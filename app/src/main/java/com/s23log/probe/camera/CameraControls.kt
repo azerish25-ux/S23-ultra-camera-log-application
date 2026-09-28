@@ -36,7 +36,7 @@ data class CameraControls(
             if (fps != null) c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.filter { it.upper == fps }
                 ?.maxByOrNull { it.lower }?.let { set(R.CONTROL_AE_TARGET_FPS_RANGE, it) }
         }
-        val afModes = c[C.CONTROL_AF_AVAILABLE_MODES].orEmpty().toSet()
+        val afModes = c[C.CONTROL_AF_AVAILABLE_MODES]?.toSet().orEmpty()
         if (focusDiopters != null) {
             require(target.minFocus > 0 && R.CONTROL_AF_MODE_OFF in afModes) { "Manual focus is unavailable" }
             require(focusDiopters.isFinite())
@@ -46,7 +46,7 @@ data class CameraControls(
             listOf(R.CONTROL_AF_MODE_CONTINUOUS_VIDEO, R.CONTROL_AF_MODE_CONTINUOUS_PICTURE, R.CONTROL_AF_MODE_AUTO, R.CONTROL_AF_MODE_OFF)
                 .firstOrNull { it in afModes }?.let { set(R.CONTROL_AF_MODE, it) }
         }
-        val modes = c[C.CONTROL_AWB_AVAILABLE_MODES].orEmpty()
+        val modes = c[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty()
         if (wbMode in modes) set(R.CONTROL_AWB_MODE, wbMode)
         else require(wbMode == R.CONTROL_AWB_MODE_AUTO) { "Selected white-balance preset is unavailable" }
         if (c[C.CONTROL_AWB_LOCK_AVAILABLE] == true) set(R.CONTROL_AWB_LOCK, wbLock)

@@ -181,7 +181,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         toggle(R.id.manualFocus).isChecked = false
         toggle(R.id.wbLock).isChecked = false
         val c = target.characteristics
-        wbModes = c[C.CONTROL_AWB_AVAILABLE_MODES].orEmpty().filter { it != CaptureRequest.CONTROL_AWB_MODE_OFF }
+        wbModes = c[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty().filter { it != CaptureRequest.CONTROL_AWB_MODE_OFF }
         setItems(spinner(R.id.wbSelector), wbModes.map(::wbName))
         val isoRange = c[C.SENSOR_INFO_SENSITIVITY_RANGE]
         text(R.id.isoInput).text = (isoRange?.lower?.coerceAtLeast(100) ?: 100).toString()
