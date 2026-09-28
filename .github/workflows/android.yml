@@ -21,6 +21,8 @@ jobs:
           java-version: '21'
       - name: Verify wrapper binary
         run: echo '497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+      - name: Host acceptance-check regression tests
+        run: python3 -m unittest discover -s scripts/tests -v
       - name: Install pinned Android build and emulator packages
         env:
           ANDROID_HOME: ${{ runner.temp }}/s23log-android-sdk
@@ -28,10 +30,10 @@ jobs:
       - name: Unit tests, lint and APK builds
         id: build
         run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest
-      - name: Real emulator camera and encoder tests
-        run: bash .github/scripts/emulator-test.sh
       - name: Verify debug APK signature
         run: $ANDROID_HOME/build-tools/36.0.0/apksigner verify --verbose app/build/outputs/apk/debug/app-debug.apk
+      - name: Real emulator camera and encoder tests
+        run: bash .github/scripts/emulator-test.sh
       - name: Upload installable debug APK
         if: always() && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4

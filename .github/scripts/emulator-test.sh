@@ -2,8 +2,12 @@
 set -euo pipefail
 export ANDROID_SDK_ROOT="$ANDROID_HOME"
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+export ANDROID_SERIAL=emulator-5554
 mkdir -p evidence/emulator
-if ! command -v ffprobe >/dev/null; then sudo apt-get update -qq; sudo apt-get install -y ffmpeg; fi
+if ! command -v ffprobe >/dev/null || ! command -v ffmpeg >/dev/null; then
+  sudo apt-get update -qq
+  sudo apt-get install -y ffmpeg
+fi
 printf 'no\n' | avdmanager create avd --force --name s23log_ci --package 'system-images;android-36;google_apis;x86_64'
 cat >> "$HOME/.android/avd/s23log_ci.avd/config.ini" <<'AVD'
 hw.camera.back=emulated
@@ -15,22 +19,25 @@ hw.ramSize=3072
 AVD
 accel=off
 if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; accel=on; fi
-emulator -avd s23log_ci -no-window -no-audio -no-boot-anim -no-snapshot -no-metrics -gpu swiftshader -accel "$accel" -camera-back emulated -camera-front emulated > evidence/emulator/emulator.log 2>&1 &
+emulator -avd s23log_ci -port 5554 -no-window -no-audio -no-boot-anim -no-snapshot -no-metrics -gpu swiftshader -accel "$accel" -camera-back emulated -camera-front emulated > evidence/emulator/emulator.log 2>&1 &
 emulator_pid=$!
 cleanup() {
+  local status=$?
+  trap - EXIT
   set +e
-  adb logcat -d > evidence/emulator/logcat.txt
-  adb shell screencap -p /sdcard/s23log-ci.png
-  adb pull /sdcard/s23log-ci.png evidence/emulator/screen.png
-  adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.tar
-  adb pull /sdcard/Movies/S23Log evidence/emulator/videos
-  adb emu kill
+  # Preserve the real test/validation exit status and never truncate good evidence.
+  timeout 20 adb logcat -d > evidence/emulator/logcat.txt
+  if [[ ! -s evidence/emulator/app-evidence.tar ]]; then
+    timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.partial.tar
+  fi
+  timeout 10 adb emu kill
   kill "$emulator_pid" 2>/dev/null
+  exit "$status"
 }
 trap cleanup EXIT
 booted=0
 for _ in $(seq 1 180); do
-  if [[ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]]; then booted=1; break; fi
+  if [[ "$(timeout 5 adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" == 1 ]]; then booted=1; break; fi
   kill -0 "$emulator_pid" || { tail -100 evidence/emulator/emulator.log; exit 1; }
   sleep 3
 done
@@ -39,17 +46,24 @@ adb shell input keyevent 82
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
-./gradlew --no-daemon :app:connectedDebugAndroidTest
-adb pull /sdcard/Movies/S23Log evidence/emulator/videos
+# AGP normally uninstalls both APKs after connected tests, deleting private reports.
+# This is the exact BooleanOption name in the pinned AGP 9.4 toolchain.
+./gradlew --no-daemon -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true :app:connectedDebugAndroidTest
+timeout 15 adb shell pm path com.s23log.probe | grep '^package:'
+timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.tar
+[[ -s evidence/emulator/app-evidence.tar ]] || { echo 'Device reports were not preserved'; exit 1; }
+timeout 60 adb pull /sdcard/Movies/S23Log evidence/emulator/videos
 python3 scripts/check_video.py evidence/emulator/videos --min-duration 1 > evidence/emulator/ffprobe.json
-# Independently require a 60-second container, not only the in-app duration assertion.
-python3 - <<'PY_CHECK'
-import json
-from pathlib import Path
-clips = json.loads(Path("evidence/emulator/ffprobe.json").read_text())
-assert len(clips) >= 12, "Expected ten cycles, one long recording, and one lifecycle recording"
-assert max(clip["durationSeconds"] for clip in clips) >= 60, "No 60-second recording was produced"
-PY_CHECK
-adb shell am start -W -n com.s23log.probe/.MainActivity
+python3 scripts/check_evidence.py evidence/emulator/app-evidence.tar evidence/emulator/ffprobe.json > evidence/emulator/summary.json
+timeout 30 adb shell am start -W -n com.s23log.probe/.MainActivity > evidence/emulator/activity-start.txt
+# am may return success even when the requested component is absent.
+grep -q 'Status: ok' evidence/emulator/activity-start.txt
 sleep 3
-adb exec-out screencap -p > evidence/emulator/camera-screen.png
+timeout 20 adb exec-out screencap -p > evidence/emulator/camera-screen.png
+python3 - <<'PY_CHECK'
+from pathlib import Path
+image = Path('evidence/emulator/camera-screen.png').read_bytes()
+if not image.startswith(b'\x89PNG\r\n\x1a\n') or len(image) < 100:
+    raise SystemExit('Missing or invalid camera screenshot')
+PY_CHECK
+cat evidence/emulator/summary.json
