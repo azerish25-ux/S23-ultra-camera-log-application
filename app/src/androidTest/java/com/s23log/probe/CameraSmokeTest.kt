@@ -50,7 +50,7 @@ class CameraSmokeTest {
             assertTrue(button.performClick())
         }
     }
-    private fun waitForNewOutput(previous: String?) {
+    private fun waitForNewOutput(previous: String?, minimumSpanUs: Long = 0) {
         val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(30)
         while (System.nanoTime() < end) {
             val entry = CaptureHistory.latest(context)
@@ -59,6 +59,7 @@ class CameraSmokeTest {
                 assertEquals(json.toString(), "checked", json.getString("status"))
                 assertTrue(json.getJSONObject("verification").getBoolean("firstSyncFrameDecoded"))
                 assertTrue(json.getJSONObject("verification").getInt("samples") >= 2)
+                assertTrue("Recorded sample span must meet the duration requirement", json.getJSONObject("verification").getLong("sampleSpanUs") >= minimumSpanUs)
                 context.contentResolver.openInputStream(entry.uris.first()).use { input ->
                     assertNotNull(input)
                     assertTrue(input!!.read(ByteArray(16)) > 0)
@@ -109,9 +110,9 @@ class CameraSmokeTest {
             live(scenario)
         }
     }
-    @Test fun recordsTwoIndependentDecodableVideos() {
+    @Test fun recordsTenIndependentDecodableVideos() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            repeat(2) {
+            repeat(10) {
                 val previous = CaptureHistory.latest(context).report?.name
                 begin(scenario)
                 Thread.sleep(4000)
@@ -119,6 +120,16 @@ class CameraSmokeTest {
                 waitForNewOutput(previous)
                 live(scenario)
             }
+        }
+    }
+    @Test fun recordsAtLeastSixtySeconds() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            val previous = CaptureHistory.latest(context).report?.name
+            begin(scenario)
+            Thread.sleep(65_000)
+            click(scenario, R.id.record)
+            waitForNewOutput(previous, minimumSpanUs = 60_000_000)
+            live(scenario)
         }
     }
     @Test fun leavingActivityFinalizesRecording() {

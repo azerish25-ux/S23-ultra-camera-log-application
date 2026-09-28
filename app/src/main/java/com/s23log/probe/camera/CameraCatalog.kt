@@ -14,6 +14,7 @@ import android.util.Size
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.RecordingMode
+import com.s23log.probe.core.RawLimits
 
 /** A physical-only camera is routed through its public logical device, never opened by guess. */
 data class CameraTarget(val logicalId: String, val physicalId: String?, val characteristics: C) {
@@ -30,8 +31,7 @@ data class CameraTarget(val logicalId: String, val physicalId: String?, val char
         if (characteristics[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_RAW) != true) return null
         val sizes = characteristics[C.SCALER_STREAM_CONFIGURATION_MAP]?.getOutputSizes(ImageFormat.RAW_SENSOR).orEmpty()
         // Bound initial still-capture memory. This does not truncate the diagnostic export.
-        return sizes.filter { it.width.toLong() * it.height <= 24_000_000L }.maxByOrNull { it.width.toLong() * it.height }
-            ?: sizes.minByOrNull { it.width.toLong() * it.height }
+        return sizes.filter { RawLimits.supports(it.width, it.height) }.maxByOrNull { it.width.toLong() * it.height }
     }
 }
 
@@ -116,6 +116,7 @@ object CameraCatalog {
             }
         }
         if (hlg && modes.none { it.range == DynamicRange.HLG10 }) notes += "No Surface-input HEVC Main10 encoder matched the selected camera's advertised size/rate combinations."
+        notes += "The initial RAW DNG path is limited to RAW_SENSOR modes up to 24 megapixels. Larger modes remain listed in Diagnostics."
         notes += "All listed modes are advertised candidates, not device-validated recording guarantees."
         notes += "P010 byte-buffer support is deliberately not used to gate Surface-input recording."
         return ModePlan(modes.distinctBy { it.key }, notes.distinct())

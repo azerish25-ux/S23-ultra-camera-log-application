@@ -42,3 +42,14 @@ adb shell settings put global animator_duration_scale 0
 ./gradlew --no-daemon :app:connectedDebugAndroidTest
 adb pull /sdcard/Movies/S23Log evidence/emulator/videos
 python3 scripts/check_video.py evidence/emulator/videos --min-duration 1 > evidence/emulator/ffprobe.json
+# Independently require a 60-second container, not only the in-app duration assertion.
+python3 - <<'PY_CHECK'
+import json
+from pathlib import Path
+clips = json.loads(Path("evidence/emulator/ffprobe.json").read_text())
+assert len(clips) >= 12, "Expected ten cycles, one long recording, and one lifecycle recording"
+assert max(clip["durationSeconds"] for clip in clips) >= 60, "No 60-second recording was produced"
+PY_CHECK
+adb shell am start -W -n com.s23log.probe/.MainActivity
+sleep 3
+adb exec-out screencap -p > evidence/emulator/camera-screen.png
