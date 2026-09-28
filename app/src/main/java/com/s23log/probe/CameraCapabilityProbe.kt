@@ -2,272 +2,193 @@ package com.s23log.probe
 
 import android.content.Context
 import android.graphics.ImageFormat
-import android.graphics.ColorSpace
-import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraCharacteristics as C
 import android.hardware.camera2.CameraManager
-import android.hardware.camera2.params.DynamicRangeProfiles
+import android.hardware.camera2.params.StreamConfigurationMap
+import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.os.Build
-import android.util.Range
-import android.util.Size
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import com.s23log.probe.core.CapturePolicy
+import com.s23log.probe.diagnostics.ProbeReport
+import com.s23log.probe.diagnostics.ProbeSection
+import java.time.Instant
 
-class CameraCapabilityProbe(private val context: Context) {
-    private val lines = mutableListOf<String>()
+/** Metadata only: no cameras are opened and no sensor/recording capabilities are assumed. */
+class CameraCapabilityProbe(context: Context) {
+    private val manager = context.applicationContext.getSystemService(CameraManager::class.java)
 
-    fun run(): String {
-        header()
-        cameraSection()
-        codecSection()
-        verdictSection()
-        return lines.joinToString("\n")
-    }
-
-    private fun header() {
-        line("S23LOG CAMERA CAPABILITY REPORT")
-        line("Generated: ${SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z", Locale.US).format(Date())}")
-        line("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
-        line("Product: ${Build.PRODUCT}")
-        line("Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
-        line("Build: ${Build.DISPLAY}")
-        line("")
-    }
-
-    private fun cameraSection() {
-        val manager = context.getSystemService(CameraManager::class.java)
-        line("=== CAMERA2 DEVICES ===")
-        line("Camera IDs: ${manager.cameraIdList.joinToString()}")
-        line("")
-
-        manager.cameraIdList.forEach { id ->
-            val c = manager.getCameraCharacteristics(id)
-            val caps = c.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES)?.toSet().orEmpty()
-            line("--- Camera $id ---")
-            line("Facing: ${facingName(c.get(CameraCharacteristics.LENS_FACING))}")
-            line("Hardware level: ${hardwareLevelName(c.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL))}")
-            line("Capabilities: ${caps.map(::capabilityName).sorted().joinToString()}")
-            line("RAW capability: ${CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW in caps}")
-            line("Manual sensor: ${CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR in caps}")
-            line("Manual post-processing: ${CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_POST_PROCESSING in caps}")
-            line("Logical multi-camera: ${CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA in caps}")
-            line("Ultra-high-resolution sensor: ${if (Build.VERSION.SDK_INT >= 31) CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_ULTRA_HIGH_RESOLUTION_SENSOR in caps else "n/a"}")
-
-            val physicalIds = if (Build.VERSION.SDK_INT >= 28) c.physicalCameraIds else emptySet()
-            line("Physical camera IDs: ${physicalIds.ifEmpty { setOf("none") }.joinToString()}")
-
-            line("Sensor pixel array: ${c.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE).fmt()}")
-            line("Sensor active array: ${c.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE) ?: "n/a"}")
-            line("Sensitivity ISO range: ${c.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE).fmt()}")
-            line("Exposure-time range: ${c.get(CameraCharacteristics.SENSOR_INFO_EXPOSURE_TIME_RANGE).fmtNs()}")
-            line("Max frame duration: ${c.get(CameraCharacteristics.SENSOR_INFO_MAX_FRAME_DURATION)?.let { "${it} ns (${nsToMs(it)} ms)" } ?: "n/a"}")
-            line("Color filter arrangement: ${colorFilterName(c.get(CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT))}")
-            line("White level: ${c.get(CameraCharacteristics.SENSOR_INFO_WHITE_LEVEL) ?: "n/a"}")
-            line("Black-level pattern: ${c.get(CameraCharacteristics.SENSOR_BLACK_LEVEL_PATTERN) ?: "n/a"}")
-
-            line("Focal lengths: ${c.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)?.joinToString() ?: "n/a"} mm")
-            line("Apertures: ${c.get(CameraCharacteristics.LENS_INFO_AVAILABLE_APERTURES)?.joinToString() ?: "n/a"}")
-            line("Minimum focus distance: ${c.get(CameraCharacteristics.LENS_INFO_MINIMUM_FOCUS_DISTANCE) ?: "n/a"} diopters")
-            line("Flash: ${c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false}")
-            line("AE FPS ranges: ${c.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES)?.joinToString() ?: "n/a"}")
-            line("Video stabilization modes: ${c.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES)?.joinToString() ?: "n/a"}")
-            line("Optical stabilization modes: ${c.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION)?.joinToString() ?: "n/a"}")
-
-            if (Build.VERSION.SDK_INT >= 33) {
-                val profiles = c.get(CameraCharacteristics.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES)
-                line("Dynamic-range profiles: ${profiles?.supportedProfiles?.map(::dynamicRangeName)?.joinToString() ?: "n/a"}")
-                line("Recommended 10-bit profile: ${c.get(CameraCharacteristics.REQUEST_RECOMMENDED_TEN_BIT_DYNAMIC_RANGE_PROFILE)?.let(::dynamicRangeName) ?: "n/a"}")
+    fun run(): ProbeReport {
+        val sections = mutableListOf<ProbeSection>()
+        val device = ProbeSection("device", Build.MODEL).also(sections::add)
+        device.query("manufacturer") { Build.MANUFACTURER }
+        device.query("model") { Build.MODEL }
+        device.query("android") { Build.VERSION.RELEASE }
+        device.query("api") { Build.VERSION.SDK_INT }
+        device.query("build") { Build.DISPLAY }
+        var ids = emptyList<String>()
+        device.query("cameraIds") { manager.cameraIdList.toList().also { ids = it } }
+        // Cache successes and failures, including physical-only IDs. No second scan for the summary.
+        val characteristics = mutableMapOf<String, Result<C>>()
+        fun get(id: String): C = characteristics.getOrPut(id) {
+            runCatching { manager.getCameraCharacteristics(id) }
+        }.getOrThrow()
+        val targets = linkedMapOf<String, String?>()
+        ids.forEach { targets[it] = null }
+        ids.forEach { id ->
+            val section = ProbeSection("camera", id).also(sections::add)
+            section.query("characteristics") {
+                val c = get(id)
+                inspectCamera(section, c)
+                if (Build.VERSION.SDK_INT >= 28) {
+                    c.physicalCameraIds.forEach { physical -> if (physical !in targets) targets[physical] = id }
+                }
+                "read"
             }
-
-            if (Build.VERSION.SDK_INT >= 34) {
-                val colorProfiles = c.get(CameraCharacteristics.REQUEST_AVAILABLE_COLOR_SPACE_PROFILES)
-                val named = colorProfiles?.getSupportedColorSpaces(ImageFormat.YUV_420_888)
-                    ?.map(ColorSpace.Named::name)
-                    ?.sorted()
-                    ?.joinToString()
-                line("YUV color spaces: ${named ?: "n/a"}")
-            }
-
-            val map = c.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-            if (map == null) {
-                line("Stream configuration map: unavailable")
-            } else {
-                formatBlock("RAW_SENSOR", map.getOutputSizes(ImageFormat.RAW_SENSOR))
-                formatBlock("RAW10", map.getOutputSizes(ImageFormat.RAW10))
-                formatBlock("RAW12", map.getOutputSizes(ImageFormat.RAW12))
-                formatBlock("YUV_420_888", map.getOutputSizes(ImageFormat.YUV_420_888))
-                formatBlock("PRIVATE", map.getOutputSizes(ImageFormat.PRIVATE))
-                formatBlock("JPEG", map.getOutputSizes(ImageFormat.JPEG))
-            }
-            line("")
         }
+        targets.filterValues { it != null }.forEach { (id, parent) ->
+            val section = ProbeSection("physical_camera", id).also(sections::add)
+            section.query("logicalParent") { parent }
+            section.query("independentlyOpenable") { id in ids }
+            section.query("characteristics") { inspectCamera(section, get(id)); "read" }
+        }
+        val codecList = ProbeSection("codec_discovery", "encoders").also(sections::add)
+        var codecs = emptyList<MediaCodecInfo>()
+        codecList.query("enumeration") {
+            MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.filter { it.isEncoder }
+                .sortedBy { it.name }.also { codecs = it }.map { it.name }
+        }
+        codecs.forEach { codec ->
+            val section = ProbeSection("encoder", codec.name)
+            var useful = false
+            section.query("videoTypes") {
+                codec.supportedTypes.filter { it == MediaFormat.MIMETYPE_VIDEO_AVC || it == MediaFormat.MIMETYPE_VIDEO_HEVC }
+                    .also { types ->
+                        useful = types.isNotEmpty()
+                        types.forEach { mime -> inspectCodec(section, codec, mime) }
+                    }
+            }
+            if (useful || section.fields.values.any { it.status == "query_failed" }) sections += section
+        }
+        val summary = ProbeSection("summary", "advertised-only").also(sections::add)
+        val cameras = sections.filter { it.kind == "camera" || it.kind == "physical_camera" }
+        summary.query("camerasAdvertisingRAW") { cameras.filter { it.fields["rawCapability"]?.value == true }.map { it.id } }
+        summary.query("camerasAdvertisingManualSensor") { cameras.filter { it.fields["manualSensor"]?.value == true }.map { it.id } }
+        summary.query("camerasAdvertisingHLG10") { cameras.filter { it.fields["hlg10"]?.value == true }.map { it.id } }
+        summary.query("recordingPathVerified") { false }
+        return ProbeReport(Instant.now().toString(), sections)
     }
 
-    private fun codecSection() {
-        line("=== MEDIA CODEC ENCODERS ===")
-        val codecs = MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos
-            .filter { it.isEncoder }
-            .sortedBy { it.name }
-
-        val hevc = codecs.filter { MediaFormat.MIMETYPE_VIDEO_HEVC in it.supportedTypes }
-        line("HEVC encoders found: ${hevc.size}")
-        hevc.forEach { codec ->
-            val caps = codec.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_HEVC)
-            line("--- ${codec.name} ---")
-            line("Hardware accelerated: ${if (Build.VERSION.SDK_INT >= 29) codec.isHardwareAccelerated else "unknown"}")
-            line("Software only: ${if (Build.VERSION.SDK_INT >= 29) codec.isSoftwareOnly else "unknown"}")
-            line("Vendor: ${if (Build.VERSION.SDK_INT >= 29) codec.isVendor else "unknown"}")
-            line("HEVC profiles: ${caps.profileLevels.map { hevcProfileName(it.profile) }.distinct().joinToString()}")
-            line("10-bit HEVC: ${caps.profileLevels.any { isHevc10BitProfile(it.profile) }}")
-            line("P010 input: ${MediaCodecInfo.CodecCapabilities.COLOR_FormatYUVP010 in caps.colorFormats}")
-            line("Color formats: ${caps.colorFormats.joinToString()}")
-            caps.videoCapabilities?.let { v ->
-                line("Width range: ${v.supportedWidths}")
-                line("Height range: ${v.supportedHeights}")
-                line("Bitrate range: ${v.bitrateRange}")
-                line("Frame-rate range: ${v.supportedFrameRates}")
-                listOf(Size(3840, 2160), Size(7680, 4320)).forEach { s ->
-                    val supported = runCatching { v.isSizeSupported(s.width, s.height) }.getOrDefault(false)
-                    line("${s.width}x${s.height} supported: $supported")
-                    if (supported) {
-                        val fps = runCatching { v.getSupportedFrameRatesFor(s.width, s.height) }.getOrNull()
-                        line("${s.width}x${s.height} FPS: ${fps ?: "n/a"}")
+    private fun inspectCamera(s: ProbeSection, c: C) {
+        s.query("hardwareLevel") { c[C.INFO_SUPPORTED_HARDWARE_LEVEL] }
+        s.query("facing") { c[C.LENS_FACING] }
+        s.query("orientation") { c[C.SENSOR_ORIENTATION] }
+        s.query("capabilities") { c[C.REQUEST_AVAILABLE_CAPABILITIES]?.toList() }
+        s.query("rawCapability") { c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_RAW) }
+        s.query("manualSensor") { c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR) }
+        s.query("manualPostProcessing") { c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_POST_PROCESSING) }
+        if (Build.VERSION.SDK_INT >= 28) s.query("physicalCameraIds") { c.physicalCameraIds.sorted() }
+        s.query("pixelArray") { c[C.SENSOR_INFO_PIXEL_ARRAY_SIZE] }
+        s.query("activeArray") { c[C.SENSOR_INFO_ACTIVE_ARRAY_SIZE] }
+        s.query("sensorPhysicalSizeMm") { c[C.SENSOR_INFO_PHYSICAL_SIZE] }
+        s.query("isoRange") { c[C.SENSOR_INFO_SENSITIVITY_RANGE] }
+        s.query("exposureNsRange") { c[C.SENSOR_INFO_EXPOSURE_TIME_RANGE] }
+        s.query("maxFrameDurationNs") { c[C.SENSOR_INFO_MAX_FRAME_DURATION] }
+        s.query("cfa") { c[C.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT] }
+        s.query("whiteLevel") { c[C.SENSOR_INFO_WHITE_LEVEL] }
+        s.query("blackLevel") { c[C.SENSOR_BLACK_LEVEL_PATTERN] }
+        s.query("focalLengthsMm") { c[C.LENS_INFO_AVAILABLE_FOCAL_LENGTHS] }
+        s.query("apertures") { c[C.LENS_INFO_AVAILABLE_APERTURES] }
+        s.query("minimumFocusDiopters") { c[C.LENS_INFO_MINIMUM_FOCUS_DISTANCE] }
+        s.query("flash") { c[C.FLASH_INFO_AVAILABLE] }
+        s.query("aeFpsRanges") { c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.map { listOf(it.lower, it.upper) } }
+        s.query("awbModes") { c[C.CONTROL_AWB_AVAILABLE_MODES] }
+        s.query("awbLockAvailable") { c[C.CONTROL_AWB_LOCK_AVAILABLE] }
+        s.query("afModes") { c[C.CONTROL_AF_AVAILABLE_MODES] }
+        s.query("oisModes") { c[C.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION] }
+        s.query("eisModes") { c[C.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES] }
+        s.query("requestKeys") { c.availableCaptureRequestKeys?.map { it.name }?.sorted() }
+        s.query("resultKeys") { c.availableCaptureResultKeys?.map { it.name }?.sorted() }
+        if (Build.VERSION.SDK_INT >= 33) {
+            s.query("tenBitCapability") { c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT) }
+            s.query("dynamicRangeProfiles") {
+                c[C.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES]?.let { profiles ->
+                    profiles.supportedProfiles.sorted().map { p -> mapOf(
+                        "id" to p, "tenBit" to CapturePolicy.isTenBitProfile(p),
+                        "requestConstraints" to profiles.getProfileCaptureRequestConstraints(p).sorted(),
+                        "extraLatency" to profiles.isExtraLatencyPresent(p)
+                    ) }
+                }
+            }
+            s.query("hlg10") {
+                CapturePolicy.supportsHlg(
+                    c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT) == true,
+                    c[C.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES]?.supportedProfiles.orEmpty()
+                )
+            }
+            s.query("recommendedTenBitProfile") { c[C.REQUEST_RECOMMENDED_TEN_BIT_DYNAMIC_RANGE_PROFILE] }
+        } else s.unavailable("hlg10", "Requires Android API 33+")
+        if (Build.VERSION.SDK_INT >= 34) s.query("colorSpacesByFormatAndProfile") {
+            c[C.REQUEST_AVAILABLE_COLOR_SPACE_PROFILES]?.let { colors ->
+                listOf(ImageFormat.PRIVATE, ImageFormat.YUV_420_888, ImageFormat.YCBCR_P010).associate { format ->
+                    format.toString() to colors.getSupportedColorSpaces(format).associate { space ->
+                        space.name to colors.getSupportedDynamicRangeProfiles(space, format).sorted()
                     }
                 }
             }
         }
-        line("")
-    }
-
-    private fun verdictSection() {
-        val manager = context.getSystemService(CameraManager::class.java)
-        var raw = false
-        var manual = false
-        var tenBitCamera = false
-
-        manager.cameraIdList.forEach { id ->
-            val c = manager.getCameraCharacteristics(id)
-            val caps = c.get(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES)?.toSet().orEmpty()
-            raw = raw || CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW in caps
-            manual = manual || CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR in caps
-            if (Build.VERSION.SDK_INT >= 33) {
-                val profiles = c.get(CameraCharacteristics.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES)
-                tenBitCamera = tenBitCamera || profiles?.supportedProfiles.orEmpty().any {
-                    it != DynamicRangeProfiles.STANDARD
-                }
+        s.query("streams") { streams(c[C.SCALER_STREAM_CONFIGURATION_MAP]) }
+        s.query("highSpeedVideo") {
+            c[C.SCALER_STREAM_CONFIGURATION_MAP]?.let { map ->
+                if (c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO) == true)
+                    map.highSpeedVideoSizes.map { size -> mapOf("size" to size.toString(), "fps" to map.getHighSpeedVideoFpsRangesFor(size).map { it.toString() }) }
+                else emptyList<Any>()
             }
         }
-
-        val hevc10 = MediaCodecList(MediaCodecList.ALL_CODECS).codecInfos
-            .filter { it.isEncoder && MediaFormat.MIMETYPE_VIDEO_HEVC in it.supportedTypes }
-            .any { codec ->
-                codec.getCapabilitiesForType(MediaFormat.MIMETYPE_VIDEO_HEVC)
-                    .profileLevels.any { isHevc10BitProfile(it.profile) }
-            }
-
-        line("=== S23LOG PHASE-1 SUMMARY ===")
-        line("Any Camera2 RAW path: $raw")
-        line("Any manual-sensor camera: $manual")
-        line("Any advertised non-standard/10-bit dynamic-range profile: $tenBitCamera")
-        line("Any HEVC Main10-class encoder: $hevc10")
-        line("")
-        line("Interpretation: this report records what Android publicly exposes. It does not assume that Samsung's stock-camera private ISP pipeline or proprietary LOG processing is accessible to third-party apps.")
+        if (Build.VERSION.SDK_INT >= 31) s.query("maximumResolutionStreams") {
+            streams(c[C.SCALER_STREAM_CONFIGURATION_MAP_MAXIMUM_RESOLUTION])
+        }
     }
 
-    private fun formatBlock(name: String, sizes: Array<Size>?) {
-        val sorted = sizes.orEmpty().sortedWith(compareByDescending<Size> { it.width.toLong() * it.height }.thenByDescending { it.width })
-        line("$name outputs (${sorted.size}): ${sorted.take(30).joinToString { "${it.width}x${it.height}" }}${if (sorted.size > 30) " …" else ""}")
+    private fun streams(map: StreamConfigurationMap?): Any? {
+        if (map == null) return null
+        val formats = (map.outputFormats.toList() + listOf(ImageFormat.RAW_SENSOR, ImageFormat.RAW10, ImageFormat.RAW12, ImageFormat.PRIVATE, ImageFormat.YUV_420_888) +
+            if (Build.VERSION.SDK_INT >= 31) listOf(ImageFormat.YCBCR_P010) else emptyList()).distinct().sorted()
+        return formats.map { format ->
+            try {
+                val sizes = map.getOutputSizes(format).orEmpty().sortedByDescending { it.width.toLong() * it.height }
+                mapOf("format" to format, "status" to if (sizes.isEmpty()) "unsupported" else "reported", "outputs" to sizes.map { size ->
+                    val row = linkedMapOf<String, Any?>("width" to size.width, "height" to size.height)
+                    try { row["minFrameDurationNs"] = map.getOutputMinFrameDuration(format, size) } catch (e: Exception) { row["minFrameDurationError"] = e.toString() }
+                    try { row["stallDurationNs"] = map.getOutputStallDuration(format, size) } catch (e: Exception) { row["stallDurationError"] = e.toString() }
+                    row
+                })
+            } catch (e: Exception) { mapOf("format" to format, "status" to "query_failed", "error" to e.toString()) }
+        } + listOf(mapOf("outputClass" to "MediaCodec", "sizes" to map.getOutputSizes(MediaCodec::class.java)?.map { it.toString() }))
     }
 
-    private fun facingName(value: Int?): String = when (value) {
-        CameraCharacteristics.LENS_FACING_FRONT -> "FRONT"
-        CameraCharacteristics.LENS_FACING_BACK -> "BACK"
-        CameraCharacteristics.LENS_FACING_EXTERNAL -> "EXTERNAL"
-        else -> "UNKNOWN($value)"
-    }
-
-    private fun hardwareLevelName(value: Int?): String = when (value) {
-        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY -> "LEGACY"
-        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED -> "LIMITED"
-        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL -> "FULL"
-        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_3 -> "LEVEL_3"
-        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL -> "EXTERNAL"
-        else -> "UNKNOWN($value)"
-    }
-
-    private fun capabilityName(value: Int): String = when (value) {
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE -> "BACKWARD_COMPATIBLE"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR -> "MANUAL_SENSOR"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_POST_PROCESSING -> "MANUAL_POST_PROCESSING"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_RAW -> "RAW"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_PRIVATE_REPROCESSING -> "PRIVATE_REPROCESSING"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_READ_SENSOR_SETTINGS -> "READ_SENSOR_SETTINGS"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_BURST_CAPTURE -> "BURST_CAPTURE"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_YUV_REPROCESSING -> "YUV_REPROCESSING"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_DEPTH_OUTPUT -> "DEPTH_OUTPUT"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO -> "HIGH_SPEED_VIDEO"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MOTION_TRACKING -> "MOTION_TRACKING"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA -> "LOGICAL_MULTI_CAMERA"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MONOCHROME -> "MONOCHROME"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_SECURE_IMAGE_DATA -> "SECURE_IMAGE_DATA"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_SYSTEM_CAMERA -> "SYSTEM_CAMERA"
-        CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_OFFLINE_PROCESSING -> "OFFLINE_PROCESSING"
-        else -> "CAPABILITY_$value"
-    }
-
-    private fun colorFilterName(value: Int?): String = when (value) {
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGGB -> "RGGB"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GRBG -> "GRBG"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_GBRG -> "GBRG"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_BGGR -> "BGGR"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_RGB -> "RGB"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_MONO -> "MONO"
-        CameraCharacteristics.SENSOR_INFO_COLOR_FILTER_ARRANGEMENT_NIR -> "NIR"
-        else -> "UNKNOWN($value)"
-    }
-
-    private fun dynamicRangeName(profile: Long): String = when (profile) {
-        DynamicRangeProfiles.STANDARD -> "STANDARD"
-        DynamicRangeProfiles.HLG10 -> "HLG10"
-        DynamicRangeProfiles.HDR10 -> "HDR10"
-        DynamicRangeProfiles.HDR10_PLUS -> "HDR10_PLUS"
-        DynamicRangeProfiles.DOLBY_VISION_10B_HDR_REF -> "DOLBY_VISION_10B_HDR_REF"
-        DynamicRangeProfiles.DOLBY_VISION_10B_HDR_REF_PO -> "DOLBY_VISION_10B_HDR_REF_PO"
-        DynamicRangeProfiles.DOLBY_VISION_10B_HDR_OEM -> "DOLBY_VISION_10B_HDR_OEM"
-        DynamicRangeProfiles.DOLBY_VISION_10B_HDR_OEM_PO -> "DOLBY_VISION_10B_HDR_OEM_PO"
-        DynamicRangeProfiles.DOLBY_VISION_8B_HDR_REF -> "DOLBY_VISION_8B_HDR_REF"
-        DynamicRangeProfiles.DOLBY_VISION_8B_HDR_REF_PO -> "DOLBY_VISION_8B_HDR_REF_PO"
-        DynamicRangeProfiles.DOLBY_VISION_8B_HDR_OEM -> "DOLBY_VISION_8B_HDR_OEM"
-        DynamicRangeProfiles.DOLBY_VISION_8B_HDR_OEM_PO -> "DOLBY_VISION_8B_HDR_OEM_PO"
-        else -> "PROFILE_$profile"
-    }
-
-    private fun hevcProfileName(profile: Int): String = when (profile) {
-        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain -> "Main8"
-        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10 -> "Main10"
-        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10 -> "Main10 HDR10"
-        MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10Plus -> "Main10 HDR10+"
-        else -> "profile=0x${profile.toString(16)}"
-    }
-
-    private fun isHevc10BitProfile(profile: Int): Boolean = profile == MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10 ||
-        profile == MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10 ||
-        profile == MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10HDR10Plus
-
-    private fun Size?.fmt(): String = this?.let { "${it.width}x${it.height}" } ?: "n/a"
-
-    private fun <T : Comparable<T>> Range<T>?.fmt(): String = this?.toString() ?: "n/a"
-
-    private fun Range<Long>?.fmtNs(): String = this?.let {
-        "${it.lower}..${it.upper} ns (${nsToMs(it.lower)}..${nsToMs(it.upper)} ms)"
-    } ?: "n/a"
-
-    private fun nsToMs(ns: Long): String = String.format(Locale.US, "%.3f", ns / 1_000_000.0)
-
-    private fun line(value: String) {
-        lines += value
+    private fun inspectCodec(s: ProbeSection, codec: MediaCodecInfo, mime: String) {
+        if (Build.VERSION.SDK_INT >= 29) {
+            s.query("hardwareAccelerated") { codec.isHardwareAccelerated }
+            s.query("softwareOnly") { codec.isSoftwareOnly }
+        }
+        s.query(mime) {
+            val caps = codec.getCapabilitiesForType(mime)
+            val video = caps.videoCapabilities
+            mapOf(
+                "profilesAndLevels" to caps.profileLevels.map { mapOf("profile" to it.profile, "level" to it.level) },
+                "colorFormats" to caps.colorFormats.toList(),
+                "surfaceInput" to caps.colorFormats.contains(MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface),
+                "p010BufferInput" to caps.colorFormats.contains(MediaCodecInfo.CodecCapabilities.COLOR_FormatYUVP010),
+                "widthRange" to video?.supportedWidths.toString(), "heightRange" to video?.supportedHeights.toString(),
+                "bitrateRange" to video?.bitrateRange.toString(),
+                "sampleSizeRates" to listOf(1920 to 1080, 3840 to 2160, 7680 to 4320).map { (w, h) ->
+                    try { mapOf("width" to w, "height" to h, "supported30fps" to video?.areSizeAndRateSupported(w, h, 30.0),
+                        "fps" to if (video?.isSizeSupported(w, h) == true) video.getSupportedFrameRatesFor(w, h).toString() else null) }
+                    catch (e: Exception) { mapOf("width" to w, "height" to h, "queryError" to e.toString()) }
+                }
+            )
+        }
     }
 }

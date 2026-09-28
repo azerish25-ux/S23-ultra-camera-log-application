@@ -1,63 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp">
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="S23Log Camera Capability Probe"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Ready to inspect this device."
-        android:textSize="14sp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/runProbe"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Run probe" />
-
-        <Button
-            android:id="@+id/shareReport"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:text="Share report" />
+    android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="12dp" android:background="#10151D">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/app_name" android:textSize="28sp" android:textStyle="bold" android:textColor="#FFFFFF" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/subtitle" android:textSize="11sp" android:letterSpacing="0.12" android:textColor="#72E5D1" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <Button android:id="@+id/cameraTab" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/camera_tab" />
+        <Button android:id="@+id/diagnosticsTab" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/diagnostics_tab" />
     </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
-
-        <TextView
-            android:id="@+id/report"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:text="The probe will enumerate Camera2 and MediaCodec capabilities without recording anything."
-            android:textIsSelectable="true"
-            android:textSize="12sp" />
-    </ScrollView>
+    <ViewFlipper android:id="@+id/pages" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <ScrollView android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                <Button android:id="@+id/enableCamera" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/grant_camera" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/camera_label" android:labelFor="@id/cameraSelector" />
+                <Spinner android:id="@+id/cameraSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/camera_label" />
+                <FrameLayout android:layout_width="match_parent" android:layout_height="260dp" android:background="#000000">
+                    <TextureView android:id="@+id/preview" android:layout_width="match_parent" android:layout_height="match_parent" android:contentDescription="@string/preview_description" />
+                    <TextView android:id="@+id/previewOverlay" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:padding="24dp" android:background="#E6000000" android:text="@string/preview_idle" android:textColor="#FFFFFF" />
+                </FrameLayout>
+                <TextView android:id="@+id/cameraStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="8dp" android:text="@string/status_ready" android:textColor="#72E5D1" android:accessibilityLiveRegion="polite" />
+                <TextView android:id="@+id/applied" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="6dp" android:textSize="12sp" android:fontFamily="monospace" android:text="@string/applied_empty" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="12dp" android:text="@string/mode_label" android:labelFor="@id/modeSelector" />
+                <Spinner android:id="@+id/modeSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/mode_label" />
+                <Button android:id="@+id/record" android:layout_width="match_parent" android:layout_height="56dp" android:text="@string/start_recording" android:enabled="false" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <Button android:id="@+id/rawOne" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_one" android:enabled="false" />
+                    <Button android:id="@+id/rawFive" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_five" android:enabled="false" />
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="12dp" android:text="@string/controls_label" android:textStyle="bold" />
+                <TextView android:id="@+id/limits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/limits_empty" android:textSize="12sp" />
+                <Switch android:id="@+id/manualExposure" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_exposure" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/iso" android:labelFor="@id/isoInput" />
+                <EditText android:id="@+id/isoInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="number" android:autofillHints="" android:text="100" android:selectAllOnFocus="true" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/shutter" android:labelFor="@id/shutterInput" />
+                <EditText android:id="@+id/shutterInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="16.667" android:selectAllOnFocus="true" />
+                <Switch android:id="@+id/manualFocus" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_focus" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/focus" android:labelFor="@id/focusInput" />
+                <EditText android:id="@+id/focusInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="0" android:selectAllOnFocus="true" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/wb" android:labelFor="@id/wbSelector" />
+                <Spinner android:id="@+id/wbSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/wb" />
+                <CheckBox android:id="@+id/wbLock" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/wb_lock" />
+                <Button android:id="@+id/applyControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/apply" />
+                <TextView android:id="@+id/planNotes" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:paddingTop="8dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/recording_scope" android:textSize="12sp" android:paddingTop="8dp" />
+                <TextView android:id="@+id/captureResult" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="12dp" android:textIsSelectable="true" />
+                <Button android:id="@+id/shareCapture" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/share_capture" android:enabled="false" />
+                <Button android:id="@+id/shareValidation" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/share_validation" android:enabled="false" />
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/probe_title" android:textSize="22sp" android:textStyle="bold" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/probe_description" android:textSize="13sp" />
+            <TextView android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/status_ready" android:paddingTop="8dp" android:accessibilityLiveRegion="polite" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:id="@+id/runProbe" android:layout_width="0dp" android:layout_weight="1" android:layout_height="56dp" android:text="@string/run_probe" />
+                <Button android:id="@+id/shareReport" android:layout_width="0dp" android:layout_weight="1" android:layout_height="56dp" android:text="@string/share_report" android:enabled="false" />
+            </LinearLayout>
+            <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+                <TextView android:id="@+id/report" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:textSize="12sp" android:textIsSelectable="true" android:text="@string/report_empty" />
+            </ScrollView>
+        </LinearLayout>
+    </ViewFlipper>
 </LinearLayout>

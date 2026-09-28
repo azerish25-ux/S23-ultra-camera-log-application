@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">S23Log</string>
+    <string name="subtitle">CAMERA LAB / PHASE 02</string>
+    <string name="camera_tab">Camera</string>
+    <string name="diagnostics_tab">Diagnostics</string>
+    <string name="grant_camera">Enable camera / retry</string>
+    <string name="camera_label">Camera / physical lens</string>
+    <string name="mode_label">Recording mode · advertised candidates</string>
+    <string name="preview_description">Live camera preview</string>
+    <string name="preview_idle">Enable camera to start preview</string>
+    <string name="controls_label">MANUAL CONTROLS</string>
+    <string name="manual_exposure">Manual exposure</string>
+    <string name="iso">ISO</string>
+    <string name="shutter">Shutter (milliseconds)</string>
+    <string name="manual_focus">Manual focus</string>
+    <string name="focus">Focus (diopters; 0 = infinity)</string>
+    <string name="wb">White balance preset</string>
+    <string name="wb_lock">Lock white balance</string>
+    <string name="apply">Apply controls</string>
+    <string name="start_recording">Record video</string>
+    <string name="stop_recording">Stop recording</string>
+    <string name="raw_one">RAW DNG</string>
+    <string name="raw_five">RAW × 5</string>
+    <string name="share_capture">Share last capture</string>
+    <string name="share_validation">Share validation</string>
+    <string name="recording_scope">Video-only capture. HLG10 is HDR, not Samsung Log. Leaving this screen or rotating the device stops and finalizes recording.</string>
+    <string name="probe_title">Hardware capability report</string>
+    <string name="probe_description">Complete Camera2 and encoder metadata, including per-property failures. Advertisements are not proof of a working recording pipeline.</string>
+    <string name="run_probe">Run probe</string>
+    <string name="share_report">Share JSON + text</string>
+    <string name="report_empty">No report yet.</string>
+    <string name="status_ready">Ready</string>
+    <string name="applied_empty">Applied sensor settings will appear here.</string>
+    <string name="limits_empty">Camera-specific control limits will appear here.</string>
+</resources>

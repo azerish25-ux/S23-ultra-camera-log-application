@@ -1,21 +1,15 @@
-# Gradle / Android build output
 .gradle/
+.kotlin/
 **/build/
-
-# Local SDK configuration
 local.properties
-
-# IDE files
 .idea/
 *.iml
-
-# OS/editor noise
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
-
-# Local verification output
-.manual-kotlin-check/
 *.apk
 *.aab
+*.jks
+*.keystore
+.manual-kotlin-check/

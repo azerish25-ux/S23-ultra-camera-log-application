@@ -1,0 +1,144 @@
+package com.s23log.probe
+
+import android.Manifest
+import android.content.Context
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
+import com.s23log.probe.storage.CaptureHistory
+import org.json.JSONObject
+import org.junit.Assert.*
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicReference
+
+/** Exercises real framework, camera, encoder and files. Emulator results are not S23 Ultra certification. */
+@RunWith(AndroidJUnit4::class)
+class CameraSmokeTest {
+    @get:Rule val permission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+    private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    private fun await(scenario: ActivityScenario<MainActivity>, label: String, seconds: Long = 45, predicate: (MainActivity) -> Boolean) {
+        val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(seconds)
+        val success = AtomicBoolean()
+        while (System.nanoTime() < end) {
+            scenario.onActivity { success.set(predicate(it)) }
+            if (success.get()) return
+            Thread.sleep(150)
+        }
+        val status = AtomicReference("")
+        scenario.onActivity { status.set(it.findViewById<TextView>(R.id.cameraStatus).text.toString()) }
+        fail("Timed out: $label. Last camera state: ${status.get()}")
+    }
+    private fun live(scenario: ActivityScenario<MainActivity>) = await(scenario, "live sensor preview") {
+        it.findViewById<TextView>(R.id.cameraStatus).text.toString().startsWith("Live preview")
+    }
+    private fun click(scenario: ActivityScenario<MainActivity>, id: Int) {
+        scenario.onActivity { activity ->
+            val button = activity.findViewById<Button>(id)
+            assertTrue("Button $id must be enabled", button.isEnabled)
+            assertTrue(button.performClick())
+        }
+    }
+    private fun waitForNewOutput(previous: String?) {
+        val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(30)
+        while (System.nanoTime() < end) {
+            val entry = CaptureHistory.latest(context)
+            if (entry.report?.name != previous && entry.uris.isNotEmpty() && entry.report != null) {
+                val json = JSONObject(entry.report.readText())
+                assertEquals(json.toString(), "checked", json.getString("status"))
+                assertTrue(json.getJSONObject("verification").getBoolean("firstSyncFrameDecoded"))
+                assertTrue(json.getJSONObject("verification").getInt("samples") >= 2)
+                context.contentResolver.openInputStream(entry.uris.first()).use { input ->
+                    assertNotNull(input)
+                    assertTrue(input!!.read(ByteArray(16)) > 0)
+                }
+                return
+            }
+            if (entry.report?.name != previous && entry.message.contains("rejected")) fail(entry.message)
+            Thread.sleep(150)
+        }
+        fail("No new verified video: ${CaptureHistory.latest(context).message}")
+    }
+    private fun begin(scenario: ActivityScenario<MainActivity>) {
+        live(scenario)
+        await(scenario, "negotiated SDR recording candidate") { it.findViewById<Button>(R.id.record).isEnabled }
+        click(scenario, R.id.record)
+        await(scenario, "recording capture session") { it.findViewById<TextView>(R.id.cameraStatus).text.toString().startsWith("Recording ") }
+    }
+
+    @Test fun diagnosticsSurviveRecreationAndShareAsFiles() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            live(scenario)
+            click(scenario, R.id.diagnosticsTab)
+            click(scenario, R.id.runProbe)
+            scenario.recreate()
+            await(scenario, "completed report") { it.findViewById<Button>(R.id.shareReport).isEnabled }
+            scenario.onActivity { assertTrue(it.findViewById<TextView>(R.id.report).text.contains("S23LOG")) }
+            val latch = CountDownLatch(1)
+            val result = AtomicReference<Result<List<File>>>()
+            scenario.onActivity { (it.application as S23Application).reports.export { files -> result.set(files); latch.countDown() } }
+            assertTrue(latch.await(10, TimeUnit.SECONDS))
+            val files = result.get().getOrThrow()
+            assertEquals(2, files.size)
+            assertEquals(2, JSONObject(files.first { it.extension == "json" }.readText()).getInt("schemaVersion"))
+            files.forEach { file ->
+                val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
+                context.contentResolver.openInputStream(uri).use { assertTrue(it!!.read() >= 0) }
+            }
+        }
+    }
+    @Test fun previewSurvivesStopAndRecreation() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            live(scenario)
+            scenario.moveToState(Lifecycle.State.CREATED)
+            Thread.sleep(500)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            live(scenario)
+            scenario.recreate()
+            live(scenario)
+        }
+    }
+    @Test fun recordsTwoIndependentDecodableVideos() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            repeat(2) {
+                val previous = CaptureHistory.latest(context).report?.name
+                begin(scenario)
+                Thread.sleep(4000)
+                click(scenario, R.id.record)
+                waitForNewOutput(previous)
+                live(scenario)
+            }
+        }
+    }
+    @Test fun leavingActivityFinalizesRecording() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            val previous = CaptureHistory.latest(context).report?.name
+            begin(scenario)
+            Thread.sleep(4000)
+            scenario.moveToState(Lifecycle.State.CREATED)
+            waitForNewOutput(previous)
+            scenario.moveToState(Lifecycle.State.RESUMED)
+            live(scenario)
+        }
+    }
+    @Test fun providerRejectsPathsOutsideExportDirectory() {
+        val private = File(context.filesDir, "not-an-export.txt").apply { writeText("private") }
+        try {
+            try {
+                FileProvider.getUriForFile(context, "${context.packageName}.files", private)
+                fail("Provider must not expose all app-private files")
+            } catch (_: IllegalArgumentException) { /* required */ }
+        } finally { private.delete() }
+    }
+}
