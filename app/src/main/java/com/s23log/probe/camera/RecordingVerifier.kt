@@ -9,6 +9,7 @@ import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.FrameStatistics
 import com.s23log.probe.core.HevcSps
 import com.s23log.probe.core.RecordingMode
+import com.s23log.probe.core.cadenceStatus
 import org.json.JSONObject
 import java.nio.ByteBuffer
 
@@ -61,6 +62,9 @@ object RecordingVerifier {
                 .put("sampleSpanUs", summary.durationUs).put("measuredFps", summary.measuredFps ?: JSONObject.NULL)
                 .put("largeFrameIntervals", summary.largeGaps)
                 .put("nominalFpsIsNotSustainedRateProof", true)
+                .put("cadenceStatus", summary.cadenceStatus(mode.fps)).put("requestedFps", mode.fps)
+                .put("cadenceToleranceFraction", 0.03).put("cadenceMinimumSpanUs", 2_000_000)
+                .put("cadenceWarningPreservesFootage", true)
         } finally { extractor.release() }
         val retriever = MediaMetadataRetriever()
         try {

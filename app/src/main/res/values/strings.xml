@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">S23Log</string>
-    <string name="subtitle">CAMERA LAB / PHASE 03A</string>
-    <string name="camera_tab">Camera</string>
+    <string name="subtitle">NATIVE CAMERA / MODE FOUNDATION</string>
+    <string name="camera_tab">Capture</string>
     <string name="diagnostics_tab">Diagnostics</string>
     <string name="grant_camera">Enable camera / retry</string>
     <string name="camera_label">Camera / physical lens</string>
@@ -34,4 +34,21 @@
     <string name="applied_empty">Applied sensor settings will appear here.</string>
     <string name="limits_empty">Camera-specific control limits will appear here.</string>
     <string name="recover_captures">Recover captures</string>
+    <string name="open_controls">Controls</string>
+    <string name="close_controls">Back to viewfinder</string>
+    <string name="mode_details">Mode evidence</string>
+    <string name="test_mode">Test 5 seconds</string>
+    <string name="recording_time">Elapsed recording time</string>
+    <string name="advertised_only">Advertised candidate · not device-certified</string>
+    <string name="manual_timing_required">Manual timing · apply manual exposure before recording</string>
+    <string name="capture_scope_short">VIDEO ONLY · NO CUSTOM LOG</string>
+    <string name="mode_evidence_title">Recording mode evidence</string>
+    <string name="mode_export">Export JSON</string>
+    <string name="close">Close</string>
+    <string name="cancel">Cancel</string>
+    <string name="test_title">Record a five-second test?</string>
+    <string name="test_start">Record test</string>
+    <string name="test_explanation">This records and saves a real video without sound. It stops approximately five seconds after the first encoded frame. It is a configuration test, not sustained-performance certification. No Log transform is applied.
+
+%1$s</string>
 </resources>

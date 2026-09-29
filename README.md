@@ -1,8 +1,19 @@
-# S23Log — Phase 3A capture integrity and consistent controls
+# S23Log — Phase 3B recording modes and capture-screen foundation
 
 Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not implement proprietary Samsung Log, a custom log curve, audio capture, or sustained RAW video.**
 
-## Phase 3A changes
+## Phase 3B changes
+
+- Capability-driven ordinary-session planning retains advertised sizes and explicitly evaluates 8K 24/30 targets. SDR offers AVC and HEVC independently of HLG10; encoder alternatives remain selectable. Mode evidence exports exact candidates and structured rejection reasons. This does not certify 8K on any phone.
+- Fixed AE, variable AE and manual sensor timing are distinguished. A 15–30 AE range is not relabelled 24 fps. Manual-only candidates cannot record before manual exposure has actually been applied; saved mode keys migrate from Phase 3A.
+- The portrait viewfinder and landscape recording rail keep Record/Stop outside scrolling controls. Manual controls and recovery remain in a dismissible panel without replacing the live preview surface.
+- STARTING remains visible until the first successfully muxed video sample. Stop cannot resurrect recording through a late first-frame callback. The elapsed timer begins at that acknowledgement.
+- **Test 5 seconds** requires explicit confirmation, saves a real video-only clip, and automatically stops approximately five seconds after its first encoded frame. Mode and validation JSON include device/firmware, source revision, selected codec/rate strategy, requested/effective controls and actual output evidence.
+- Cadence is reported separately from file integrity: at least two seconds of samples, a 3% average-rate tolerance and no intervals over 1.5 frame periods are required for `within_tolerance`. This is not thermal certification. Cadence warnings never delete readable footage.
+
+See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, audio, high-speed/max-resolution sessions, a full clip browser and physical S23 Ultra acceptance remain separate work.
+
+## Preserved Phase 3A safeguards
 
 - Video is encoded to a private staging file. Verification gates gallery publication, but auxiliary JSON report failures never roll back retained/published footage. Interrupted, format-rejected, and failed-publication clips remain clearly labelled **unverified recovery clips**; zero-sample attempts may be discarded.
 - **Recover captures** lists retained footage for grant-based export or explicitly confirmed deletion. Cold-start recovery keeps nonempty videos (including the previous private-file journal format). Cleanup failures keep a retryable journal record. Uninstalling still removes private recovery files: export them first.

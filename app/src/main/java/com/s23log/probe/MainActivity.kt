@@ -13,6 +13,7 @@ import android.hardware.camera2.CaptureRequest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
 import android.util.Size
 import android.view.Surface
@@ -29,6 +30,8 @@ import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.EngineState
 import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.diagnostics.ProbeStore
+import com.s23log.probe.diagnostics.ModeEvidence
+import com.s23log.probe.core.ModePlanning
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.PendingMedia
@@ -51,6 +54,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var engineState = EngineState.CLOSED
     private var modeKey: String? = null
     private var bindingControls = false
+    private var latestPlan: ModePlan? = null
+    private var manualApplied = false
     private var permissionAction: (() -> Unit)? = null
     private val observer: (ProbeStore.State) -> Unit = { state ->
         text(R.id.status).text = state.message
@@ -68,7 +73,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
         val root = findViewById<View>(R.id.root)
-        val padding = (12 * resources.displayMetrics.density).toInt()
+        val padding = (8 * resources.displayMetrics.density).toInt()
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -111,9 +116,31 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             }
         }
         button(R.id.recoverCaptures).setOnClickListener { showRecovery() }
+        button(R.id.openControls).setOnClickListener {
+            val panel = findViewById<View>(R.id.controlsPanel)
+            panel.visibility = if (panel.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+        button(R.id.closeControls).setOnClickListener { findViewById<View>(R.id.controlsPanel).visibility = View.GONE }
+        button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
+        button(R.id.testMode).setOnClickListener {
+            val mode = modes.firstOrNull { it.key == modeKey } ?: return@setOnClickListener
+            AlertDialog.Builder(this).setTitle(R.string.test_title).setMessage(getString(R.string.test_explanation, mode.label))
+                .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.test_start) { _, _ ->
+                    if (modeKey == mode.key && ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
+                        findViewById<View>(R.id.controlsPanel).visibility = View.GONE
+                        onState(EngineState.STARTING, "Starting selected-mode test…")
+                        controller.startRecording(mode, testSeconds = 5)
+                    }
+                }.show()
+        }
         button(R.id.record).setOnClickListener {
             if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
-            else modes.getOrNull(spinner(R.id.modeSelector).selectedItemPosition)?.let(controller::startRecording)
+            else modes.firstOrNull { it.key == modeKey }?.let { mode ->
+                if (ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
+                    onState(EngineState.STARTING, "Starting camera and encoder…")
+                    controller.startRecording(mode)
+                }
+            }
         }
         button(R.id.rawOne).setOnClickListener { controller.captureRaw(1) }
         button(R.id.rawFive).setOnClickListener { controller.captureRaw(5) }
@@ -178,7 +205,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         return when (rotation) { Surface.ROTATION_90 -> 90; Surface.ROTATION_180 -> 180; Surface.ROTATION_270 -> 270; else -> 0 }
     }
     private fun setItems(spinner: Spinner, labels: List<String>) {
-        spinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, labels).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        spinner.adapter = ArrayAdapter(this, R.layout.selector_item, labels).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
     }
     override fun onCatalog(result: CatalogResult) {
         if (destroyed) return
@@ -194,6 +221,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (target.key != selected?.key || destroyed) return
         this.previewSize = previewSize
         modes = plan.modes
+        latestPlan = plan
+        manualApplied = false
         bindingControls = true
         modeKey = mode?.key
         setItems(spinner(R.id.modeSelector), modes.map { it.label })
@@ -221,6 +250,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onControlsChanged(cameraKey: String, controls: CameraControls) {
         if (destroyed || cameraKey != selected?.key) return
+        manualApplied = controls.manualExposure
         renderControls(controls)
         selected?.let { CameraSettings.saveControls(this, it.key, controls) }
         updateEnabled()
@@ -233,6 +263,24 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         text(R.id.shutterInput).text = String.format(Locale.US, "%.6f", controls.exposureNs / 1_000_000.0)
         text(R.id.focusInput).text = (controls.focusDiopters ?: 0f).toString()
         wbModes.indexOf(controls.wbMode).takeIf { it >= 0 }?.let { spinner(R.id.wbSelector).setSelection(it) }
+    }
+    private fun showModeEvidence() {
+        val target = selected ?: return
+        val plan = latestPlan ?: return
+        val text = TextView(this).apply {
+            setPadding(24, 16, 24, 16)
+            textSize = 12f
+            setTextIsSelectable(true)
+            text = ModeEvidence.report(target, plan).toString(2)
+        }
+        val scroll = ScrollView(this).apply { addView(text) }
+        AlertDialog.Builder(this).setTitle(R.string.mode_evidence_title).setView(scroll)
+            .setNegativeButton(R.string.close, null).setPositiveButton(R.string.mode_export) { _, _ ->
+                ModeEvidence.export(this, target, plan) { result ->
+                    if (!destroyed && visible) result.onSuccess { shareFiles(listOf(it), "application/json") }
+                        .onFailure { Toast.makeText(this, "Mode export failed: ${it.message}", Toast.LENGTH_LONG).show() }
+                }
+            }.show()
     }
     private fun showRecovery() {
         val entries = PendingMedia.recoverable(this)
@@ -257,19 +305,27 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onState(state: EngineState, message: String) {
         if (destroyed) return
+        val previous = engineState
         engineState = state
+        if (state == EngineState.OPENING || state == EngineState.CLOSED || state == EngineState.ERROR) manualApplied = false
+        val clock = findViewById<Chronometer>(R.id.recordingClock)
+        if (state == EngineState.RECORDING && previous != state) { clock.base = SystemClock.elapsedRealtime(); clock.start() }
+        else if (state != EngineState.RECORDING) { clock.stop(); if (state == EngineState.PREVIEW || state == EngineState.CLOSED) clock.base = SystemClock.elapsedRealtime() }
         text(R.id.cameraStatus).text = message
         val mode = modes.getOrNull(spinner(R.id.modeSelector).selectedItemPosition)
         val showOverlay = state !in setOf(EngineState.PREVIEW, EngineState.RECORDING) ||
             (state == EngineState.RECORDING && mode?.previewDuringRecording == false)
         text(R.id.previewOverlay).visibility = if (showOverlay) View.VISIBLE else View.GONE
         text(R.id.previewOverlay).text = message
-        if (state == EngineState.RECORDING) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (state == EngineState.STARTING || state == EngineState.RECORDING) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         updateEnabled()
     }
     override fun onApplied(values: Map<String, Any?>) {
         if (destroyed || !visible) return
+        val wasManual = manualApplied
+        manualApplied = values["aeMode"] == CaptureRequest.CONTROL_AE_MODE_OFF
+        if (wasManual != manualApplied) updateEnabled()
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
         text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
     }
@@ -288,7 +344,12 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val idle = CapturePolicy.canChangeCamera(engineState)
         spinner(R.id.cameraSelector).isEnabled = idle
         spinner(R.id.modeSelector).isEnabled = preview && modes.isNotEmpty()
-        button(R.id.record).isEnabled = (preview && modes.isNotEmpty()) || recording || engineState == EngineState.STARTING
+        val mode = modes.firstOrNull { it.key == modeKey }
+        val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied)
+        button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
+        button(R.id.testMode).isEnabled = canRecord
+        button(R.id.modeDetails).isEnabled = idle && latestPlan != null
+        text(R.id.modeEvidence).setText(if (mode?.ratePlan?.requiresManual == true && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
         button(R.id.diagnosticsTab).isEnabled = idle

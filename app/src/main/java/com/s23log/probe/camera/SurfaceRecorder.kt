@@ -13,6 +13,8 @@ import com.s23log.probe.core.VideoFinalizer
 import com.s23log.probe.core.VideoDisposition
 import com.s23log.probe.core.FrameStatistics
 import com.s23log.probe.core.RecordingMode
+import com.s23log.probe.core.RecordingStartGate
+import com.s23log.probe.diagnostics.ModeEvidence
 import com.s23log.probe.diagnostics.atomicWrite
 import com.s23log.probe.diagnostics.jsonValue
 import com.s23log.probe.storage.PendingMedia
@@ -28,6 +30,7 @@ class SurfaceRecorder private constructor(
     val mode: RecordingMode,
     private val orientation: Int,
     private val request: Map<String, Any?>,
+    private val onFirstSample: () -> Unit,
     private val completed: (Outcome) -> Unit
 ) {
     data class Outcome(val uri: Uri?, val report: File?, val message: String)
@@ -38,6 +41,7 @@ class SurfaceRecorder private constructor(
     private var muxer: MediaMuxer? = null
     lateinit var surface: Surface
         private set
+    private val startGate = RecordingStartGate()
     private var track = -1
     private var muxerStarted = false
     @Volatile private var finished = false
@@ -82,6 +86,7 @@ class SurfaceRecorder private constructor(
                             requireNotNull(muxer).writeSampleData(track, buffer, info)
                             frameStats.add(info.presentationTimeUs)
                             lastFrameAt = SystemClock.elapsedRealtime()
+                            if (startGate.sampleWritten(info.size, false, info.presentationTimeUs)) onFirstSample()
                         }
                     } catch (e: Exception) { failure = e }
                     finally { runCatching { codec.releaseOutputBuffer(index, false) }.exceptionOrNull()?.let { if (failure == null) failure = IllegalStateException("Cannot release encoder buffer", it) } }
@@ -115,6 +120,7 @@ class SurfaceRecorder private constructor(
         handler.post {
             if (finished || stopping) return@post
             stopping = true
+            startGate.stop()
             handler.removeCallbacks(watchdog)
             try {
                 codec.signalEndOfInputStream()
@@ -127,6 +133,7 @@ class SurfaceRecorder private constructor(
     private fun complete(initialError: Exception?) {
         if (finished) return
         finished = true
+        startGate.stop()
         handler.removeCallbacksAndMessages(null)
         var failure = initialError
         fun attempt(block: () -> Unit) { try { block() } catch (e: Exception) { if (failure == null) failure = e } }
@@ -140,14 +147,15 @@ class SurfaceRecorder private constructor(
         val stats = frameStats.summary()
         val stages = JSONArray().put("advertised")
         if (sessionConfigured) stages.put("session_configured")
-        if (stats.frames > 0) stages.put("encoded_frames_received")
+        if (stats.frames > 0) stages.put("encoded_frames_received").put("first_sample_written")
         val outcome = VideoFinalizer.finish(
             samples = stats.frames, initialError = failure,
             verify = { RecordingVerifier.verify(context, output.uri, mode).also { stages.put("container_and_output_checked") } },
             publish = { output.publish() }, retain = { reason -> output.retain(reason) },
             discardEmpty = { output.abort() },
             saveReport = { result ->
-                val report = JSONObject().put("schemaVersion", 1).put("kind", "recording-validation")
+                val report = JSONObject().put("schemaVersion", 2).put("kind", "recording-validation")
+                    .put("device", jsonValue(ModeEvidence.device())).put("selectedMode", jsonValue(mode.describe()))
                     .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
                     .put("orientation", orientation).put("latestApplied", jsonValue(applied))
                     .put("videoOnly", true).put("customLog", false)
@@ -167,7 +175,7 @@ class SurfaceRecorder private constructor(
             }
         )
         val message = when (outcome.disposition) {
-            VideoDisposition.PUBLISHED -> "Saved ${mode.label}; ${stats.frames} frames. File checked; sustained device performance is not certified."
+            VideoDisposition.PUBLISHED -> "Saved ${mode.label}; ${stats.frames} frames. File integrity checked; cadence ${outcome.verification?.optString("cadenceStatus") ?: "unknown"}. Sustained device performance is not certified."
             VideoDisposition.RECOVERABLE -> "Footage retained privately for recovery, NOT a verified recording: ${outcome.errors.joinToString("; ")}. Open Recover captures to export or delete it."
             VideoDisposition.EMPTY -> "Empty recording rejected; no encoded footage arrived."
             VideoDisposition.RETENTION_FAILED -> "Recording needs recovery; no further deletion attempted: ${outcome.errors.joinToString("; ")}. Check Recover captures after reopening."
@@ -177,7 +185,8 @@ class SurfaceRecorder private constructor(
     }
 
     companion object {
-        fun prepare(context: Context, mode: RecordingMode, orientation: Int, request: Map<String, Any?>, completed: (Outcome) -> Unit): SurfaceRecorder =
-            SurfaceRecorder(context.applicationContext, mode, orientation, request, completed).apply { prepare() }
+        fun prepare(context: Context, mode: RecordingMode, orientation: Int, request: Map<String, Any?>,
+                    onFirstSample: () -> Unit = {}, completed: (Outcome) -> Unit): SurfaceRecorder =
+            SurfaceRecorder(context.applicationContext, mode, orientation, request, onFirstSample, completed).apply { prepare() }
     }
 }

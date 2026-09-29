@@ -198,7 +198,7 @@ class CameraSmokeTest {
         val selected = requireNotNull(CameraSettings.camera(context))
         val manager = context.getSystemService(android.hardware.camera2.CameraManager::class.java)
         val target = CameraCatalog.discover(manager).targets.first { it.key == selected }
-        return CameraCatalog.plan(target).modes.filter { it.range == DynamicRange.SDR }
+        return CameraCatalog.plan(target).modes.filter { it.range == DynamicRange.SDR && !it.ratePlan.requiresManual && it.fps <= 30 }
     }
 
     private fun selectReadyMode(scenario: ActivityScenario<MainActivity>, mode: RecordingMode) {
@@ -281,6 +281,57 @@ class CameraSmokeTest {
             val editor = settings.edit().clear()
             before.forEach { (key, value) -> editor.putString(key, value as String) }
             editor.commit()
+        }
+    }
+
+    @Test fun recordControlStaysVisibleWhenManualPanelScrollsAndInLandscape() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            live(scenario)
+            fun assertDock(activity: MainActivity) {
+                val record = activity.findViewById<Button>(R.id.record)
+                val rect = android.graphics.Rect()
+                assertTrue(record.getGlobalVisibleRect(rect))
+                assertEquals(record.height, rect.height())
+                var parent = record.parent
+                while (parent is android.view.View) {
+                    assertFalse("Record must not scroll away", parent is android.widget.ScrollView)
+                    parent = parent.parent
+                }
+            }
+            click(scenario, R.id.openControls)
+            scenario.onActivity { activity ->
+                val panel = activity.findViewById<android.widget.ScrollView>(R.id.controlsPanel)
+                assertEquals(android.view.View.VISIBLE, panel.visibility)
+                panel.scrollTo(0, 10000)
+                assertDock(activity)
+                activity.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            }
+            await(scenario, "landscape layout") {
+                it.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE &&
+                    it.findViewById<Button>(R.id.record).width > 0
+            }
+            live(scenario)
+            scenario.onActivity { assertDock(it); it.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
+        }
+    }
+
+    @Test fun userConfirmedModeTestStopsAndExportsFirstSampleEvidence() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            live(scenario)
+            val previous = CaptureHistory.latest(context).report?.name
+            click(scenario, R.id.testMode)
+            val instrumentation = InstrumentationRegistry.getInstrumentation()
+            instrumentation.waitForIdleSync()
+            val buttons = instrumentation.uiAutomation.rootInActiveWindow.findAccessibilityNodeInfosByText("Record test")
+            assertTrue("An explicit confirmation is required", buttons.isNotEmpty())
+            assertTrue(buttons.first().performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK))
+            waitForNewOutput(previous, minimumSpanUs = 3_000_000)
+            live(scenario)
+            val json = JSONObject(requireNotNull(CaptureHistory.latest(context).report).readText())
+            assertEquals("user_initiated_short_recording", json.getJSONObject("requested").getString("testKind"))
+            assertTrue(json.getJSONArray("stages").toString().contains("first_sample_written"))
+            assertTrue(json.getJSONObject("device").getString("appCommit").isNotBlank())
+            assertTrue(json.getJSONObject("verification").has("cadenceStatus"))
         }
     }
 

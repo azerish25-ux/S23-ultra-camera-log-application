@@ -38,7 +38,7 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: S23Log-Phase3A-debug
+          name: S23Log-Phase3B-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
       - name: Package exact source and revision

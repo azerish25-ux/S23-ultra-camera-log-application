@@ -13,10 +13,17 @@ data class RecordingMode(
     val mime: String,
     val bitRate: Int,
     val previewDuringRecording: Boolean,
-    val timingAdvertised: Boolean
+    val timingAdvertised: Boolean,
+    val ratePlan: RatePlan = RatePlan(RateControl.AE_FIXED, FpsRange(fps, fps))
 ) {
-    val label: String get() = "${width}×${height} / $fps / ${range.name}"
-    val key: String get() = "$width:$height:$fps:${range.name}:$encoder"
+    val label: String get() = "${width}×${height} / $fps / ${if (mime == "video/hevc") "HEVC" else "AVC"} / ${range.name} / ${ratePlan.control.label} · $encoder"
+    val key: String get() = "$width:$height:$fps:${range.name}:$encoder:${ratePlan.control.name}"
+    val legacyKey: String get() = "$width:$height:$fps:${range.name}:$encoder"
+    fun describe(): Map<String, Any?> = mapOf("key" to key, "width" to width, "height" to height, "fps" to fps,
+        "dynamicRange" to range.name, "mime" to mime, "encoder" to encoder, "bitrate" to bitRate,
+        "rateControl" to ratePlan.control.name, "aeRange" to ratePlan.aeRange?.let { listOf(it.lower, it.upper) },
+        "requiresManualExposure" to ratePlan.requiresManual, "timingAdvertised" to timingAdvertised,
+        "previewDuringRecording" to previewDuringRecording, "evidence" to "advertised_candidate", "customLog" to false)
 }
 
 object CapturePolicy {

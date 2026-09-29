@@ -3,6 +3,8 @@ package com.s23log.probe.camera
 import android.hardware.camera2.CameraCharacteristics as C
 import android.hardware.camera2.CaptureRequest as R
 import com.s23log.probe.core.CapturePolicy
+import com.s23log.probe.core.RatePlan
+import android.util.Range
 
 /** WB presets/lock are supported; calibrated Kelvin-to-sensor-gain conversion is not claimed. */
 data class CameraControls(
@@ -17,7 +19,18 @@ data class CameraControls(
     fun describe(): Map<String, Any?> = mapOf("manualExposure" to manualExposure, "iso" to iso,
         "exposureNs" to exposureNs, "focusDiopters" to focusDiopters, "awbMode" to wbMode, "awbLock" to wbLock, "afModeOverride" to afModeOverride)
 
-    fun apply(builder: R.Builder, target: CameraTarget, fps: Int?) {
+    fun effective(target: CameraTarget, fps: Int?): CameraControls {
+        val c = target.characteristics
+        val sensitivity = c[C.SENSOR_INFO_SENSITIVITY_RANGE]
+        val exposure = c[C.SENSOR_INFO_EXPOSURE_TIME_RANGE]
+        return copy(iso = if (manualExposure && sensitivity != null) iso.coerceIn(sensitivity.lower, sensitivity.upper) else iso,
+            exposureNs = if (manualExposure && exposure != null) {
+                if (fps != null) CapturePolicy.exposureForRate(exposureNs, exposure.lower, exposure.upper, fps)
+                else exposureNs.coerceIn(exposure.lower, exposure.upper)
+            } else exposureNs, focusDiopters = focusDiopters?.coerceIn(0f, target.minFocus))
+    }
+
+    fun apply(builder: R.Builder, target: CameraTarget, fps: Int?, ratePlan: RatePlan? = null) {
         val c = target.characteristics
         fun <T> set(key: R.Key<T>, value: T) = target.set(builder, key, value)
         require(iso > 0 && exposureNs > 0) { "ISO and shutter must be positive" }
@@ -38,8 +51,12 @@ data class CameraControls(
             set(R.SENSOR_FRAME_DURATION, if (fps != null) 1_000_000_000L / fps else exposure)
         } else {
             set(R.CONTROL_AE_MODE, R.CONTROL_AE_MODE_ON)
-            if (fps != null) c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.filter { it.upper == fps }
-                ?.maxByOrNull { it.lower }?.let { set(R.CONTROL_AE_TARGET_FPS_RANGE, it) }
+            if (fps != null) {
+                val planned = ratePlan?.aeRange?.let { Range(it.lower, it.upper) }
+                val chosen = planned ?: c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.filter { it.upper == fps }?.maxByOrNull { it.lower }
+                require(chosen != null) { "This rate needs manual exposure; a containing AE range is not fixed-rate proof" }
+                set(R.CONTROL_AE_TARGET_FPS_RANGE, chosen)
+            }
         }
         val afModes = c[C.CONTROL_AF_AVAILABLE_MODES]?.toSet().orEmpty()
         if (focusDiopters != null) {

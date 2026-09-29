@@ -17,6 +17,7 @@ import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.core.RawLimits
+import com.s23log.probe.core.*
 
 /** A physical-only camera is routed through its public logical device, never opened by guess. */
 data class CameraTarget(val logicalId: String, val physicalId: String?, val characteristics: C, val logicalCharacteristics: C = characteristics) {
@@ -57,7 +58,11 @@ data class CameraTarget(val logicalId: String, val physicalId: String?, val char
 }
 
 data class CatalogResult(val targets: List<CameraTarget>, val errors: List<String>)
-data class ModePlan(val modes: List<RecordingMode>, val notes: List<String>)
+data class ModePlan(val modes: List<RecordingMode>, val notes: List<String>, val rejected: List<ModeRejection> = emptyList()) {
+    fun describe(): Map<String, Any?> = mapOf("candidates" to modes.map { it.describe() },
+        "rejections" to rejected.map { it.describe() }, "notes" to notes,
+        "scope" to "Public ordinary-session candidates; not device certification. No custom Log or high-speed sessions.")
+}
 
 object CameraCatalog {
     fun discover(manager: CameraManager): CatalogResult {
@@ -94,58 +99,77 @@ object CameraCatalog {
         val map = c[C.SCALER_STREAM_CONFIGURATION_MAP] ?: return ModePlan(emptyList(), listOf("No stream map"))
         val notes = mutableListOf<String>()
         val modes = mutableListOf<RecordingMode>()
-        val sizes = map.getOutputSizes(MediaCodec::class.java).orEmpty().toSet()
-        val fpsRanges = c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES].orEmpty()
+        val rejected = mutableListOf<ModeRejection>()
+        val sizes = runCatching { map.getOutputSizes(MediaCodec::class.java).orEmpty().map { VideoSize(it.width, it.height) } }
+            .getOrElse { notes += "Encoder output-size query failed: ${it.message}"; emptyList() }
+        val logicalRanges = target.logicalCharacteristics[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES].orEmpty().toSet()
+        val fpsRanges = if (R.CONTROL_AE_TARGET_FPS_RANGE in target.requestKeys)
+            c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES].orEmpty().filter { it in logicalRanges }.map { FpsRange(it.lower, it.upper) }
+            else emptyList()
         val encoders = MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.filter { it.isEncoder }
+            .filter { Build.VERSION.SDK_INT < 29 || !it.isAlias }
             .sortedWith(compareBy<MediaCodecInfo> { if (Build.VERSION.SDK_INT >= 29) !it.isHardwareAccelerated else false }.thenBy { it.name })
+        val capabilities = mutableMapOf<Pair<String, String>, MediaCodecInfo.CodecCapabilities?>()
+        for (encoder in encoders) for (mime in listOf(MediaFormat.MIMETYPE_VIDEO_AVC, MediaFormat.MIMETYPE_VIDEO_HEVC)) {
+            capabilities[encoder.name to mime] = runCatching {
+                if (mime in encoder.supportedTypes) encoder.getCapabilitiesForType(mime) else null
+            }.getOrElse { notes += "${encoder.name}/$mime capability query failed: ${it.message}"; null }
+        }
         var hlg = false
         var mixed = false
         if (Build.VERSION.SDK_INT >= 33) {
-            val profiles = c[C.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES]
-            hlg = CapturePolicy.supportsHlg(c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT) == true, profiles?.supportedProfiles.orEmpty())
-            if (hlg && profiles != null) mixed = CapturePolicy.allowsPair(
-                profiles.getProfileCaptureRequestConstraints(DynamicRangeProfiles.STANDARD),
-                profiles.getProfileCaptureRequestConstraints(DynamicRangeProfiles.HLG10),
-                DynamicRangeProfiles.STANDARD, DynamicRangeProfiles.HLG10)
+            runCatching {
+                val profiles = c[C.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES]
+                hlg = CapturePolicy.supportsHlg(c[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT) == true, profiles?.supportedProfiles.orEmpty())
+                if (hlg && profiles != null) mixed = CapturePolicy.allowsPair(
+                    profiles.getProfileCaptureRequestConstraints(DynamicRangeProfiles.STANDARD),
+                    profiles.getProfileCaptureRequestConstraints(DynamicRangeProfiles.HLG10),
+                    DynamicRangeProfiles.STANDARD, DynamicRangeProfiles.HLG10)
+            }.onFailure { hlg = false; mixed = false; notes += "HDR profile query failed: ${it.message}" }
         }
-        if (!hlg) notes += "HLG10 unavailable: the selected camera does not advertise both 10-bit capability and HLG10."
-        if (hlg && !mixed) notes += "HLG10 requires encoder-only capture on this camera; SDR preview is suspended while recording."
-        for (range in listOf(DynamicRange.SDR, DynamicRange.HLG10)) {
-            if (range == DynamicRange.HLG10 && !hlg) continue
-            for (size in listOf(Size(1920, 1080), Size(1280, 720), Size(3840, 2160), Size(640, 480))) {
-                for (fps in listOf(30, 24)) {
-                    if (size !in sizes || fpsRanges.none { it.upper == fps }) continue
-                    val durationResult = runCatching { map.getOutputMinFrameDuration(MediaCodec::class.java, size) }
-                    val duration = durationResult.getOrNull()
-                    if (duration == null) { notes += "Timing query failed for $size: ${durationResult.exceptionOrNull()?.message}"; continue }
-                    if (!CapturePolicy.nominalRateFits(duration, fps)) continue
-                    val mime = if (range == DynamicRange.SDR) MediaFormat.MIMETYPE_VIDEO_AVC else MediaFormat.MIMETYPE_VIDEO_HEVC
-                    val match = encoders.firstNotNullOfOrNull { encoder ->
-                        try {
-                            if (mime !in encoder.supportedTypes) return@firstNotNullOfOrNull null
-                            val caps = encoder.getCapabilitiesForType(mime)
-                            if (MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface !in caps.colorFormats) return@firstNotNullOfOrNull null
-                            if (range == DynamicRange.HLG10 && caps.profileLevels.none { it.profile == MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10 }) return@firstNotNullOfOrNull null
-                            val video = caps.videoCapabilities ?: return@firstNotNullOfOrNull null
-                            if (!video.areSizeAndRateSupported(size.width, size.height, fps.toDouble())) return@firstNotNullOfOrNull null
-                            val bitrate = (size.width.toLong() * size.height * fps / 5).coerceIn(video.bitrateRange.lower.toLong(), video.bitrateRange.upper.toLong()).toInt()
-                            val candidate = RecordingMode(size.width, size.height, fps, range, encoder.name, mime, bitrate, range == DynamicRange.SDR || mixed, duration > 0)
-                            if (caps.isFormatSupported(videoFormat(candidate))) { previewSize(target, candidate); candidate } else null
-                        } catch (e: Exception) {
-                            notes += "${encoder.name}, $size/$fps/${range.name}: ${e.javaClass.simpleName}"
-                            null
+        if (hlg && !mixed) notes += "HLG10 encoder-only capture: live SDR monitoring is unavailable on this route."
+        for (size in ModePlanning.sizes(sizes)) {
+            val durationResult = runCatching { map.getOutputMinFrameDuration(MediaCodec::class.java, Size(size.width, size.height)) }
+            val duration = durationResult.getOrNull()
+            for (fps in ModePlanning.rates(fpsRanges)) for (range in DynamicRange.entries) for (mime in ModePlanning.mimes(range)) {
+                fun reject(reason: String) { rejected += ModeRejection(size, fps, range, mime, reason) }
+                if (size !in sizes) { reject("Size is not exposed as a public MediaCodec camera output"); continue }
+                if (range == DynamicRange.HLG10 && !hlg) { reject("Camera does not expose both ten-bit capability and HLG10"); continue }
+                if (duration == null) { reject("Camera timing query failed: ${durationResult.exceptionOrNull()?.javaClass?.simpleName}"); continue }
+                if (!CapturePolicy.nominalRateFits(duration, fps)) { reject("Advertised camera minimum frame interval is too long"); continue }
+                val timing = ModePlanning.timing(fps, fpsRanges, target.manualSensor,
+                    c[C.SENSOR_INFO_MAX_FRAME_DURATION], c[C.SENSOR_INFO_EXPOSURE_TIME_RANGE]?.lower)
+                if (timing == null) { reject("No matching AE rate or supported manual frame-duration path"); continue }
+                val failures = mutableListOf<String>()
+                var matched = false
+                for (encoder in encoders) {
+                    val caps = capabilities[encoder.name to mime] ?: continue
+                    try {
+                        require(MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface in caps.colorFormats) { "No Surface input" }
+                        if (mime == MediaFormat.MIMETYPE_VIDEO_HEVC) {
+                            val profile = if (range == DynamicRange.HLG10) MediaCodecInfo.CodecProfileLevel.HEVCProfileMain10 else MediaCodecInfo.CodecProfileLevel.HEVCProfileMain
+                            require(caps.profileLevels.any { it.profile == profile }) { "Required HEVC profile unavailable" }
                         }
-                    }
-                    if (match != null) modes += match
+                        val video = requireNotNull(caps.videoCapabilities) { "No video capabilities" }
+                        require(video.areSizeAndRateSupported(size.width, size.height, fps.toDouble())) { "Size/rate rejected" }
+                        val bitrate = (size.pixels * fps / 5).coerceIn(video.bitrateRange.lower.toLong(), video.bitrateRange.upper.toLong()).toInt()
+                        val candidate = RecordingMode(size.width, size.height, fps, range, encoder.name, mime, bitrate,
+                            range == DynamicRange.SDR || mixed, duration > 0, timing)
+                        require(caps.isFormatSupported(videoFormat(candidate))) { "Configured format rejected" }
+                        previewSize(target, candidate)
+                        modes += candidate
+                        matched = true
+                    } catch (e: Exception) { failures += "${encoder.name}: ${e.message ?: e.javaClass.simpleName}" }
                 }
+                if (!matched) reject("No compatible encoder/preview: " + failures.ifEmpty { listOf("No encoder exposes $mime") }.joinToString("; "))
             }
         }
-        if (hlg && modes.none { it.range == DynamicRange.HLG10 }) notes += "No Surface-input HEVC Main10 encoder matched the selected camera's advertised size/rate combinations."
-        notes += "The initial RAW DNG path is limited to RAW_SENSOR modes up to 24 megapixels. Larger modes remain listed in Diagnostics."
-        if (target.physicalId != null) notes += "Physical sensor/focus controls require logical-device override keys; unavailable overrides are disabled."
-        notes += "All listed modes are advertised candidates, not device-validated recording guarantees."
-        notes += "P010 byte-buffer support is deliberately not used to gate Surface-input recording."
-        return ModePlan(modes.distinctBy { it.key }, notes.distinct())
+        notes += "Candidates are advertised only. Test the exact camera, codec, size, rate and colour profile on the device."
+        notes += "Variable AE can slow down in low light. Manual-timing modes require confirmed manual exposure before recording."
+        notes += "8K24 and 8K30 are explicit targets, not guarantees. Maximum-resolution sensor and high-speed sessions remain separate work."
+        notes += "HEVC SDR is distinct from HLG10; neither is custom or Samsung Log. P010 byte-buffer support is not a Surface-input prerequisite."
+        notes += "RAW DNG stills are limited to 24 MP; they are not RAW video."
+        return ModePlan(modes.distinctBy { it.key }, notes.distinct(), rejected)
     }
 
     fun videoFormat(mode: RecordingMode): MediaFormat = MediaFormat.createVideoFormat(mode.mime, mode.width, mode.height).apply {
@@ -160,6 +184,7 @@ object CameraCatalog {
             setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_HLG)
             setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_LIMITED)
         } else {
+            if (mode.mime == MediaFormat.MIMETYPE_VIDEO_HEVC) setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.HEVCProfileMain)
             setInteger(MediaFormat.KEY_COLOR_STANDARD, MediaFormat.COLOR_STANDARD_BT709)
             setInteger(MediaFormat.KEY_COLOR_TRANSFER, MediaFormat.COLOR_TRANSFER_SDR_VIDEO)
             setInteger(MediaFormat.KEY_COLOR_RANGE, MediaFormat.COLOR_RANGE_LIMITED)

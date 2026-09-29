@@ -240,20 +240,35 @@ class CameraController(context: Context, listener: Listener) {
             }
         } catch (e: Exception) { rejectManual(job, e.message ?: "Control transition failed") }
     }
-    fun startRecording(mode: RecordingMode) {
+    fun startRecording(mode: RecordingMode, testSeconds: Int? = null) {
         handler.post {
             if (!CapturePolicy.canStartRecording(state) || recorder != null || raw != null) return@post
             val request = wanted ?: return@post
             if (modes.none { it.key == mode.key } || selectedMode?.key != mode.key) { emit { it.onState(state, "Mode was not planned for this camera") }; return@post }
+            if (mode.ratePlan.requiresManual && !controls.manualExposure) {
+                emit { it.onState(state, "This mode requires confirmed manual exposure. Open Controls and apply manual exposure first.") }; return@post
+            }
+            if (testSeconds != null && testSeconds != 5) return@post
             try {
                 state(EngineState.STARTING, "Configuring ${mode.label}. Video only; not custom Log.")
                 val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0, request.displayDegrees, request.target.front)
                 var current: SurfaceRecorder? = null
                 current = SurfaceRecorder.prepare(app, mode, orientation, mapOf(
                     "logicalCamera" to request.target.logicalId, "physicalCamera" to request.target.physicalId,
-                    "controls" to controls.describe(), "nominalFps" to mode.fps, "bitrate" to mode.bitRate,
+                    "controls" to intentControls.describe(), "effectiveControls" to controls.effective(request.target, mode.fps).describe(),
+                    "selectedMode" to mode.describe(), "nominalFps" to mode.fps, "bitrate" to mode.bitRate,
+                    "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
+                    "requestedTestSeconds" to testSeconds,
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
-                )) { outcome -> handler.post completion@{
+                ), onFirstSample = { handler.post {
+                    if (recorder === current && state == EngineState.STARTING && wanted != null) {
+                        state(EngineState.RECORDING, "Recording ${mode.label} · video only" +
+                            if (!mode.previewDuringRecording) "; SDR preview suspended for HDR compatibility" else "")
+                        if (testSeconds != null) handler.postDelayed({
+                            if (recorder === current && state == EngineState.RECORDING) stopRecording()
+                        }, testSeconds * 1000L)
+                    }
+                } }) { outcome -> handler.post completion@{
                     if (recorder !== current) return@completion
                     recorder = null
                     closeSession()
@@ -267,7 +282,9 @@ class CameraController(context: Context, listener: Listener) {
                 configure(outputs, {
                     repeat(controls)
                     prepared.sessionStarted()
-                    state(EngineState.RECORDING, "Recording ${mode.label} · video only" + if (!mode.previewDuringRecording) "; SDR preview suspended for HDR compatibility" else "")
+                    // Session configuration is not proof of recorded footage. The first
+                    // successfully muxed sample acknowledges RECORDING above.
+                    state(EngineState.STARTING, "Camera configured; waiting for encoded footage…")
                 }, { message -> prepared.cancel(message) })
             } catch (e: Exception) {
                 val active = recorder
@@ -373,7 +390,8 @@ class CameraController(context: Context, listener: Listener) {
         try {
             val plan = runCatching { CameraCatalog.plan(request.target) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
             modes = plan.modes
-            selectedMode = modes.firstOrNull { it.key == request.modeKey } ?: modes.firstOrNull()
+            selectedMode = modes.firstOrNull { it.key == request.modeKey || it.legacyKey == request.modeKey }
+                ?: modes.firstOrNull { !it.ratePlan.requiresManual } ?: modes.firstOrNull()
             val size = CameraCatalog.previewSize(request.target, selectedMode)
             request.texture.setDefaultBufferSize(size.width, size.height)
             previewSurface = Surface(request.texture)
@@ -465,7 +483,11 @@ class CameraController(context: Context, listener: Listener) {
         val builder = target.request(camera, if (activeRecorder == null) CameraDevice.TEMPLATE_PREVIEW else CameraDevice.TEMPLATE_RECORD).apply {
             if (activeRecorder == null || activeRecorder.mode.previewDuringRecording) addTarget(requireNotNull(previewSurface))
             activeRecorder?.let { addTarget(it.surface) }
-            value.apply(this, target, activeRecorder?.mode?.fps ?: selectedMode?.fps)
+            val mode = activeRecorder?.mode ?: selectedMode
+            // Manual-only modes use ordinary AE preview while converging focus/WB;
+            // do not send a fictitious fixed AE range before manual controls are active.
+            val fps = mode?.fps?.takeUnless { mode.ratePlan.requiresManual && !value.manualExposure }
+            value.apply(this, target, fps, mode?.ratePlan)
             target.set(this, CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
         }
         val token = sessionEpoch.current()
@@ -484,7 +506,8 @@ class CameraController(context: Context, listener: Listener) {
                         }
                         return // Restored manual intent is not ready until its locks are confirmed.
                     }
-                    state(EngineState.PREVIEW, "Live preview · SDR · ${selectedMode?.fps ?: "auto"} fps target · no Log transform" +
+                    state(EngineState.PREVIEW, "Live preview · SDR · " + (if (selectedMode?.ratePlan?.requiresManual == true && !controls.manualExposure)
+                        "manual timing requires applied manual exposure" else "${selectedMode?.fps ?: "auto"} fps target") + " · no Log transform" +
                         (previewControlWarning?.let { ". $it" } ?: ""))
                 }
                 val actual = if (target.physicalId != null && Build.VERSION.SDK_INT >= 28) result.physicalCameraResults[target.physicalId] else result
@@ -502,6 +525,8 @@ class CameraController(context: Context, listener: Listener) {
                     "afMode" to actual?.get(CaptureResult.CONTROL_AF_MODE),
                     "afState" to actual?.get(CaptureResult.CONTROL_AF_STATE),
                     "nominalFps" to (activeRecorder?.mode?.fps ?: selectedMode?.fps),
+                    "rateControl" to (activeRecorder?.mode ?: selectedMode)?.ratePlan?.control?.name,
+                    "manualTimingActive" to ((activeRecorder?.mode ?: selectedMode)?.ratePlan?.requiresManual == true && controls.manualExposure),
                     "frameDurationNs" to actual?.get(CaptureResult.SENSOR_FRAME_DURATION),
                     "sensorTimestampNs" to actual?.get(CaptureResult.SENSOR_TIMESTAMP)
                 )
