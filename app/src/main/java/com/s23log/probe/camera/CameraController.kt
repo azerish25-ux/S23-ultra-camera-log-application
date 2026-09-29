@@ -265,6 +265,12 @@ class CameraController(context: Context, listener: Listener) {
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
                 ), audioMode = audioMode, onAudioMeter = { meter -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onAudioMeter(meter) }
+                } }, onAudioFault = { message -> handler.post {
+                    if (recorder === current) {
+                        closeSession()
+                        state(EngineState.STOPPING, "Audio capture failed; draining retained footage")
+                        emit { it.onAudioError(message) }
+                    }
                 } }, onFirstSample = { handler.post {
                     if (recorder === current && state == EngineState.STARTING && wanted != null) {
                         state(EngineState.RECORDING, "Recording ${mode.label} · ${if (audioMode.enabled) "AAC ${audioMode.channels}ch / 48 kHz" else "video only"}" +
@@ -308,11 +314,13 @@ class CameraController(context: Context, listener: Listener) {
         }
     }
     fun stopRecording() {
+        val cutoffNs = System.nanoTime()
         handler.post {
             val active = recorder ?: return@post
+            active.requestStopBoundary(cutoffNs)
             closeSession()
             state(EngineState.STOPPING, "Finalizing video and checking output…")
-            active.finish()
+            active.finish(cutoffNs)
         }
     }
     fun captureRaw(count: Int) {
@@ -368,6 +376,8 @@ class CameraController(context: Context, listener: Listener) {
         if (closing.add(camera)) camera.close()
     }
     private fun teardown() {
+        val cutoffNs = System.nanoTime()
+        recorder?.requestStopBoundary(cutoffNs)
         deviceEpoch.next()
         closeSession()
         device?.let(::closeDevice)
@@ -380,7 +390,7 @@ class CameraController(context: Context, listener: Listener) {
         raw?.cancel("Camera closed; unfinished RAW capture cancelled")
         if (recorder != null) {
             state(EngineState.STOPPING, "Camera closed; finalizing any recorded frames…")
-            recorder?.finish()
+            recorder?.finish(cutoffNs)
         } else if (raw == null) state(EngineState.CLOSED, "Camera closed")
     }
     private fun resumeOrClose() {

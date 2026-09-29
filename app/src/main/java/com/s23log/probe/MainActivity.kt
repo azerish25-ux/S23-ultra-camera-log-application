@@ -442,7 +442,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (destroyed || !visible || engineState !in setOf(EngineState.STARTING, EngineState.RECORDING)) return
         val clipped = meter.levels.any { it.clipped }
         val peak = meter.levels.maxOfOrNull { it.peakDb } ?: -96.0
-        val uncertainty = if (meter.clockSource != "audio_timestamp_monotonic" || Build.VERSION.SDK_INT < 33) " · sync unverified" else ""
+        val uncertainty = when {
+            meter.timingStatus != "no_discontinuity_observed" -> " · ${meter.timingStatus.replace('_', ' ')}"
+            Build.VERSION.SDK_INT < 33 -> " · legacy clock unverified"
+            else -> "" // Never label packet timing as physical lip-sync certification.
+        }
         text(R.id.audioStatus).text = "${if (clipped) "CLIPPING · " else ""}${audioMode.name.lowercase()} · 48 kHz · ${String.format(Locale.US, "%.0f", peak)} dBFS$uncertainty"
         text(R.id.audioStatus).contentDescription = "${meter.route}. ${text(R.id.audioStatus).text}"
         findViewById<ProgressBar>(R.id.audioLeft).progress = meter.levels.getOrNull(0)?.meter ?: 0

@@ -70,6 +70,7 @@ timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_p
 python3 scripts/pull_videos.py evidence/emulator/videos
 python3 scripts/check_video.py evidence/emulator/videos --min-duration 1 > evidence/emulator/ffprobe.json
 python3 scripts/check_evidence.py evidence/emulator/app-evidence.tar evidence/emulator/ffprobe.json --require-audio > evidence/emulator/summary.json
+python3 scripts/check_timing.py evidence/emulator/app-evidence.tar > evidence/emulator/timing-summary.json
 timeout 30 adb shell am start -W -n com.s23log.probe/.MainActivity > evidence/emulator/activity-start.txt
 # am may return success even when the requested component is absent.
 grep -q 'Status: ok' evidence/emulator/activity-start.txt

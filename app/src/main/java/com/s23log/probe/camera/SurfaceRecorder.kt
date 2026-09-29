@@ -38,6 +38,7 @@ class SurfaceRecorder private constructor(
     val audioMode: AudioMode,
     private val onFirstSample: () -> Unit,
     private val onAudioMeter: (AudioCapture.Meter) -> Unit,
+    private val onAudioFault: (String) -> Unit,
     private val completed: (Outcome) -> Unit
 ) {
     data class Outcome(val uri: Uri?, val report: File?, val message: String, val audioError: String? = null)
@@ -45,7 +46,7 @@ class SurfaceRecorder private constructor(
     private val handler = Handler(thread.looper)
     private lateinit var output: PendingMedia
     private lateinit var codec: MediaCodec
-    private var audio: AudioCapture? = null
+    @Volatile private var audio: AudioCapture? = null
     private var muxer: MediaMuxer? = null
     private lateinit var coordinator: AvMuxCoordinator<MediaFormat>
     lateinit var surface: Surface; private set
@@ -130,12 +131,13 @@ class SurfaceRecorder private constructor(
         } catch (e: Exception) {
             finished = true
             handler.removeCallbacksAndMessages(null)
-            runCatching { audio?.close() }
+            val failedAudio = audio
+            if (failedAudio != null) failedAudio.close { thread.quitSafely() }
             if (::codec.isInitialized) runCatching { codec.release() }
             if (::surface.isInitialized) runCatching { surface.release() }
             runCatching { muxer?.release() }
             if (::output.isInitialized) output.abort()
-            thread.quitSafely()
+            if (failedAudio == null) thread.quitSafely()
             throw e
         }
     }
@@ -149,12 +151,14 @@ class SurfaceRecorder private constructor(
         }
     }
     fun noteApplied(values: Map<String, Any?>) { applied = values.toMap() }
-    fun finish() {
+    fun requestStopBoundary(cutoffNs: Long) { audio?.requestStopBoundary(cutoffNs) }
+    fun finish(cutoffNs: Long = System.nanoTime()) {
+        requestStopBoundary(cutoffNs)
         handler.post {
             if (finished || stopping) return@post
             stopping = true; startGate.stop(); handler.removeCallbacks(watchdog)
             try {
-                audio?.stopGracefully()
+                audio?.stopGracefully(cutoffNs)
                 codec.signalEndOfInputStream()
                 handler.postDelayed({ if (!finished) complete(IllegalStateException("Audio/video end-of-stream timed out")) }, 8000)
             } catch (e: Exception) { complete(e) }
@@ -163,17 +167,26 @@ class SurfaceRecorder private constructor(
     fun cancel(reason: String) { handler.post { complete(IllegalStateException(reason)) } }
     private fun failAudio(error: Exception) {
         if (finished) return
-        audioFailure = error.message ?: "Microphone failed"
-        complete(IllegalStateException("Audio recording failed: $audioFailure. No silent fallback was performed.", error))
+        if (audioFailure == null) {
+            audioFailure = error.message ?: "Microphone failed"
+            onAudioFault(requireNotNull(audioFailure))
+        }
+        // Drain captured PCM and video through the normal bounded EOS path. A broken
+        // codec may time out; failure remains recovery, never a silently muted success.
+        finish()
     }
-    private fun completeIfDrained() { if (stopping && videoEos && audioEos) complete(null) }
+    private fun completeIfDrained() { if (stopping && videoEos && audioEos) complete(audioFailure?.let { IllegalStateException(it) }) }
 
     private fun complete(initialError: Exception?) {
         if (finished) return
         finished = true; startGate.stop(); handler.removeCallbacksAndMessages(null)
+        val activeAudio = audio
+        if (activeAudio != null) activeAudio.close { closeError -> finalizeMedia(initialError ?: closeError) }
+        else finalizeMedia(initialError)
+    }
+    private fun finalizeMedia(initialError: Exception?) {
         var failure = initialError
         fun attempt(block: () -> Unit) { try { block() } catch (e: Exception) { if (failure == null) failure = e } }
-        attempt { audio?.close() }
         attempt { codec.stop() }; attempt { codec.release() }
         // Salvage bounded startup packets even when the other encoder never became ready.
         // Such a subset is recovery footage, never an automatic video-only success.
@@ -199,6 +212,7 @@ class SurfaceRecorder private constructor(
                     .put("orientation", orientation).put("latestApplied", jsonValue(applied))
                     .put("videoOnly", !audioMode.enabled).put("customLog", false)
                     .put("audioMode", audioMode.name).put("audio", jsonValue(audioEvidence))
+                    .put("timingQuality", timingQuality(audioEvidence, result.verification))
                     .put("audioError", audioFailure ?: JSONObject.NULL).put("audioEncodedSamples", audioSamples)
                     .put("commonEpochUs", coordinator.originUs ?: JSONObject.NULL)
                     .put("videoClock", if (Build.VERSION.SDK_INT >= 33) "explicit_monotonic_output" else "legacy_encoder_default_unverified")
@@ -216,8 +230,11 @@ class SurfaceRecorder private constructor(
                 reportFile = File(directory, "recording-${UUID.randomUUID()}.json").also { atomicWrite(it, report.toString(2)) }
             }
         )
+        val timing = timingQuality(audioEvidence, outcome.verification)
+        val timingNote = if (audioMode.enabled) " Timing: ${timing.getString("status")}" +
+            (timing.getJSONArray("warnings").takeIf { it.length() > 0 }?.let { " — ${it.join(", ")}" } ?: "") else ""
         val message = when (outcome.disposition) {
-            VideoDisposition.PUBLISHED -> "Saved ${mode.label}; ${stats.frames} frames; ${if (audioMode.enabled) "AAC ${audioMode.channels}ch / 48 kHz" else "video only"}. File integrity checked; cadence ${outcome.verification?.optString("cadenceStatus") ?: "unknown"}. Physical sync and sustained performance are not certified."
+            VideoDisposition.PUBLISHED -> "Saved ${mode.label}; ${stats.frames} frames; ${if (audioMode.enabled) "AAC ${audioMode.channels}ch / 48 kHz" else "video only"}. File integrity checked; cadence ${outcome.verification?.optString("cadenceStatus") ?: "unknown"}. Physical sync and sustained performance are not certified.$timingNote"
             VideoDisposition.RECOVERABLE -> "Footage retained privately for recovery, NOT a verified recording: ${outcome.errors.joinToString("; ")}. Open Recover captures to export or delete it."
             VideoDisposition.EMPTY -> "Empty recording rejected; no encoded video footage arrived."
             VideoDisposition.RETENTION_FAILED -> "Recording needs recovery; no further deletion attempted: ${outcome.errors.joinToString("; ")}. Check Recover captures after reopening."
@@ -225,10 +242,26 @@ class SurfaceRecorder private constructor(
         runCatching { CaptureHistory.save(context, listOfNotNull(outcome.uri), reportFile, message) }
         try { completed(Outcome(outcome.uri, reportFile, message, audioFailure)) } finally { thread.quitSafely() }
     }
+    private fun timingQuality(audioEvidence: Map<String, Any?>?, verification: JSONObject?): JSONObject {
+        val acquisition = audioEvidence?.get("acquisition") as? Map<*, *>
+        val continuity = acquisition?.get("continuityStatus") as? String
+        val warnings = JSONArray()
+        if (audioMode.enabled) {
+            if (continuity != "no_discontinuity_observed") warnings.put(continuity ?: "acquisition_unverified")
+            if (Build.VERSION.SDK_INT < 33) warnings.put("legacy_video_clock_unverified")
+            if (verification?.optString("avPacketCoverage") != "within_250ms") warnings.put("audio_video_coverage_warning")
+        }
+        return JSONObject().put("schemaVersion", 1).put("status", when {
+            !audioMode.enabled -> "video_only"
+            warnings.length() > 0 -> "warning"
+            else -> "no_timing_warning_observed"
+        }).put("warnings", warnings).put("physicalLipSyncVerified", false)
+    }
     companion object {
         fun prepare(context: Context, mode: RecordingMode, orientation: Int, request: Map<String, Any?>,
                     audioMode: AudioMode = AudioMode.OFF, onFirstSample: () -> Unit = {},
-                    onAudioMeter: (AudioCapture.Meter) -> Unit = {}, completed: (Outcome) -> Unit): SurfaceRecorder =
-            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, completed).apply { prepare() }
+                    onAudioMeter: (AudioCapture.Meter) -> Unit = {}, onAudioFault: (String) -> Unit = {},
+                    completed: (Outcome) -> Unit): SurfaceRecorder =
+            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, onAudioFault, completed).apply { prepare() }
     }
 }

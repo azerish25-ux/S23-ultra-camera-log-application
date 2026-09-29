@@ -20,12 +20,14 @@ import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.ChannelLevel
 import com.s23log.probe.core.PcmClock
 import com.s23log.probe.core.PcmLevels
-import com.s23log.probe.core.PcmFrameQueue
+import com.s23log.probe.core.PcmHandoff
+import com.s23log.probe.core.MicrophoneReader
+import java.util.concurrent.atomic.AtomicBoolean
 import java.nio.ByteBuffer
 import java.util.ArrayDeque
 import java.nio.ByteOrder
 
-/** Nonblocking microphone reads and AAC callbacks share the recorder's serial encoder handler. */
+/** Microphone acquisition has its own owner; only AAC and handoff draining use the encoder handler. */
 class AudioCapture private constructor(
     private val record: AudioRecord,
     private val codec: MediaCodec,
@@ -34,7 +36,7 @@ class AudioCapture private constructor(
     private val handler: Handler,
     private val events: Events
 ) {
-    data class Meter(val levels: List<ChannelLevel>, val route: String, val clockSource: String)
+    data class Meter(val levels: List<ChannelLevel>, val route: String, val clockSource: String, val timingStatus: String = "clock_unverified")
     interface Events {
         fun format(format: MediaFormat)
         fun sample(buffer: ByteBuffer, info: MediaCodec.BufferInfo)
@@ -42,147 +44,142 @@ class AudioCapture private constructor(
         fun failed(error: Exception)
         fun meter(value: Meter)
     }
-    private val clock = PcmClock(AudioMode.SAMPLE_RATE)
-    private val inputIndices = ArrayDeque<Int>()
-    private val pending = PcmFrameQueue(mode.channels)
-    private val shorts = ShortArray(1024 * mode.channels)
-    private var readFrames = 0L
+    private val clock = PcmClock(AudioMode.SAMPLE_RATE, stableStartup = true)
+    private val inputIndices = ArrayDeque<Int>() // Encoder-handler owned.
+    private val pending = PcmHandoff(mode.channels)
     private var queuedFrames = 0L
     private var endPaddingFrames = 0
     private var lastEncoderInputEndUs = 0L
-    private var firstReadNs = 0L
-    private var firstReadFrames = 0L
-    private var startedMs = 0L
-    private var lastReadMs = 0L
     private var lastMeterMs = 0L
     private var firstQueueUs: Long? = null
     private var lastQueueEndUs = 0L
     private var started = false
     private var stopped = false
-    private var closed = false
+    @Volatile private var closed = false
     private var eosQueued = false
-    private var route = "Built-in microphone (awaiting route)"
-    private var routeConfirmed = false
-    private var clippingBlocks = 0
-    private val pump = object : Runnable {
-        override fun run() {
-            if (closed || eosQueued) return
-            try {
-                val now = SystemClock.elapsedRealtime()
-                if (!stopped) {
-                    // Never block camera, UI, or encoder callbacks waiting for microphone data.
-                    val count = record.read(shorts, 0, shorts.size, AudioRecord.READ_NON_BLOCKING)
-                    check(count >= 0) { "Microphone read failed ($count); audio has NOT been disabled" }
-                    if (count > 0) {
-                        check(count % mode.channels == 0) { "Unaligned microphone frame" }
-                        val frames = count / mode.channels
-                        val data = ByteBuffer.allocate(count * 2).order(ByteOrder.nativeOrder())
-                        data.asShortBuffer().put(shorts, 0, count)
-                        pending.offer(data, readFrames); readFrames += frames
-                        lastReadMs = now
-                        if (firstReadNs == 0L) { firstReadNs = System.nanoTime(); firstReadFrames = readFrames }
-                        val stamp = AudioTimestamp()
-                        if (record.getTimestamp(stamp, AudioTimestamp.TIMEBASE_MONOTONIC) == AudioRecord.SUCCESS && stamp.nanoTime > 0 && stamp.framePosition >= 0)
-                            clock.observe(stamp.framePosition, stamp.nanoTime)
-                        if (now - lastMeterMs >= 125) {
-                            inspectRoute(now)
-                            val levels = PcmLevels.measure(shorts, count, mode.channels)
-                            if (levels.any { it.clipped }) clippingBlocks++
-                            events.meter(Meter(levels, route, if (clock.regressions > 0 || clock.maxDriftUs > 33_333) "${clock.source}:drift_warning" else clock.source)); lastMeterMs = now
-                        }
+    private var readerFailureNotified = false
+    @Volatile private var route = "Built-in microphone (awaiting route)"
+    @Volatile private var routeConfirmed = false
+    private val pumpPosted = AtomicBoolean()
+    private val reader = MicrophoneReader(mode.channels, record.bufferSizeInFrames,
+        object : MicrophoneReader.Source {
+            private var startedNs = 0L
+            @SuppressLint("MissingPermission")
+            override fun start() {
+                record.startRecording(); startedNs = System.nanoTime()
+                check(record.recordingState == AudioRecord.RECORDSTATE_RECORDING) { "Microphone could not start" }
+            }
+            override fun read(samples: ShortArray, count: Int): Int = record.read(samples, 0, count, AudioRecord.READ_NON_BLOCKING)
+            override fun timestamp(): MicrophoneReader.Stamp? {
+                val stamp = AudioTimestamp()
+                return if (record.getTimestamp(stamp, AudioTimestamp.TIMEBASE_MONOTONIC) == AudioRecord.SUCCESS && stamp.nanoTime > 0 && stamp.framePosition >= 0)
+                    MicrophoneReader.Stamp(stamp.framePosition, stamp.nanoTime) else null
+            }
+            override fun inspect() {
+                val device = record.routedDevice
+                if (device != null) {
+                    check(device.type == AudioDeviceInfo.TYPE_BUILTIN_MIC && device.id == preferredDeviceId) {
+                        "Microphone route changed; external inputs are not supported by this recording mode"
                     }
-                    check(now - lastReadMs <= 5000) { "Microphone produced no PCM for five seconds" }
+                    route = "${device.productName} · built-in · ${mode.channels}ch / 48 kHz"; routeConfirmed = true
+                } else check(System.nanoTime() - startedNs < 2_000_000_000) { "Unable to confirm the built-in microphone route" }
+                if (Build.VERSION.SDK_INT >= 29) check(record.activeRecordingConfiguration?.isClientSilenced != true) {
+                    "Android silenced the microphone (privacy or competing capture); footage retained, not a valid audio recording"
                 }
-                // Some HALs do not supply AudioTimestamp. Preserve audio but explicitly expose uncertainty.
-                if (!clock.anchored && firstReadNs > 0 && (stopped || now - startedMs >= 750))
-                    clock.estimate(firstReadFrames, firstReadNs)
+            }
+            override fun close() {
+                try { if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop() }
+                finally { record.release() }
+            }
+        }, pending, clock, ::schedulePump,
+        initializeThread = { android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO) })
+    private val pump = Runnable {
+        pumpPosted.set(false)
+        if (!closed && !eosQueued) try {
+            if (reader.done && reader.failure != null && !readerFailureNotified) {
+                readerFailureNotified = true
+                // Stop the video too, but still drain already accepted PCM before finalization.
+                events.failed(requireNotNull(reader.failure))
+            }
+            if (!closed) {
                 queuePcm()
-                if (!closed && !eosQueued) handler.postDelayed(this, 5)
-            } catch (e: Exception) { events.failed(e) }
+                val now = SystemClock.elapsedRealtime()
+                if (!stopped && now - lastMeterMs >= 125 && reader.levels.isNotEmpty()) {
+                    events.meter(Meter(reader.levels, route, clock.source, reader.continuity())); lastMeterMs = now
+                }
+            }
+        } catch (e: Exception) { events.failed(e) }
+    }
+    private fun schedulePump() {
+        if (!closed && pumpPosted.compareAndSet(false, true)) {
+            if (!handler.post(pump)) pumpPosted.set(false)
         }
     }
-
-    @SuppressLint("MissingPermission") // Checked at prepare; revocation still throws and is retained as an error.
     fun start() {
         check(!started && !closed)
-        started = true
-        startedMs = SystemClock.elapsedRealtime(); lastReadMs = startedMs
-        record.startRecording()
-        check(record.recordingState == AudioRecord.RECORDSTATE_RECORDING) { "Microphone could not start" }
-        codec.start()
-        handler.post(pump)
-    }
-    private fun inspectRoute(now: Long) {
-        val device = record.routedDevice
-        if (device != null) {
-            check(device.type == AudioDeviceInfo.TYPE_BUILTIN_MIC && device.id == preferredDeviceId) {
-                "Microphone route changed; external inputs are not supported by this recording mode"
-            }
-            route = "${device.productName} · built-in · ${mode.channels}ch / 48 kHz"
-            routeConfirmed = true
-        } else check(now - startedMs < 2000) { "Unable to confirm the built-in microphone route" }
-        if (Build.VERSION.SDK_INT >= 29) check(record.activeRecordingConfiguration?.isClientSilenced != true) {
-            "Android silenced the microphone (privacy or competing capture); footage retained, not a valid audio recording"
-        }
+        codec.start(); started = true
+        reader.start()
     }
     private fun queuePcm() {
-        while (!eosQueued && inputIndices.isNotEmpty() && pending.ready(stopped) && clock.anchored) {
+        while (!closed && !eosQueued && inputIndices.isNotEmpty() && pending.ready() && clock.anchored) {
             val index = inputIndices.removeFirst()
             val input = requireNotNull(codec.getInputBuffer(index)).apply { clear() }
-            // AudioRecord reads may be partial. Coalesce them before AAC input;
-            // tiny input buffers can cause codec timestamp rounding/discontinuities.
-            val batch = requireNotNull(pending.drainTo(input, stopped))
+            val batch = requireNotNull(pending.drain(input))
             val ptsUs = clock.timestampUs(batch.firstFrame)
             check(ptsUs >= 0 && (firstQueueUs == null || ptsUs >= lastQueueEndUs)) { "Microphone clock regressed" }
-            // The final input is a full AAC block with explicitly counted end
-            // padding. Its timestamp remains the original PCM sample position.
             codec.queueInputBuffer(index, 0, batch.bytes, ptsUs,
                 if (batch.endOfStream) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0)
             if (batch.endOfStream) eosQueued = true
             firstQueueUs = firstQueueUs ?: ptsUs
-            queuedFrames += batch.frames
-            endPaddingFrames += batch.paddingFrames
+            queuedFrames += batch.frames; endPaddingFrames += batch.paddingFrames
             lastQueueEndUs = clock.timestampUs(batch.firstFrame + batch.frames)
             lastEncoderInputEndUs = clock.timestampUs(batch.firstFrame + batch.frames + batch.paddingFrames)
         }
-        if (stopped && pending.frames == 0 && inputIndices.isNotEmpty() && !eosQueued) {
+        if (reader.done && pending.exhausted() && inputIndices.isNotEmpty() && !eosQueued) {
             eosQueued = true
-            // No PCM remains (e.g. an exact block boundary or immediate Stop).
-            // MediaCodec specifies that an empty EOS timestamp is ignored.
             codec.queueInputBuffer(inputIndices.removeFirst(), 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
         }
     }
-    fun stopGracefully() {
+    /** Thread-safe cutoff signalling does not wait behind codec or disk callbacks. */
+    fun requestStopBoundary(cutoffNs: Long) { reader.requestStop(cutoffNs) }
+    fun stopGracefully(cutoffNs: Long = System.nanoTime()) {
         if (closed || stopped) return
-        stopped = true
-        if (!started) { events.ended(); return }
-        // Reads are nonblocking and on this same handler; no worker join can deadlock a callback.
-        if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop()
-        handler.removeCallbacks(pump); handler.post(pump)
+        stopped = true; reader.requestStop(cutoffNs)
+        if (!started) { reader.cancel(); events.ended(); return }
+        schedulePump()
     }
-    fun close() {
-        if (closed) return
-        closed = true
-        handler.removeCallbacks(pump)
+    /** Async native-owner shutdown. Never join a microphone thread on an encoder/camera/UI thread. */
+    fun close(completed: (Exception?) -> Unit = {}) {
+        if (closed) { completed(null); return }
+        closed = true; reader.cancel(); handler.removeCallbacks(pump)
         var error: Exception? = null
         fun attempt(block: () -> Unit) { try { block() } catch (e: Exception) { if (error == null) error = e } }
-        attempt { if (record.recordingState == AudioRecord.RECORDSTATE_RECORDING) record.stop() }
-        attempt { record.release() }
-        attempt { if (started) codec.stop() }
-        attempt { codec.release() }
-        pending.clear(); inputIndices.clear()
-        error?.let { throw it }
+        attempt { if (started) codec.stop() }; attempt { codec.release() }
+        inputIndices.clear()
+        val deadline = SystemClock.elapsedRealtime() + 2000
+        val checkOwner = object : Runnable {
+            override fun run() {
+                if (!reader.done && SystemClock.elapsedRealtime() < deadline) { handler.postDelayed(this, 10); return }
+                if (!reader.done && error == null) error = IllegalStateException("Microphone owner shutdown timed out; native release unconfirmed")
+                if (error == null) error = reader.failure
+                // Snapshot retains accepted/consumed counts even on an exceptional abort.
+                pending.cancel()
+                completed(error)
+            }
+        }
+        handler.post(checkOwner)
     }
+    fun acquisitionEvidence(): Map<String, Any?> = reader.describe()
     fun describe(): Map<String, Any?> = mapOf(
         "requestedMode" to mode.name, "mime" to MediaFormat.MIMETYPE_AUDIO_AAC, "profile" to "AAC-LC",
         "sampleRate" to AudioMode.SAMPLE_RATE, "channels" to mode.channels, "bitrate" to mode.bitRate,
         "source" to "CAMCORDER", "route" to route, "builtInRouteConfirmed" to routeConfirmed,
-        "pcmFramesRead" to readFrames, "pcmFramesQueued" to queuedFrames, "firstInputPtsUs" to firstQueueUs,
-        "pcmFramesSubmittedWithPadding" to (queuedFrames + endPaddingFrames),
-        "appEndPaddingFrames" to endPaddingFrames,
-        "appEndPaddingUs" to (endPaddingFrames * 1_000_000L / AudioMode.SAMPLE_RATE),
-        "appEndPaddingTrimmed" to false,
-        "lastInputEndUs" to lastQueueEndUs, "lastEncoderInputEndUs" to lastEncoderInputEndUs, "clippingMeterBlocks" to clippingBlocks, "clock" to clock.describe()
+        "pcmFramesRead" to reader.framesRead, "pcmFramesQueued" to queuedFrames, "firstInputPtsUs" to firstQueueUs,
+        "pcmFramesSubmittedWithPadding" to (queuedFrames + endPaddingFrames), "appEndPaddingFrames" to endPaddingFrames,
+        "appEndPaddingUs" to (endPaddingFrames * 1_000_000L / AudioMode.SAMPLE_RATE), "appEndPaddingTrimmed" to false,
+        "lastInputEndUs" to lastQueueEndUs, "lastEncoderInputEndUs" to lastEncoderInputEndUs,
+        "clippingMeterBlocks" to reader.clippingBlocks, "clock" to clock.describe(),
+        "acquisition" to reader.describe(), "timingSchemaVersion" to 1
     )
 
     companion object {
@@ -209,7 +206,7 @@ class AudioCapture private constructor(
                 val capture = AudioCapture(record, codec, input.id, mode, handler, events)
                 codec.setCallback(object : MediaCodec.Callback() {
                     override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {
-                        if (!capture.closed && !capture.eosQueued) capture.inputIndices.addLast(index)
+                        if (!capture.closed && !capture.eosQueued) { capture.inputIndices.addLast(index); capture.schedulePump() }
                     }
                     override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {
                         if (!capture.closed) try { events.format(format) } catch (e: Exception) { events.failed(e) }

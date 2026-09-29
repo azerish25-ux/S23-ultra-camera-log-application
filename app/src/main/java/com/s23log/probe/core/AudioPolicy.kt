@@ -16,46 +16,77 @@ enum class AudioMode(val channels: Int) {
     }
 }
 
-/** One immutable anchor for the AudioRecord sample-position clock. Never reset tracks separately. */
-class PcmClock(private val sampleRate: Int) {
+/** Startup observations may be qualified; once anchored, timestamps are never silently rewritten. */
+class PcmClock(private val sampleRate: Int, private val stableStartup: Boolean = false) {
     init { require(sampleRate > 0) }
-    var anchorFrame: Long? = null; private set
-    var anchorNs: Long? = null; private set
-    var source = "unavailable"; private set
-    var observations = 0; private set
-    var maxDriftUs = 0L; private set
-    var regressions = 0; private set
+    @Volatile var anchorFrame: Long? = null; private set
+    @Volatile var anchorNs: Long? = null; private set
+    @Volatile var source = "unavailable"; private set
+    @Volatile var observations = 0; private set
+    @Volatile var maxDriftUs = 0L; private set
+    @Volatile var regressions = 0; private set
+    private var repeatedFrameTimes = 0
+    private var jumps = 0
     private var lastObservedFrame = -1L
     private var lastObservedNs = -1L
+    private var firstObservedFrame = -1L
+    private var firstObservedNs = -1L
+    private val startup = java.util.ArrayDeque<Pair<Long, Long>>()
     val anchored: Boolean get() = anchorNs != null
+    private fun durationNs(frames: Long): Long = frames / sampleRate * 1_000_000_000L + frames % sampleRate * 1_000_000_000L / sampleRate
 
-    fun observe(frame: Long, ns: Long) {
+    @Synchronized fun observe(frame: Long, ns: Long) {
         require(frame >= 0 && ns > 0) { "Invalid microphone timestamp" }
         if (frame == lastObservedFrame && ns == lastObservedNs) return
         if (frame < lastObservedFrame || ns < lastObservedNs) { regressions++; return }
-        if (!anchored) { anchorFrame = frame; anchorNs = ns; source = "audio_timestamp_monotonic" }
+        // A changed time for the same frame is not a progressive clock observation.
+        if (frame == lastObservedFrame || ns == lastObservedNs) { repeatedFrameTimes++; return }
+        if (firstObservedFrame < 0) { firstObservedFrame = frame; firstObservedNs = ns }
+        if (lastObservedFrame >= 0 && abs((ns - lastObservedNs) - durationNs(frame - lastObservedFrame)) > 20_000_000) jumps++
         observations++
-        maxDriftUs = max(maxDriftUs, abs(ns - timestampNs(frame)) / 1000)
+        if (!anchored) {
+            startup.addLast(frame to ns)
+            if (startup.size > 8) startup.removeFirst()
+            val origins = startup.map { it.second - durationNs(it.first) }.sorted()
+            if (!stableStartup || (startup.size >= 3 && ns - startup.first.second >= 100_000_000 && origins.last() - origins.first() <= 2_000_000)) {
+                // Median projected origin rejects a single noisy startup timestamp.
+                anchorFrame = if (stableStartup) 0 else frame
+                anchorNs = if (stableStartup) origins[origins.size / 2] else ns
+                source = "audio_timestamp_monotonic"
+            }
+        }
+        if (anchored) maxDriftUs = max(maxDriftUs, abs(ns - timestampNs(frame)) / 1000)
         lastObservedFrame = frame; lastObservedNs = ns
     }
-
-    /** Fallback is explicit, immutable and NOT proof of synchronization. */
-    fun estimate(frame: Long, ns: Long) {
+    @Synchronized fun estimate(frame: Long, ns: Long) {
         require(frame >= 0 && ns > 0)
         if (!anchored) { anchorFrame = frame; anchorNs = ns; source = "read_completion_estimate_unverified" }
     }
-    fun timestampNs(frame: Long): Long {
+    @Synchronized fun timestampNs(frame: Long): Long {
         require(frame >= 0)
-        val delta = frame - requireNotNull(anchorFrame)
-        // Avoid multiplying a long recording's entire sample count by a billion.
-        return requireNotNull(anchorNs) + delta / sampleRate * 1_000_000_000L + delta % sampleRate * 1_000_000_000L / sampleRate
+        return requireNotNull(anchorNs) + durationNs(frame - requireNotNull(anchorFrame))
     }
     fun timestampUs(frame: Long): Long = timestampNs(frame) / 1000
-    fun describe(): Map<String, Any?> = mapOf(
+    @Synchronized fun frameAt(ns: Long): Long {
+        val delta = ns - requireNotNull(anchorNs)
+        return (requireNotNull(anchorFrame) + delta / 1_000_000_000L * sampleRate + delta % 1_000_000_000L * sampleRate / 1_000_000_000L).coerceAtLeast(0)
+    }
+    @Synchronized fun quality(): String = when {
+        regressions > 0 -> "timestamp_regression"
+        jumps > 0 -> "timestamp_discontinuity_suspected"
+        source != "audio_timestamp_monotonic" -> "clock_unverified"
+        observations < 3 || lastObservedNs - firstObservedNs < 100_000_000 -> "clock_warming_up"
+        maxDriftUs > 33_333 -> "clock_rate_deviation"
+        else -> "stable_nominal_clock"
+    }
+    @Synchronized fun describe(): Map<String, Any?> = mapOf(
         "source" to source, "anchorFrame" to anchorFrame, "anchorNs" to anchorNs,
         "timestampObservations" to observations, "maxNominalClockDriftUs" to maxDriftUs,
-        "timestampRegressions" to regressions, "resamplingApplied" to false,
-        "physicalLipSyncVerified" to false
+        "timestampRegressions" to regressions, "nonProgressiveObservations" to repeatedFrameTimes,
+        "abruptTimestampChanges" to jumps, "quality" to quality(), "stableStartupRequired" to stableStartup,
+        "observedRateErrorPpm" to if (lastObservedNs - firstObservedNs >= 1_000_000_000 && lastObservedFrame > firstObservedFrame)
+            ((lastObservedNs - firstObservedNs).toDouble() / durationNs(lastObservedFrame - firstObservedFrame) - 1.0) * 1_000_000 else null,
+        "resamplingApplied" to false, "physicalLipSyncVerified" to false
     )
 }
 

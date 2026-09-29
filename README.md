@@ -1,6 +1,12 @@
-# S23Log — Phase 3D.1 audio/video recording foundation
+# S23Log — Phase 3D.2 acquisition isolation and timing evidence
 
 Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not implement proprietary Samsung Log, a custom log curve or sustained RAW video.**
+
+## Phase 3D.2 changes
+
+Microphone acquisition now has a dedicated native-resource owner and a bounded PCM handoff, independent of AAC callbacks and MP4 writes. Startup clocks are qualified, reader delays and timestamp discontinuities are distinguished, Stop has an explicit bounded drain policy, and saved timing warnings are visible separately from media integrity. New tests freeze the encoder handler during real microphone acquisition and encode/decode known flash/tone events at 24/30 fps. No physical synchronization or custom Log certification is implied.
+
+See [Phase 3D.2 scope, timing tolerances and physical-device gate](docs/PHASE3D2.md). The existing Phase 3D.1 audio, permission and footage-retention safeguards remain in place.
 
 ## Phase 3D.1 changes
 
