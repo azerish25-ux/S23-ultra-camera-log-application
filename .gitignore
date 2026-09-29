@@ -13,3 +13,7 @@ Thumbs.db
 *.jks
 *.keystore
 .manual-kotlin-check/
+
+# Python validation caches
+__pycache__/
+*.py[cod]

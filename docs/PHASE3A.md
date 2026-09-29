@@ -18,7 +18,7 @@ The logical camera's physical override key list gates independent sensor/focus c
 
 ## Tests
 
-JVM regression tests exercise finalization order and fault handling, cleanup retry policy, each transition gate/deadline, stream-query isolation, and nested error counts. Instrumented tests add real private-file retention/recovery, path containment, an actual recording whose sidecar directory is blocked, and selected mode/control-intent restoration. The report-failure test decodes retained published video and cleans only its own temporary outputs. The original twelve-recording acceptance gate remains in place.
+JVM regression tests exercise finalization order and fault handling, cleanup retry policy, each transition gate/deadline, stream-query isolation, and nested error counts. Instrumented tests add real private-file retention/recovery, path containment, an actual recording whose sidecar directory is blocked, and selected mode/control-intent restoration. The report-failure test decodes retained published video and cleans only its own temporary outputs. The original twelve-recording acceptance gate remains in place. ADB video evidence transfer retries at most three times into separate temporary directories; a failed or empty transfer cannot count as acceptance, and capture tests are never retried or bypassed by this transport helper.
 
 Hardware acceptance remains separate: verify 24/30-fps long-shutter behaviour, focus/WB locks, logical/physical routes, and low-storage recovery on the actual phone. Emulator/policy tests are not Galaxy S23 Ultra certification.
 

@@ -52,7 +52,8 @@ adb shell settings put global animator_duration_scale 0
 timeout 15 adb shell pm path com.s23log.probe | grep '^package:'
 timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.tar
 [[ -s evidence/emulator/app-evidence.tar ]] || { echo 'Device reports were not preserved'; exit 1; }
-timeout 60 adb pull /sdcard/Movies/S23Log evidence/emulator/videos
+# Retry transport only; a complete copy must still pass all recording checks.
+python3 scripts/pull_videos.py evidence/emulator/videos
 python3 scripts/check_video.py evidence/emulator/videos --min-duration 1 > evidence/emulator/ffprobe.json
 python3 scripts/check_evidence.py evidence/emulator/app-evidence.tar evidence/emulator/ffprobe.json > evidence/emulator/summary.json
 timeout 30 adb shell am start -W -n com.s23log.probe/.MainActivity > evidence/emulator/activity-start.txt
