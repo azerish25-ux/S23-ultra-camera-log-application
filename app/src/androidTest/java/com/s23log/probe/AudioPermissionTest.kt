@@ -14,6 +14,7 @@ import com.s23log.probe.core.AudioMode
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.CaptureHistory
 import org.json.JSONObject
+import org.json.JSONArray
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,15 +41,30 @@ class AudioPermissionTest {
         assertTrue(it.findViewById<Button>(id).isEnabled)
         assertTrue(it.findViewById<Button>(id).performClick())
     }
-    private fun clickDialog(text: String) {
+    private val appDialogActions = JSONArray()
+    private fun clickDialog(resourceId: String, text: String) {
         val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(10)
+        var observed = "No active dialog"
         while (System.nanoTime() < end) {
-            val nodes = instrumentation.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText(text).orEmpty()
-            val button = nodes.firstOrNull { it.text?.toString() == text && it.isClickable }
-            if (button != null) { assertTrue(button.performAction(AccessibilityNodeInfo.ACTION_CLICK)); return }
+            val root = instrumentation.uiAutomation.rootInActiveWindow
+            val nodes = root?.findAccessibilityNodeInfosByViewId(resourceId).orEmpty()
+            observed = nodes.joinToString { "${it.packageName}/${it.viewIdResourceName}: ${it.text}; clickable=${it.isClickable}; visible=${it.isVisibleToUser}" }
+            // Platform Material buttons may expose transformed ALL-CAPS text.
+            // Match the dialog role by resource ID, retaining the expected label
+            // and app-package checks rather than clicking an arbitrary text hit.
+            val button = nodes.firstOrNull {
+                it.packageName?.toString() == context.packageName && it.isClickable && it.isVisibleToUser &&
+                    it.text?.toString()?.equals(text, ignoreCase = true) == true
+            }
+            if (button != null) {
+                val displayed = button.text?.toString()
+                assertTrue(button.performAction(AccessibilityNodeInfo.ACTION_CLICK))
+                appDialogActions.put(JSONObject().put("resourceId", resourceId).put("expectedLabel", text).put("displayedLabel", displayed))
+                return
+            }
             Thread.sleep(100)
         }
-        fail("No clickable dialog action: $text")
+        fail("No clickable app dialog action: $resourceId / $text; observed: $observed")
     }
     private fun denySystemPermission() {
         val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(15)
@@ -79,12 +95,12 @@ class AudioPermissionTest {
             }
             live()
             click(scenario, R.id.record)
-            clickDialog(context.getString(R.string.cancel))
+            clickDialog("android:id/button2", context.getString(R.string.cancel))
             assertEquals(AudioMode.MONO, CameraSettings.audio(context))
             assertEquals(previous, CaptureHistory.latest(context).report?.name)
             live()
             click(scenario, R.id.record)
-            clickDialog(context.getString(R.string.audio_allow))
+            clickDialog("android:id/button1", context.getString(R.string.audio_allow))
             denySystemPermission()
             await(scenario, "Denied audio is shown, not silently disabled") {
                 it.findViewById<TextView>(R.id.audioStatus).text.contains("denied", true) && it.findViewById<Button>(R.id.record).isEnabled
@@ -93,7 +109,7 @@ class AudioPermissionTest {
             assertEquals(AudioMode.MONO, CameraSettings.audio(context))
             assertEquals(previous, CaptureHistory.latest(context).report?.name)
             click(scenario, R.id.record)
-            clickDialog(context.getString(R.string.audio_video_only_action))
+            clickDialog("android:id/button3", context.getString(R.string.audio_video_only_action))
             assertEquals(AudioMode.OFF, CameraSettings.audio(context))
             assertEquals("Choosing muted does not start a stale take", previous, CaptureHistory.latest(context).report?.name)
             click(scenario, R.id.record)
@@ -109,6 +125,7 @@ class AudioPermissionTest {
             assertTrue(report.getBoolean("videoOnly"))
             assertEquals(0, report.getJSONObject("verification").getInt("audioTrackCount"))
             val evidence = JSONObject().put("kind", "microphone-permission-test").put("appCommit", BuildConfig.SOURCE_REVISION)
+                .put("appDialogActions", appDialogActions)
                 .put("initialMicrophonePermissionDenied", true).put("systemDenialClicked", true)
                 .put("cancelPreservedIntent", true).put("denialPreservedIntent", true)
                 .put("videoOnlyExplicit", true).put("mutedRecordingChecked", true)
