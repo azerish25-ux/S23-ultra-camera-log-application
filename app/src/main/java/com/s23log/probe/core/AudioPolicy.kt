@@ -31,7 +31,12 @@ class PcmClock(private val sampleRate: Int, private val stableStartup: Boolean =
     private var lastObservedNs = -1L
     private var firstObservedFrame = -1L
     private var firstObservedNs = -1L
-    private val startup = java.util.ArrayDeque<Pair<Long, Long>>()
+    // Bound storage, not observation count: fast HALs can report more than
+    // eight progressive timestamps within the required 100 ms qualification.
+    private var startupFirstNs = 0L
+    private var startupMinOriginNs = 0L
+    private var startupMaxOriginNs = 0L
+    private var startupProgress = 0
     val anchored: Boolean get() = anchorNs != null
     private fun durationNs(frames: Long): Long = frames / sampleRate * 1_000_000_000L + frames % sampleRate * 1_000_000_000L / sampleRate
 
@@ -45,14 +50,27 @@ class PcmClock(private val sampleRate: Int, private val stableStartup: Boolean =
         if (lastObservedFrame >= 0 && abs((ns - lastObservedNs) - durationNs(frame - lastObservedFrame)) > 20_000_000) jumps++
         observations++
         if (!anchored) {
-            startup.addLast(frame to ns)
-            if (startup.size > 8) startup.removeFirst()
-            val origins = startup.map { it.second - durationNs(it.first) }.sorted()
-            if (!stableStartup || (startup.size >= 3 && ns - startup.first.second >= 100_000_000 && origins.last() - origins.first() <= 2_000_000)) {
-                // Median projected origin rejects a single noisy startup timestamp.
-                anchorFrame = if (stableStartup) 0 else frame
-                anchorNs = if (stableStartup) origins[origins.size / 2] else ns
-                source = "audio_timestamp_monotonic"
+            if (!stableStartup) {
+                anchorFrame = frame; anchorNs = ns; source = "audio_timestamp_monotonic"
+            } else {
+                val origin = ns - durationNs(frame)
+                if (startupProgress == 0 ||
+                    maxOf(startupMaxOriginNs, origin) - minOf(startupMinOriginNs, origin) > 2_000_000) {
+                    // A noisy origin starts a new qualification interval. Earlier
+                    // unstable observations cannot satisfy the 100 ms minimum.
+                    startupFirstNs = ns
+                    startupMinOriginNs = origin; startupMaxOriginNs = origin
+                    startupProgress = 1
+                } else {
+                    startupMinOriginNs = minOf(startupMinOriginNs, origin)
+                    startupMaxOriginNs = maxOf(startupMaxOriginNs, origin)
+                    startupProgress = minOf(3, startupProgress + 1)
+                }
+                if (startupProgress >= 3 && ns - startupFirstNs >= 100_000_000) {
+                    anchorFrame = 0
+                    anchorNs = startupMinOriginNs + (startupMaxOriginNs - startupMinOriginNs) / 2
+                    source = "audio_timestamp_monotonic"
+                }
             }
         }
         if (anchored) maxDriftUs = max(maxDriftUs, abs(ns - timestampNs(frame)) / 1000)

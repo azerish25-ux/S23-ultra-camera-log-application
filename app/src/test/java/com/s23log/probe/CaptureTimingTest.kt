@@ -97,6 +97,40 @@ class CaptureTimingTest {
         clock.observe(4800, 1_100_000_000); assertTrue(clock.anchored)
         assertEquals("stable_nominal_clock", clock.quality()); assertEquals(4800L, clock.frameAt(1_100_000_000))
     }
+    @Test fun startupQualificationIsIndependentOfTimestampPollingFrequency() {
+        for (stepMs in listOf(1, 2, 5, 10, 16, 20, 50)) {
+            val clock = PcmClock(48000, true)
+            for (ms in 0..250 step stepMs) {
+                clock.observe(ms * 48L, 1_000_000_000L + ms * 1_000_000L)
+                if (ms < 100) assertFalse("Must not shorten the qualification window", clock.anchored)
+                else assertTrue("Valid $stepMs ms timestamps must qualify after 100 ms", clock.anchored)
+            }
+            assertEquals("stable_nominal_clock", clock.quality())
+            assertEquals(1_000_000_000L, clock.anchorNs)
+        }
+    }
+    @Test fun noisyOriginRestartsFullQualificationInterval() {
+        val clock = PcmClock(48000, true)
+        for (ms in 0..59) clock.observe(ms * 48L, 1_000_000_000L + ms * 1_000_000L)
+        for (ms in 60..159) {
+            clock.observe(ms * 48L, 1_005_000_000L + ms * 1_000_000L)
+            assertFalse("The new origin needs its own 100 ms of stability", clock.anchored)
+        }
+        clock.observe(160 * 48L, 1_165_000_000L)
+        assertTrue(clock.anchored)
+        assertEquals(1_005_000_000L, clock.anchorNs)
+    }
+    @Test fun pollingFrequencyDoesNotReplaceDistinctProgressOrReanchorFallback() {
+        val clock = PcmClock(48000, true)
+        repeat(500) { clock.observe(0, 1_000_000_000L) }
+        clock.observe(4800, 1_100_000_000L)
+        assertFalse("Two progressive observations are insufficient", clock.anchored)
+        clock.estimate(0, 999_000_000L)
+        for (ms in 101..400) clock.observe(ms * 48L, 1_000_000_000L + ms * 1_000_000L)
+        assertEquals("read_completion_estimate_unverified", clock.source)
+        assertEquals(999_000_000L, clock.anchorNs)
+        assertEquals("clock_unverified", clock.quality())
+    }
     @Test fun noisyStartupDoesNotPretendFirstTimestampIsReliable() {
         val clock = PcmClock(48000, true)
         clock.observe(0, 1_000_000_000); clock.observe(2400, 1_200_000_000); clock.observe(4800, 1_350_000_000)

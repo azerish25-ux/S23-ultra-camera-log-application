@@ -50,6 +50,26 @@ fun main() {
         c.observe(2400,1050000000); c.observe(4800,1100000000)
         check(c.quality() == "stable_nominal_clock" && c.frameAt(1100000000) == 4800L)
     }
+    test("high-frequency native timestamps qualify without shortening the 100 ms window") {
+        for (step in listOf(1, 2, 5, 10, 16, 20, 50)) {
+            val c = PcmClock(48000, true)
+            for (ms in 0..250 step step) {
+                c.observe(48L * ms, 1_000_000_000L + ms * 1_000_000L)
+                check(c.anchored == (ms >= 100))
+            }
+            check(c.quality() == "stable_nominal_clock" && c.anchorNs == 1_000_000_000L)
+        }
+    }
+    test("a changed startup origin requires a fresh stable interval") {
+        val c = PcmClock(48000, true)
+        for (ms in 0..59) c.observe(48L * ms, 1_000_000_000L + ms * 1_000_000L)
+        for (ms in 60..159) {
+            c.observe(48L * ms, 1_005_000_000L + ms * 1_000_000L)
+            check(!c.anchored)
+        }
+        c.observe(7680, 1_165_000_000L)
+        check(c.anchored && c.anchorNs == 1_005_000_000L)
+    }
     test("timestamp jump and smooth rate deviation remain distinct") {
         val c = PcmClock(48000); c.observe(0,1000000000)
         for (s in 1L..60) c.observe(48000*s,1000000000+1001000000*s)
