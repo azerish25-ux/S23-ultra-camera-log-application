@@ -1,6 +1,14 @@
-# S23Log — Phase 3D.2 acquisition isolation and timing evidence
+# S23Log — Phase 3E.1 experimental high-precision HLG processing
 
-Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not implement proprietary Samsung Log, a custom log curve or sustained RAW video.**
+Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not record proprietary Samsung Log, custom-Log video or sustained RAW video.**
+
+## Phase 3E.1 changes
+
+Opt-in **GPU HLG (experimental)** candidates add a Camera2 → explicit YUV/BT.2020 conversion → FP16 → RGB10 HLG encoder path with independently rendered SDR/HLG-signal monitoring. Direct recording choices and saved identifiers are preserved. The initial GPU route is limited to advertised <=1080p24/30 configurations and gated by rendered-HDR encoder, EGL and YUV-import capabilities. No format fallback is hidden.
+
+Pixel tests include a 1024-level ramp, a deliberately degraded 8-bit negative control, CPU/GPU colour/reference-Log comparisons, and monitor-independence checks. Existing 24/30 fps timing fixtures now pass through the production colour renderer. Real HDR encoder and camera tests report unavailable hardware explicitly; synthetic success does not certify a physical ten-bit camera path.
+
+The reference custom Log curve and inverse are specified and tested, **not enabled as a recording format**. Recorded processed footage remains HLG10. See [Phase 3E.1 scope and hardware gates](docs/PHASE3E1.md) and [colour specification 0.1](docs/COLOUR_SPEC_V0_1.md). Physical S23 Ultra acceptance and GPU 4K/8K throughput remain open.
 
 ## Phase 3D.2 changes
 
@@ -43,7 +51,7 @@ See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, high-speed/max
 - Supported manual ISO/shutter/focus controls, available white-balance presets/lock, and actual applied sensor settings from capture results. Video exposure is bounded by its frame interval; no calibrated Kelvin conversion is claimed.
 - Per-camera size/rate/encoder planning. SDR offers AVC or HEVC Surface input. HLG10 candidates require explicit camera 10-bit capability, the HLG10 profile, and a matching Surface-input HEVC Main10 encoder. P010 CPU-buffer support is not a prerequisite.
 - MediaCodec → MediaMuxer audio/video or explicit video-only recording, EOS draining and timeout, private video staging, transactional MediaStore publication, and explicitly labelled recovery of unfinished footage. API 26–28 uses private, grant-shareable files without broad storage permission.
-- Before publication: actual recorded codec/dimensions, all packet timestamps, and a decoded frame are checked. HLG10 additionally requires HEVC SPS 10-bit samples and BT.2020/HLG/limited-range tags. Unsupported HDR is **not silently downgraded to SDR**. Preview is suspended during HLG recording if the camera disallows a mixed SDR/HDR request.
+- Before publication: actual recorded codec/dimensions, all packet timestamps, and a decoded frame are checked. HLG10 additionally requires HEVC SPS 10-bit samples and BT.2020/HLG/limited-range tags. Unsupported HDR is **not silently downgraded to SDR**. In direct HLG mode, preview is suspended if the camera disallows a mixed SDR/HDR request; eligible GPU HLG modes use the independent viewing branch described above.
 - One RAW_SENSOR DNG or five sequential DNG stills, matching image and capture-result sensor timestamps, bounded image ownership, and metadata/timing reports. The sequence includes file-write time and is explicitly **not a RAW-video benchmark**.
 - Complete schema-versioned JSON/text diagnostics: per-property error isolation, physical-camera metadata, P010 camera outputs, per-size timing, high-speed and maximum-resolution stream maps, and explicit profile classification. Exports do not truncate resolution lists.
 - Application-owned probe work survives activity recreation. Scans remain available when saving fails. File sharing is limited to an exports directory with temporary URI grants.

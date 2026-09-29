@@ -15,9 +15,9 @@ data class VideoSize(val width: Int, val height: Int) {
     init { require(width > 0 && height > 0) }
     val pixels: Long get() = width.toLong() * height
 }
-data class ModeRejection(val size: VideoSize, val fps: Int, val range: DynamicRange, val mime: String, val reason: String) {
+data class ModeRejection(val size: VideoSize, val fps: Int, val range: DynamicRange, val mime: String, val reason: String, val processing: ProcessingPath = ProcessingPath.DIRECT) {
     fun describe(): Map<String, Any> = mapOf("width" to size.width, "height" to size.height, "fps" to fps,
-        "dynamicRange" to range.name, "mime" to mime, "reason" to reason, "evidence" to "advertised_rejection")
+        "dynamicRange" to range.name, "mime" to mime, "reason" to reason, "evidence" to "advertised_rejection", "processingPath" to processing.name)
 }
 
 object ModePlanning {

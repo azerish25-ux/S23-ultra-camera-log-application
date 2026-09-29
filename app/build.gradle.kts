@@ -11,8 +11,8 @@ android {
         applicationId = "com.s23log.probe"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.4.1-capture-timing"
+        versionCode = 7
+        versionName = "0.5.0-colour-pipeline"
         val revision = System.getenv("GITHUB_SHA") ?: providers.gradleProperty("sourceRevision").orNull ?: "local-unversioned"
         require(revision.matches(Regex("[a-zA-Z0-9-]+")))
         buildConfigField("String", "SOURCE_REVISION", "\"$revision\"")

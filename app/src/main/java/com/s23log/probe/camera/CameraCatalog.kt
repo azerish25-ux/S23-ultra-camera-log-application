@@ -164,6 +164,26 @@ object CameraCatalog {
                 if (!matched) reject("No compatible encoder/preview: " + failures.ifEmpty { listOf("No encoder exposes $mime") }.joinToString("; "))
             }
         }
+        // A rendered HDR route is a distinct candidate, never an upgrade of a direct mode.
+        val textureSizes = runCatching { map.getOutputSizes(SurfaceTexture::class.java).orEmpty().toSet() }.getOrDefault(emptySet())
+        for (direct in modes.toList().filter { it.range == DynamicRange.HLG10 }) {
+            val size = Size(direct.width, direct.height)
+            val textureTiming = runCatching { map.getOutputMinFrameDuration(SurfaceTexture::class.java, size) }.getOrNull()
+            val caps = capabilities[direct.encoder to direct.mime]
+            val hdrEditing = Build.VERSION.SDK_INT >= 33 && caps?.isFeatureSupported(MediaCodecInfo.CodecCapabilities.FEATURE_HdrEditing) == true
+            val hlgEditing = Build.VERSION.SDK_INT >= 35 && caps?.isFeatureSupported(MediaCodecInfo.CodecCapabilities.FEATURE_HlgEditing) == true
+            var reason = ProcessingPolicy.rejection(Build.VERSION.SDK_INT, direct,
+                size in textureSizes && textureTiming != null && CapturePolicy.nominalRateFits(textureTiming, direct.fps), hdrEditing, hlgEditing)
+            val candidate = direct.copy(processing = ProcessingPath.GPU_HLG10, previewDuringRecording = true,
+                timingAdvertised = direct.timingAdvertised && textureTiming != null && textureTiming > 0)
+            if (reason == null) reason = runCatching {
+                require(caps?.isFormatSupported(videoFormat(candidate)) == true) { "Rendered HLG encoder format rejected" }
+            }.exceptionOrNull()?.message
+            if (reason == null) modes += candidate else rejected += ModeRejection(VideoSize(direct.width,direct.height),
+                direct.fps,direct.range,direct.mime,requireNotNull(reason),ProcessingPath.GPU_HLG10)
+        }
+        notes += "GPU HLG is experimental, at most 1080p24/30. Runtime checks require explicit YUV import, FP16, RGB10 HLG EGL and an independent monitor."
+        notes += "Custom Log remains reference-only and cannot be selected for recording."
         notes += "Candidates are advertised only. Test the exact camera, codec, size, rate and colour profile on the device."
         notes += "Variable AE can slow down in low light. Manual-timing modes require confirmed manual exposure before recording."
         notes += "8K24 and 8K30 are explicit targets, not guarantees. Maximum-resolution sensor and high-speed sessions remain separate work."
@@ -173,6 +193,14 @@ object CameraCatalog {
     }
 
     fun videoFormat(mode: RecordingMode): MediaFormat = MediaFormat.createVideoFormat(mode.mime, mode.width, mode.height).apply {
+        if (mode.processing == ProcessingPath.GPU_HLG10) {
+            require(Build.VERSION.SDK_INT >= 33)
+            val caps = MediaCodecList(MediaCodecList.REGULAR_CODECS).codecInfos.first { it.name == mode.encoder }.getCapabilitiesForType(mode.mime)
+            val feature = if (Build.VERSION.SDK_INT >= 35 && caps.isFeatureSupported(MediaCodecInfo.CodecCapabilities.FEATURE_HlgEditing))
+                MediaCodecInfo.CodecCapabilities.FEATURE_HlgEditing else MediaCodecInfo.CodecCapabilities.FEATURE_HdrEditing
+            require(caps.isFeatureSupported(feature)) { "Rendered RGB10 HLG encoding unavailable" }
+            setFeatureEnabled(feature, true)
+        }
         setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
         setInteger(MediaFormat.KEY_BIT_RATE, mode.bitRate)
         setInteger(MediaFormat.KEY_FRAME_RATE, mode.fps)

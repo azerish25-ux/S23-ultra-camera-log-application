@@ -23,6 +23,8 @@ import android.os.SystemClock
 import android.util.Size
 import android.view.Surface
 import com.s23log.probe.core.AudioMode
+import com.s23log.probe.core.ProcessingPath
+import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
@@ -79,6 +81,20 @@ class CameraController(context: Context, listener: Listener) {
     private var lastAppliedAt = 0L
     private var previewHasFrames = false
     private var previewControlWarning: String? = null
+    private val closeWaiters = java.util.IdentityHashMap<CameraCaptureSession, () -> Unit>()
+    private val retiredTextures = mutableSetOf<SurfaceTexture>()
+    private var monitorTransform = MonitorTransform.SDR_TONEMAP
+    fun setMonitor(transform: MonitorTransform) { handler.post { monitorTransform = transform; recorder?.setMonitor(transform) } }
+    private fun releaseRetiredTextures() {
+        if (recorder == null) { retiredTextures.forEach { runCatching { it.release() } }; retiredTextures.clear() }
+    }
+    private fun afterPreviewClosed(active: SurfaceRecorder, ready: () -> Unit) {
+        val old = session
+        if (old == null) { ready(); return }
+        closeWaiters[old] = { if (recorder === active && state == EngineState.STARTING && wanted != null) ready() }
+        closeSession()
+        handler.postDelayed({ if (closeWaiters.remove(old) != null && recorder === active) active.cancel("Camera preview did not disconnect before GPU monitor setup") }, 5000)
+    }
 
     private fun emit(block: (Listener) -> Unit) { main.post { listener?.let(block) } }
     private fun changedControls(value: CameraControls) {
@@ -282,24 +298,38 @@ class CameraController(context: Context, listener: Listener) {
                 } }) { outcome -> handler.post completion@{
                     if (recorder !== current) return@completion
                     recorder = null
+                    releaseRetiredTextures()
                     closeSession()
                     emit { it.onVideo(outcome) }
                     resumeOrClose()
                 } }
                 val prepared = requireNotNull(current)
                 recorder = prepared
-                val encoderOutput = output(prepared.surface, mode.range).apply {
-                    if (Build.VERSION.SDK_INT >= 33) timestampBase = OutputConfiguration.TIMESTAMP_BASE_MONOTONIC
+                fun createRecordingSession(input: Surface) {
+                    if (recorder !== prepared || state != EngineState.STARTING || wanted == null) return
+                    val cameraOutput = output(input, mode.colour.inputProfile).apply {
+                        if (Build.VERSION.SDK_INT >= 33) timestampBase = OutputConfiguration.TIMESTAMP_BASE_MONOTONIC
+                    }
+                    val outputs = mutableListOf(cameraOutput)
+                    if (mode.processing == ProcessingPath.DIRECT && mode.previewDuringRecording)
+                        outputs += output(requireNotNull(previewSurface), DynamicRange.SDR)
+                    configure(outputs, {
+                        repeat(controls)
+                        prepared.sessionStarted()
+                        state(EngineState.STARTING, "Camera configured; waiting for ${if (audioMode.enabled) "video and audio samples" else "encoded footage"}…")
+                    }, { message -> prepared.cancel(message) })
                 }
-                val outputs = mutableListOf(encoderOutput)
-                if (mode.previewDuringRecording) outputs += output(requireNotNull(previewSurface), DynamicRange.SDR)
-                configure(outputs, {
-                    repeat(controls)
-                    prepared.sessionStarted()
-                    // Session configuration is not proof of recorded footage. The first
-                    // successfully muxed sample acknowledges RECORDING above.
-                    state(EngineState.STARTING, "Camera configured; waiting for ${if (audioMode.enabled) "video and audio samples" else "encoded footage"}…")
-                }, { message -> prepared.cancel(message) })
+                if (mode.processing == ProcessingPath.DIRECT) createRecordingSession(prepared.surface)
+                else afterPreviewClosed(prepared) {
+                    val preview = previewSurface
+                    if (preview == null) prepared.cancel("Preview surface disappeared before GPU setup")
+                    else prepared.prepareCameraInput(preview, CameraCatalog.previewSize(request.target, mode), monitorTransform,
+                        ready = { input -> handler.post { createRecordingSession(input) } }, fault = { message -> handler.post {
+                            if (recorder === prepared) {
+                                closeSession(); state(EngineState.STOPPING, message)
+                            }
+                        } })
+                }
             } catch (e: Exception) {
                 val active = recorder
                 if (active != null) active.cancel("Recording configuration failed: ${e.message}")
@@ -355,7 +385,8 @@ class CameraController(context: Context, listener: Listener) {
     fun detachTexture(texture: SurfaceTexture) {
         if (!handler.post {
             if (wanted?.texture === texture) { wanted = null; teardown() }
-            runCatching { texture.release() }
+            if (recorder?.mode?.processing == ProcessingPath.GPU_HLG10) retiredTextures += texture
+            else runCatching { texture.release() }
             maybeQuit()
         }) runCatching { texture.release() }
     }
@@ -399,6 +430,7 @@ class CameraController(context: Context, listener: Listener) {
         else { state(EngineState.CLOSED, "Camera closed"); maybeQuit() }
     }
     private fun maybeQuit() {
+        releaseRetiredTextures()
         if (releasing && device == null && openingToken == null && closing.isEmpty() && recorder == null && raw == null) {
             io.shutdown()
             thread.quitSafely()
@@ -468,6 +500,7 @@ class CameraController(context: Context, listener: Listener) {
                     session = created
                     try { ready() } catch (e: Exception) { closeSession(); failed("Capture request rejected: ${e.message}") }
                 }
+                override fun onClosed(created: CameraCaptureSession) { closeWaiters.remove(created)?.invoke() }
                 override fun onConfigureFailed(created: CameraCaptureSession) {
                     created.close()
                     if (sessionEpoch.isCurrent(token)) { closeSession(); failed("Camera rejected this output combination; no format downgrade was performed") }
@@ -505,8 +538,8 @@ class CameraController(context: Context, listener: Listener) {
         val target = requireNotNull(wanted).target
         val activeRecorder = recorder
         val builder = target.request(camera, if (activeRecorder == null) CameraDevice.TEMPLATE_PREVIEW else CameraDevice.TEMPLATE_RECORD).apply {
-            if (activeRecorder == null || activeRecorder.mode.previewDuringRecording) addTarget(requireNotNull(previewSurface))
-            activeRecorder?.let { addTarget(it.surface) }
+            if (activeRecorder == null || (activeRecorder.mode.processing == ProcessingPath.DIRECT && activeRecorder.mode.previewDuringRecording)) addTarget(requireNotNull(previewSurface))
+            activeRecorder?.let { addTarget(it.cameraSurface) }
             val mode = activeRecorder?.mode ?: selectedMode
             // Manual-only modes use ordinary AE preview while converging focus/WB;
             // do not send a fictitious fixed AE range before manual controls are active.

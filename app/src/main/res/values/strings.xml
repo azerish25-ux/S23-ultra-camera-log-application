@@ -68,4 +68,9 @@
     <string name="audio_video_only_action">Video only</string>
     <string name="audio_granted">Microphone access granted. Tap Record to begin.</string>
     <string name="audio_denied">Microphone denied. Allow access or explicitly choose Video only.</string>
+    <string name="monitor_sdr">Viewing: SDR tone-map</string>
+    <string name="monitor_signal">Viewing: HLG signal (not HDR display)</string>
+    <string name="colour_gpu">GPU HLG10 · experimental · Log off</string>
+    <string name="colour_direct">Direct capture · custom Log off</string>
+    <string name="colour_explanation">GPU HLG records HLG10 through a floating-point processor. Viewing changes affect preview only. Runtime precision and colour checks may reject an unsupported path. Custom Log is reference-only and is not a recording option.</string>
 </resources>

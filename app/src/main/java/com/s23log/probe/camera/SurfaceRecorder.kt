@@ -10,6 +10,10 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
 import android.view.Surface
+import android.util.Size
+import com.s23log.probe.gpu.GpuVideoProcessor
+import com.s23log.probe.core.ProcessingPath
+import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.AvMuxCoordinator
 import com.s23log.probe.core.AvMuxCoordinator.Track
@@ -48,6 +52,51 @@ class SurfaceRecorder private constructor(
     private lateinit var codec: MediaCodec
     @Volatile private var audio: AudioCapture? = null
     private var muxer: MediaMuxer? = null
+    @Volatile private var processor: GpuVideoProcessor? = null
+    @Volatile private var processingInput: Surface? = null
+    private var processingFailure: String? = null
+    private var processingCloseRequested = false
+    private var processingClosed = false
+    private val processingCloseWaiters = mutableListOf<(String?) -> Unit>()
+    private var processingSnapshot: Map<String, Any?>? = null
+    val cameraSurface: Surface get() = if (mode.processing == ProcessingPath.DIRECT) surface else requireNotNull(processingInput)
+    fun prepareCameraInput(preview: Surface, size: Size, monitor: MonitorTransform, ready: (Surface) -> Unit,
+                           fault: (String) -> Unit) {
+        handler.post {
+            if (finished || stopping) return@post
+            if (mode.processing == ProcessingPath.DIRECT) { ready(surface); return@post }
+            check(processor == null)
+            processor = GpuVideoProcessor.prepare(mode, surface, preview, size, handler, monitor, { input ->
+                if (!finished && !stopping) { processingInput = input; ready(input) }
+            }, { message ->
+                if (!finished) { processingFailure = message; fault(message); finish() }
+            })
+            handler.postDelayed({
+                if (!finished && !stopping && processingInput == null) {
+                    processingFailure = "GPU initialization timed out"
+                    fault(requireNotNull(processingFailure)); finish()
+                }
+            }, 8000)
+        }
+    }
+    fun setMonitor(transform: MonitorTransform) { handler.post { processor?.setMonitor(transform) } }
+    private fun closeProcessor(done: (String?) -> Unit) {
+        val active = processor
+        if (active == null || processingClosed) { done(processingFailure); return }
+        processingCloseWaiters += done
+        if (processingCloseRequested) return
+        processingCloseRequested = true
+        fun closed(error: String?) {
+            if (processingClosed) return
+            processingClosed = true
+            if (error != null) processingFailure = error
+            processingSnapshot = active.describe()
+            val callbacks = processingCloseWaiters.toList(); processingCloseWaiters.clear()
+            callbacks.forEach { it(processingFailure) }
+        }
+        active.close(::closed)
+        handler.postDelayed({ closed("GPU/monitor shutdown timed out; native cleanup is unconfirmed") }, 3000)
+    }
     private lateinit var coordinator: AvMuxCoordinator<MediaFormat>
     lateinit var surface: Surface; private set
     private val startGate = AvStartGate(audioMode.enabled)
@@ -151,7 +200,7 @@ class SurfaceRecorder private constructor(
         }
     }
     fun noteApplied(values: Map<String, Any?>) { applied = values.toMap() }
-    fun requestStopBoundary(cutoffNs: Long) { audio?.requestStopBoundary(cutoffNs) }
+    fun requestStopBoundary(cutoffNs: Long) { audio?.requestStopBoundary(cutoffNs); processor?.requestStop() }
     fun finish(cutoffNs: Long = System.nanoTime()) {
         requestStopBoundary(cutoffNs)
         handler.post {
@@ -159,8 +208,13 @@ class SurfaceRecorder private constructor(
             stopping = true; startGate.stop(); handler.removeCallbacks(watchdog)
             try {
                 audio?.stopGracefully(cutoffNs)
-                codec.signalEndOfInputStream()
-                handler.postDelayed({ if (!finished) complete(IllegalStateException("Audio/video end-of-stream timed out")) }, 8000)
+                closeProcessor { error ->
+                    if (error != null) processingFailure = error
+                    if (!finished) try {
+                        codec.signalEndOfInputStream()
+                        handler.postDelayed({ if (!finished) complete(IllegalStateException("Audio/video end-of-stream timed out")) }, 8000)
+                    } catch (e: Exception) { complete(e) }
+                }
             } catch (e: Exception) { complete(e) }
         }
     }
@@ -179,10 +233,13 @@ class SurfaceRecorder private constructor(
 
     private fun complete(initialError: Exception?) {
         if (finished) return
-        finished = true; startGate.stop(); handler.removeCallbacksAndMessages(null)
-        val activeAudio = audio
-        if (activeAudio != null) activeAudio.close { closeError -> finalizeMedia(initialError ?: closeError) }
-        else finalizeMedia(initialError)
+        finished = true; startGate.stop(); handler.removeCallbacks(watchdog)
+        closeProcessor { error ->
+            val failure = initialError ?: (error ?: processingFailure)?.let { IllegalStateException(it) }
+            val activeAudio = audio
+            if (activeAudio != null) activeAudio.close { closeError -> finalizeMedia(failure ?: closeError) }
+            else finalizeMedia(failure)
+        }
     }
     private fun finalizeMedia(initialError: Exception?) {
         var failure = initialError
@@ -203,7 +260,14 @@ class SurfaceRecorder private constructor(
         if (stats.frames > 0 && audioSamples > 0) stages.put("av_samples_written")
         val outcome = VideoFinalizer.finish(
             samples = stats.frames, initialError = failure,
-            verify = { RecordingVerifier.verify(context, output.uri, mode, audioMode).also { stages.put("container_and_output_checked") } },
+            verify = {
+                if (mode.processing == ProcessingPath.GPU_HLG10) {
+                    require(processingSnapshot?.get("cleanupConfirmed") == true && processingSnapshot?.get("error") == null) { "GPU recording/cleanup was not confirmed" }
+                    require((processingSnapshot?.get("submittedFrames") as? Long ?: 0) >= 2) { "GPU supplied too few recorded frames" }
+                    stages.put("gpu_hlg_pipeline_exercised")
+                }
+                RecordingVerifier.verify(context, output.uri, mode, audioMode).also { stages.put("container_and_output_checked") }
+            },
             publish = { output.publish() }, retain = { reason -> output.retain(reason) }, discardEmpty = { output.abort() },
             saveReport = { result ->
                 val report = JSONObject().put("schemaVersion", 3).put("kind", "recording-validation")
@@ -211,6 +275,8 @@ class SurfaceRecorder private constructor(
                     .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
                     .put("orientation", orientation).put("latestApplied", jsonValue(applied))
                     .put("videoOnly", !audioMode.enabled).put("customLog", false)
+                    .put("colourPipeline", jsonValue(mode.colour.describe())).put("processing", jsonValue(processingSnapshot))
+                    .put("processingError", processingFailure ?: JSONObject.NULL)
                     .put("audioMode", audioMode.name).put("audio", jsonValue(audioEvidence))
                     .put("timingQuality", timingQuality(audioEvidence, result.verification))
                     .put("audioError", audioFailure ?: JSONObject.NULL).put("audioEncodedSamples", audioSamples)

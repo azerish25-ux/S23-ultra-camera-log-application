@@ -33,6 +33,8 @@ import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.diagnostics.ProbeStore
 import com.s23log.probe.diagnostics.ModeEvidence
 import com.s23log.probe.core.ModePlanning
+import com.s23log.probe.core.ProcessingPath
+import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.PendingMedia
@@ -56,6 +58,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var modeKey: String? = null
     private var bindingControls = false
     private var latestPlan: ModePlan? = null
+    private var viewingTransform = MonitorTransform.SDR_TONEMAP
     private var manualApplied = false
     private var audioMode = AudioMode.MONO
     private var audioFailure: String? = null
@@ -127,6 +130,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         }
         button(R.id.closeControls).setOnClickListener { findViewById<View>(R.id.controlsPanel).visibility = View.GONE }
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
+        button(R.id.monitorTransform).setOnClickListener {
+            viewingTransform = if (viewingTransform == MonitorTransform.SDR_TONEMAP) MonitorTransform.HLG_SIGNAL else MonitorTransform.SDR_TONEMAP
+            controller.setMonitor(viewingTransform); updateEnabled()
+        }
         button(R.id.testMode).setOnClickListener {
             val mode = modes.firstOrNull { it.key == modeKey } ?: return@setOnClickListener
             AlertDialog.Builder(this).setTitle(R.string.test_title).setMessage(getString(R.string.test_explanation, mode.label, audioLabel(audioMode)))
@@ -359,6 +366,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         spinner(R.id.cameraSelector).isEnabled = idle
         spinner(R.id.modeSelector).isEnabled = preview && modes.isNotEmpty()
         val mode = modes.firstOrNull { it.key == modeKey }
+        val processed = mode?.processing == ProcessingPath.GPU_HLG10
+        button(R.id.monitorTransform).isEnabled = processed && (preview || recording)
+        button(R.id.monitorTransform).setText(if (viewingTransform == MonitorTransform.SDR_TONEMAP) R.string.monitor_sdr else R.string.monitor_signal)
+        text(R.id.colourStatus).setText(if (processed) R.string.colour_gpu else R.string.colour_direct)
         val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied)
         button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
         button(R.id.testMode).isEnabled = canRecord

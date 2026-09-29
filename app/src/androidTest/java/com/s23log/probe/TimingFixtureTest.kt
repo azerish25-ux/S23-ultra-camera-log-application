@@ -7,6 +7,10 @@ import android.media.MediaMuxer
 import android.opengl.EGL14
 import android.opengl.EGLExt
 import android.opengl.GLES20
+import android.opengl.GLES30
+import com.s23log.probe.gpu.ColourRenderer
+import com.s23log.probe.gpu.GlTools
+import com.s23log.probe.core.MonitorTransform
 import android.os.SystemClock
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -59,6 +63,8 @@ class TimingFixtureTest {
         var window = EGL14.EGL_NO_SURFACE
         var input: android.view.Surface? = null
         var videoStarted = false; var audioStarted = false
+        var colours: ColourRenderer? = null
+        var white = 0; var black = 0; var monitor = 0; var monitorFbo = 0
         try {
             video.configure(MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, 320, 180).apply {
                 setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface)
@@ -75,12 +81,16 @@ class TimingFixtureTest {
             check(EGL14.eglInitialize(display, version, 0, version, 1))
             val configs = arrayOfNulls<android.opengl.EGLConfig>(1); val num = IntArray(1)
             val attributes = intArrayOf(EGL14.EGL_RED_SIZE, 8, EGL14.EGL_GREEN_SIZE, 8, EGL14.EGL_BLUE_SIZE, 8,
-                EGL14.EGL_RENDERABLE_TYPE, EGL14.EGL_OPENGL_ES2_BIT, 0x3142, 1, EGL14.EGL_NONE)
+                EGL14.EGL_RENDERABLE_TYPE, EGLExt.EGL_OPENGL_ES3_BIT_KHR, 0x3142, 1, EGL14.EGL_NONE)
             check(EGL14.eglChooseConfig(display, attributes, 0, configs, 0, 1, num, 0) && num[0] > 0)
             context = EGL14.eglCreateContext(display, configs[0], EGL14.EGL_NO_CONTEXT,
-                intArrayOf(EGL14.EGL_CONTEXT_CLIENT_VERSION, 2, EGL14.EGL_NONE), 0)
+                intArrayOf(EGL14.EGL_CONTEXT_CLIENT_VERSION, 3, EGL14.EGL_NONE), 0)
             window = EGL14.eglCreateWindowSurface(display, configs[0], input, intArrayOf(EGL14.EGL_NONE), 0)
             check(EGL14.eglMakeCurrent(display, window, window, context))
+            colours = ColourRenderer(320,180)
+            white = GlTools.texture(1,1,GLES30.GL_RGBA16F,GlTools.floats(floatArrayOf(1f,1f,1f,1f)))
+            black = GlTools.texture(1,1,GLES30.GL_RGBA16F,GlTools.floats(floatArrayOf(0f,0f,0f,1f)))
+            monitor = GlTools.texture(32,18,GLES30.GL_RGBA8); monitorFbo = GlTools.fbo(monitor)
             video.start(); videoStarted = true; audio.start(); audioStarted = true
             val epochUs = 10_000_000L
             val audioOffsetUs = 125_000L // A separate track reset would visibly move both tones by 125 ms.
@@ -117,8 +127,9 @@ class TimingFixtureTest {
                 if (!videoInputEos) {
                     if (frame < 5 * fps) {
                         val light = if (frame in fps..(fps + 1) || frame in (4 * fps)..(4 * fps + 1)) 1f else 0f
-                        GLES20.glViewport(0, 0, 320, 180); GLES20.glClearColor(light, light, light, 1f)
-                        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+                        requireNotNull(colours).import(if(light==1f)white else black)
+                        requireNotNull(colours).monitor(monitorFbo,32,18,if(frame%2==0)MonitorTransform.SDR_TONEMAP else MonitorTransform.HLG_SIGNAL)
+                        requireNotNull(colours).record()
                         check(EGLExt.eglPresentationTimeANDROID(display, window, epochUs * 1000 + frame * 1_000_000_000L / fps))
                         check(EGL14.eglSwapBuffers(display, window)); frame++
                     } else { video.signalEndOfInputStream(); videoInputEos = true }
@@ -152,9 +163,13 @@ class TimingFixtureTest {
                 .put("audioInputStartOffsetUs", audioOffsetUs).put("audioEncoderDelaySamples", audioDelay ?: JSONObject.NULL)
                 .put("audioEncoderPaddingSamples", audioPadding ?: JSONObject.NULL).put("sampleRate", 48000)
                 .put("delayedWrites", delayedWrites).put("delayPerWriteMs", 75).put("commonEpochUs", coordinator.originUs)
+                .put("colourProcessor", "production_RGBA16F_HLG_identity").put("monitorChangedDuringFixture", true)
                 .put("producer", "synthetic_test_apk_only").put("physicalLipSyncVerified", false)
         } finally {
             if (display != EGL14.EGL_NO_DISPLAY) {
+                colours?.close()
+                if(monitorFbo!=0)GLES30.glDeleteFramebuffers(1,intArrayOf(monitorFbo),0)
+                intArrayOf(white,black,monitor).filter { it!=0 }.forEach { GLES30.glDeleteTextures(1,intArrayOf(it),0) }
                 EGL14.eglMakeCurrent(display, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
                 if (window != EGL14.EGL_NO_SURFACE) EGL14.eglDestroySurface(display, window)
                 if (context != EGL14.EGL_NO_CONTEXT) EGL14.eglDestroyContext(display, context)

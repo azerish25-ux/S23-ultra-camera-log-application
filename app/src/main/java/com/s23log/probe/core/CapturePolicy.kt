@@ -14,16 +14,19 @@ data class RecordingMode(
     val bitRate: Int,
     val previewDuringRecording: Boolean,
     val timingAdvertised: Boolean,
-    val ratePlan: RatePlan = RatePlan(RateControl.AE_FIXED, FpsRange(fps, fps))
+    val ratePlan: RatePlan = RatePlan(RateControl.AE_FIXED, FpsRange(fps, fps)),
+    val processing: ProcessingPath = ProcessingPath.DIRECT
 ) {
-    val label: String get() = "${width}×${height} / $fps / ${if (mime == "video/hevc") "HEVC" else "AVC"} / ${range.name} / ${ratePlan.control.label} · $encoder"
-    val key: String get() = "$width:$height:$fps:${range.name}:$encoder:$mime:${ratePlan.control.name}"
+    init { require(processing == ProcessingPath.DIRECT || (range == DynamicRange.HLG10 && mime == "video/hevc" && previewDuringRecording)) }
+    val colour: ColourPipelineSpec get() = ColourPipelineSpec.forMode(this)
+    val label: String get() = "${width}×${height} / $fps / ${if (mime == "video/hevc") "HEVC" else "AVC"} / ${range.name} / ${ratePlan.control.label} · $encoder${if (processing == ProcessingPath.GPU_HLG10) " · GPU HLG (experimental)" else ""}"
+    val key: String get() = "$width:$height:$fps:${range.name}:$encoder:$mime:${ratePlan.control.name}${if (processing == ProcessingPath.DIRECT) "" else ":GPU_HLG10"}"
     val legacyKey: String get() = "$width:$height:$fps:${range.name}:$encoder"
     fun describe(): Map<String, Any?> = mapOf("key" to key, "width" to width, "height" to height, "fps" to fps,
         "dynamicRange" to range.name, "mime" to mime, "encoder" to encoder, "bitrate" to bitRate,
         "rateControl" to ratePlan.control.name, "aeRange" to ratePlan.aeRange?.let { listOf(it.lower, it.upper) },
         "requiresManualExposure" to ratePlan.requiresManual, "timingAdvertised" to timingAdvertised,
-        "previewDuringRecording" to previewDuringRecording, "evidence" to "advertised_candidate", "customLog" to false)
+        "previewDuringRecording" to previewDuringRecording, "evidence" to "advertised_candidate", "customLog" to false, "colourPipeline" to colour.describe())
 }
 
 object CapturePolicy {
