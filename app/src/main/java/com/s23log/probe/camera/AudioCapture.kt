@@ -20,6 +20,7 @@ import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.ChannelLevel
 import com.s23log.probe.core.PcmClock
 import com.s23log.probe.core.PcmLevels
+import com.s23log.probe.core.PcmFrameQueue
 import java.nio.ByteBuffer
 import java.util.ArrayDeque
 import java.nio.ByteOrder
@@ -41,12 +42,10 @@ class AudioCapture private constructor(
         fun failed(error: Exception)
         fun meter(value: Meter)
     }
-    private data class Pcm(val data: ByteBuffer, var frame: Long)
     private val clock = PcmClock(AudioMode.SAMPLE_RATE)
     private val inputIndices = ArrayDeque<Int>()
-    private val pending = ArrayDeque<Pcm>()
+    private val pending = PcmFrameQueue(mode.channels)
     private val shorts = ShortArray(1024 * mode.channels)
-    private var pendingFrames = 0
     private var readFrames = 0L
     private var queuedFrames = 0L
     private var firstReadNs = 0L
@@ -75,10 +74,9 @@ class AudioCapture private constructor(
                     if (count > 0) {
                         check(count % mode.channels == 0) { "Unaligned microphone frame" }
                         val frames = count / mode.channels
-                        check(pendingFrames + frames <= AudioMode.SAMPLE_RATE * 2) { "Microphone encoder backlog exceeded two seconds" }
                         val data = ByteBuffer.allocate(count * 2).order(ByteOrder.nativeOrder())
                         data.asShortBuffer().put(shorts, 0, count)
-                        pending.addLast(Pcm(data, readFrames)); pendingFrames += frames; readFrames += frames
+                        pending.offer(data, readFrames); readFrames += frames
                         lastReadMs = now
                         if (firstReadNs == 0L) { firstReadNs = System.nanoTime(); firstReadFrames = readFrames }
                         val stamp = AudioTimestamp()
@@ -126,26 +124,20 @@ class AudioCapture private constructor(
         }
     }
     private fun queuePcm() {
-        while (inputIndices.isNotEmpty() && pending.isNotEmpty() && clock.anchored) {
+        while (inputIndices.isNotEmpty() && pending.ready(stopped) && clock.anchored) {
             val index = inputIndices.removeFirst()
             val input = requireNotNull(codec.getInputBuffer(index)).apply { clear() }
-            val pcm = pending.first()
-            val bytesPerFrame = mode.channels * 2
-            val bytes = minOf(input.remaining(), pcm.data.remaining()) / bytesPerFrame * bytesPerFrame
-            check(bytes > 0) { "AAC input buffer cannot hold a PCM frame" }
-            val frames = bytes / bytesPerFrame
-            val data = pcm.data.duplicate().apply { limit(position() + bytes) }
-            input.put(data)
-            val ptsUs = clock.timestampUs(pcm.frame)
+            // AudioRecord reads may be partial. Coalesce them before AAC input;
+            // tiny input buffers can cause codec timestamp rounding/discontinuities.
+            val batch = requireNotNull(pending.drainTo(input, stopped))
+            val ptsUs = clock.timestampUs(batch.firstFrame)
             check(ptsUs >= 0 && (firstQueueUs == null || ptsUs >= lastQueueEndUs)) { "Microphone clock regressed" }
-            codec.queueInputBuffer(index, 0, bytes, ptsUs, 0)
+            codec.queueInputBuffer(index, 0, batch.bytes, ptsUs, 0)
             firstQueueUs = firstQueueUs ?: ptsUs
-            pcm.data.position(pcm.data.position() + bytes); pcm.frame += frames
-            pendingFrames -= frames; queuedFrames += frames
-            lastQueueEndUs = clock.timestampUs(pcm.frame)
-            if (!pcm.data.hasRemaining()) pending.removeFirst()
+            queuedFrames += batch.frames
+            lastQueueEndUs = clock.timestampUs(batch.firstFrame + batch.frames)
         }
-        if (stopped && pending.isEmpty() && inputIndices.isNotEmpty() && !eosQueued) {
+        if (stopped && pending.frames == 0 && inputIndices.isNotEmpty() && !eosQueued) {
             eosQueued = true
             codec.queueInputBuffer(inputIndices.removeFirst(), 0, 0, lastQueueEndUs.coerceAtLeast(0), MediaCodec.BUFFER_FLAG_END_OF_STREAM)
         }
@@ -168,7 +160,7 @@ class AudioCapture private constructor(
         attempt { record.release() }
         attempt { if (started) codec.stop() }
         attempt { codec.release() }
-        pending.clear(); inputIndices.clear(); pendingFrames = 0
+        pending.clear(); inputIndices.clear()
         error?.let { throw it }
     }
     fun describe(): Map<String, Any?> = mapOf(

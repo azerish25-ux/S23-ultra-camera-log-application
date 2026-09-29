@@ -79,6 +79,9 @@ class AudioEvidenceChecks(unittest.TestCase):
     check = EvidenceChecks.check
     def setUp(self):
         EvidenceChecks.setUp(self)
+        self.files["files/exports/microphone-permission-test.json"] = json.dumps({key: True for key in
+            ("initialMicrophonePermissionDenied", "systemDenialClicked", "cancelPreservedIntent", "denialPreservedIntent",
+             "videoOnlyExplicit", "mutedRecordingChecked", "microphoneStillDenied")})
         self.clips = [dict(c) for c in self.clips]
         for i in range(6):
             self.clips[i].update(audioPresent=True, audioFullDecodePassed=True, audioPacketSpanSeconds=65,
@@ -114,4 +117,8 @@ class AudioEvidenceChecks(unittest.TestCase):
         name = "files/exports/validation/recording-0.json"
         report = json.loads(self.files[name]); report["verification"].pop("firstAudioPcmDecoded")
         self.files[name] = json.dumps(report)
+        with self.assertRaises(ValueError): self.check(True)
+
+    def test_real_permission_denial_evidence_is_required(self):
+        del self.files["files/exports/microphone-permission-test.json"]
         with self.assertRaises(ValueError): self.check(True)

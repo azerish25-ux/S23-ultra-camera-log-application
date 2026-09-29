@@ -13,6 +13,7 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
     if max(c["packetSpanSeconds"] for c in clips) < 60:
         raise ValueError("No recording contains at least sixty seconds of packet timestamps")
     reports, probes, text_reports = [], [], set()
+    permission_evidence = None
     # Read regular files only. Never extract device paths into the host filesystem.
     with tarfile.open(archive) as tar:
         for member in tar:
@@ -25,6 +26,11 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
             if name.startswith("files/exports/reports/") and name.endswith(".txt"):
                 if member.size > 0:
                     text_reports.add(name[:-4])
+            if name == "files/exports/microphone-permission-test.json":
+                if not 0 < member.size <= 16384:
+                    raise ValueError("Invalid microphone permission evidence size")
+                with tar.extractfile(member) as source:
+                    permission_evidence = json.load(source)
             is_recording = name.startswith("files/exports/validation/recording-") and name.endswith(".json")
             is_probe = name.startswith("files/exports/reports/report-") and name.endswith(".json")
             if not (is_recording or is_probe):
@@ -54,6 +60,10 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
     audio_clips = [c for c in clips if c.get("audioPresent") is True]
     audio_reports = [r for r in reports if r.get("videoOnly") is False]
     if require_audio:
+        required_permission_checks = ("initialMicrophonePermissionDenied", "systemDenialClicked", "cancelPreservedIntent",
+                                      "denialPreservedIntent", "videoOnlyExplicit", "mutedRecordingChecked", "microphoneStillDenied")
+        if not permission_evidence or not all(permission_evidence.get(key) is True for key in required_permission_checks):
+            raise ValueError("Missing real microphone runtime-permission denial evidence")
         if len(audio_clips) < 6 or len(audio_reports) != len(audio_clips):
             raise ValueError("Missing repeated, sustained and stereo audio/video capture evidence")
         if not all(c.get("audioFullDecodePassed") is True for c in audio_clips):
@@ -72,7 +82,7 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
                 raise ValueError("Missing actual microphone/clock/decoded-audio evidence")
     return {"recordings": len(clips), "recordingReports": len(reports), "probeReports": len(probes),
             "longestPacketSpanSeconds": max(c["packetSpanSeconds"] for c in clips),
-            "audioRecordings": len(audio_clips), "allAudioFullyDecoded": all(c.get("audioFullDecodePassed") is True for c in audio_clips) if audio_clips else None,
+            "audioRecordings": len(audio_clips), "permissionDenialVerified": permission_evidence is not None, "allAudioFullyDecoded": all(c.get("audioFullDecodePassed") is True for c in audio_clips) if audio_clips else None,
             "allVideosFullyDecoded": True, "physicalLipSyncVerified": False, "scope": "emulator evidence; not physical S23 Ultra validation"}
 
 

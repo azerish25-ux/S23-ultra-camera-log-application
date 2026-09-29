@@ -34,5 +34,18 @@ fun main() {
         mux.sample(Track.VIDEO,packet(),1,0); check(runCatching { mux.sample(Track.AUDIO,packet(),9000000,0) }.isFailure)
         check(mux.finish() && sink.writes.all { it.first==Track.VIDEO })
     }
+    test("partial PCM reads become complete AAC frames") {
+        val q=PcmFrameQueue(2); var offered=0L; var consumed=0L
+        repeat(500) { i ->
+            val n=1+i*37%1300; q.offer(ByteBuffer.allocate(n*4),offered); offered+=n
+            while(q.ready(false)) { val b=requireNotNull(q.drainTo(ByteBuffer.allocate(4096),false)); check(b.firstFrame==consumed && b.frames==1024); consumed+=b.frames }
+        }
+        q.drainTo(ByteBuffer.allocate(4096),true)?.let { check(it.firstFrame==consumed); consumed+=it.frames }
+        check(offered==consumed && q.frames==0)
+    }
+    test("encoder input shortage does not lose PCM") {
+        val q=PcmFrameQueue(1); q.offer(ByteBuffer.allocate(2048),0)
+        check(runCatching { q.drainTo(ByteBuffer.allocate(16),false) }.isFailure && q.frames==1024)
+    }
     println("$count audio policy checks passed")
 }

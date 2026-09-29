@@ -68,6 +68,7 @@ class AudioRecordingTest {
                 val audio = verification.getJSONObject("audio")
                 assertEquals("AAC-LC", audio.getString("profile")); assertEquals(48000, audio.getInt("sampleRate")); assertEquals(channels, audio.getInt("channels"))
                 assertTrue(audio.getLong("samples") >= 2)
+                assertEquals("AAC timestamps must not inherit partial-read gaps", 0, audio.getInt("largeFrameIntervals"))
                 assertTrue(json.getJSONObject("audio").getBoolean("builtInRouteConfirmed"))
                 assertTrue(json.getJSONObject("audio").getJSONObject("clock").getString("source") != "unavailable")
                 assertFalse(verification.getBoolean("physicalLipSyncVerified"))
@@ -107,25 +108,5 @@ class AudioRecordingTest {
             val previous = CaptureHistory.latest(context).report?.name
             begin(scenario); Thread.sleep(4000); click(scenario, R.id.record); output(previous, channels = 2)
         }
-    }
-    @Test fun deniedMicrophoneDoesNotSilentlyRecordVideoOnly() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        fun appop(mode: String) { automation.executeShellCommand("appops set ${context.packageName} RECORD_AUDIO $mode").use { descriptor ->
-            android.os.ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { it.readBytes() }
-        } }
-        try {
-            appop("deny")
-            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-                ready(scenario)
-                val previous = CaptureHistory.latest(context).report?.name
-                click(scenario, R.id.record)
-                await(scenario, "Microphone denial reported without a silent take") {
-                    it.findViewById<TextView>(R.id.audioStatus).text.contains("failed", ignoreCase = true) ||
-                        automation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Record with microphone audio?")?.isNotEmpty() == true
-                }
-                scenario.onActivity { assertFalse(it.findViewById<TextView>(R.id.cameraStatus).text.startsWith("Recording ")) }
-                assertEquals(previous, CaptureHistory.latest(context).report?.name)
-            }
-        } finally { appop("allow") }
     }
 }

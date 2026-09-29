@@ -48,7 +48,16 @@ adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
 # AGP normally uninstalls both APKs after connected tests, deleting private reports.
 # This is the exact BooleanOption name in the pinned AGP 9.4 toolchain.
-./gradlew --no-daemon -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true :app:connectedDebugAndroidTest
+# The real-denial test runs in its own process: revoking a granted runtime permission
+# kills the app, and package-level appops writes are ignored for runtime ops on API 36.
+./gradlew --no-daemon -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true \
+  -Pandroid.testInstrumentationRunnerArguments.notClass=com.s23log.probe.AudioPermissionTest :app:connectedDebugAndroidTest
+timeout 15 adb shell am force-stop com.s23log.probe
+timeout 15 adb shell pm revoke com.s23log.probe android.permission.RECORD_AUDIO
+timeout 15 adb shell pm clear-permission-flags com.s23log.probe android.permission.RECORD_AUDIO user-set user-fixed
+timeout 240 adb shell am instrument -w -r -e class com.s23log.probe.AudioPermissionTest \
+  com.s23log.probe.test/androidx.test.runner.AndroidJUnitRunner | tee evidence/emulator/permission-instrumentation.txt
+grep -q '^OK (1 test)' evidence/emulator/permission-instrumentation.txt
 timeout 15 adb shell pm path com.s23log.probe | grep '^package:'
 timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.tar
 [[ -s evidence/emulator/app-evidence.tar ]] || { echo 'Device reports were not preserved'; exit 1; }

@@ -16,7 +16,7 @@ On API 33+, the MediaCodec camera output explicitly requests OutputConfiguration
 
 A HAL that supplies no usable audio timestamp within the startup window uses a clearly labelled `read_completion_estimate_unverified`. It preserves sound, not a synchronization guarantee. The observed deviation between later timestamps and the nominal sample clock is recorded; this milestone does not resample to compensate for oscillator drift. On API 26–32, encoder defaults are labelled legacy/unverified. No path claims physical lip-sync certification. Camera SENSOR_TIMESTAMP and encoder-surface timestamps must not be interchanged.
 
-Both encoders drain with an eight-second EOS deadline. Audio reads are nonblocking on the recorder handler, so no audio-thread join can deadlock finalization. There are separate microphone/encoded-sample watchdogs. Foreground-only behaviour remains: leaving/rotating the activity finalizes the take. MediaStore staging, recovery, report-save failure handling and first-video-frame safeguards are preserved.
+Both encoders drain with an eight-second EOS deadline. Partial microphone reads are coalesced into 1024-sample AAC-LC inputs (except the final tail), preserving a contiguous sample-count timeline. Audio reads are nonblocking on the recorder handler, so no audio-thread join can deadlock finalization. There are separate microphone/encoded-sample watchdogs. Foreground-only behaviour remains: leaving/rotating the activity finalizes the take. MediaStore staging, recovery, report-save failure handling and first-video-frame safeguards are preserved.
 
 ## Evidence and tests
 
@@ -24,10 +24,11 @@ Recording validation schema 3 includes the audio mode, configured channels/rate/
 
 Packet start/end offsets and missing intervals are reported separately from file integrity. `within_250ms` describes broad track coverage only, NOT a lip-sync tolerance. Warning clips are preserved. Encoder priming/padding is reported when exposed. `checked` still means media integrity, not full-duration synchronization/quality certification.
 
-JUnit/standalone policy tests exercise delayed formats, common-epoch offsets, mutable-buffer ownership, startup limits, early stop/partial recovery, late callbacks, PCM clock drift/fallback and clipping. Python tests reject missing/extra audio, mismatched channels/rate/profile, duplicate/regressing timestamps and missing CI audio evidence. Instrumentation uses real emulated Camera2/AudioRecord/AAC for repeated mono takes, stereo, a 65-second take, lifecycle finalization and denied-microphone behaviour. CI explicitly requires at least six fully decoded audio recordings, including stereo and a >=60-second audio sample span. Emulated input may be silence and does not establish physical acoustic sync.
+JUnit/standalone policy tests exercise delayed formats, common-epoch offsets, mutable-buffer ownership, startup limits, early stop/partial recovery, late callbacks, PCM clock drift/fallback and clipping. Python tests reject missing/extra audio, mismatched channels/rate/profile, duplicate/regressing timestamps and missing CI audio evidence. Instrumentation uses real emulated Camera2/AudioRecord/AAC for repeated mono takes, stereo, a 65-second take and lifecycle finalization. A separate instrumentation process starts after actual runtime-permission revocation and exercises the system microphone denial button, cancellation, preserved audio intent, and explicitly muted recording; CI requires its evidence. It does not assume that a package-level AppOps command denied access. CI explicitly requires at least six fully decoded audio recordings, including stereo and a >=60-second audio sample span. Emulated input may be silence and does not establish physical acoustic sync.
 
 ```sh
-./gradlew :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:connectedDebugAndroidTest
+./gradlew :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease
+bash .github/scripts/emulator-test.sh # Complete two-process microphone permission + recording suite
 python3 -m unittest discover -s scripts/tests -v
 python3 scripts/check_video.py capture.mp4 --expect-audio --audio-channels 1 --min-duration 60
 python3 scripts/check_video.py muted.mp4 --expect-video-only
