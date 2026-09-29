@@ -100,8 +100,14 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         spinner(R.id.modeSelector).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                // Adapter/layout callbacks may arrive after a newer selection was bound.
+                if (parent?.selectedItemPosition != position) return
                 val mode = modes.getOrNull(position) ?: return
-                if (!bindingControls && mode.key != modeKey && engineState == EngineState.PREVIEW) controller.selectMode(mode)
+                if (!bindingControls && mode.key != modeKey && engineState == EngineState.PREVIEW) {
+                    // Close the UI's ready window immediately, before the camera-thread hop.
+                    onState(EngineState.OPENING, "Matching preview to ${mode.label}…")
+                    controller.selectMode(mode)
+                }
             }
         }
         button(R.id.recoverCaptures).setOnClickListener { showRecovery() }

@@ -11,6 +11,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import com.s23log.probe.storage.CaptureHistory
+import com.s23log.probe.storage.CameraSettings
+import com.s23log.probe.camera.CameraCatalog
+import com.s23log.probe.core.DynamicRange
+import com.s23log.probe.core.RecordingMode
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Rule
@@ -46,7 +50,8 @@ class CameraSmokeTest {
     private fun click(scenario: ActivityScenario<MainActivity>, id: Int) {
         scenario.onActivity { activity ->
             val button = activity.findViewById<Button>(id)
-            assertTrue("Button $id must be enabled", button.isEnabled)
+            assertTrue("${activity.resources.getResourceEntryName(id)} must be enabled; state: " +
+                activity.findViewById<TextView>(R.id.cameraStatus).text, button.isEnabled)
             assertTrue(button.performClick())
         }
     }
@@ -189,22 +194,70 @@ class CameraSmokeTest {
         }
     }
 
+    private fun advertisedSdrModes(): List<RecordingMode> {
+        val selected = requireNotNull(CameraSettings.camera(context))
+        val manager = context.getSystemService(android.hardware.camera2.CameraManager::class.java)
+        val target = CameraCatalog.discover(manager).targets.first { it.key == selected }
+        return CameraCatalog.plan(target).modes.filter { it.range == DynamicRange.SDR }
+    }
+
+    private fun selectReadyMode(scenario: ActivityScenario<MainActivity>, mode: RecordingMode) {
+        await(scenario, "mode selector ready") {
+            it.findViewById<android.widget.Spinner>(R.id.modeSelector).isEnabled
+        }
+        scenario.onActivity { activity ->
+            val selector = activity.findViewById<android.widget.Spinner>(R.id.modeSelector)
+            val choice = (0 until selector.count).first { selector.getItemAtPosition(it).toString() == mode.label }
+            selector.setSelection(choice)
+        }
+        // A stale Live-preview label (or a fixed sleep) is not acknowledgement of
+        // this selection. Require the engine's accepted key AND its new live session.
+        await(scenario, "fresh live preview for ${mode.label}") { activity ->
+            val key = CameraSettings.camera(context)
+            key != null && CameraSettings.mode(context, key) == mode.key &&
+                activity.findViewById<android.widget.Spinner>(R.id.modeSelector).selectedItem.toString() == mode.label &&
+                activity.findViewById<TextView>(R.id.cameraStatus).text.toString().startsWith("Live preview") &&
+                activity.findViewById<Button>(R.id.applyControls).isEnabled &&
+                activity.findViewById<Button>(R.id.record).isEnabled
+        }
+    }
+
+    @Test fun repeatedModeChangesRestoreLivePreviewAndActionReadiness() {
+        val settings = context.getSharedPreferences("camera_settings_v1", Context.MODE_PRIVATE)
+        val before = settings.all.filterValues { it is String }
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                live(scenario)
+                val choices = advertisedSdrModes()
+                assertTrue("At least one SDR candidate is required", choices.isNotEmpty())
+                for (mode in listOf(choices.last(), choices.first(), choices.last())) {
+                    selectReadyMode(scenario, mode)
+                    scenario.recreate()
+                    live(scenario)
+                    scenario.onActivity { activity ->
+                        val key = requireNotNull(CameraSettings.camera(context))
+                        assertEquals(mode.key, CameraSettings.mode(context, key))
+                        assertEquals(mode.label, activity.findViewById<android.widget.Spinner>(R.id.modeSelector).selectedItem.toString())
+                        assertTrue(activity.findViewById<Button>(R.id.applyControls).isEnabled)
+                        assertTrue(activity.findViewById<Button>(R.id.record).isEnabled)
+                    }
+                }
+            }
+        } finally {
+            val editor = settings.edit().clear()
+            before.forEach { (key, value) -> editor.putString(key, value as String) }
+            assertTrue(editor.commit())
+        }
+    }
+
     @Test fun selectedModeAndControlIntentSurviveRecreation() {
         val settings = context.getSharedPreferences("camera_settings_v1", Context.MODE_PRIVATE)
         val before = settings.all.filterValues { it is String }
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 live(scenario)
-                val label = AtomicReference("")
-                scenario.onActivity { activity ->
-                    val modes = activity.findViewById<android.widget.Spinner>(R.id.modeSelector)
-                    assertTrue(modes.count > 0)
-                    val choice = (0 until modes.count).last { modes.getItemAtPosition(it).toString().contains("SDR") }
-                    label.set(modes.getItemAtPosition(choice).toString())
-                    modes.setSelection(choice)
-                }
-                Thread.sleep(500)
-                live(scenario)
+                val mode = advertisedSdrModes().last()
+                selectReadyMode(scenario, mode)
                 scenario.onActivity { activity ->
                     activity.findViewById<android.widget.CompoundButton>(R.id.manualExposure).isChecked = false
                     activity.findViewById<android.widget.EditText>(R.id.isoInput).setText("125")
@@ -212,15 +265,16 @@ class CameraSmokeTest {
                 }
                 click(scenario, R.id.applyControls)
                 await(scenario, "accepted control intent saved") {
-                    val key = com.s23log.probe.storage.CameraSettings.camera(context)!!
-                    com.s23log.probe.storage.CameraSettings.controls(context, key).iso == 125
+                    val key = requireNotNull(CameraSettings.camera(context))
+                    val saved = CameraSettings.controls(context, key)
+                    saved.iso == 125 && saved.exposureNs == 20_000_000L && !saved.manualExposure
                 }
                 scenario.recreate()
                 live(scenario)
                 scenario.onActivity { activity ->
                     assertEquals("125", activity.findViewById<android.widget.EditText>(R.id.isoInput).text.toString())
                     assertEquals("20.000000", activity.findViewById<android.widget.EditText>(R.id.shutterInput).text.toString())
-                    assertEquals(label.get(), activity.findViewById<android.widget.Spinner>(R.id.modeSelector).selectedItem.toString())
+                    assertEquals(mode.label, activity.findViewById<android.widget.Spinner>(R.id.modeSelector).selectedItem.toString())
                 }
             }
         } finally {

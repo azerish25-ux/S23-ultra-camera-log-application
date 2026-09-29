@@ -113,13 +113,15 @@ class CameraController(context: Context, listener: Listener) {
             try {
                 val request = requireNotNull(wanted)
                 val size = CameraCatalog.previewSize(request.target, mode)
+                // Closing/flushing the old session can block. Stop advertising readiness
+                // before doing it, not after the replacement Surface has been created.
+                state(EngineState.OPENING, "Matching preview to ${mode.label}…")
                 selectedMode = mode
                 closeSession()
                 previewSurface?.release()
                 request.texture.setDefaultBufferSize(size.width, size.height)
                 previewSurface = Surface(request.texture)
                 emit { it.onModeChanged(request.target.key, mode, size) }
-                state(EngineState.OPENING, "Matching preview to ${mode.label}…")
                 configurePreview()
             } catch (e: Exception) { fail("Mode preview unavailable: ${e.message}") }
         }
@@ -449,9 +451,11 @@ class CameraController(context: Context, listener: Listener) {
                 previewControlWarning = "Saved controls unavailable: ${e.message}. Auto defaults restored."
                 changedControls(controls)
             }
-            state(EngineState.PREVIEW, "Preview configured; waiting for sensor frames")
+            // onConfigured proves configuration only. Recording and control changes
+            // become available in onCaptureCompleted after this session delivers a frame.
+            state(EngineState.OPENING, "Preview configured; waiting for sensor frames")
             val token = sessionEpoch.current()
-            handler.postDelayed({ if (sessionEpoch.isCurrent(token) && !previewHasFrames && state == EngineState.PREVIEW) fail("Preview session produced no frames") }, 10_000)
+            handler.postDelayed({ if (sessionEpoch.isCurrent(token) && !previewHasFrames && state == EngineState.OPENING) fail("Preview session produced no frames") }, 10_000)
         }, ::fail)
     }
     private fun repeat(value: CameraControls, afTrigger: Int? = null) {
@@ -471,16 +475,17 @@ class CameraController(context: Context, listener: Listener) {
                 if (!sessionEpoch.isCurrent(token) || !requestEpoch.isCurrent(requestToken) || session !== s) return
                 if (!previewHasFrames && activeRecorder == null) {
                     previewHasFrames = true
-                    state(EngineState.PREVIEW, "Live preview · SDR · ${selectedMode?.fps ?: "auto"} fps target · no Log transform" +
-                        (previewControlWarning?.let { ". $it" } ?: ""))
                     afterFirstPreview?.let { restore ->
                         afterFirstPreview = null
                         try { beginManual(restore) } catch (e: Exception) {
                             intentControls = controls
-                            changedControls(controls); emit { it.onState(state, "Restored manual controls unavailable: ${e.message}. Auto exposure remains active.") }
+                            changedControls(controls)
+                            state(EngineState.PREVIEW, "Restored manual controls unavailable: ${e.message}. Auto exposure remains active.")
                         }
-                        return
+                        return // Restored manual intent is not ready until its locks are confirmed.
                     }
+                    state(EngineState.PREVIEW, "Live preview · SDR · ${selectedMode?.fps ?: "auto"} fps target · no Log transform" +
+                        (previewControlWarning?.let { ". $it" } ?: ""))
                 }
                 val actual = if (target.physicalId != null && Build.VERSION.SDK_INT >= 28) result.physicalCameraResults[target.physicalId] else result
                 advanceManual(actual)

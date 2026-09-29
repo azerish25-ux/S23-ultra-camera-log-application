@@ -63,4 +63,9 @@ class ManualExposureGateTest {
         assertFalse(CapturePolicy.canStartRecording(com.s23log.probe.core.EngineState.ADJUSTING))
         assertFalse(CapturePolicy.canChangeCamera(com.s23log.probe.core.EngineState.ADJUSTING))
     }
+    @Test fun configuringPreviewCannotRecordOrSwitchCameras() {
+        assertFalse(CapturePolicy.canStartRecording(com.s23log.probe.core.EngineState.OPENING))
+        assertFalse(CapturePolicy.canChangeCamera(com.s23log.probe.core.EngineState.OPENING))
+    }
+
 }

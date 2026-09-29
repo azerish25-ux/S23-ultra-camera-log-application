@@ -28,3 +28,9 @@ Hardware acceptance remains separate: verify 24/30-fps long-shutter behaviour, f
 - https://developer.android.com/reference/android/hardware/camera2/CaptureResult (lock and applied-setting acknowledgement)
 - https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#getAvailablePhysicalCameraRequestKeys()
 - https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.Builder#setPhysicalCameraKey(android.hardware.camera2.CaptureRequest.Key,T,java.lang.String)
+
+## Preview readiness regression
+
+Mode changes leave PREVIEW before closing/flushing the old capture session, and the UI disables actions before dispatching that change to the camera thread. Session configuration alone stays in OPENING; only the first valid result for the new session advertises live PREVIEW. A ten-second no-frame deadline still fails closed. Obsolete spinner-position callbacks are ignored.
+
+The mode-restoration device test waits for both the exact accepted mode key and a live, actionable preview, rather than sleeping 500 ms and accepting the old session's status. Repeated mode switches followed by activity recreation are also exercised. These are bounded state assertions, not retries of failing tests or relaxed recording checks.
