@@ -124,7 +124,7 @@ class AudioCapture private constructor(
         }
     }
     private fun queuePcm() {
-        while (inputIndices.isNotEmpty() && pending.ready(stopped) && clock.anchored) {
+        while (!eosQueued && inputIndices.isNotEmpty() && pending.ready(stopped) && clock.anchored) {
             val index = inputIndices.removeFirst()
             val input = requireNotNull(codec.getInputBuffer(index)).apply { clear() }
             // AudioRecord reads may be partial. Coalesce them before AAC input;
@@ -132,14 +132,20 @@ class AudioCapture private constructor(
             val batch = requireNotNull(pending.drainTo(input, stopped))
             val ptsUs = clock.timestampUs(batch.firstFrame)
             check(ptsUs >= 0 && (firstQueueUs == null || ptsUs >= lastQueueEndUs)) { "Microphone clock regressed" }
-            codec.queueInputBuffer(index, 0, batch.bytes, ptsUs, 0)
+            // Carry EOS with the final PCM, so a partial AAC frame is flushed on
+            // its own sample timestamp rather than a later empty-buffer timestamp.
+            codec.queueInputBuffer(index, 0, batch.bytes, ptsUs,
+                if (batch.endOfStream) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0)
+            if (batch.endOfStream) eosQueued = true
             firstQueueUs = firstQueueUs ?: ptsUs
             queuedFrames += batch.frames
             lastQueueEndUs = clock.timestampUs(batch.firstFrame + batch.frames)
         }
         if (stopped && pending.frames == 0 && inputIndices.isNotEmpty() && !eosQueued) {
             eosQueued = true
-            codec.queueInputBuffer(inputIndices.removeFirst(), 0, 0, lastQueueEndUs.coerceAtLeast(0), MediaCodec.BUFFER_FLAG_END_OF_STREAM)
+            // No PCM remains (e.g. an exact block boundary or immediate Stop).
+            // MediaCodec specifies that an empty EOS timestamp is ignored.
+            codec.queueInputBuffer(inputIndices.removeFirst(), 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM)
         }
     }
     fun stopGracefully() {

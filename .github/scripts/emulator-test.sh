@@ -30,6 +30,11 @@ cleanup() {
   if [[ ! -s evidence/emulator/app-evidence.tar ]]; then
     timeout 30 adb exec-out run-as com.s23log.probe tar -cf - files/exports shared_prefs > evidence/emulator/app-evidence.partial.tar
   fi
+  if [[ "$status" != 0 && ! -d evidence/emulator/videos ]]; then
+    # Failed assertions still need the original MP4s for independent packet analysis.
+    # Failure evidence is separate and cannot satisfy the normal acceptance checks.
+    timeout 45 adb pull /sdcard/Movies/S23Log evidence/emulator/failed-videos
+  fi
   timeout 10 adb emu kill
   kill "$emulator_pid" 2>/dev/null
   exit "$status"

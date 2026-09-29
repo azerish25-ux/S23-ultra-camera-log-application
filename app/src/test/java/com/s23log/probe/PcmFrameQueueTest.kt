@@ -59,4 +59,30 @@ class PcmFrameQueueTest {
         try { queue.drainTo(ByteBuffer.allocate(8), false); fail() } catch (_: IllegalArgumentException) { }
         assertEquals(1024, queue.frames)
     }
+    @Test fun onlyLastValidBufferCarriesEosWhenStopping() {
+        for (channels in 1..2) for (tail in listOf(1, 128, 512, 640, 1023, 1024)) {
+            val queue = PcmFrameQueue(channels)
+            val total = 2048 + tail
+            queue.offer(ByteBuffer.allocate(total * channels * 2), 0)
+            var consumed = 0L
+            var eosCount = 0
+            while (queue.ready(true)) {
+                val batch = requireNotNull(queue.drainTo(ByteBuffer.allocate(4096), true))
+                assertEquals(consumed, batch.firstFrame)
+                consumed += batch.frames
+                assertEquals(consumed == total.toLong(), batch.endOfStream)
+                if (batch.endOfStream) eosCount++
+            }
+            assertEquals(total.toLong(), consumed)
+            assertEquals(1, eosCount)
+            assertNull(queue.drainTo(ByteBuffer.allocate(4096), true))
+        }
+    }
+    @Test fun liveInputNeverSignalsEndAndEmptyStopDoesNotInventPcm() {
+        val queue = PcmFrameQueue(1)
+        queue.offer(ByteBuffer.allocate(2048), 0)
+        assertFalse(requireNotNull(queue.drainTo(ByteBuffer.allocate(2048), false)).endOfStream)
+        assertFalse(queue.ready(true))
+        assertNull(queue.drainTo(ByteBuffer.allocate(2048), true))
+    }
 }

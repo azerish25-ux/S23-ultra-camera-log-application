@@ -6,7 +6,7 @@ import java.util.ArrayDeque
 /** Owns bounded interleaved PCM and emits complete AAC-LC frames, except the final tail. */
 class PcmFrameQueue(private val channels: Int, private val maxFrames: Int = 96_000) {
     init { require(channels in 1..2 && maxFrames >= 1024) }
-    data class Batch(val firstFrame: Long, val frames: Int, val bytes: Int)
+    data class Batch(val firstFrame: Long, val frames: Int, val bytes: Int, val endOfStream: Boolean)
     private data class Chunk(val bytes: ByteBuffer, var firstFrame: Long)
     private val chunks = ArrayDeque<Chunk>()
     private val bytesPerFrame = channels * 2
@@ -37,7 +37,9 @@ class PcmFrameQueue(private val channels: Int, private val maxFrames: Int = 96_0
             remaining -= bytes
         }
         frames -= count
-        return Batch(first, count, count * bytesPerFrame)
+        // Keep EOS on the last valid buffer, including a short final AAC input.
+        // A separate empty EOS must not retime that partial frame during codec flush.
+        return Batch(first, count, count * bytesPerFrame, stopping && frames == 0)
     }
     fun clear() { chunks.clear(); frames = 0 }
 }

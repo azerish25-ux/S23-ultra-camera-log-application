@@ -44,3 +44,16 @@ Primary API contracts used:
 - https://developer.android.com/reference/android/hardware/camera2/params/OutputConfiguration#TIMESTAMP_BASE_MONOTONIC
 - https://developer.android.com/reference/android/media/AudioRecord#getTimestamp(android.media.AudioTimestamp,%20int)
 - https://developer.android.com/reference/android/media/MediaMuxer
+
+## AAC end-of-stream regression
+
+Partial AudioRecord reads are coalesced into 1024-frame AAC-LC inputs. At Stop,
+the last valid buffer (including a short tail) carries end-of-stream; no second
+empty input is submitted after it. If all PCM was already submitted, a single
+empty EOS is used instead. No captured PCM is discarded, zero-padded by the app,
+or assigned a new output timestamp to conceal a gap. Unit cases cover every
+boundary; real-codec tests exercise mono/stereo tails and empty-EOS completion.
+The gap-free packet assertion in repeated microphone recordings remains enabled.
+
+Failure collection also retains published test MP4s separately for debugging.
+They do not count as successful acceptance evidence.

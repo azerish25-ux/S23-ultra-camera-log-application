@@ -47,5 +47,19 @@ fun main() {
         val q=PcmFrameQueue(1); q.offer(ByteBuffer.allocate(2048),0)
         check(runCatching { q.drainTo(ByteBuffer.allocate(16),false) }.isFailure && q.frames==1024)
     }
+    test("final partial input carries EOS without an extra buffer") {
+        for (channels in 1..2) for (tail in listOf(1,128,512,640,1023,1024)) {
+            val q=PcmFrameQueue(channels); val total=2048+tail
+            q.offer(ByteBuffer.allocate(total*channels*2),0)
+            var consumed=0L; var eos=0
+            while(q.ready(true)) {
+                val b=requireNotNull(q.drainTo(ByteBuffer.allocate(4096),true))
+                check(b.firstFrame==consumed); consumed+=b.frames
+                check(b.endOfStream==(consumed==total.toLong()))
+                if(b.endOfStream) eos++
+            }
+            check(consumed==total.toLong() && eos==1 && q.frames==0)
+        }
+    }
     println("$count audio policy checks passed")
 }
