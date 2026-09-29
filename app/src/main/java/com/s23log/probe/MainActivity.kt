@@ -2,6 +2,7 @@ package com.s23log.probe
 
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,6 +30,8 @@ import com.s23log.probe.core.EngineState
 import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.diagnostics.ProbeStore
 import com.s23log.probe.storage.CaptureHistory
+import com.s23log.probe.storage.CameraSettings
+import com.s23log.probe.storage.PendingMedia
 import java.io.File
 import java.util.Locale
 
@@ -46,6 +49,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var previewSize: Size? = null
     private var requestedKey: String? = null
     private var engineState = EngineState.CLOSED
+    private var modeKey: String? = null
+    private var bindingControls = false
     private var permissionAction: (() -> Unit)? = null
     private val observer: (ProbeStore.State) -> Unit = { state ->
         text(R.id.status).text = state.message
@@ -92,6 +97,14 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                 if (target.key != selected?.key) { selected = target; requestedKey = null; maybeOpen() }
             }
         }
+        spinner(R.id.modeSelector).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val mode = modes.getOrNull(position) ?: return
+                if (!bindingControls && mode.key != modeKey && engineState == EngineState.PREVIEW) controller.selectMode(mode)
+            }
+        }
+        button(R.id.recoverCaptures).setOnClickListener { showRecovery() }
         button(R.id.record).setOnClickListener {
             if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
             else modes.getOrNull(spinner(R.id.modeSelector).selectedItemPosition)?.let(controller::startRecording)
@@ -152,7 +165,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (!visible || pages.displayedChild != 0 || !texture.isAvailable || checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) return
         if (requestedKey == target.key) return
         requestedKey = target.key
-        controller.open(target, surface, displayDegrees())
+        controller.open(target, surface, displayDegrees(), CameraSettings.mode(this, target.key), CameraSettings.controls(this, target.key))
     }
     @Suppress("DEPRECATION") private fun displayDegrees(): Int {
         val rotation = if (Build.VERSION.SDK_INT >= 30) display?.rotation ?: Surface.ROTATION_0 else windowManager.defaultDisplay.rotation
@@ -163,7 +176,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onCatalog(result: CatalogResult) {
         if (destroyed) return
-        val previous = selected?.key
+        val previous = selected?.key ?: CameraSettings.camera(this)
         targets = result.targets
         selected = targets.firstOrNull { it.key == previous } ?: targets.firstOrNull()
         setItems(spinner(R.id.cameraSelector), targets.map { it.label })
@@ -171,23 +184,70 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (targets.isEmpty()) onState(EngineState.ERROR, "No accessible camera. ${result.errors.joinToString()}")
         else maybeOpen()
     }
-    override fun onReady(target: CameraTarget, previewSize: Size, plan: ModePlan) {
+    override fun onReady(target: CameraTarget, previewSize: Size, plan: ModePlan, mode: RecordingMode?) {
         if (target.key != selected?.key || destroyed) return
         this.previewSize = previewSize
         modes = plan.modes
+        bindingControls = true
+        modeKey = mode?.key
         setItems(spinner(R.id.modeSelector), modes.map { it.label })
+        if (mode != null) spinner(R.id.modeSelector).setSelection(modes.indexOf(mode))
+        CameraSettings.select(this, target.key)
+        CameraSettings.saveMode(this, target.key, modeKey)
         text(R.id.planNotes).text = plan.notes.joinToString("\n")
-        toggle(R.id.manualExposure).isChecked = false
-        toggle(R.id.manualFocus).isChecked = false
-        toggle(R.id.wbLock).isChecked = false
         val c = target.characteristics
-        wbModes = c[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty().filter { it != CaptureRequest.CONTROL_AWB_MODE_OFF }
+        wbModes = target.wbModes
         setItems(spinner(R.id.wbSelector), wbModes.map(::wbName))
+        renderControls(CameraSettings.controls(this, target.key))
+        bindingControls = false
         val isoRange = c[C.SENSOR_INFO_SENSITIVITY_RANGE]
-        text(R.id.isoInput).text = (isoRange?.lower?.coerceAtLeast(100) ?: 100).toString()
         text(R.id.limits).text = "ISO ${isoRange ?: "unreported"}; shutter ns ${c[C.SENSOR_INFO_EXPOSURE_TIME_RANGE] ?: "unreported"}; focus 0…${target.minFocus} diopters. Video shutter is bounded by its frame interval."
         transformPreview()
         updateEnabled()
+    }
+    override fun onModeChanged(cameraKey: String, mode: RecordingMode, previewSize: Size) {
+        if (destroyed || cameraKey != selected?.key || modes.none { it.key == mode.key }) return
+        modeKey = mode.key
+        this.previewSize = previewSize
+        selected?.let { CameraSettings.saveMode(this, it.key, mode.key) }
+        spinner(R.id.modeSelector).setSelection(modes.indexOfFirst { it.key == mode.key })
+        transformPreview()
+    }
+    override fun onControlsChanged(cameraKey: String, controls: CameraControls) {
+        if (destroyed || cameraKey != selected?.key) return
+        renderControls(controls)
+        selected?.let { CameraSettings.saveControls(this, it.key, controls) }
+        updateEnabled()
+    }
+    private fun renderControls(controls: CameraControls) {
+        toggle(R.id.manualExposure).isChecked = controls.manualExposure
+        toggle(R.id.manualFocus).isChecked = controls.focusDiopters != null
+        toggle(R.id.wbLock).isChecked = controls.wbLock
+        text(R.id.isoInput).text = controls.iso.toString()
+        text(R.id.shutterInput).text = String.format(Locale.US, "%.6f", controls.exposureNs / 1_000_000.0)
+        text(R.id.focusInput).text = (controls.focusDiopters ?: 0f).toString()
+        wbModes.indexOf(controls.wbMode).takeIf { it >= 0 }?.let { spinner(R.id.wbSelector).setSelection(it) }
+    }
+    private fun showRecovery() {
+        val entries = PendingMedia.recoverable(this)
+        if (entries.isEmpty()) {
+            AlertDialog.Builder(this).setTitle("Recover captures").setMessage("No retained video files. Recovery clips are private and may be incomplete or unverified.").setPositiveButton("Close", null).show()
+            return
+        }
+        AlertDialog.Builder(this).setTitle("Retained footage — not verified")
+            .setItems(entries.map { "${it.file.name} (${it.file.length() / 1024} KiB)" }.toTypedArray()) { _, index ->
+                val entry = entries[index]
+                AlertDialog.Builder(this).setTitle("Unverified recovery clip").setMessage(entry.reason + "\nExport this file for inspection or recovery. It has not been published as a verified recording.")
+                    .setPositiveButton("Export") { _, _ -> shareUris(listOf(entry.uri), "video/mp4") }
+                    .setNeutralButton("Keep", null)
+                    .setNegativeButton("Delete…") { _, _ ->
+                        AlertDialog.Builder(this).setTitle("Permanently delete recovery clip?").setMessage(entry.file.name)
+                            .setNegativeButton("Keep", null).setPositiveButton("Delete") { _, _ ->
+                                runCatching { PendingMedia.discardRecovery(this, entry) }
+                                    .onFailure { Toast.makeText(this, it.message, Toast.LENGTH_LONG).show() }
+                            }.show()
+                    }.show()
+            }.setNegativeButton("Close", null).show()
     }
     override fun onState(state: EngineState, message: String) {
         if (destroyed) return
@@ -205,7 +265,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     override fun onApplied(values: Map<String, Any?>) {
         if (destroyed || !visible) return
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
-        text(R.id.applied).text = "APPLIED · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
+        text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
     }
     override fun onVideo(outcome: SurfaceRecorder.Outcome) { restoreCapture() }
     override fun onRaw(outcome: RawCapture.Outcome) { restoreCapture() }
@@ -224,6 +284,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         spinner(R.id.modeSelector).isEnabled = preview && modes.isNotEmpty()
         button(R.id.record).isEnabled = (preview && modes.isNotEmpty()) || recording || engineState == EngineState.STARTING
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
+        button(R.id.recoverCaptures).isEnabled = idle
         button(R.id.diagnosticsTab).isEnabled = idle
         button(R.id.cameraTab).isEnabled = idle
         button(R.id.enableCamera).isEnabled = idle
@@ -235,11 +296,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         toggle(R.id.manualExposure).isEnabled = controls && selected?.manualSensor == true
         text(R.id.isoInput).isEnabled = controls && toggle(R.id.manualExposure).isChecked
         text(R.id.shutterInput).isEnabled = controls && toggle(R.id.manualExposure).isChecked
-        toggle(R.id.manualFocus).isEnabled = controls && (selected?.minFocus ?: 0f) > 0f &&
-            selected?.characteristics?.get(C.CONTROL_AF_AVAILABLE_MODES)?.contains(CaptureRequest.CONTROL_AF_MODE_OFF) == true
+        toggle(R.id.manualFocus).isEnabled = controls && selected?.manualFocus == true
         text(R.id.focusInput).isEnabled = controls && toggle(R.id.manualFocus).isChecked
         spinner(R.id.wbSelector).isEnabled = controls && wbModes.isNotEmpty()
-        toggle(R.id.wbLock).isEnabled = controls && selected?.characteristics?.get(C.CONTROL_AWB_LOCK_AVAILABLE) == true
+        toggle(R.id.wbLock).isEnabled = controls && selected?.wbLockAvailable == true
         button(R.id.applyControls).isEnabled = controls
     }
     private fun applyControls() {

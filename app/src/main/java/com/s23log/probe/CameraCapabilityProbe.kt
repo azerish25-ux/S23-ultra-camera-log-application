@@ -1,5 +1,6 @@
 package com.s23log.probe
 
+import com.s23log.probe.diagnostics.StreamDiagnostics
 import android.content.Context
 import android.graphics.ImageFormat
 import android.hardware.camera2.CameraCharacteristics as C
@@ -153,19 +154,15 @@ class CameraCapabilityProbe(context: Context) {
 
     private fun streams(map: StreamConfigurationMap?): Any? {
         if (map == null) return null
-        val formats = (map.outputFormats.toList() + listOf(ImageFormat.RAW_SENSOR, ImageFormat.RAW10, ImageFormat.RAW12, ImageFormat.PRIVATE, ImageFormat.YUV_420_888) +
-            if (Build.VERSION.SDK_INT >= 31) listOf(ImageFormat.YCBCR_P010) else emptyList()).distinct().sorted()
-        return formats.map { format ->
-            try {
-                val sizes = map.getOutputSizes(format).orEmpty().sortedByDescending { it.width.toLong() * it.height }
-                mapOf("format" to format, "status" to if (sizes.isEmpty()) "unsupported" else "reported", "outputs" to sizes.map { size ->
-                    val row = linkedMapOf<String, Any?>("width" to size.width, "height" to size.height)
-                    try { row["minFrameDurationNs"] = map.getOutputMinFrameDuration(format, size) } catch (e: Exception) { row["minFrameDurationError"] = e.toString() }
-                    try { row["stallDurationNs"] = map.getOutputStallDuration(format, size) } catch (e: Exception) { row["stallDurationError"] = e.toString() }
-                    row
-                })
-            } catch (e: Exception) { mapOf("format" to format, "status" to "query_failed", "error" to e.toString()) }
-        } + listOf(mapOf("outputClass" to "MediaCodec", "sizes" to map.getOutputSizes(MediaCodec::class.java)?.map { it.toString() }))
+        val fallback = listOf(ImageFormat.RAW_SENSOR, ImageFormat.RAW10, ImageFormat.RAW12, ImageFormat.PRIVATE, ImageFormat.YUV_420_888) +
+            if (Build.VERSION.SDK_INT >= 31) listOf(ImageFormat.YCBCR_P010) else emptyList()
+        return StreamDiagnostics.collect(object : StreamDiagnostics.Queries {
+            override fun formats() = map.outputFormats.toList()
+            override fun sizes(format: Int) = map.getOutputSizes(format).orEmpty().map { StreamDiagnostics.Size(it.width, it.height) }
+            override fun minimumDuration(format: Int, size: StreamDiagnostics.Size) = map.getOutputMinFrameDuration(format, android.util.Size(size.width, size.height))
+            override fun stallDuration(format: Int, size: StreamDiagnostics.Size) = map.getOutputStallDuration(format, android.util.Size(size.width, size.height))
+            override fun codecSizes() = map.getOutputSizes(MediaCodec::class.java)?.map { it.toString() }
+        }, fallback)
     }
 
     private fun inspectCodec(s: ProbeSection, codec: MediaCodecInfo, mime: String) {

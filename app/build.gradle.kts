@@ -11,8 +11,8 @@ android {
         applicationId = "com.s23log.probe"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0-camera"
+        versionCode = 3
+        versionName = "0.3.0-capture-integrity"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

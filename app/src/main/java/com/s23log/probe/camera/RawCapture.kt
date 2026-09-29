@@ -79,7 +79,7 @@ class RawCapture(
         val thisShot = shot
         progress("RAW $shot/$count: waiting for matched image and sensor metadata…")
         try {
-            val request = requireNotNull(device).createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
+            val request = target.request(requireNotNull(device), CameraDevice.TEMPLATE_STILL_CAPTURE).apply {
                 addTarget(surface)
                 controls.apply(this, target, null)
             }.build()

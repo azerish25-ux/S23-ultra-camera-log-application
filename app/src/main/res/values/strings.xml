@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">S23Log</string>
-    <string name="subtitle">CAMERA LAB / PHASE 02</string>
+    <string name="subtitle">CAMERA LAB / PHASE 03A</string>
     <string name="camera_tab">Camera</string>
     <string name="diagnostics_tab">Diagnostics</string>
     <string name="grant_camera">Enable camera / retry</string>
@@ -33,4 +33,5 @@
     <string name="status_ready">Ready</string>
     <string name="applied_empty">Applied sensor settings will appear here.</string>
     <string name="limits_empty">Camera-specific control limits will appear here.</string>
+    <string name="recover_captures">Recover captures</string>
 </resources>

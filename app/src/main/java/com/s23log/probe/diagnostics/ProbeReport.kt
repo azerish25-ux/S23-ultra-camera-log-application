@@ -25,7 +25,7 @@ class ProbeSection(val kind: String, val id: String) {
 }
 
 class ProbeReport(val generatedAt: String, val sections: List<ProbeSection>) {
-    val errorCount: Int get() = sections.sumOf { s -> s.fields.values.count { it.status == "query_failed" } }
+    val errorCount: Int get() = sections.sumOf { s -> s.fields.values.sumOf { (if (it.status == "query_failed") 1 else 0) + nestedQueryErrors(it.value) } }
     fun json(): String = JSONObject().put("schemaVersion", 2).put("generatedAt", generatedAt)
         .put("evidence", "advertised_only").put("queryErrors", errorCount)
         .put("sections", JSONArray().also { array -> sections.forEach { array.put(it.json()) } }).toString(2)

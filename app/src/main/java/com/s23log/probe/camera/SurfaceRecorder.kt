@@ -9,6 +9,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
 import android.view.Surface
+import com.s23log.probe.core.VideoFinalizer
+import com.s23log.probe.core.VideoDisposition
 import com.s23log.probe.core.FrameStatistics
 import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.diagnostics.atomicWrite
@@ -134,44 +136,44 @@ class SurfaceRecorder private constructor(
         attempt { muxer?.release() }
         attempt { surface.release() }
         attempt { output.closeDescriptor() }
-        var uri: Uri? = null
         var reportFile: File? = null
-        val report = JSONObject().put("schemaVersion", 1).put("kind", "recording-validation")
-            .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
-            .put("orientation", orientation).put("latestApplied", jsonValue(applied))
-            .put("videoOnly", true).put("customLog", false)
         val stats = frameStats.summary()
-        report.put("encodedSamples", stats.frames).put("encodedFrameGaps", stats.largeGaps)
         val stages = JSONArray().put("advertised")
         if (sessionConfigured) stages.put("session_configured")
         if (stats.frames > 0) stages.put("encoded_frames_received")
-        if (failure == null) {
-            try {
-                require(stats.frames >= 2) { "Recording was stopped before two video frames arrived" }
-                report.put("verification", RecordingVerifier.verify(context, output.uri, mode))
-                stages.put("container_and_output_checked")
-            } catch (e: Exception) { failure = e }
-        }
-        report.put("stages", stages).put("status", if (failure == null) "checked" else "rejected")
-        report.put("error", failure?.let { "${it.javaClass.simpleName}: ${it.message}" } ?: JSONObject.NULL)
-        try {
-            val directory = File(context.filesDir, "exports/validation")
-            check(directory.isDirectory || directory.mkdirs())
-            reportFile = File(directory, "recording-${UUID.randomUUID()}.json")
-            atomicWrite(reportFile, report.toString(2))
-        } catch (e: Exception) { if (failure == null) failure = e; reportFile = null }
-        if (failure == null) {
-            try { uri = output.publish() } catch (e: Exception) { failure = e }
-        }
-        if (failure != null) {
-            output.abort()
-            report.put("status", "rejected").put("error", failure?.message ?: "Output publication failed")
-            reportFile?.let { runCatching { atomicWrite(it, report.toString(2)) } }
-        }
-        val message = if (uri != null) "Saved ${mode.label}; ${stats.frames} frames. File checked; sustained device performance is not certified."
-            else "Recording rejected and pending video removed: ${failure?.message ?: "unknown error"}"
-        runCatching { CaptureHistory.save(context, listOfNotNull(uri), reportFile, message) }
-        try { completed(Outcome(uri, reportFile, message)) } finally { thread.quitSafely() }
+        val outcome = VideoFinalizer.finish(
+            samples = stats.frames, initialError = failure,
+            verify = { RecordingVerifier.verify(context, output.uri, mode).also { stages.put("container_and_output_checked") } },
+            publish = { output.publish() }, retain = { reason -> output.retain(reason) },
+            discardEmpty = { output.abort() },
+            saveReport = { result ->
+                val report = JSONObject().put("schemaVersion", 1).put("kind", "recording-validation")
+                    .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
+                    .put("orientation", orientation).put("latestApplied", jsonValue(applied))
+                    .put("videoOnly", true).put("customLog", false)
+                    .put("encodedSamples", stats.frames).put("encodedFrameGaps", stats.largeGaps)
+                    .put("stages", stages).put("disposition", result.disposition.name.lowercase())
+                    .put("verification", result.verification ?: JSONObject.NULL)
+                    .put("status", when (result.disposition) {
+                        VideoDisposition.PUBLISHED -> "checked"
+                        VideoDisposition.RECOVERABLE -> "recoverable"
+                        else -> "rejected"
+                    }).put("error", result.errors.takeIf { it.isNotEmpty() }?.joinToString("; ") ?: JSONObject.NULL)
+                val directory = File(context.filesDir, "exports/validation")
+                check(directory.isDirectory || directory.mkdirs()) { "Validation directory is unavailable" }
+                val file = File(directory, "recording-${UUID.randomUUID()}.json")
+                atomicWrite(file, report.toString(2))
+                reportFile = file
+            }
+        )
+        val message = when (outcome.disposition) {
+            VideoDisposition.PUBLISHED -> "Saved ${mode.label}; ${stats.frames} frames. File checked; sustained device performance is not certified."
+            VideoDisposition.RECOVERABLE -> "Footage retained privately for recovery, NOT a verified recording: ${outcome.errors.joinToString("; ")}. Open Recover captures to export or delete it."
+            VideoDisposition.EMPTY -> "Empty recording rejected; no encoded footage arrived."
+            VideoDisposition.RETENTION_FAILED -> "Recording needs recovery; no further deletion attempted: ${outcome.errors.joinToString("; ")}. Check Recover captures after reopening."
+        } + (outcome.reportError?.let { " Validation report unavailable: $it. Media was not deleted." } ?: "")
+        runCatching { CaptureHistory.save(context, listOfNotNull(outcome.uri), reportFile, message) }
+        try { completed(Outcome(outcome.uri, reportFile, message)) } finally { thread.quitSafely() }
     }
 
     companion object {

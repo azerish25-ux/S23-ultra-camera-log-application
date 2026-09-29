@@ -1,5 +1,6 @@
 package com.s23log.probe.camera
 
+import com.s23log.probe.S23Application
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -21,6 +22,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Size
 import android.view.Surface
+import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.EngineState
@@ -32,13 +34,15 @@ import java.util.concurrent.Executors
 class CameraController(context: Context, listener: Listener) {
     interface Listener {
         fun onCatalog(result: CatalogResult)
-        fun onReady(target: CameraTarget, previewSize: Size, plan: ModePlan)
+        fun onReady(target: CameraTarget, previewSize: Size, plan: ModePlan, mode: RecordingMode?)
+        fun onModeChanged(cameraKey: String, mode: RecordingMode, previewSize: Size)
+        fun onControlsChanged(cameraKey: String, controls: CameraControls)
         fun onState(state: EngineState, message: String)
         fun onApplied(values: Map<String, Any?>)
         fun onVideo(outcome: SurfaceRecorder.Outcome)
         fun onRaw(outcome: RawCapture.Outcome)
     }
-    private data class PreviewRequest(val target: CameraTarget, val texture: SurfaceTexture, val displayDegrees: Int)
+    private data class PreviewRequest(val target: CameraTarget, val texture: SurfaceTexture, val displayDegrees: Int, val modeKey: String?, val controls: CameraControls)
     private val app = context.applicationContext
     private val manager = app.getSystemService(CameraManager::class.java)
     private val thread = HandlerThread("S23Log-camera").apply { start() }
@@ -57,37 +61,188 @@ class CameraController(context: Context, listener: Listener) {
     private val sessionEpoch = SessionEpoch()
     private var state = EngineState.CLOSED
     private var controls = CameraControls()
+    private var intentControls = CameraControls()
+    private var selectedMode: RecordingMode? = null
+    private val requestEpoch = SessionEpoch()
+    private var afterFirstPreview: CameraControls? = null
+    private class ManualJob(val intent: CameraControls, val previous: CameraControls, val gate: ManualExposureGate) {
+        var effective = intent
+        var deadline: Runnable? = null
+    }
+    private var manualJob: ManualJob? = null
     private var recorder: SurfaceRecorder? = null
     private var raw: RawCapture? = null
     private var modes: List<RecordingMode> = emptyList()
     private var lastAppliedAt = 0L
     private var previewHasFrames = false
+    private var previewControlWarning: String? = null
 
     private fun emit(block: (Listener) -> Unit) { main.post { listener?.let(block) } }
+    private fun changedControls(value: CameraControls) {
+        val key = wanted?.target?.key ?: return
+        emit { it.onControlsChanged(key, value) }
+    }
     private fun state(next: EngineState, message: String) { state = next; emit { it.onState(next, message) } }
-    fun discover() { handler.post { if (!releasing) { val result = CameraCatalog.discover(manager); emit { it.onCatalog(result) } } } }
-    fun open(target: CameraTarget, texture: SurfaceTexture, displayDegrees: Int) {
+    fun discover() {
+        io.execute {
+            val recovery = runCatching { (app as S23Application).awaitMediaRecovery() }
+            handler.post {
+                if (!releasing) {
+                    if (recovery.isFailure) { state(EngineState.ERROR, "Media recovery could not finish; capture remains disabled"); return@post }
+                    val result = CameraCatalog.discover(manager)
+                    emit { it.onCatalog(result) }
+                }
+            }
+        }
+    }
+    fun open(target: CameraTarget, texture: SurfaceTexture, displayDegrees: Int, modeKey: String? = null, initialControls: CameraControls = CameraControls()) {
         handler.post {
             if (releasing) return@post
             wanted = null
             teardown()
-            controls = CameraControls()
-            wanted = PreviewRequest(target, texture, displayDegrees)
+            intentControls = initialControls
+            controls = initialControls.copy(manualExposure = false, wbLock = false, afModeOverride = null)
+            wanted = PreviewRequest(target, texture, displayDegrees, modeKey, initialControls)
             reconcile()
+        }
+    }
+    fun selectMode(mode: RecordingMode) {
+        handler.post {
+            if (state != EngineState.PREVIEW || recorder != null || raw != null || modes.none { it.key == mode.key }) return@post
+            if (selectedMode?.key == mode.key) return@post
+            try {
+                val request = requireNotNull(wanted)
+                val size = CameraCatalog.previewSize(request.target, mode)
+                selectedMode = mode
+                closeSession()
+                previewSurface?.release()
+                request.texture.setDefaultBufferSize(size.width, size.height)
+                previewSurface = Surface(request.texture)
+                emit { it.onModeChanged(request.target.key, mode, size) }
+                state(EngineState.OPENING, "Matching preview to ${mode.label}…")
+                configurePreview()
+            } catch (e: Exception) { fail("Mode preview unavailable: ${e.message}") }
         }
     }
     fun applyControls(value: CameraControls) {
         handler.post {
             if (state != EngineState.PREVIEW && state != EngineState.RECORDING) return@post
-            try { repeat(value); controls = value }
-            catch (e: Exception) { emit { it.onState(state, "Controls rejected: ${e.message}") } }
+            try {
+                if (value.manualExposure && !controls.manualExposure) {
+                    require(state == EngineState.PREVIEW) { "Stop recording before establishing manual exposure locks" }
+                    beginManual(value)
+                } else if (value.manualExposure) {
+                    // Never temporarily enable AE during a recording to re-meter focus or WB.
+                    val safe = value.copy(focusDiopters = value.focusDiopters ?: controls.focusDiopters,
+                        wbLock = value.wbMode == CaptureRequest.CONTROL_AWB_MODE_AUTO || value.wbLock)
+                    require(value.wbMode == controls.wbMode && (!safe.wbLock || controls.wbLock)) {
+                        "Return to auto exposure in preview before changing the white-balance strategy"
+                    }
+                    repeat(safe)
+                    controls = safe; intentControls = safe
+                    changedControls(safe)
+                } else {
+                    require(state != EngineState.RECORDING || !controls.manualExposure) { "Stop recording before leaving manual exposure" }
+                    repeat(value)
+                    controls = value; intentControls = value
+                    changedControls(value)
+                }
+            } catch (e: Exception) { changedControls(controls); emit { it.onState(state, "Controls rejected: ${e.message}") } }
         }
+    }
+    private fun beginManual(value: CameraControls) {
+        val target = requireNotNull(wanted).target
+        require(target.manualSensor) { "Manual sensor controls unavailable on this route" }
+        require(value.wbMode != CaptureRequest.CONTROL_AWB_MODE_AUTO || target.wbLockAvailable) { "Select a WB preset; this route cannot lock automatic WB" }
+        require(target.minFocus == 0f || target.manualFocus) { "This route cannot freeze its focus before disabling AE" }
+        val autofocus = value.focusDiopters == null && target.minFocus > 0
+        if (autofocus) require(target.characteristics[C.CONTROL_AF_AVAILABLE_MODES]?.contains(CaptureRequest.CONTROL_AF_MODE_AUTO) == true) {
+            "Set manual focus explicitly; a triggered focus lock is unavailable"
+        }
+        val job = ManualJob(value, controls, ManualExposureGate(SystemClock.elapsedRealtime()))
+        manualJob = job
+        state(EngineState.ADJUSTING, "Establishing focus and white balance with auto exposure; manual exposure is not active yet…")
+        val preflight = value.copy(manualExposure = false, wbLock = false,
+            afModeOverride = if (autofocus) CaptureRequest.CONTROL_AF_MODE_AUTO else null)
+        try {
+            repeat(preflight, if (autofocus) CaptureRequest.CONTROL_AF_TRIGGER_START else null)
+            val deadline = object : Runnable {
+                override fun run() {
+                    if (manualJob !== job) return
+                    if (job.gate.accept(SystemClock.elapsedRealtime(), ManualExposureGate.Evidence()) == ManualExposureGate.Action.REJECT)
+                        rejectManual(job, "Timed out waiting for ${job.gate.stage}; required capture-result metadata was not confirmed")
+                    else handler.postDelayed(this, 200)
+                }
+            }
+            job.deadline = deadline
+            handler.postDelayed(deadline, 200)
+        } catch (e: Exception) { rejectManual(job, e.message ?: "Preflight request failed") }
+    }
+    private fun rejectManual(job: ManualJob, reason: String) {
+        if (manualJob !== job) return
+        manualJob = null
+        job.deadline?.let(handler::removeCallbacks)
+        val safe = job.previous.copy(manualExposure = false, wbLock = false, afModeOverride = null)
+        try {
+            repeat(safe); controls = safe; intentControls = safe
+            changedControls(safe)
+            state(EngineState.PREVIEW, "Manual transition rejected: $reason. Auto exposure restored; no recording started.")
+        } catch (e: Exception) { fail("Could not restore preview controls: ${e.message}") }
+    }
+    private fun advanceManual(actual: CaptureResult?) {
+        val job = manualJob ?: return
+        if (actual == null) return // missing physical metadata must time out, never confirm a lock
+        val target = requireNotNull(wanted).target
+        val autofocus = job.intent.focusDiopters == null && target.minFocus > 0
+        val autoWb = job.intent.wbMode == CaptureRequest.CONTROL_AWB_MODE_AUTO
+        val ae = actual[CaptureResult.CONTROL_AE_STATE]
+        val af = actual[CaptureResult.CONTROL_AF_STATE]
+        val wb = actual[CaptureResult.CONTROL_AWB_STATE]
+        val focus = actual[CaptureResult.LENS_FOCUS_DISTANCE]
+        val fixedFocus = target.minFocus == 0f ||
+            (actual[CaptureResult.CONTROL_AF_MODE] == CaptureRequest.CONTROL_AF_MODE_OFF && focus != null && focus.isFinite() &&
+                (actual[CaptureResult.LENS_STATE] == null || actual[CaptureResult.LENS_STATE] == CaptureResult.LENS_STATE_STATIONARY))
+        val locked = fixedFocus && if (autoWb)
+            actual[CaptureResult.CONTROL_AWB_LOCK] == true && wb == CaptureResult.CONTROL_AWB_STATE_LOCKED
+            else actual[CaptureResult.CONTROL_AWB_MODE] == job.intent.wbMode
+        val evidence = ManualExposureGate.Evidence(
+            converged = actual[CaptureResult.CONTROL_AE_MODE] == CaptureRequest.CONTROL_AE_MODE_ON &&
+                ae in listOf(CaptureResult.CONTROL_AE_STATE_CONVERGED, CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED, CaptureResult.CONTROL_AE_STATE_LOCKED) &&
+                (if (autofocus) af == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && focus != null else fixedFocus) &&
+                (if (autoWb) wb == CaptureResult.CONTROL_AWB_STATE_CONVERGED else actual[CaptureResult.CONTROL_AWB_MODE] == job.intent.wbMode),
+            locked = locked,
+            applied = locked && actual[CaptureResult.CONTROL_AE_MODE] == CaptureRequest.CONTROL_AE_MODE_OFF &&
+                (actual[CaptureResult.SENSOR_SENSITIVITY] ?: 0) > 0 && (actual[CaptureResult.SENSOR_EXPOSURE_TIME] ?: 0) > 0,
+            focusFailed = autofocus && job.gate.stage == ManualExposureGate.Stage.CONVERGING && af == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
+        )
+        try {
+            when (job.gate.accept(SystemClock.elapsedRealtime(), evidence)) {
+                ManualExposureGate.Action.LOCK -> {
+                    job.effective = job.intent.copy(wbLock = autoWb || job.intent.wbLock,
+                        focusDiopters = job.intent.focusDiopters ?: if (target.minFocus > 0) requireNotNull(focus) else null)
+                    repeat(job.effective.copy(manualExposure = false))
+                    state(EngineState.ADJUSTING, "Confirming fixed focus and white-balance lock before disabling auto exposure…")
+                }
+                ManualExposureGate.Action.APPLY -> {
+                    repeat(job.effective)
+                    state(EngineState.ADJUSTING, "Confirming applied manual exposure in sensor results…")
+                }
+                ManualExposureGate.Action.COMPLETE -> {
+                    controls = job.effective; intentControls = job.effective
+                    manualJob = null; job.deadline?.let(handler::removeCallbacks)
+                    changedControls(controls)
+                    state(EngineState.PREVIEW, "Live preview · manual exposure confirmed; focus fixed and WB locked/preset · ${selectedMode?.fps ?: "auto"} fps target")
+                }
+                ManualExposureGate.Action.REJECT -> rejectManual(job, "Focus failed or the lock/apply deadline expired")
+                ManualExposureGate.Action.WAIT -> Unit
+            }
+        } catch (e: Exception) { rejectManual(job, e.message ?: "Control transition failed") }
     }
     fun startRecording(mode: RecordingMode) {
         handler.post {
             if (!CapturePolicy.canStartRecording(state) || recorder != null || raw != null) return@post
             val request = wanted ?: return@post
-            if (modes.none { it.key == mode.key }) { emit { it.onState(state, "Mode was not planned for this camera") }; return@post }
+            if (modes.none { it.key == mode.key } || selectedMode?.key != mode.key) { emit { it.onState(state, "Mode was not planned for this camera") }; return@post }
             try {
                 state(EngineState.STARTING, "Configuring ${mode.label}. Video only; not custom Log.")
                 val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0, request.displayDegrees, request.target.front)
@@ -169,6 +324,9 @@ class CameraController(context: Context, listener: Listener) {
     }
     private fun closeSession() {
         sessionEpoch.next()
+        requestEpoch.next()
+        manualJob?.deadline?.let(handler::removeCallbacks)
+        manualJob = null
         val old = session
         session = null
         if (old != null) { runCatching { old.stopRepeating() }; runCatching { old.abortCaptures() }; old.close() }
@@ -184,6 +342,8 @@ class CameraController(context: Context, listener: Listener) {
         previewSurface?.release()
         previewSurface = null
         modes = emptyList()
+        selectedMode = null
+        afterFirstPreview = null
         raw?.cancel("Camera closed; unfinished RAW capture cancelled")
         if (recorder != null) {
             state(EngineState.STOPPING, "Camera closed; finalizing any recorded frames…")
@@ -209,12 +369,14 @@ class CameraController(context: Context, listener: Listener) {
             fail("Camera permission is required"); return
         }
         try {
-            val size = CameraCatalog.previewSize(request.target)
-            request.texture.setDefaultBufferSize(size.width, size.height)
-            previewSurface = Surface(request.texture)
             val plan = runCatching { CameraCatalog.plan(request.target) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
             modes = plan.modes
-            emit { it.onReady(request.target, size, plan) }
+            selectedMode = modes.firstOrNull { it.key == request.modeKey } ?: modes.firstOrNull()
+            val size = CameraCatalog.previewSize(request.target, selectedMode)
+            request.texture.setDefaultBufferSize(size.width, size.height)
+            previewSurface = Surface(request.texture)
+            val mode = selectedMode
+            emit { it.onReady(request.target, size, plan, mode) }
             state(EngineState.OPENING, "Opening ${request.target.label}…")
             val token = deviceEpoch.next()
             openingToken = token
@@ -276,27 +438,53 @@ class CameraController(context: Context, listener: Listener) {
         if (wanted == null || device == null || previewSurface == null || recorder != null || raw != null || releasing) return
         previewHasFrames = false
         configure(listOf(output(requireNotNull(previewSurface), DynamicRange.SDR)), {
-            repeat(controls)
+            afterFirstPreview = intentControls.takeIf { it.manualExposure }
+            controls = if (afterFirstPreview != null) intentControls.copy(manualExposure = false, wbLock = false) else intentControls
+            previewControlWarning = null
+            try { repeat(controls) } catch (e: Exception) {
+                // Persisted intent is not a guarantee that a route/firmware still accepts it.
+                afterFirstPreview = null
+                controls = CameraControls(); intentControls = controls
+                repeat(controls)
+                previewControlWarning = "Saved controls unavailable: ${e.message}. Auto defaults restored."
+                changedControls(controls)
+            }
             state(EngineState.PREVIEW, "Preview configured; waiting for sensor frames")
             val token = sessionEpoch.current()
             handler.postDelayed({ if (sessionEpoch.isCurrent(token) && !previewHasFrames && state == EngineState.PREVIEW) fail("Preview session produced no frames") }, 10_000)
         }, ::fail)
     }
-    private fun repeat(value: CameraControls) {
+    private fun repeat(value: CameraControls, afTrigger: Int? = null) {
         val camera = requireNotNull(device)
         val target = requireNotNull(wanted).target
         val activeRecorder = recorder
-        val request = camera.createCaptureRequest(if (activeRecorder == null) CameraDevice.TEMPLATE_PREVIEW else CameraDevice.TEMPLATE_RECORD).apply {
+        val builder = target.request(camera, if (activeRecorder == null) CameraDevice.TEMPLATE_PREVIEW else CameraDevice.TEMPLATE_RECORD).apply {
             if (activeRecorder == null || activeRecorder.mode.previewDuringRecording) addTarget(requireNotNull(previewSurface))
             activeRecorder?.let { addTarget(it.surface) }
-            value.apply(this, target, activeRecorder?.mode?.fps ?: 30)
-        }.build()
+            value.apply(this, target, activeRecorder?.mode?.fps ?: selectedMode?.fps)
+            target.set(this, CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
+        }
         val token = sessionEpoch.current()
-        requireNotNull(session).setRepeatingRequest(request, object : CameraCaptureSession.CaptureCallback() {
+        val requestToken = requestEpoch.next()
+        val callback = object : CameraCaptureSession.CaptureCallback() {
             override fun onCaptureCompleted(s: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
-                if (!sessionEpoch.isCurrent(token) || session !== s) return
-                if (!previewHasFrames && activeRecorder == null) { previewHasFrames = true; state(EngineState.PREVIEW, "Live preview · SDR · no Log transform") }
+                if (!sessionEpoch.isCurrent(token) || !requestEpoch.isCurrent(requestToken) || session !== s) return
+                if (!previewHasFrames && activeRecorder == null) {
+                    previewHasFrames = true
+                    state(EngineState.PREVIEW, "Live preview · SDR · ${selectedMode?.fps ?: "auto"} fps target · no Log transform" +
+                        (previewControlWarning?.let { ". $it" } ?: ""))
+                    afterFirstPreview?.let { restore ->
+                        afterFirstPreview = null
+                        try { beginManual(restore) } catch (e: Exception) {
+                            intentControls = controls
+                            changedControls(controls); emit { it.onState(state, "Restored manual controls unavailable: ${e.message}. Auto exposure remains active.") }
+                        }
+                        return
+                    }
+                }
                 val actual = if (target.physicalId != null && Build.VERSION.SDK_INT >= 28) result.physicalCameraResults[target.physicalId] else result
+                advanceManual(actual)
+                if (!requestEpoch.isCurrent(requestToken)) return
                 val values = mapOf<String, Any?>(
                     "metadataCamera" to (if (actual == null) "physical metadata unavailable" else target.key),
                     "iso" to actual?.get(CaptureResult.SENSOR_SENSITIVITY),
@@ -304,6 +492,11 @@ class CameraController(context: Context, listener: Listener) {
                     "focusDiopters" to actual?.get(CaptureResult.LENS_FOCUS_DISTANCE),
                     "awbMode" to actual?.get(CaptureResult.CONTROL_AWB_MODE),
                     "awbState" to actual?.get(CaptureResult.CONTROL_AWB_STATE),
+                    "awbLock" to actual?.get(CaptureResult.CONTROL_AWB_LOCK),
+                    "aeMode" to actual?.get(CaptureResult.CONTROL_AE_MODE),
+                    "afMode" to actual?.get(CaptureResult.CONTROL_AF_MODE),
+                    "afState" to actual?.get(CaptureResult.CONTROL_AF_STATE),
+                    "nominalFps" to (activeRecorder?.mode?.fps ?: selectedMode?.fps),
                     "frameDurationNs" to actual?.get(CaptureResult.SENSOR_FRAME_DURATION),
                     "sensorTimestampNs" to actual?.get(CaptureResult.SENSOR_TIMESTAMP)
                 )
@@ -312,8 +505,17 @@ class CameraController(context: Context, listener: Listener) {
                 if (now - lastAppliedAt > 250) { lastAppliedAt = now; emit { it.onApplied(values) } }
             }
             override fun onCaptureFailed(s: CameraCaptureSession, request: CaptureRequest, failure: CaptureFailure) {
-                if (sessionEpoch.isCurrent(token)) emit { it.onState(state, "A capture request failed (${failure.reason}); inspect output timing evidence") }
+                if (sessionEpoch.isCurrent(token) && requestEpoch.isCurrent(requestToken)) emit { it.onState(state, "A capture request failed (${failure.reason}); inspect output timing evidence") }
             }
-        }, handler)
+        }
+        val activeSession = requireNotNull(session)
+        activeSession.setRepeatingRequest(builder.build(), callback, handler)
+        val chosenAf = if (target.physicalId != null && CaptureRequest.CONTROL_AF_MODE in target.physicalKeys && Build.VERSION.SDK_INT >= 28)
+            builder.getPhysicalCameraKey(CaptureRequest.CONTROL_AF_MODE, target.physicalId) else builder.get(CaptureRequest.CONTROL_AF_MODE)
+        val trigger = afTrigger ?: if (chosenAf == CaptureRequest.CONTROL_AF_MODE_AUTO && !value.manualExposure) CaptureRequest.CONTROL_AF_TRIGGER_START else null
+        if (trigger != null) {
+            target.set(builder, CaptureRequest.CONTROL_AF_TRIGGER, trigger)
+            activeSession.capture(builder.build(), callback, handler)
+        }
     }
 }

@@ -152,4 +152,82 @@ class CameraSmokeTest {
             } catch (_: IllegalArgumentException) { /* required */ }
         } finally { private.delete() }
     }
+    @Test fun sidecarWriteFailureKeepsActualDecodableRecording() {
+        val previous = CaptureHistory.latest(context)
+        val directory = File(context.filesDir, "exports/validation")
+        val backup = File(context.filesDir, "validation-backup-${java.util.UUID.randomUUID()}")
+        var captured: android.net.Uri? = null
+        val existed = directory.exists()
+        if (existed) assertTrue(directory.renameTo(backup))
+        assertTrue(directory.createNewFile()) // forces the real report write to fail
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                begin(scenario)
+                Thread.sleep(4000)
+                click(scenario, R.id.record)
+                await(scenario, "video retained despite report write failure") {
+                    val entry = CaptureHistory.latest(context)
+                    if (entry.uris.isNotEmpty() && entry.uris != previous.uris) captured = entry.uris.first()
+                    captured != null && entry.message.contains("Validation report unavailable")
+                }
+                val entry = CaptureHistory.latest(context)
+                assertNull(entry.report)
+                assertTrue(entry.message.startsWith("Saved "))
+                val retriever = android.media.MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(context, captured!!)
+                    val frame = retriever.getFrameAtTime(0)
+                    assertNotNull("Real footage must remain decodable", frame)
+                    frame?.recycle()
+                } finally { retriever.release() }
+            }
+        } finally {
+            captured?.let { context.contentResolver.delete(it, null, null) }
+            assertTrue(directory.delete())
+            if (existed) assertTrue(backup.renameTo(directory))
+            CaptureHistory.save(context, previous.uris, previous.report, previous.message)
+        }
+    }
+
+    @Test fun selectedModeAndControlIntentSurviveRecreation() {
+        val settings = context.getSharedPreferences("camera_settings_v1", Context.MODE_PRIVATE)
+        val before = settings.all.filterValues { it is String }
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                live(scenario)
+                val label = AtomicReference("")
+                scenario.onActivity { activity ->
+                    val modes = activity.findViewById<android.widget.Spinner>(R.id.modeSelector)
+                    assertTrue(modes.count > 0)
+                    val choice = (0 until modes.count).last { modes.getItemAtPosition(it).toString().contains("SDR") }
+                    label.set(modes.getItemAtPosition(choice).toString())
+                    modes.setSelection(choice)
+                }
+                Thread.sleep(500)
+                live(scenario)
+                scenario.onActivity { activity ->
+                    activity.findViewById<android.widget.CompoundButton>(R.id.manualExposure).isChecked = false
+                    activity.findViewById<android.widget.EditText>(R.id.isoInput).setText("125")
+                    activity.findViewById<android.widget.EditText>(R.id.shutterInput).setText("20")
+                }
+                click(scenario, R.id.applyControls)
+                await(scenario, "accepted control intent saved") {
+                    val key = com.s23log.probe.storage.CameraSettings.camera(context)!!
+                    com.s23log.probe.storage.CameraSettings.controls(context, key).iso == 125
+                }
+                scenario.recreate()
+                live(scenario)
+                scenario.onActivity { activity ->
+                    assertEquals("125", activity.findViewById<android.widget.EditText>(R.id.isoInput).text.toString())
+                    assertEquals("20.000000", activity.findViewById<android.widget.EditText>(R.id.shutterInput).text.toString())
+                    assertEquals(label.get(), activity.findViewById<android.widget.Spinner>(R.id.modeSelector).selectedItem.toString())
+                }
+            }
+        } finally {
+            val editor = settings.edit().clear()
+            before.forEach { (key, value) -> editor.putString(key, value as String) }
+            editor.commit()
+        }
+    }
+
 }

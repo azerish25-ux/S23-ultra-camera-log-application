@@ -1,13 +1,22 @@
-# S23Log — Phase 2 native Camera2 capture foundation
+# S23Log — Phase 3A capture integrity and consistent controls
 
-Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone adds a real camera engine to the original capability probe. **It does not implement proprietary Samsung Log, a custom log curve, audio capture, or sustained RAW video.**
+Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not implement proprietary Samsung Log, a custom log curve, audio capture, or sustained RAW video.**
+
+## Phase 3A changes
+
+- Video is encoded to a private staging file. Verification gates gallery publication, but auxiliary JSON report failures never roll back retained/published footage. Interrupted, format-rejected, and failed-publication clips remain clearly labelled **unverified recovery clips**; zero-sample attempts may be discarded.
+- **Recover captures** lists retained footage for grant-based export or explicitly confirmed deletion. Cold-start recovery keeps nonempty videos (including the previous private-file journal format). Cleanup failures keep a retryable journal record. Uninstalling still removes private recovery files: export them first.
+- Successful Android 29+ publication copies the verified staging file into a pending MediaStore row, commits publication, then removes the private original. This deliberately needs temporary space for two copies; lack of gallery space retains the original. Android 26–28 moves completed video into private shareable storage.
+- Preview uses the selected mode's rate and matching aspect ratio. Camera route, mode and accepted control intent survive recreation and are revalidated on reopen.
+- Entering manual exposure is a bounded converge → focus/WB lock → manual-result-confirmation sequence. Record and lens changes are disabled during it. Missing lock metadata/focus failures reject the transition and restore auto exposure. A new metering strategy is not introduced mid-recording. Physical overrides use only the logical device's advertised keys and a physical-aware request builder.
+- Optional MediaCodec stream-query failures no longer discard other formats. Nested timing/query errors count in the report summary.
 
 ## Implemented
 
 - Lifecycle-managed Camera2 preview, logical/public camera selection, and physical-only camera routing through a logical device.
 - Supported manual ISO/shutter/focus controls, available white-balance presets/lock, and actual applied sensor settings from capture results. Video exposure is bounded by its frame interval; no calibrated Kelvin conversion is claimed.
 - Per-camera size/rate/encoder planning. SDR uses AVC Surface input. HLG10 candidates require explicit camera 10-bit capability, the HLG10 profile, and a matching Surface-input HEVC Main10 encoder. P010 CPU-buffer support is not a prerequisite.
-- MediaCodec → MediaMuxer video-only recording, EOS draining and timeout, pending MediaStore publication, failed-output cleanup, and recovery of journaled unfinished outputs. API 26–28 uses private, grant-shareable files without broad storage permission.
+- MediaCodec → MediaMuxer video-only recording, EOS draining and timeout, private video staging, transactional MediaStore publication, and explicitly labelled recovery of unfinished footage. API 26–28 uses private, grant-shareable files without broad storage permission.
 - Before publication: actual recorded codec/dimensions, all packet timestamps, and a decoded frame are checked. HLG10 additionally requires HEVC SPS 10-bit samples and BT.2020/HLG/limited-range tags. Unsupported HDR is **not silently downgraded to SDR**. Preview is suspended during HLG recording if the camera disallows a mixed SDR/HDR request.
 - One RAW_SENSOR DNG or five sequential DNG stills, matching image and capture-result sensor timestamps, bounded image ownership, and metadata/timing reports. The sequence includes file-write time and is explicitly **not a RAW-video benchmark**.
 - Complete schema-versioned JSON/text diagnostics: per-property error isolation, physical-camera metadata, P010 camera outputs, per-size timing, high-speed and maximum-resolution stream maps, and explicit profile classification. Exports do not truncate resolution lists.
@@ -40,7 +49,7 @@ Each recording produces a shareable validation JSON with requested/applied setti
 
 ## Use on the phone
 
-Grant Camera permission, select a publicly exposed lens, choose an advertised mode, and start recording. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report. Leaving the screen or rotating the device stops and finalizes an active recording; background recording is deliberately not supported.
+Grant Camera permission, select a publicly exposed lens, choose an advertised mode, and start recording. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. Leaving the screen or rotating the device stops and finalizes an active recording; background recording is deliberately not supported.
 
 Different debug signing keys can prevent an update over a previous APK: preserve exported evidence before uninstalling an older debug build. Production signing and a release-update policy remain separate work.
 

@@ -4,6 +4,8 @@ import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics as C
 import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CameraDevice
+import android.hardware.camera2.CaptureRequest as R
 import android.hardware.camera2.params.DynamicRangeProfiles
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
@@ -17,7 +19,7 @@ import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.core.RawLimits
 
 /** A physical-only camera is routed through its public logical device, never opened by guess. */
-data class CameraTarget(val logicalId: String, val physicalId: String?, val characteristics: C) {
+data class CameraTarget(val logicalId: String, val physicalId: String?, val characteristics: C, val logicalCharacteristics: C = characteristics) {
     val key: String get() = "$logicalId:${physicalId ?: "logical"}"
     val front: Boolean get() = characteristics[C.LENS_FACING] == C.LENS_FACING_FRONT
     val label: String get() {
@@ -25,7 +27,26 @@ data class CameraTarget(val logicalId: String, val physicalId: String?, val char
         val focal = characteristics[C.LENS_INFO_AVAILABLE_FOCAL_LENGTHS]?.joinToString() ?: "?"
         return "$facing · $focal mm · ${physicalId?.let { "$logicalId → $it" } ?: logicalId}"
     }
-    val manualSensor: Boolean get() = characteristics[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR) == true
+    val requestKeys: Set<R.Key<*>> get() = logicalCharacteristics.availableCaptureRequestKeys.toSet()
+    val physicalKeys: Set<R.Key<*>> get() = if (physicalId != null && Build.VERSION.SDK_INT >= 28)
+        logicalCharacteristics.availablePhysicalCameraRequestKeys.orEmpty().toSet() else emptySet()
+    fun independentlySettable(key: R.Key<*>): Boolean = key in requestKeys && (physicalId == null || key in physicalKeys)
+    val manualSensor: Boolean get() = characteristics[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR) == true &&
+        listOf(R.SENSOR_SENSITIVITY, R.SENSOR_EXPOSURE_TIME, R.SENSOR_FRAME_DURATION).all(::independentlySettable)
+    val manualFocus: Boolean get() = minFocus > 0 && independentlySettable(R.LENS_FOCUS_DISTANCE) &&
+        characteristics[C.CONTROL_AF_AVAILABLE_MODES]?.contains(R.CONTROL_AF_MODE_OFF) == true
+    val wbLockAvailable: Boolean get() = characteristics[C.CONTROL_AWB_LOCK_AVAILABLE] == true && logicalCharacteristics[C.CONTROL_AWB_LOCK_AVAILABLE] == true
+    val wbModes: List<Int> get() = characteristics[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty().filter {
+        it in logicalCharacteristics[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty() && it != R.CONTROL_AWB_MODE_OFF
+    }
+    fun request(camera: CameraDevice, template: Int): R.Builder = if (physicalId != null && Build.VERSION.SDK_INT >= 28)
+        camera.createCaptureRequest(template, setOf(physicalId)) else camera.createCaptureRequest(template)
+    fun <T> set(builder: R.Builder, key: R.Key<T>, value: T) {
+        if (key !in requestKeys) return
+        // Common logical settings govern the session. Override only explicitly advertised physical keys.
+        if (physicalId != null && key in physicalKeys && Build.VERSION.SDK_INT >= 28) builder.setPhysicalCameraKey(key, value, physicalId)
+        else builder.set(key, value)
+    }
     val minFocus: Float get() = characteristics[C.LENS_INFO_MINIMUM_FOCUS_DISTANCE] ?: 0f
     val rawSize: Size? get() {
         if (characteristics[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_RAW) != true) return null
@@ -48,7 +69,7 @@ object CameraCatalog {
                 val c = manager.getCameraCharacteristics(id)
                 result += CameraTarget(id, null, c)
                 if (Build.VERSION.SDK_INT >= 28) c.physicalCameraIds.sorted().filter { it !in ids }.forEach { physical ->
-                    try { result += CameraTarget(id, physical, manager.getCameraCharacteristics(physical)) }
+                    try { result += CameraTarget(id, physical, manager.getCameraCharacteristics(physical), c) }
                     catch (e: Exception) { errors += "Physical $physical via $id: ${e.message}" }
                 }
             } catch (e: Exception) { errors += "Camera $id: ${e.message}" }
@@ -56,9 +77,13 @@ object CameraCatalog {
         return CatalogResult(result.sortedWith(compareBy<CameraTarget> { it.front }.thenBy { it.physicalId != null }.thenBy { it.key }), errors)
     }
 
-    fun previewSize(target: CameraTarget): Size {
-        val sizes = target.characteristics[C.SCALER_STREAM_CONFIGURATION_MAP]?.getOutputSizes(SurfaceTexture::class.java).orEmpty()
-        require(sizes.isNotEmpty()) { "No advertised preview sizes" }
+    fun previewSize(target: CameraTarget, mode: RecordingMode? = null): Size {
+        val map = requireNotNull(target.characteristics[C.SCALER_STREAM_CONFIGURATION_MAP])
+        val sizes = map.getOutputSizes(SurfaceTexture::class.java).orEmpty().filter { size ->
+            mode == null || (size.width.toLong() * mode.height == size.height.toLong() * mode.width &&
+                CapturePolicy.nominalRateFits(map.getOutputMinFrameDuration(SurfaceTexture::class.java, size), mode.fps))
+        }
+        require(sizes.isNotEmpty()) { "No preview with the selected mode's aspect ratio and advertised timing" }
         return sizes.firstOrNull { it.width == 1280 && it.height == 720 }
             ?: sizes.filter { it.width <= 1920 && it.height <= 1080 }.maxByOrNull { it.width.toLong() * it.height }
             ?: sizes.minBy { it.width.toLong() * it.height }
@@ -105,7 +130,7 @@ object CameraCatalog {
                             if (!video.areSizeAndRateSupported(size.width, size.height, fps.toDouble())) return@firstNotNullOfOrNull null
                             val bitrate = (size.width.toLong() * size.height * fps / 5).coerceIn(video.bitrateRange.lower.toLong(), video.bitrateRange.upper.toLong()).toInt()
                             val candidate = RecordingMode(size.width, size.height, fps, range, encoder.name, mime, bitrate, range == DynamicRange.SDR || mixed, duration > 0)
-                            if (caps.isFormatSupported(videoFormat(candidate))) candidate else null
+                            if (caps.isFormatSupported(videoFormat(candidate))) { previewSize(target, candidate); candidate } else null
                         } catch (e: Exception) {
                             notes += "${encoder.name}, $size/$fps/${range.name}: ${e.javaClass.simpleName}"
                             null
@@ -117,6 +142,7 @@ object CameraCatalog {
         }
         if (hlg && modes.none { it.range == DynamicRange.HLG10 }) notes += "No Surface-input HEVC Main10 encoder matched the selected camera's advertised size/rate combinations."
         notes += "The initial RAW DNG path is limited to RAW_SENSOR modes up to 24 megapixels. Larger modes remain listed in Diagnostics."
+        if (target.physicalId != null) notes += "Physical sensor/focus controls require logical-device override keys; unavailable overrides are disabled."
         notes += "All listed modes are advertised candidates, not device-validated recording guarantees."
         notes += "P010 byte-buffer support is deliberately not used to gate Surface-input recording."
         return ModePlan(modes.distinctBy { it.key }, notes.distinct())

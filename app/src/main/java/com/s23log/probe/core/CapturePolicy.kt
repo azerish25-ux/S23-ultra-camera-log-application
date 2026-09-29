@@ -2,7 +2,7 @@ package com.s23log.probe.core
 
 /** Pure policies shared by the camera engine, diagnostics and regression tests. */
 enum class DynamicRange { SDR, HLG10 }
-enum class EngineState { CLOSED, OPENING, PREVIEW, STARTING, RECORDING, STOPPING, RAW, ERROR }
+enum class EngineState { CLOSED, OPENING, PREVIEW, ADJUSTING, STARTING, RECORDING, STOPPING, RAW, ERROR }
 
 data class RecordingMode(
     val width: Int,

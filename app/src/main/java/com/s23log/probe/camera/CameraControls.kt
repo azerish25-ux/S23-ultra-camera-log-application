@@ -11,15 +11,20 @@ data class CameraControls(
     val exposureNs: Long = 16_666_667L,
     val focusDiopters: Float? = null,
     val wbMode: Int = R.CONTROL_AWB_MODE_AUTO,
-    val wbLock: Boolean = false
+    val wbLock: Boolean = false,
+    internal val afModeOverride: Int? = null
 ) {
     fun describe(): Map<String, Any?> = mapOf("manualExposure" to manualExposure, "iso" to iso,
-        "exposureNs" to exposureNs, "focusDiopters" to focusDiopters, "awbMode" to wbMode, "awbLock" to wbLock)
+        "exposureNs" to exposureNs, "focusDiopters" to focusDiopters, "awbMode" to wbMode, "awbLock" to wbLock, "afModeOverride" to afModeOverride)
 
     fun apply(builder: R.Builder, target: CameraTarget, fps: Int?) {
         val c = target.characteristics
-        val keys = c.availableCaptureRequestKeys.orEmpty().toSet()
-        fun <T> set(key: R.Key<T>, value: T) { if (key in keys) builder.set(key, value) }
+        fun <T> set(key: R.Key<T>, value: T) = target.set(builder, key, value)
+        require(iso > 0 && exposureNs > 0) { "ISO and shutter must be positive" }
+        require(wbMode in target.wbModes || (target.wbModes.isEmpty() && wbMode == R.CONTROL_AWB_MODE_AUTO)) { "White-balance preset unavailable on this route" }
+        if (manualExposure) require(wbMode != R.CONTROL_AWB_MODE_AUTO || wbLock) { "Lock automatic white balance before disabling AE" }
+        if (manualExposure && target.minFocus > 0) require(focusDiopters != null) { "Freeze or set manual focus before disabling AE" }
+        if (wbLock && wbMode == R.CONTROL_AWB_MODE_AUTO) require(target.wbLockAvailable) { "White-balance lock unavailable on this route" }
         set(R.CONTROL_MODE, R.CONTROL_MODE_AUTO)
         if (manualExposure) {
             require(target.manualSensor) { "Manual exposure is not advertised for this camera" }
@@ -38,10 +43,13 @@ data class CameraControls(
         }
         val afModes = c[C.CONTROL_AF_AVAILABLE_MODES]?.toSet().orEmpty()
         if (focusDiopters != null) {
-            require(target.minFocus > 0 && R.CONTROL_AF_MODE_OFF in afModes) { "Manual focus is unavailable" }
+            require(target.manualFocus && R.CONTROL_AF_MODE_OFF in afModes) { "Manual focus is unavailable" }
             require(focusDiopters.isFinite())
             set(R.CONTROL_AF_MODE, R.CONTROL_AF_MODE_OFF)
             set(R.LENS_FOCUS_DISTANCE, focusDiopters.coerceIn(0f, target.minFocus))
+        } else if (afModeOverride != null) {
+            require(afModeOverride in afModes) { "Requested focus mode unavailable" }
+            set(R.CONTROL_AF_MODE, afModeOverride)
         } else {
             listOf(R.CONTROL_AF_MODE_CONTINUOUS_VIDEO, R.CONTROL_AF_MODE_CONTINUOUS_PICTURE, R.CONTROL_AF_MODE_AUTO, R.CONTROL_AF_MODE_OFF)
                 .firstOrNull { it in afModes }?.let { set(R.CONTROL_AF_MODE, it) }
@@ -49,6 +57,6 @@ data class CameraControls(
         val modes = c[C.CONTROL_AWB_AVAILABLE_MODES]?.toList().orEmpty()
         if (wbMode in modes) set(R.CONTROL_AWB_MODE, wbMode)
         else require(wbMode == R.CONTROL_AWB_MODE_AUTO) { "Selected white-balance preset is unavailable" }
-        if (c[C.CONTROL_AWB_LOCK_AVAILABLE] == true) set(R.CONTROL_AWB_LOCK, wbLock)
+        if (target.wbLockAvailable) set(R.CONTROL_AWB_LOCK, wbLock)
     }
 }
