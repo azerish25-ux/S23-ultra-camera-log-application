@@ -17,6 +17,7 @@ fun main() {
     test("unknown manual limits rejected") { check(ModePlanning.timing(24,emptyList(),true,null,1000) == null) }
     test("impossible manual interval rejected") { check(ModePlanning.timing(24,emptyList(),true,20_000_000,1000) == null) }
     val mode = RecordingMode(7680,4320,24,DynamicRange.SDR,"encoder","video/hevc",100_000_000,true,true,RatePlan(RateControl.MANUAL_SENSOR))
+    test("codec MIME participates in mode identity") { check(mode.key != mode.copy(mime="video/avc").key) }
     test("manual intent alone cannot record") { check(!ModePlanning.recordingAllowed(EngineState.PREVIEW,mode,false)) }
     test("confirmed manual can record") { check(ModePlanning.recordingAllowed(EngineState.PREVIEW,mode,true)) }
     test("busy states cannot record") { EngineState.entries.filter { it != EngineState.PREVIEW }.forEach { check(!ModePlanning.recordingAllowed(it,mode,true)) } }

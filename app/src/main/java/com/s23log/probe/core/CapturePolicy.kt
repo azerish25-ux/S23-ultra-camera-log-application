@@ -17,7 +17,7 @@ data class RecordingMode(
     val ratePlan: RatePlan = RatePlan(RateControl.AE_FIXED, FpsRange(fps, fps))
 ) {
     val label: String get() = "${width}×${height} / $fps / ${if (mime == "video/hevc") "HEVC" else "AVC"} / ${range.name} / ${ratePlan.control.label} · $encoder"
-    val key: String get() = "$width:$height:$fps:${range.name}:$encoder:${ratePlan.control.name}"
+    val key: String get() = "$width:$height:$fps:${range.name}:$encoder:$mime:${ratePlan.control.name}"
     val legacyKey: String get() = "$width:$height:$fps:${range.name}:$encoder"
     fun describe(): Map<String, Any?> = mapOf("key" to key, "width" to width, "height" to height, "fps" to fps,
         "dynamicRange" to range.name, "mime" to mime, "encoder" to encoder, "bitrate" to bitRate,

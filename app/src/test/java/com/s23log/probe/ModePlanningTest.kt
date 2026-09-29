@@ -55,6 +55,7 @@ class ModePlanningTest {
         val fixed = mode(RatePlan(RateControl.AE_FIXED, FpsRange(24, 24)))
         val manual = mode(RatePlan(RateControl.MANUAL_SENSOR))
         assertNotEquals(fixed.key, manual.key)
+        assertNotEquals("One component may expose multiple MIME types", fixed.key, fixed.copy(mime = "video/avc").key)
         assertTrue(fixed.label.contains("HEVC")); assertTrue(manual.label.contains("manual timing"))
         assertEquals("advertised_candidate", manual.describe()["evidence"])
         assertEquals(false, manual.describe()["customLog"])
