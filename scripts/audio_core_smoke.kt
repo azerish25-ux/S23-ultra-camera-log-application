@@ -56,9 +56,22 @@ fun main() {
                 val b=requireNotNull(q.drainTo(ByteBuffer.allocate(4096),true))
                 check(b.firstFrame==consumed); consumed+=b.frames
                 check(b.endOfStream==(consumed==total.toLong()))
+                check(b.bytes==1024*channels*2 && b.paddingFrames==(if(b.endOfStream) 1024-tail else 0))
                 if(b.endOfStream) eos++
             }
             check(consumed==total.toLong() && eos==1 && q.frames==0)
+        }
+    }
+    test("padding clears stale samples and never overwrites captured PCM") {
+        for(channels in 1..2) for(tail in 1..1023) {
+            val q=PcmFrameQueue(channels)
+            val real=ByteArray(tail*channels*2) { (it%127+1).toByte() }
+            q.offer(ByteBuffer.wrap(real),0)
+            val input=ByteBuffer.wrap(ByteArray(1024*channels*2) { 99 })
+            val b=requireNotNull(q.drainTo(input,true))
+            check(input.array().copyOf(real.size).contentEquals(real))
+            check(input.array().drop(real.size).all { it==0.toByte() })
+            check(b.frames==tail && b.paddingFrames==1024-tail && b.endOfStream)
         }
     }
     println("$count audio policy checks passed")

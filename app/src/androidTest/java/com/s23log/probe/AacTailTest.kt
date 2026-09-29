@@ -50,6 +50,7 @@ class AacTailTest {
         var started = false
         val times = mutableListOf<Long>()
         var submitted = 0L
+        var padding = 0
         var inputEos = false
         var outputEos = false
         val label = "${channels}ch tail=$tail emptyEos=$emptyEos"
@@ -71,6 +72,8 @@ class AacTailTest {
                         if (batch != null) {
                             assertEquals(label, submitted, batch.firstFrame)
                             submitted += batch.frames
+                            padding += batch.paddingFrames
+                            assertEquals(label, 1024 * channels * 2, batch.bytes)
                             codec.queueInputBuffer(index, 0, batch.bytes, clock.timestampUs(batch.firstFrame),
                                 if (batch.endOfStream) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0)
                             inputEos = batch.endOfStream
@@ -92,13 +95,15 @@ class AacTailTest {
             }
             assertTrue("$label: EOS timeout", outputEos)
             assertEquals("$label: all original PCM submitted", frames.toLong(), submitted)
+            assertEquals("$label: padding is explicit and bounded", (1024 - tail) % 1024, padding)
             assertTrue("$label: not enough encoded frames", times.size >= (frames + 1023) / 1024)
             for ((a, b) in times.zipWithNext()) {
                 assertTrue("$label: non-monotonic $a -> $b", b > a)
                 assertTrue("$label: AAC packet gap ${b - a}us; timestamps=$times", b - a <= 32_000)
             }
             return JSONObject().put("channels", channels).put("tailFrames", tail).put("emptyEos", emptyEos)
-                .put("encoder", codec.name).put("inputFrames", submitted).put("packets", times.size)
+                .put("encoder", codec.name).put("inputFrames", submitted).put("appEndPaddingFrames", padding)
+                .put("submittedFramesWithPadding", submitted + padding).put("packets", times.size)
                 .put("ptsUs", JSONArray(times)).put("passed", true)
         } finally {
             if (started) runCatching { codec.stop() }

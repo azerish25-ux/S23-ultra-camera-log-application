@@ -16,7 +16,7 @@ On API 33+, the MediaCodec camera output explicitly requests OutputConfiguration
 
 A HAL that supplies no usable audio timestamp within the startup window uses a clearly labelled `read_completion_estimate_unverified`. It preserves sound, not a synchronization guarantee. The observed deviation between later timestamps and the nominal sample clock is recorded; this milestone does not resample to compensate for oscillator drift. On API 26–32, encoder defaults are labelled legacy/unverified. No path claims physical lip-sync certification. Camera SENSOR_TIMESTAMP and encoder-surface timestamps must not be interchanged.
 
-Both encoders drain with an eight-second EOS deadline. Partial microphone reads are coalesced into 1024-sample AAC-LC inputs (except the final tail), preserving a contiguous sample-count timeline. Audio reads are nonblocking on the recorder handler, so no audio-thread join can deadlock finalization. There are separate microphone/encoded-sample watchdogs. Foreground-only behaviour remains: leaving/rotating the activity finalizes the take. MediaStore staging, recovery, report-save failure handling and first-video-frame safeguards are preserved.
+Both encoders drain with an eight-second EOS deadline. Partial microphone reads are coalesced into 1024-frame AAC-LC inputs, preserving a contiguous sample-count timeline. A short final input is completed with 0–1023 explicitly reported silence frames (less than 21.34 ms at 48 kHz); this avoids the demonstrated encoder flush-timestamp discontinuity. All PCM read from AudioRecord is preserved. Audio reads are nonblocking on the recorder handler, so no audio-thread join can deadlock finalization. There are separate microphone/encoded-sample watchdogs. Foreground-only behaviour remains: leaving/rotating the activity finalizes the take. MediaStore staging, recovery, report-save failure handling and first-video-frame safeguards are preserved.
 
 ## Evidence and tests
 
@@ -48,11 +48,21 @@ Primary API contracts used:
 ## AAC end-of-stream regression
 
 Partial AudioRecord reads are coalesced into 1024-frame AAC-LC inputs. At Stop,
-the last valid buffer (including a short tail) carries end-of-stream; no second
-empty input is submitted after it. If all PCM was already submitted, a single
-empty EOS is used instead. No captured PCM is discarded, zero-padded by the app,
-or assigned a new output timestamp to conceal a gap. Unit cases cover every
-boundary; real-codec tests exercise mono/stereo tails and empty-EOS completion.
+the last valid buffer carries end-of-stream; no second empty input follows it.
+An EOS-on-tail-only change did not resolve the issue: the deterministic codec
+fixture reproduced an extra 13,333 us on a 640-frame tail. The final short block
+is therefore completed to 1024 frames with explicitly counted silence. No PCM
+read from the microphone is discarded or overwritten, and no encoded output PTS
+is rewritten. If all PCM was already submitted, a single empty EOS is used.
+
+`pcmFramesRead` and `pcmFramesQueued` count original PCM; the separate
+`appEndPaddingFrames`, `pcmFramesSubmittedWithPadding`, and
+`lastEncoderInputEndUs` include this bounded final padding. `lastInputEndUs`
+continues to describe the original PCM end. `appEndPaddingTrimmed=false` is
+intentional: the MP4 is not claimed to trim this silence. Codec priming/padding
+is distinct from this app-added padding. Physical sync tests must account for
+both. Unit tests check every mono/stereo tail length and exact byte preservation;
+real-codec tests exercise mono/stereo tails and empty-EOS completion.
 The gap-free packet assertion in repeated microphone recordings remains enabled.
 
 Failure collection also retains published test MP4s separately for debugging.

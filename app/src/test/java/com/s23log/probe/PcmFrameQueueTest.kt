@@ -21,6 +21,9 @@ class PcmFrameQueueTest {
         input.clear()
         val tail = requireNotNull(queue.drainTo(input, true))
         assertEquals(1024L, tail.firstFrame); assertEquals(176, tail.frames)
+        assertEquals(848, tail.paddingFrames); assertEquals(2048, tail.bytes)
+        assertTrue(input.array().take(352).all { it == 2.toByte() })
+        assertTrue(input.array().drop(352).all { it == 0.toByte() })
         assertEquals(0, queue.frames)
     }
     @Test fun mutableReadBuffersCannotChangeQueuedPcm() {
@@ -70,6 +73,8 @@ class PcmFrameQueueTest {
                 val batch = requireNotNull(queue.drainTo(ByteBuffer.allocate(4096), true))
                 assertEquals(consumed, batch.firstFrame)
                 consumed += batch.frames
+                assertEquals(1024 * channels * 2, batch.bytes)
+                assertEquals(if (consumed == total.toLong()) 1024 - tail else 0, batch.paddingFrames)
                 assertEquals(consumed == total.toLong(), batch.endOfStream)
                 if (batch.endOfStream) eosCount++
             }
@@ -84,5 +89,33 @@ class PcmFrameQueueTest {
         assertFalse(requireNotNull(queue.drainTo(ByteBuffer.allocate(2048), false)).endOfStream)
         assertFalse(queue.ready(true))
         assertNull(queue.drainTo(ByteBuffer.allocate(2048), true))
+    }
+    @Test fun tailPaddingPreservesEveryOriginalSampleAndClearsStaleInput() {
+        for (channels in 1..2) for (tail in 1..1023) {
+            val queue = PcmFrameQueue(channels)
+            val actual = ByteArray(tail * channels * 2) { (it % 127 + 1).toByte() }
+            queue.offer(ByteBuffer.wrap(actual), 0)
+            val output = ByteBuffer.wrap(ByteArray(1024 * channels * 2) { 99 })
+            val batch = requireNotNull(queue.drainTo(output, true))
+            assertArrayEquals(actual, output.array().copyOf(actual.size))
+            assertTrue(output.array().drop(actual.size).all { it == 0.toByte() })
+            assertEquals(tail, batch.frames); assertEquals(1024 - tail, batch.paddingFrames)
+            assertTrue(batch.endOfStream)
+        }
+    }
+    @Test fun undersizedTailDestinationLeavesOriginalPcmQueued() {
+        val queue = PcmFrameQueue(2)
+        queue.offer(ByteBuffer.wrap(ByteArray(512) { 8 }), 0)
+        try { queue.drainTo(ByteBuffer.allocate(512), true); fail() } catch (_: IllegalArgumentException) { }
+        assertEquals(128, queue.frames)
+        val output = ByteBuffer.allocate(4096)
+        assertEquals(128, queue.drainTo(output, true)?.frames)
+        assertEquals(8.toByte(), output.get(0))
+    }
+    @Test(expected = IllegalStateException::class) fun samplesAfterFinalPaddedBatchAreRejected() {
+        val queue = PcmFrameQueue(1)
+        queue.offer(ByteBuffer.allocate(2), 0)
+        queue.drainTo(ByteBuffer.allocate(2048), true)
+        queue.offer(ByteBuffer.allocate(2), 1)
     }
 }

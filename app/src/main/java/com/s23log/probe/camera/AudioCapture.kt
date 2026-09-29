@@ -48,6 +48,8 @@ class AudioCapture private constructor(
     private val shorts = ShortArray(1024 * mode.channels)
     private var readFrames = 0L
     private var queuedFrames = 0L
+    private var endPaddingFrames = 0
+    private var lastEncoderInputEndUs = 0L
     private var firstReadNs = 0L
     private var firstReadFrames = 0L
     private var startedMs = 0L
@@ -132,14 +134,16 @@ class AudioCapture private constructor(
             val batch = requireNotNull(pending.drainTo(input, stopped))
             val ptsUs = clock.timestampUs(batch.firstFrame)
             check(ptsUs >= 0 && (firstQueueUs == null || ptsUs >= lastQueueEndUs)) { "Microphone clock regressed" }
-            // Carry EOS with the final PCM, so a partial AAC frame is flushed on
-            // its own sample timestamp rather than a later empty-buffer timestamp.
+            // The final input is a full AAC block with explicitly counted end
+            // padding. Its timestamp remains the original PCM sample position.
             codec.queueInputBuffer(index, 0, batch.bytes, ptsUs,
                 if (batch.endOfStream) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0)
             if (batch.endOfStream) eosQueued = true
             firstQueueUs = firstQueueUs ?: ptsUs
             queuedFrames += batch.frames
+            endPaddingFrames += batch.paddingFrames
             lastQueueEndUs = clock.timestampUs(batch.firstFrame + batch.frames)
+            lastEncoderInputEndUs = clock.timestampUs(batch.firstFrame + batch.frames + batch.paddingFrames)
         }
         if (stopped && pending.frames == 0 && inputIndices.isNotEmpty() && !eosQueued) {
             eosQueued = true
@@ -174,7 +178,11 @@ class AudioCapture private constructor(
         "sampleRate" to AudioMode.SAMPLE_RATE, "channels" to mode.channels, "bitrate" to mode.bitRate,
         "source" to "CAMCORDER", "route" to route, "builtInRouteConfirmed" to routeConfirmed,
         "pcmFramesRead" to readFrames, "pcmFramesQueued" to queuedFrames, "firstInputPtsUs" to firstQueueUs,
-        "lastInputEndUs" to lastQueueEndUs, "clippingMeterBlocks" to clippingBlocks, "clock" to clock.describe()
+        "pcmFramesSubmittedWithPadding" to (queuedFrames + endPaddingFrames),
+        "appEndPaddingFrames" to endPaddingFrames,
+        "appEndPaddingUs" to (endPaddingFrames * 1_000_000L / AudioMode.SAMPLE_RATE),
+        "appEndPaddingTrimmed" to false,
+        "lastInputEndUs" to lastQueueEndUs, "lastEncoderInputEndUs" to lastEncoderInputEndUs, "clippingMeterBlocks" to clippingBlocks, "clock" to clock.describe()
     )
 
     companion object {
