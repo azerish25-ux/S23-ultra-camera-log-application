@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">S23Log</string>
-    <string name="subtitle">NATIVE CAMERA / MODE FOUNDATION</string>
+    <string name="subtitle">NATIVE CAMERA / AUDIO + VIDEO</string>
     <string name="camera_tab">Capture</string>
     <string name="diagnostics_tab">Diagnostics</string>
     <string name="grant_camera">Enable camera / retry</string>
@@ -18,13 +18,13 @@
     <string name="wb">White balance preset</string>
     <string name="wb_lock">Lock white balance</string>
     <string name="apply">Apply controls</string>
-    <string name="start_recording">Record video</string>
+    <string name="start_recording">Record</string>
     <string name="stop_recording">Stop recording</string>
     <string name="raw_one">RAW DNG</string>
     <string name="raw_five">RAW × 5</string>
     <string name="share_capture">Share last capture</string>
     <string name="share_validation">Share validation</string>
-    <string name="recording_scope">Video-only capture. HLG10 is HDR, not Samsung Log. Leaving this screen or rotating the device stops and finalizes recording.</string>
+    <string name="recording_scope">Microphone audio or explicitly selected video-only capture. HLG10 is HDR, not Samsung Log. Leaving this screen or rotating the device stops and finalizes recording.</string>
     <string name="probe_title">Hardware capability report</string>
     <string name="probe_description">Complete Camera2 and encoder metadata, including per-property failures. Advertisements are not proof of a working recording pipeline.</string>
     <string name="run_probe">Run probe</string>
@@ -41,14 +41,31 @@
     <string name="recording_time">Elapsed recording time</string>
     <string name="advertised_only">Advertised candidate · not device-certified</string>
     <string name="manual_timing_required">Manual timing · apply manual exposure before recording</string>
-    <string name="capture_scope_short">VIDEO ONLY · NO CUSTOM LOG</string>
+    <string name="capture_scope_short">FOREGROUND CAPTURE · NO CUSTOM LOG</string>
     <string name="mode_evidence_title">Recording mode evidence</string>
     <string name="mode_export">Export JSON</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="test_title">Record a five-second test?</string>
     <string name="test_start">Record test</string>
-    <string name="test_explanation">This records and saves a real video without sound. It stops approximately five seconds after the first encoded frame. It is a configuration test, not sustained-performance certification. No Log transform is applied.
+    <string name="test_explanation">This saves a real clip using the selected audio setting. It stops approximately five seconds after all required tracks begin recording. It is a configuration test, not sustained-performance certification. No Log transform is applied.
 
-%1$s</string>
+%1$s
+%2$s</string>
+    <string name="audio_mic">Mic</string>
+    <string name="audio_off">Muted</string>
+    <string name="audio_choose">Audio recording setting</string>
+    <string name="audio_idle">Mono · 48 kHz · idle</string>
+    <string name="audio_mono">Built-in microphone · Mono · 48 kHz</string>
+    <string name="audio_stereo">Built-in microphone · Stereo · 48 kHz</string>
+    <string name="audio_video_only">Video only · microphone off</string>
+    <string name="audio_left_meter">Left or mono microphone peak level</string>
+    <string name="audio_right_meter">Right microphone peak level</string>
+    <string name="audio_permission_title">Record with microphone audio?</string>
+    <string name="audio_permission_body">Microphone access is needed for the selected audio mode. No recording starts while this dialog is open. After granting access, tap Record again. Video-only capture must be selected explicitly.</string>
+    <string name="audio_allow">Allow microphone</string>
+    <string name="audio_settings">Open app settings</string>
+    <string name="audio_video_only_action">Video only</string>
+    <string name="audio_granted">Microphone access granted. Tap Record to begin.</string>
+    <string name="audio_denied">Microphone denied. Allow access or explicitly choose Video only.</string>
 </resources>

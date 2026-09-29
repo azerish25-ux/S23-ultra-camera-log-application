@@ -24,7 +24,7 @@ class EvidenceChecks(unittest.TestCase):
         self.files["files/exports/reports/report-probe.json"] = '{"schemaVersion": 2}'
         self.files["files/exports/reports/report-probe.txt"] = "S23LOG"
 
-    def check(self):
+    def check(self, require_audio=False):
         with tarfile.open(self.archive, "w") as tar:
             for name, text in self.files.items():
                 encoded = text.encode()
@@ -32,7 +32,7 @@ class EvidenceChecks(unittest.TestCase):
                 entry.size = len(encoded)
                 tar.addfile(entry, io.BytesIO(encoded))
         self.videos.write_text(json.dumps(self.clips))
-        return verify(self.archive, self.videos)
+        return verify(self.archive, self.videos, require_audio)
 
     def test_complete_evidence(self):
         result = self.check()
@@ -73,3 +73,45 @@ class EvidenceChecks(unittest.TestCase):
         self.files["../outside.txt"] = "not extracted"
         with self.assertRaises(ValueError):
             self.check()
+
+
+class AudioEvidenceChecks(unittest.TestCase):
+    check = EvidenceChecks.check
+    def setUp(self):
+        EvidenceChecks.setUp(self)
+        self.clips = [dict(c) for c in self.clips]
+        for i in range(6):
+            self.clips[i].update(audioPresent=True, audioFullDecodePassed=True, audioPacketSpanSeconds=65,
+                                 audioStream={"channels": 2 if i == 0 else 1})
+            name = f"files/exports/validation/recording-{i}.json"
+            report = json.loads(self.files[name])
+            report.update(schemaVersion=3, videoOnly=False, physicalLipSyncVerified=False,
+                          audio={"builtInRouteConfirmed": True, "clock": {"source": "audio_timestamp_monotonic"}})
+            report["stages"].append("av_samples_written")
+            report["verification"]["firstAudioPcmDecoded"] = True
+            self.files[name] = json.dumps(report)
+
+    def test_audio_suite_complete(self):
+        self.assertEqual(self.check(True)["audioRecordings"], 6)
+
+    def test_video_only_cannot_satisfy_audio_gate(self):
+        self.clips = [{"fullDecodePassed": True, "packetSpanSeconds": 65}] * 12
+        with self.assertRaises(ValueError): self.check(True)
+
+    def test_audio_decode_evidence_mandatory(self):
+        self.clips[0]["audioFullDecodePassed"] = False
+        with self.assertRaises(ValueError): self.check(True)
+
+    def test_audio_duration_mandatory(self):
+        for clip in self.clips: clip["audioPacketSpanSeconds"] = 3
+        with self.assertRaises(ValueError): self.check(True)
+
+    def test_stereo_cannot_be_silently_downmixed(self):
+        for clip in self.clips: clip["audioStream"] = {"channels": 1}
+        with self.assertRaises(ValueError): self.check(True)
+
+    def test_audio_decode_stage_cannot_be_fabricated(self):
+        name = "files/exports/validation/recording-0.json"
+        report = json.loads(self.files[name]); report["verification"].pop("firstAudioPcmDecoded")
+        self.files[name] = json.dumps(report)
+        with self.assertRaises(ValueError): self.check(True)

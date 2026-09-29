@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical">
+    <Button android:id="@+id/audioMode" android:layout_width="88dp" android:layout_height="48dp"
+        android:text="@string/audio_mic" android:contentDescription="@string/audio_choose" />
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:id="@+id/audioStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/audio_idle" android:textSize="11sp" android:maxLines="2" android:ellipsize="end" android:textColor="#DDE6F5" />
+        <ProgressBar android:id="@+id/audioLeft" style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent" android:layout_height="5dp" android:max="100" android:progress="0"
+            android:progressTint="#72E5D1" android:contentDescription="@string/audio_left_meter" />
+        <ProgressBar android:id="@+id/audioRight" style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent" android:layout_height="5dp" android:max="100" android:progress="0"
+            android:progressTint="#72E5D1" android:visibility="gone" android:contentDescription="@string/audio_right_meter" />
+    </LinearLayout>
+</LinearLayout>

@@ -17,6 +17,7 @@ import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.RecordingMode
 import org.json.JSONObject
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,6 +32,8 @@ import java.util.concurrent.atomic.AtomicReference
 class CameraSmokeTest {
     @get:Rule val permission: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
     private val context: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Before fun selectExplicitVideoOnly() { CameraSettings.saveAudio(context, com.s23log.probe.core.AudioMode.OFF) }
 
     private fun await(scenario: ActivityScenario<MainActivity>, label: String, seconds: Long = 45, predicate: (MainActivity) -> Boolean) {
         val end = System.nanoTime() + TimeUnit.SECONDS.toNanos(seconds)

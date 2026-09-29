@@ -26,6 +26,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.s23log.probe.camera.*
+import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.EngineState
 import com.s23log.probe.core.RecordingMode
@@ -56,6 +57,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var bindingControls = false
     private var latestPlan: ModePlan? = null
     private var manualApplied = false
+    private var audioMode = AudioMode.MONO
+    private var audioFailure: String? = null
     private var permissionAction: (() -> Unit)? = null
     private val observer: (ProbeStore.State) -> Unit = { state ->
         text(R.id.status).text = state.message
@@ -85,6 +88,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         texture = findViewById(R.id.preview)
         texture.surfaceTextureListener = this
         controller = CameraController(this, this)
+        audioMode = CameraSettings.audio(this)
+        button(R.id.audioMode).setOnClickListener { chooseAudioMode() }
         button(R.id.cameraTab).setOnClickListener { pages.displayedChild = 0; maybeOpen() }
         button(R.id.diagnosticsTab).setOnClickListener { pages.displayedChild = 1; requestedKey = null; controller.close() }
         button(R.id.enableCamera).setOnClickListener { withCameraPermission { requestedKey = null; controller.discover() } }
@@ -124,12 +129,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
         button(R.id.testMode).setOnClickListener {
             val mode = modes.firstOrNull { it.key == modeKey } ?: return@setOnClickListener
-            AlertDialog.Builder(this).setTitle(R.string.test_title).setMessage(getString(R.string.test_explanation, mode.label))
+            AlertDialog.Builder(this).setTitle(R.string.test_title).setMessage(getString(R.string.test_explanation, mode.label, audioLabel(audioMode)))
                 .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.test_start) { _, _ ->
                     if (modeKey == mode.key && ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
                         findViewById<View>(R.id.controlsPanel).visibility = View.GONE
-                        onState(EngineState.STARTING, "Starting selected-mode test…")
-                        controller.startRecording(mode, testSeconds = 5)
+                        requestRecording(mode, 5)
                     }
                 }.show()
         }
@@ -137,8 +141,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
             else modes.firstOrNull { it.key == modeKey }?.let { mode ->
                 if (ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
-                    onState(EngineState.STARTING, "Starting camera and encoder…")
-                    controller.startRecording(mode)
+                    requestRecording(mode, null)
                 }
             }
         }
@@ -159,6 +162,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         super.onResume()
         visible = true
         restoreCapture()
+        renderAudioIdle()
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             if (targets.isEmpty()) controller.discover() else maybeOpen()
         }
@@ -186,6 +190,12 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 1002) {
+            audioFailure = if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) null else getString(R.string.audio_denied)
+            renderAudioIdle()
+            text(R.id.cameraStatus).setText(if (audioFailure == null) R.string.audio_granted else R.string.audio_denied)
+            return // Permission grants never resurrect stale recording requests.
+        }
         if (requestCode != 1001) return
         val action = permissionAction
         permissionAction = null
@@ -319,6 +329,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         text(R.id.previewOverlay).text = message
         if (state == EngineState.STARTING || state == EngineState.RECORDING) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (state != EngineState.RECORDING) renderAudioIdle()
         updateEnabled()
     }
     override fun onApplied(values: Map<String, Any?>) {
@@ -329,7 +340,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
         text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
     }
-    override fun onVideo(outcome: SurfaceRecorder.Outcome) { restoreCapture() }
+    override fun onVideo(outcome: SurfaceRecorder.Outcome) {
+        if (outcome.audioError != null) audioFailure = "Microphone error: ${outcome.audioError}"
+        restoreCapture(); renderAudioIdle()
+    }
     override fun onRaw(outcome: RawCapture.Outcome) { restoreCapture() }
     private fun restoreCapture() {
         if (destroyed) return
@@ -348,6 +362,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied)
         button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
         button(R.id.testMode).isEnabled = canRecord
+        button(R.id.audioMode).isEnabled = idle
         button(R.id.modeDetails).isEnabled = idle && latestPlan != null
         text(R.id.modeEvidence).setText(if (mode?.ratePlan?.requiresManual == true && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
@@ -369,6 +384,71 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         toggle(R.id.wbLock).isEnabled = controls && selected?.wbLockAvailable == true
         button(R.id.applyControls).isEnabled = controls
     }
+    private fun audioLabel(mode: AudioMode): String = getString(when (mode) {
+        AudioMode.OFF -> R.string.audio_video_only
+        AudioMode.MONO -> R.string.audio_mono
+        AudioMode.STEREO -> R.string.audio_stereo
+    })
+    private fun chooseAudioMode() {
+        if (!CapturePolicy.canChangeCamera(engineState)) return
+        val choices = listOf(AudioMode.MONO, AudioMode.STEREO, AudioMode.OFF)
+        AlertDialog.Builder(this).setTitle(R.string.audio_choose)
+            .setSingleChoiceItems(choices.map(::audioLabel).toTypedArray(), choices.indexOf(audioMode)) { dialog, index ->
+                if (CapturePolicy.canChangeCamera(engineState)) {
+                    audioMode = choices[index]; CameraSettings.saveAudio(this, audioMode)
+                    audioFailure = null; renderAudioIdle()
+                }
+                dialog.dismiss()
+            }.setNegativeButton(R.string.cancel, null).show()
+    }
+    private fun requestRecording(mode: RecordingMode, testSeconds: Int?) {
+        if (!visible || pages.displayedChild != 0 || mode.key != modeKey || !ModePlanning.recordingAllowed(engineState, mode, manualApplied)) return
+        if (audioMode.enabled && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            val previouslyAsked = getPreferences(MODE_PRIVATE).getBoolean("audioPermissionAsked", false)
+            val openSettings = previouslyAsked && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)
+            AlertDialog.Builder(this).setTitle(R.string.audio_permission_title).setMessage(R.string.audio_permission_body)
+                .setPositiveButton(if (openSettings) R.string.audio_settings else R.string.audio_allow) { _, _ ->
+                    if (openSettings) startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:$packageName")))
+                    else {
+                        getPreferences(MODE_PRIVATE).edit().putBoolean("audioPermissionAsked", true).apply()
+                        requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), 1002)
+                    }
+                }.setNeutralButton(R.string.audio_video_only_action) { _, _ ->
+                    if (CapturePolicy.canChangeCamera(engineState)) {
+                        audioMode = AudioMode.OFF; CameraSettings.saveAudio(this, audioMode); audioFailure = null; renderAudioIdle()
+                    }
+                }.setNegativeButton(R.string.cancel, null).show()
+            return
+        }
+        audioFailure = null
+        onState(EngineState.STARTING, "Starting camera${if (audioMode.enabled) " and microphone" else ""}…")
+        controller.startRecording(mode, testSeconds, audioMode)
+    }
+    private fun renderAudioIdle() {
+        if (destroyed) return
+        button(R.id.audioMode).setText(if (audioMode.enabled) R.string.audio_mic else R.string.audio_off)
+        button(R.id.audioMode).contentDescription = audioLabel(audioMode)
+        text(R.id.audioStatus).text = audioFailure ?: when {
+            !audioMode.enabled -> getString(R.string.audio_video_only)
+            engineState == EngineState.STARTING -> "Waiting for microphone samples"
+            engineState == EngineState.STOPPING -> "Finalizing audio + video"
+            checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED -> "${audioMode.name.lowercase()} · microphone permission needed"
+            else -> "${audioMode.name.lowercase()} · 48 kHz · idle"
+        }
+        findViewById<ProgressBar>(R.id.audioLeft).progress = 0
+        findViewById<ProgressBar>(R.id.audioRight).apply { progress = 0; visibility = if (audioMode == AudioMode.STEREO) View.VISIBLE else View.GONE }
+    }
+    override fun onAudioMeter(meter: AudioCapture.Meter) {
+        if (destroyed || !visible || engineState !in setOf(EngineState.STARTING, EngineState.RECORDING)) return
+        val clipped = meter.levels.any { it.clipped }
+        val peak = meter.levels.maxOfOrNull { it.peakDb } ?: -96.0
+        val uncertainty = if (meter.clockSource != "audio_timestamp_monotonic" || Build.VERSION.SDK_INT < 33) " · sync unverified" else ""
+        text(R.id.audioStatus).text = "${if (clipped) "CLIPPING · " else ""}${audioMode.name.lowercase()} · 48 kHz · ${String.format(Locale.US, "%.0f", peak)} dBFS$uncertainty"
+        text(R.id.audioStatus).contentDescription = "${meter.route}. ${text(R.id.audioStatus).text}"
+        findViewById<ProgressBar>(R.id.audioLeft).progress = meter.levels.getOrNull(0)?.meter ?: 0
+        findViewById<ProgressBar>(R.id.audioRight).progress = meter.levels.getOrNull(1)?.meter ?: 0
+    }
+    override fun onAudioError(message: String) { audioFailure = message; renderAudioIdle() }
     private fun applyControls() {
         try {
             val iso = text(R.id.isoInput).text.toString().toInt()

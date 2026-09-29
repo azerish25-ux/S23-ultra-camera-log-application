@@ -4,7 +4,7 @@
 
 The code contains SDR and HLG10 recording paths, output validation, and a bounded RAW-still path. Metadata discovery alone must never be reported as tested device support. A green emulator test is proof of an emulator path only. Record the phone model, firmware/build, camera ID/physical route, codec, resolution, rate, controls, Android version, and app commit with each real-device result.
 
-Current scope is video only (no microphone permission), WB presets/lock (not calibrated Kelvin), and sequential DNG stills (not RAW video). HLG10 is processed HDR, not Samsung's proprietary log pipeline or a custom log transform.
+Current scope includes built-in 48 kHz AAC microphone audio or explicit video-only, WB presets/lock (not calibrated Kelvin), and sequential DNG stills (not RAW video). HLG10 is processed HDR, not Samsung's proprietary log pipeline or a custom log transform.
 
 ## Run on an S23 Ultra
 
@@ -30,3 +30,7 @@ Current scope is video only (no microphone permission), WB presets/lock (not cal
 ## Next milestone, after these capture paths are established
 
 Choose a measured input path. A RAW-derived implementation needs black-level handling, demosaic, white balance, calibrated color conversion and a documented log encoding. An HLG-derived transform starts from processed HDR and must be labeled accordingly. Add an inverse transform/LUT, reference test vectors and controlled highlight/noise/color experiments. Merely flattening an SDR image does not establish additional captured dynamic range.
+
+## Phase 3D.1 audio acceptance
+
+Follow [PHASE3D1.md](PHASE3D1.md) for mono/stereo negotiation, permission refusal, privacy silencing, route changes, two-track drain and ten-minute physical audiovisual synchronization tests. Keep audio-enabled and muted cases separate. A 250 ms packet-coverage result is NOT a physical lip-sync pass; measure actual acoustic/image events and clock drift on the S23 Ultra.

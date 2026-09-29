@@ -6,7 +6,7 @@ import sys
 import tarfile
 
 
-def verify(archive: Path, videos: Path) -> dict:
+def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
     clips = json.loads(videos.read_text())
     if len(clips) < 12 or not all(c.get("fullDecodePassed") is True for c in clips):
         raise ValueError("Expected twelve independently decoded recordings")
@@ -51,16 +51,36 @@ def verify(archive: Path, videos: Path) -> dict:
         raise ValueError("Complete JSON/text capability reports were not preserved")
     if max(r["verification"].get("sampleSpanUs", 0) for r in reports) < 60_000_000:
         raise ValueError("Device reports contain no sixty-second recording")
+    audio_clips = [c for c in clips if c.get("audioPresent") is True]
+    audio_reports = [r for r in reports if r.get("videoOnly") is False]
+    if require_audio:
+        if len(audio_clips) < 6 or len(audio_reports) != len(audio_clips):
+            raise ValueError("Missing repeated, sustained and stereo audio/video capture evidence")
+        if not all(c.get("audioFullDecodePassed") is True for c in audio_clips):
+            raise ValueError("Audio tracks were not independently decoded")
+        if max(c.get("audioPacketSpanSeconds", 0) for c in audio_clips) < 60:
+            raise ValueError("No sustained audio recording")
+        if not any(c.get("audioStream", {}).get("channels") == 2 for c in audio_clips):
+            raise ValueError("Stereo capture was not exercised")
+        for report in audio_reports:
+            if (report.get("schemaVersion") != 3 or report.get("physicalLipSyncVerified") is not False or
+                "av_samples_written" not in report.get("stages", []) or
+                report.get("verification", {}).get("firstAudioPcmDecoded") is not True or
+                report.get("audio", {}).get("builtInRouteConfirmed") is not True or
+                report.get("audio", {}).get("clock", {}).get("source") not in
+                    {"audio_timestamp_monotonic", "read_completion_estimate_unverified"}):
+                raise ValueError("Missing actual microphone/clock/decoded-audio evidence")
     return {"recordings": len(clips), "recordingReports": len(reports), "probeReports": len(probes),
             "longestPacketSpanSeconds": max(c["packetSpanSeconds"] for c in clips),
-            "allVideosFullyDecoded": True, "scope": "emulator evidence; not physical S23 Ultra validation"}
+            "audioRecordings": len(audio_clips), "allAudioFullyDecoded": all(c.get("audioFullDecodePassed") is True for c in audio_clips) if audio_clips else None,
+            "allVideosFullyDecoded": True, "physicalLipSyncVerified": False, "scope": "emulator evidence; not physical S23 Ultra validation"}
 
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) != 3:
-            raise ValueError("Usage: check_evidence.py app-evidence.tar ffprobe.json")
-        print(json.dumps(verify(Path(sys.argv[1]), Path(sys.argv[2])), indent=2, allow_nan=False))
+        if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] != "--require-audio"):
+            raise ValueError("Usage: check_evidence.py app-evidence.tar ffprobe.json [--require-audio]")
+        print(json.dumps(verify(Path(sys.argv[1]), Path(sys.argv[2]), len(sys.argv) == 4), indent=2, allow_nan=False))
     except (OSError, ValueError, KeyError, TypeError, tarfile.TarError) as error:
         print(f"Evidence validation failed: {error}", file=sys.stderr)
         sys.exit(1)

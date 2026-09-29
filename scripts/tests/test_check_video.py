@@ -114,3 +114,79 @@ class VideoChecks(unittest.TestCase):
             path.touch()
             with self.assertRaises(ValueError):
                 inspect(path, 1, False)
+
+
+def av_fixture():
+    data = fixture()
+    data["streams"][0]["index"] = 0
+    data["streams"].append({"index": 1, "codec_type": "audio", "codec_name": "aac", "profile": "LC", "sample_rate": "48000", "channels": 2})
+    data["packets"] = [{"stream_index": 0, "pts_time": str(i / 30), "duration_time": str(1 / 30)} for i in range(61)]
+    data["packets"] += [{"stream_index": 1, "pts_time": str(.02 + i * 1024 / 48000), "duration_time": str(1024 / 48000)} for i in range(95)]
+    # Global timestamp ordering across tracks is not required; each track's ordering is.
+    return data
+
+
+class AudioChecks(unittest.TestCase):
+    def test_valid_two_track_offsets_are_preserved(self):
+        result = validate_metadata(av_fixture(), 1, False, "on", 2)
+        self.assertTrue(result["audioPresent"])
+        self.assertAlmostEqual(result["avStartOffsetSeconds"], .02)
+        self.assertFalse(result["physicalLipSyncVerified"])
+        self.assertEqual(result["avPacketCoverage"], "within_250ms")
+
+    def test_requested_audio_cannot_disappear(self):
+        with self.assertRaises(ValueError):
+            validate_metadata(fixture(), 1, False, "on")
+
+    def test_video_only_cannot_have_audio(self):
+        with self.assertRaises(ValueError):
+            validate_metadata(av_fixture(), 1, False, "off")
+
+    def test_wrong_rate_channels_or_codec_rejected(self):
+        for key, value in [("sample_rate", "44100"), ("channels", 6), ("channels", 1), ("codec_name", "mp3"), ("profile", "HE-AAC")]:
+            data = av_fixture(); data["streams"][1][key] = value
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                validate_metadata(data, 1, False, "on", 2)
+
+    def test_audio_timestamp_corruption_rejected(self):
+        for value in ["nan", "inf", "0.02", "-1"]:
+            data = av_fixture(); data["packets"][62]["pts_time"] = value
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                validate_metadata(data, 1, False)
+
+    def test_absent_audio_samples_rejected(self):
+        data = av_fixture(); data["packets"] = data["packets"][:61]
+        with self.assertRaises(ValueError): validate_metadata(data, 1, False)
+
+    def test_packet_stream_ids_required(self):
+        data = av_fixture(); del data["packets"][0]["stream_index"]
+        with self.assertRaises(ValueError): validate_metadata(data, 1, False)
+
+    def test_duplicate_audio_track_rejected(self):
+        data = av_fixture(); data["streams"].append(data["streams"][1].copy())
+        with self.assertRaises(ValueError): validate_metadata(data, 1, False)
+
+    def test_audio_gap_is_reported_not_misrepresented_as_sync(self):
+        data = av_fixture(); del data["packets"][65:75]
+        result = validate_metadata(data, 1, False)
+        self.assertEqual(result["avPacketCoverage"], "warning")
+        self.assertGreater(result["largeAudioIntervals"], 0)
+
+    def test_both_tracks_are_fully_decoded(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "av.mp4"; path.write_bytes(b"fixture")
+            with patch("check_video.subprocess.run", side_effect=[
+                subprocess.CompletedProcess([], 0, json.dumps(av_fixture()), ""),
+                subprocess.CompletedProcess([], 0, "", ""), subprocess.CompletedProcess([], 0, "", "")]) as run:
+                result = inspect(path, 1, False, "on", 2)
+                self.assertTrue(result["audioFullDecodePassed"])
+                self.assertNotIn("-select_streams", run.call_args_list[0].args[0])
+                self.assertIn("0:a:0", run.call_args_list[2].args[0])
+
+    def test_audio_decode_error_cannot_pass(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "av.mp4"; path.write_bytes(b"fixture")
+            with patch("check_video.subprocess.run", side_effect=[
+                subprocess.CompletedProcess([], 0, json.dumps(av_fixture()), ""),
+                subprocess.CompletedProcess([], 0, "", ""), subprocess.CalledProcessError(1, ["ffmpeg"])]), self.assertRaises(subprocess.SubprocessError):
+                inspect(path, 1, False)

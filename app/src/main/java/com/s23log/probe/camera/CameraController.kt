@@ -22,6 +22,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Size
 import android.view.Surface
+import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
@@ -39,6 +40,8 @@ class CameraController(context: Context, listener: Listener) {
         fun onControlsChanged(cameraKey: String, controls: CameraControls)
         fun onState(state: EngineState, message: String)
         fun onApplied(values: Map<String, Any?>)
+        fun onAudioMeter(meter: AudioCapture.Meter) {}
+        fun onAudioError(message: String) {}
         fun onVideo(outcome: SurfaceRecorder.Outcome)
         fun onRaw(outcome: RawCapture.Outcome)
     }
@@ -240,7 +243,7 @@ class CameraController(context: Context, listener: Listener) {
             }
         } catch (e: Exception) { rejectManual(job, e.message ?: "Control transition failed") }
     }
-    fun startRecording(mode: RecordingMode, testSeconds: Int? = null) {
+    fun startRecording(mode: RecordingMode, testSeconds: Int? = null, audioMode: AudioMode = AudioMode.OFF) {
         handler.post {
             if (!CapturePolicy.canStartRecording(state) || recorder != null || raw != null) return@post
             val request = wanted ?: return@post
@@ -250,7 +253,7 @@ class CameraController(context: Context, listener: Listener) {
             }
             if (testSeconds != null && testSeconds != 5) return@post
             try {
-                state(EngineState.STARTING, "Configuring ${mode.label}. Video only; not custom Log.")
+                state(EngineState.STARTING, "Configuring ${mode.label} · ${if (audioMode.enabled) "microphone ${audioMode.name.lowercase()}" else "video only"} · not custom Log")
                 val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0, request.displayDegrees, request.target.front)
                 var current: SurfaceRecorder? = null
                 current = SurfaceRecorder.prepare(app, mode, orientation, mapOf(
@@ -258,11 +261,13 @@ class CameraController(context: Context, listener: Listener) {
                     "controls" to intentControls.describe(), "effectiveControls" to controls.effective(request.target, mode.fps).describe(),
                     "selectedMode" to mode.describe(), "nominalFps" to mode.fps, "bitrate" to mode.bitRate,
                     "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
-                    "requestedTestSeconds" to testSeconds,
+                    "requestedTestSeconds" to testSeconds, "audioMode" to audioMode.name,
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
-                ), onFirstSample = { handler.post {
+                ), audioMode = audioMode, onAudioMeter = { meter -> handler.post {
+                    if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onAudioMeter(meter) }
+                } }, onFirstSample = { handler.post {
                     if (recorder === current && state == EngineState.STARTING && wanted != null) {
-                        state(EngineState.RECORDING, "Recording ${mode.label} · video only" +
+                        state(EngineState.RECORDING, "Recording ${mode.label} · ${if (audioMode.enabled) "AAC ${audioMode.channels}ch / 48 kHz" else "video only"}" +
                             if (!mode.previewDuringRecording) "; SDR preview suspended for HDR compatibility" else "")
                         if (testSeconds != null) handler.postDelayed({
                             if (recorder === current && state == EngineState.RECORDING) stopRecording()
@@ -277,19 +282,28 @@ class CameraController(context: Context, listener: Listener) {
                 } }
                 val prepared = requireNotNull(current)
                 recorder = prepared
-                val outputs = mutableListOf(output(prepared.surface, mode.range))
+                val encoderOutput = output(prepared.surface, mode.range).apply {
+                    if (Build.VERSION.SDK_INT >= 33) timestampBase = OutputConfiguration.TIMESTAMP_BASE_MONOTONIC
+                }
+                val outputs = mutableListOf(encoderOutput)
                 if (mode.previewDuringRecording) outputs += output(requireNotNull(previewSurface), DynamicRange.SDR)
                 configure(outputs, {
                     repeat(controls)
                     prepared.sessionStarted()
                     // Session configuration is not proof of recorded footage. The first
                     // successfully muxed sample acknowledges RECORDING above.
-                    state(EngineState.STARTING, "Camera configured; waiting for encoded footage…")
+                    state(EngineState.STARTING, "Camera configured; waiting for ${if (audioMode.enabled) "video and audio samples" else "encoded footage"}…")
                 }, { message -> prepared.cancel(message) })
             } catch (e: Exception) {
                 val active = recorder
                 if (active != null) active.cancel("Recording configuration failed: ${e.message}")
-                else { emit { it.onState(EngineState.PREVIEW, "Recording unavailable: ${e.message}") }; configurePreview() }
+                else {
+                    emit {
+                        it.onState(EngineState.PREVIEW, "Recording unavailable: ${e.message}")
+                        if (audioMode.enabled) it.onAudioError("Recording setup failed: ${e.message}. Audio was not disabled.")
+                    }
+                    configurePreview()
+                }
             }
         }
     }
