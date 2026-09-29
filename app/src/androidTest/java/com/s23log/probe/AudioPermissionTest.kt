@@ -110,6 +110,14 @@ class AudioPermissionTest {
             assertEquals(previous, CaptureHistory.latest(context).report?.name)
             click(scenario, R.id.record)
             clickDialog("android:id/button3", context.getString(R.string.audio_video_only_action))
+            // Accessibility reports that the click was accepted, not that the
+            // AlertDialog's separately posted onClick listener has completed.
+            // Observe the persisted choice AND rendered UI on the main thread.
+            await(scenario, "Explicit video-only choice must be accepted before recording") {
+                CameraSettings.audio(it) == AudioMode.OFF &&
+                    it.findViewById<Button>(R.id.audioMode).contentDescription?.toString() == it.getString(R.string.audio_video_only) &&
+                    it.findViewById<Button>(R.id.record).isEnabled
+            }
             assertEquals(AudioMode.OFF, CameraSettings.audio(context))
             assertEquals("Choosing muted does not start a stale take", previous, CaptureHistory.latest(context).report?.name)
             click(scenario, R.id.record)
