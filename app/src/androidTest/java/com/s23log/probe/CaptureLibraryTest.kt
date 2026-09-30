@@ -96,13 +96,31 @@ class CaptureLibraryTest {
                 assertNotNull("Successful load must bind the adapter; an error message is not success", list.adapter)
             }
             val instrumentation = InstrumentationRegistry.getInstrumentation()
-            instrumentation.waitForIdleSync()
-            val image = instrumentation.uiAutomation.takeScreenshot()
-            assertNotNull(image)
-            val destination = File(instrumentation.targetContext.filesDir, "exports/library-ui/library.png")
-            destination.parentFile!!.mkdirs()
-            destination.outputStream().use { assertTrue(image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)) }
-            image.recycle()
+            fun screenshot(name: String) {
+                val drawn = java.util.concurrent.CountDownLatch(1)
+                scenario.onActivity { activity ->
+                    val view = activity.window.decorView
+                    view.postOnAnimation { view.postOnAnimation { drawn.countDown() } }
+                }
+                assertTrue("Updated library frame was not drawn", drawn.await(10, java.util.concurrent.TimeUnit.SECONDS))
+                instrumentation.waitForIdleSync()
+                val image = instrumentation.uiAutomation.takeScreenshot()
+                assertNotNull(image)
+                val destination = File(instrumentation.targetContext.filesDir, "exports/library-ui/$name.png")
+                destination.parentFile!!.mkdirs()
+                destination.outputStream().use { assertTrue(image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, it)) }
+                image.recycle()
+            }
+            screenshot("library")
+            scenario.onActivity { it.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+            val landscape = java.util.concurrent.atomic.AtomicBoolean(false)
+            for (attempt in 0 until 100) {
+                scenario.onActivity { landscape.set(it.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) }
+                if (landscape.get()) break
+                Thread.sleep(50)
+            }
+            assertTrue("Library did not rotate", landscape.get())
+            loaded(); screenshot("library-landscape")
         }
     }
 }
