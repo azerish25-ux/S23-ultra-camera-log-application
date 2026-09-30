@@ -61,6 +61,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var latestPlan: ModePlan? = null
     private var viewingTransform = MonitorTransform.SDR_TONEMAP
     private var manualApplied = false
+    private var manualRequested = false
     private var audioMode = AudioMode.MONO
     private var audioFailure: String? = null
     private var resourceProblem: String? = null
@@ -345,7 +346,9 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         }
         if (state in setOf(EngineState.PREVIEW, EngineState.CLOSED, EngineState.ERROR))
             text(R.id.resourceStatus).text = resourceProblem ?: getString(R.string.resource_idle)
-        if (state == EngineState.OPENING || state == EngineState.CLOSED || state == EngineState.ERROR) manualApplied = false
+        if (state == EngineState.OPENING || state == EngineState.CLOSED || state == EngineState.ERROR) {
+            manualApplied = false; manualRequested = false
+        }
         val clock = findViewById<Chronometer>(R.id.recordingClock)
         if (state == EngineState.RECORDING && previous != state) { clock.base = SystemClock.elapsedRealtime(); clock.start() }
         else if (state != EngineState.RECORDING) { clock.stop(); if (state == EngineState.PREVIEW || state == EngineState.CLOSED) clock.base = SystemClock.elapsedRealtime() }
@@ -363,10 +366,18 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     override fun onApplied(values: Map<String, Any?>) {
         if (destroyed || !visible) return
         val wasManual = manualApplied
-        manualApplied = values["aeMode"] == CaptureRequest.CONTROL_AE_MODE_OFF
-        if (wasManual != manualApplied) updateEnabled()
+        val wasRequested = manualRequested
+        manualRequested = values["manualRequested"] == true
+        manualApplied = values["manualExposureConfirmed"] == true
+        if (wasManual != manualApplied || wasRequested != manualRequested) updateEnabled()
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
         text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
+        if (manualRequested) {
+            val check = values["manualControlMatch"] as? Map<*, *>
+            val targetMs = (check?.get("targetExposureNs") as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
+            val clamped = values["requestedIso"] != check?.get("targetIso") || values["requestedExposureNs"] != check?.get("targetExposureNs")
+            text(R.id.applied).append("\nMANUAL TARGET · ISO ${check?.get("targetIso") ?: "?"} · $targetMs ms · ${check?.get("status") ?: "unknown"}" + if (clamped) " · clamped to supported limits" else "")
+        }
     }
     override fun onVideo(outcome: SurfaceRecorder.Outcome) {
         if (outcome.audioError != null) audioFailure = "Microphone error: ${outcome.audioError}"
@@ -391,7 +402,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.monitorTransform).isEnabled = processed && (preview || recording)
         button(R.id.monitorTransform).setText(if (viewingTransform == MonitorTransform.SDR_TONEMAP) R.string.monitor_sdr else R.string.monitor_signal)
         text(R.id.colourStatus).setText(if (processed) R.string.colour_gpu else R.string.colour_direct)
-        val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied)
+        val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied) && (!manualRequested || manualApplied)
         button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
         button(R.id.testMode).isEnabled = canRecord
         button(R.id.audioMode).isEnabled = idle

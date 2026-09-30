@@ -1,4 +1,4 @@
-package com.s23log.probe.core
+package com.s23log.probe.storage
 
 import org.json.JSONObject
 

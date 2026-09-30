@@ -1,6 +1,6 @@
 package com.s23log.probe
 
-import com.s23log.probe.core.ClipDetails
+import com.s23log.probe.storage.ClipDetails
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test

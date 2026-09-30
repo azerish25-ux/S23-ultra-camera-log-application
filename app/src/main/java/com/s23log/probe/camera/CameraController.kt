@@ -26,6 +26,7 @@ import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.ManualExposureGate
+import com.s23log.probe.core.ManualResultPolicy
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.EngineState
@@ -82,6 +83,7 @@ class CameraController(context: Context, listener: Listener) {
     private var lastAppliedAt = 0L
     private var previewHasFrames = false
     private var previewControlWarning: String? = null
+    private var manualExposureConfirmed = false
     private val closeWaiters = java.util.IdentityHashMap<CameraCaptureSession, () -> Unit>()
     private val retiredTextures = mutableSetOf<SurfaceTexture>()
     private var monitorTransform = MonitorTransform.SDR_TONEMAP
@@ -227,14 +229,18 @@ class CameraController(context: Context, listener: Listener) {
         val locked = fixedFocus && if (autoWb)
             actual[CaptureResult.CONTROL_AWB_LOCK] == true && wb == CaptureResult.CONTROL_AWB_STATE_LOCKED
             else actual[CaptureResult.CONTROL_AWB_MODE] == job.intent.wbMode
+        val expected = job.effective.effective(target, selectedMode?.fps)
+        val appliedManual = ManualResultPolicy.assess(expected.iso, expected.exposureNs,
+            selectedMode?.fps?.let { 1_000_000_000L / it }, actual[CaptureResult.SENSOR_SENSITIVITY],
+            actual[CaptureResult.SENSOR_EXPOSURE_TIME], actual[CaptureResult.SENSOR_FRAME_DURATION],
+            actual[CaptureResult.CONTROL_AE_MODE] == CaptureRequest.CONTROL_AE_MODE_OFF)
         val evidence = ManualExposureGate.Evidence(
             converged = actual[CaptureResult.CONTROL_AE_MODE] == CaptureRequest.CONTROL_AE_MODE_ON &&
                 ae in listOf(CaptureResult.CONTROL_AE_STATE_CONVERGED, CaptureResult.CONTROL_AE_STATE_FLASH_REQUIRED, CaptureResult.CONTROL_AE_STATE_LOCKED) &&
                 (if (autofocus) af == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED && focus != null else fixedFocus) &&
                 (if (autoWb) wb == CaptureResult.CONTROL_AWB_STATE_CONVERGED else actual[CaptureResult.CONTROL_AWB_MODE] == job.intent.wbMode),
             locked = locked,
-            applied = locked && actual[CaptureResult.CONTROL_AE_MODE] == CaptureRequest.CONTROL_AE_MODE_OFF &&
-                (actual[CaptureResult.SENSOR_SENSITIVITY] ?: 0) > 0 && (actual[CaptureResult.SENSOR_EXPOSURE_TIME] ?: 0) > 0,
+            applied = locked && appliedManual.matched,
             focusFailed = autofocus && job.gate.stage == ManualExposureGate.Stage.CONVERGING && af == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED
         )
         try {
@@ -267,6 +273,10 @@ class CameraController(context: Context, listener: Listener) {
             if (modes.none { it.key == mode.key } || selectedMode?.key != mode.key) { emit { it.onState(state, "Mode was not planned for this camera") }; return@post }
             if (mode.ratePlan.requiresManual && !controls.manualExposure) {
                 emit { it.onState(state, "This mode requires confirmed manual exposure. Open Controls and apply manual exposure first.") }; return@post
+            }
+            if (controls.manualExposure && !manualExposureConfirmed) {
+                emit { it.onState(state, "Manual settings have not matched current sensor results. Inspect the applied values before recording.") }
+                return@post
             }
             if (testSeconds != null && testSeconds != 5) return@post
             try {
@@ -403,6 +413,7 @@ class CameraController(context: Context, listener: Listener) {
         handler.post { releasing = true; wanted = null; teardown(); maybeQuit() }
     }
     private fun closeSession() {
+        manualExposureConfirmed = false
         sessionEpoch.next()
         requestEpoch.next()
         manualJob?.deadline?.let(handler::removeCallbacks)
@@ -542,16 +553,18 @@ class CameraController(context: Context, listener: Listener) {
         }, ::fail)
     }
     private fun repeat(value: CameraControls, afTrigger: Int? = null) {
+        manualExposureConfirmed = false
         val camera = requireNotNull(device)
         val target = requireNotNull(wanted).target
         val activeRecorder = recorder
+        val mode = activeRecorder?.mode ?: selectedMode
+        val fps = mode?.fps?.takeUnless { mode.ratePlan.requiresManual && !value.manualExposure }
+        val effective = value.effective(target, fps)
         val builder = target.request(camera, if (activeRecorder == null) CameraDevice.TEMPLATE_PREVIEW else CameraDevice.TEMPLATE_RECORD).apply {
             if (activeRecorder == null || (activeRecorder.mode.processing == ProcessingPath.DIRECT && activeRecorder.mode.previewDuringRecording)) addTarget(requireNotNull(previewSurface))
             activeRecorder?.let { addTarget(it.cameraSurface) }
-            val mode = activeRecorder?.mode ?: selectedMode
             // Manual-only modes use ordinary AE preview while converging focus/WB;
             // do not send a fictitious fixed AE range before manual controls are active.
-            val fps = mode?.fps?.takeUnless { mode.ratePlan.requiresManual && !value.manualExposure }
             value.apply(this, target, fps, mode?.ratePlan)
             target.set(this, CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_IDLE)
         }
@@ -578,6 +591,16 @@ class CameraController(context: Context, listener: Listener) {
                 val actual = if (target.physicalId != null && Build.VERSION.SDK_INT >= 28) result.physicalCameraResults[target.physicalId] else result
                 advanceManual(actual)
                 if (!requestEpoch.isCurrent(requestToken)) return
+                val manualResult = if (value.manualExposure) ManualResultPolicy.assess(effective.iso, effective.exposureNs,
+                    fps?.let { 1_000_000_000L / it }, actual?.get(CaptureResult.SENSOR_SENSITIVITY),
+                    actual?.get(CaptureResult.SENSOR_EXPOSURE_TIME), actual?.get(CaptureResult.SENSOR_FRAME_DURATION),
+                    actual?.get(CaptureResult.CONTROL_AE_MODE) == CaptureRequest.CONTROL_AE_MODE_OFF) else null
+                val previouslyConfirmed = manualExposureConfirmed
+                manualExposureConfirmed = manualResult?.matched == true
+                if (value.manualExposure && manualJob == null && state == EngineState.PREVIEW && previouslyConfirmed != manualExposureConfirmed) {
+                    state(EngineState.PREVIEW, if (manualExposureConfirmed) "Live preview · manual sensor settings match the effective request within documented tolerances"
+                        else "Manual sensor settings differ from the request; inspect the applied values")
+                }
                 val values = mapOf<String, Any?>(
                     "metadataCamera" to (if (actual == null) "physical metadata unavailable" else target.key),
                     "iso" to actual?.get(CaptureResult.SENSOR_SENSITIVITY),
@@ -591,7 +614,11 @@ class CameraController(context: Context, listener: Listener) {
                     "afState" to actual?.get(CaptureResult.CONTROL_AF_STATE),
                     "nominalFps" to (activeRecorder?.mode?.fps ?: selectedMode?.fps),
                     "rateControl" to (activeRecorder?.mode ?: selectedMode)?.ratePlan?.control?.name,
-                    "manualTimingActive" to ((activeRecorder?.mode ?: selectedMode)?.ratePlan?.requiresManual == true && controls.manualExposure),
+                    "manualRequested" to value.manualExposure,
+                    "manualExposureConfirmed" to manualExposureConfirmed,
+                    "manualControlMatch" to manualResult?.describe(),
+                    "requestedIso" to value.iso, "requestedExposureNs" to value.exposureNs,
+                    "manualTimingActive" to (manualExposureConfirmed && fps != null),
                     "frameDurationNs" to actual?.get(CaptureResult.SENSOR_FRAME_DURATION),
                     "sensorTimestampNs" to actual?.get(CaptureResult.SENSOR_TIMESTAMP)
                 )

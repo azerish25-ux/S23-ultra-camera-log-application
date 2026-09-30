@@ -62,7 +62,11 @@ Open **Controls → Capture library** to find earlier indexed captures, open or 
 
 ## Recording resource protection
 
-Video capture budgets space for finalization/publication and responds to severe Android thermal pressure with a controlled stop. Orientation stays locked through each take and returns to the previous policy afterward. Storage estimates and thermal availability remain explicit; these safeguards do not certify physical 4K/8K throughput. See [policy, evidence and remaining hardware gates](docs/RECORDING_RESOURCES.md).
+Video capture budgets space for finalization/publication and responds to severe Android thermal pressure with a controlled stop. The app requests a fixed orientation through each take and restores the previous policy afterward. Storage estimates and thermal availability remain explicit; these safeguards do not certify physical 4K/8K throughput. See [policy, evidence and remaining hardware gates](docs/RECORDING_RESOURCES.md).
+
+## Manual result matching
+
+Manual recording readiness now requires current sensor-result values to match the effective camera-clamped request. The UI distinguishes actual values, effective targets, missing metadata and mismatches; AE-off alone is not confirmation. See [tolerances and physical-calibration boundaries](docs/MANUAL_RESULT_ACCEPTANCE.md).
 
 ## Build
 
@@ -91,7 +95,7 @@ Each recording produces a shareable validation JSON with requested/applied setti
 
 ## Use on the phone
 
-Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. Orientation is locked during a take. Leaving the screen or forcibly recreating the activity stops and finalizes recording; background recording is deliberately not supported.
+Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. A fixed orientation is requested during a take. Leaving the screen or forcibly recreating the activity stops and finalizes recording; background recording is deliberately not supported.
 
 Different debug signing keys can prevent an update over a previous APK: preserve exported evidence before uninstalling an older debug build. Production signing and a release-update policy remain separate work.
 

@@ -20,9 +20,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CaptureLibrary
-import com.s23log.probe.core.CapturePairing
+import com.s23log.probe.storage.CapturePairing
 import com.s23log.probe.core.MediaIdentity
-import com.s23log.probe.core.ClipDetails
+import com.s23log.probe.storage.ClipDetails
 import org.json.JSONObject
 import java.text.DateFormat
 import java.util.Date
@@ -140,9 +140,11 @@ class CaptureLibraryActivity : Activity() {
         view.tag = entry.id
         val cached = thumbnails.get(entry.id)
         if (cached != null) {
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
             view.clearColorFilter(); view.setImageBitmap(cached); view.setContentDescription(getString(R.string.library_thumbnail)); return
         }
-        view.setImageResource(if (entry.mimeType == "video/mp4") android.R.drawable.ic_media_play else android.R.drawable.ic_menu_gallery)
+        view.scaleType = ImageView.ScaleType.CENTER
+        view.setImageResource(if (entry.mimeType == "video/mp4") R.drawable.ic_clip_video else android.R.drawable.ic_menu_gallery)
         view.setColorFilter(0xffb6c5db.toInt())
         view.contentDescription = getString(R.string.library_thumbnail_pending)
         if (entry.id in missingThumbnails || !pendingThumbnails.add(entry.id)) return
@@ -162,7 +164,7 @@ class CaptureLibraryActivity : Activity() {
                 pendingThumbnails.remove(entry.id)
                 if (bitmap != null) thumbnails.put(entry.id, bitmap) else missingThumbnails.add(entry.id)
                 if (view.tag == entry.id) {
-                    if (bitmap != null) { view.clearColorFilter(); view.setImageBitmap(bitmap) }
+                    if (bitmap != null) { view.scaleType = ImageView.ScaleType.CENTER_CROP; view.clearColorFilter(); view.setImageBitmap(bitmap) }
                     view.contentDescription = getString(if (bitmap != null) R.string.library_thumbnail else R.string.library_thumbnail_unavailable)
                 }
             }

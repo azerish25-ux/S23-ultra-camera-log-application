@@ -1,6 +1,6 @@
 package com.s23log.probe
 
-import com.s23log.probe.core.CapturePairing
+import com.s23log.probe.storage.CapturePairing
 import com.s23log.probe.core.MediaIdentity
 import org.json.JSONObject
 import org.junit.Assert.*

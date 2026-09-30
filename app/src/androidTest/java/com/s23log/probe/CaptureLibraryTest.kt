@@ -104,10 +104,12 @@ class CaptureLibraryTest {
                         val hasVideos = (0 until list.adapter.count).any {
                             (list.adapter.getItem(it) as CaptureLibrary.Entry).mimeType == "video/mp4"
                         }
-                        val visibleThumbnail = (0 until list.childCount).any {
-                            list.getChildAt(it).findViewById<android.widget.ImageView>(R.id.libraryThumbnail)?.contentDescription == activity.getString(R.string.library_thumbnail)
+                        val visibleThumbnailsReady = list.childCount > 0 && (0 until list.childCount).all {
+                            val entry = list.adapter.getItem(list.firstVisiblePosition + it) as CaptureLibrary.Entry
+                            entry.mimeType != "video/mp4" ||
+                                list.getChildAt(it).findViewById<android.widget.ImageView>(R.id.libraryThumbnail)?.contentDescription == activity.getString(R.string.library_thumbnail)
                         }
-                        thumbnailReady.set(!hasVideos || visibleThumbnail)
+                        thumbnailReady.set(!hasVideos || visibleThumbnailsReady)
                     }
                     if (thumbnailReady.get()) break
                     Thread.sleep(50)

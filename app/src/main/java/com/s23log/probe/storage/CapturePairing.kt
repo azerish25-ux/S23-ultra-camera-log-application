@@ -1,6 +1,7 @@
-package com.s23log.probe.core
+package com.s23log.probe.storage
 
 import org.json.JSONObject
+import com.s23log.probe.core.MediaIdentity
 
 object CapturePairing {
     /** Historical reports without a byte identity cannot establish a matched export. */

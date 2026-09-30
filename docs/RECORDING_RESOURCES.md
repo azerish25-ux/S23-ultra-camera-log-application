@@ -18,7 +18,7 @@ Validation reports retain the last resource snapshot, minimum observed free byte
 
 ## Orientation and lifecycle
 
-The capture activity locks its current orientation through Starting, Recording and Finalizing, then restores its previous orientation request. Saved state prevents the lock from sticking after a forced activity recreation. This avoids ordinary sensor-driven rotations disrupting a take.
+The capture activity requests its current orientation through Starting, Recording and Finalizing, then restores its previous orientation policy. Saved state prevents the lock from sticking after a forced activity recreation. This is intended to prevent ordinary sensor-driven rotations from disrupting a take. Android windowing policies can override orientation requests, so the emulator test verifies the request/restoration contract rather than certifying every physical windowing environment.
 
 Leaving the activity or forcibly recreating/destroying it still finalizes recording under the existing foreground-only policy. Background recording is not implemented. Process death, power loss and physical device behavior remain separate acceptance tests.
 
