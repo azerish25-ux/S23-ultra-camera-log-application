@@ -33,6 +33,7 @@ object CaptureLibrary {
         if (file.exists()) return // Repeated completion/recreation does not reorder or duplicate a capture.
         val providerMime = runCatching { context.contentResolver.getType(uris.first()) }.getOrNull()
         val mime = when {
+            uris.first().lastPathSegment?.endsWith(".s23raw") == true -> "application/octet-stream"
             reportBase?.startsWith("raw-") == true || providerMime == "image/x-adobe-dng" -> "image/x-adobe-dng"
             reportBase?.startsWith("recording-") == true || providerMime?.startsWith("video/") == true -> "video/mp4"
             else -> "application/octet-stream"

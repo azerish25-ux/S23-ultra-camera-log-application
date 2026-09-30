@@ -2,7 +2,7 @@
 
 <img src="docs/images/launcher-icon.png" width="72" alt="S23Log adaptive launcher icon" />
 
-Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log, custom-Log video or sustained RAW video.**
+Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log or on-phone custom-Log video. The new continuous RAW lab is experimental and not physically certified.**
 
 Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch controls and bitrate targets, preview-only monitoring aids, a thumbnail library, original-video/report identity pairing, storage/thermal safeguards and time-varying control evidence. Reference forward/inverse LUTs are separate mathematical exports, not a claim of a shipping Log recording path.
 
@@ -13,6 +13,14 @@ Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch 
 - [Physical S23 Ultra test plan](docs/DEVICE_TEST_PLAN.md)
 
 This is an actively developed camera tool, not a device-certified production release. Release APKs remain unsigned until a release-key/update policy is established. Emulator evidence is kept separate from physical 4K/8K, ten-bit input fidelity, thermal endurance and audiovisual synchronization.
+
+## Version 0.7: continuous RAW lab and offline LogC3
+
+The opt-in **Continuous RAW lab** now uses repeating Camera2 RAW requests, exact timestamp/metadata pairing, a preallocated copy pool and an independent append-only source writer. Acquisition-only and five-second saved-source runs are separate; overflow stops explicitly. **Retained RAW sequences** exports complete or interrupted source files and reports. Existing SDR/HLG/audio and DNG still paths are preserved.
+
+`scripts/raw_to_logc3.py` develops retained Bayer source into a fully decoded/verified **LogC3 EI800 / AWG3** RGB16 FFV1 master or 10-bit HEVC file. It requires an exact camera/firmware-bound measured profile (or explicitly labelled provisional research profile). **No calibrated S23 colour profile or real phone test is supplied.** Synthetic fixtures test software only. No real-time Log, ARRI dynamic-range equivalence, 4K/8K throughput or firmware access is claimed.
+
+See [RAW capture, calibration contract, offline commands and acceptance gates](docs/RAW_SEQUENCE.md). Host development/tests additionally require Python 3.11+, NumPy (`scripts/requirements-raw.txt`) and FFmpeg/FFprobe; these add no Android runtime dependencies.
 
 ## Phase 3E.1 changes
 

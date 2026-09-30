@@ -21,8 +21,22 @@ jobs:
           java-version: '21'
       - name: Verify wrapper binary
         run: echo '497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+      - name: Install offline RAW developer dependencies
+        run: |
+          python3 -m venv "$RUNNER_TEMP/raw-venv"
+          "$RUNNER_TEMP/raw-venv/bin/python" -m pip install -r scripts/requirements-raw.txt
+          echo "$RUNNER_TEMP/raw-venv/bin" >> "$GITHUB_PATH"
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
       - name: Host acceptance-check regression tests
         run: python3 -m unittest discover -s scripts/tests -v
+      - name: RAW-to-LogC3 synthetic codec evidence (not phone footage)
+        run: |
+          python3 scripts/raw_fixture.py evidence/raw-logc3
+          python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --output evidence/raw-logc3/synthetic-logc3.mkv
+          python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --codec hevc10 --output evidence/raw-logc3/synthetic-logc3.mp4
       - name: Install pinned Android build and emulator packages
         env:
           ANDROID_HOME: ${{ runner.temp }}/s23log-android-sdk

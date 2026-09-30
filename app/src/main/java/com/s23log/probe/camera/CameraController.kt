@@ -82,7 +82,7 @@ class CameraController(context: Context, listener: Listener) {
     }
     private var manualJob: ManualJob? = null
     private var recorder: SurfaceRecorder? = null
-    private var raw: RawCapture? = null
+    private var raw: RawCaptureJob? = null
     private var modes: List<RecordingMode> = emptyList()
     private var bitratePreset = CameraSettings.bitratePreset(app)
     private var lastAppliedAt = 0L
@@ -441,6 +441,37 @@ class CameraController(context: Context, listener: Listener) {
             }
         }
     }
+    fun captureRawSequence(plan: com.s23log.probe.core.RawSequencePlan) {
+        handler.post {
+            if (state != EngineState.PREVIEW || recorder != null || raw != null) return@post
+            val request = wanted ?: return@post
+            try {
+                check(controls.manualExposure && manualExposureConfirmed) { "Apply and confirm manual ISO/shutter first" }
+                val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0,
+                    request.displayDegrees, request.target.front)
+                var job: RawSequenceCapture? = null
+                job = RawSequenceCapture(app, request.target, controls, plan, orientation, handler, io,
+                    { message -> if (raw === job) state(EngineState.RAW, message) },
+                    { result ->
+                        if (raw === job) {
+                            raw = null; closeSession()
+                            emit { it.onRaw(result) }; resumeOrClose()
+                        }
+                    })
+                val prepared = requireNotNull(job)
+                raw = prepared
+                state(EngineState.RAW, "Preparing continuous RAW acquisition; live preview and audio are not recorded…")
+                configure(listOf(output(prepared.surface, DynamicRange.SDR)), {
+                    prepared.start(requireNotNull(device), requireNotNull(session))
+                }, { message -> prepared.cancel(message) })
+            } catch (e: Exception) {
+                raw?.cancel("RAW sequence unavailable: ${e.message}") ?: run {
+                    state(EngineState.PREVIEW, "RAW sequence unavailable: ${e.message}")
+                }
+            }
+        }
+    }
+    fun stopRaw() { handler.post { raw?.stop() } }
     fun close() { handler.post { wanted = null; teardown(); maybeQuit() } }
     fun detachTexture(texture: SurfaceTexture) {
         if (!handler.post {

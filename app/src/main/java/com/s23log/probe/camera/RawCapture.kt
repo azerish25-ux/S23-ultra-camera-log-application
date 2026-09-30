@@ -39,11 +39,11 @@ class RawCapture(
     private val io: ExecutorService,
     private val progress: (String) -> Unit,
     private val completed: (Outcome) -> Unit
-) {
+) : RawCaptureJob {
     data class Outcome(val uris: List<Uri>, val report: File?, val message: String)
     private val size = requireNotNull(target.rawSize) { "No advertised RAW_SENSOR output" }
     private val reader = ImageReader.newInstance(size.width, size.height, ImageFormat.RAW_SENSOR, 2)
-    val surface: Surface get() = reader.surface
+    override val surface: Surface get() = reader.surface
     private val matcher = TimestampMatcher<Image, CaptureResult>(2) { it.close() }
     private val outputs = mutableListOf<Uri>()
     private val frames = JSONArray()
@@ -67,7 +67,7 @@ class RawCapture(
             } catch (e: Exception) { cancel("RAW image acquisition failed: ${e.message}") }
         }, handler)
     }
-    fun start(camera: CameraDevice, captureSession: CameraCaptureSession) {
+    override fun start(camera: CameraDevice, captureSession: CameraCaptureSession) {
         if (cancelled || done) return
         device = camera
         session = captureSession
@@ -140,7 +140,7 @@ class RawCapture(
             }
         }
     }
-    fun cancel(message: String) {
+    override fun cancel(message: String) {
         if (done) return
         cancelled = true
         reason = message

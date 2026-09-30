@@ -1,0 +1,2 @@
+# Only the offline developer/test fixture uses NumPy; the Android app has no new dependency.
+numpy>=1.26,<3

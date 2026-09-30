@@ -1,5 +1,9 @@
 # Implementation status and acceptance boundaries
 
+## Version 0.7 imaging milestone
+
+Continuous RAW acquisition/source retention and an offline LogC3/AWG3 developer are implemented. Exact source/profile binding, checksum/cadence/clipping checks and full decode protect the conversion contract. Physical S23 capture, calibration, real-time processing and high-resolution endurance remain unverified. See [RAW sequence scope and workflow](RAW_SEQUENCE.md).
+
 ## Implemented software paths
 
 - Public Camera2 capability discovery, logical/physical route identity, explicit unsupported/query-failed states, complete mode diagnostics and independently revalidated per-camera settings.
@@ -19,7 +23,7 @@
 | Sustained 4K/8K, HDR and GPU processing | Physical long takes, repeated start/stop, storage/temperature/battery conditions, dropped-frame and decoded image checks |
 | Native/proprietary Samsung Log | A supported public input/API and independently verified file interpretation; no assumption from the phone model |
 | Custom Log recording | Measured input, explicit transfer/container or sidecar contract, full encoder/decode/editor validation, highlight/noise/colour tests |
-| RAW-derived video | Separate sensor normalization, demosaic/colour calibration and measured bandwidth pipeline; sequential DNGs do not establish it |
+| RAW-derived video | Continuous source capture and offline reference development now exist; physical calibration/capture, real-time processing and measured sustained device bandwidth remain gates |
 | High-speed sessions and stabilization policy | Separate session/control implementation and verified device-specific combinations; ordinary-session advertisements are not proof |
 | Calibrated Kelvin, scopes and optical focus | Sensor/display calibration and actual-device measurements; current WB presets and RGB8 display aids are labelled accordingly |
 | Physical audiovisual synchronization | Real acoustic/visual events and extended drift tests; packet timestamps alone are insufficient |

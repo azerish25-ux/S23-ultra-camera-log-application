@@ -183,4 +183,7 @@
     <string name="lens_external">External</string>
     <string name="lens_unknown">Camera</string>
     <string name="choose_format">Choose an available recording format</string>
+    <string name="raw_sequence">Continuous RAW lab</string>
+    <string name="raw_sequences">Retained RAW sequences</string>
+    <string name="stop_raw">Stop RAW</string>
 </resources>

@@ -192,13 +192,16 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                 }.show()
         }
         button(R.id.record).setOnClickListener {
-            if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
+            if (engineState == EngineState.RAW) controller.stopRaw()
+            else if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
             else modes.firstOrNull { it.key == modeKey }?.let { mode ->
                 if (ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)) {
                     requestRecording(mode, null)
                 }
             }
         }
+        button(R.id.rawSequence).setOnClickListener { chooseRawSequence() }
+        button(R.id.rawSequences).setOnClickListener { showRawSequences() }
         button(R.id.rawOne).setOnClickListener { controller.captureRaw(1) }
         button(R.id.rawFive).setOnClickListener { controller.captureRaw(5) }
         button(R.id.applyControls).setOnClickListener { applyControls() }
@@ -415,6 +418,71 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                 }
             }.show()
     }
+    private fun chooseRawSequence() {
+        val target = selected ?: return
+        if (!manualApplied || !manualRequested) {
+            AlertDialog.Builder(this).setTitle(R.string.raw_sequence)
+                .setMessage("Apply manual exposure and wait for sensor-result confirmation first. RAW recording uses that ISO, shutter and focus; the existing audio choice is not changed.")
+                .setPositiveButton(R.string.close, null).show()
+            return
+        }
+        AlertDialog.Builder(this).setTitle(R.string.raw_sequence)
+            .setItems(arrayOf("Acquire only — 5 seconds, no pixels saved", "Save RAW source — 5 seconds, video only")) { _, choice ->
+                val map = target.characteristics[C.SCALER_STREAM_CONFIGURATION_MAP]
+                val sizes = runCatching { map?.getOutputSizes(android.graphics.ImageFormat.RAW_SENSOR).orEmpty().toList() }.getOrDefault(emptyList())
+                val candidates = sizes.sortedBy { it.width.toLong() * it.height }.flatMap { size ->
+                    listOf(24, 30).mapNotNull { fps -> runCatching {
+                        val plan = com.s23log.probe.core.RawSequencePlan(size.width, size.height, fps, 5, choice == 1)
+                        val interval = requireNotNull(map).getOutputMinFrameDuration(android.graphics.ImageFormat.RAW_SENSOR, size)
+                        val reason = if (interval > 1_000_000_000L / fps + 1) "Advertised RAW interval too long"
+                            else plan.rejection(Runtime.getRuntime().maxMemory(), filesDir.usableSpace)
+                        plan to reason
+                    }.getOrNull() }
+                }
+                if (candidates.isEmpty()) {
+                    AlertDialog.Builder(this).setTitle(R.string.raw_sequence).setMessage("No ordinary Bayer RAW_SENSOR candidates are exposed by this route.")
+                        .setPositiveButton(R.string.close, null).show()
+                } else AlertDialog.Builder(this).setTitle("Advertised RAW candidates — not certified")
+                    .setItems(candidates.map { (p, why) -> "${p.width}×${p.height} / ${p.fps}" + (why?.let { " — $it" } ?: "") }.toTypedArray()) { _, index ->
+                        val (plan, why) = candidates[index]
+                        if (why != null) {
+                            AlertDialog.Builder(this).setMessage(why).setPositiveButton(R.string.close, null).show()
+                        } else AlertDialog.Builder(this).setTitle("Start continuous RAW?")
+                            .setMessage("${plan.width}×${plan.height} at requested ${plan.fps} fps, five seconds.\n" +
+                                "${plan.expectedPayloadBytes / 1_000_000} MB expected source payload. Preview pauses; no audio. " +
+                                "Stop RAW remains available. Overflow stops acquisition and retains written frames. " +
+                                "This does not certify sustained RAW video or produce Log on the phone; use the documented offline LogC3 developer.")
+                            .setNegativeButton(R.string.cancel, null).setPositiveButton("Start RAW") { _, _ ->
+                                if (selected?.key == target.key && engineState == EngineState.PREVIEW && manualApplied) {
+                                    findViewById<View>(R.id.controlsPanel).visibility = View.GONE
+                                    controller.captureRawSequence(plan)
+                                }
+                            }.show()
+                    }.setNegativeButton(R.string.close, null).show()
+            }.setNegativeButton(R.string.cancel, null).show()
+    }
+    private fun showRawSequences() {
+        val folder = File(filesDir, "exports/raw-sequences")
+        val files = folder.listFiles().orEmpty().filter { it.isFile && it.name.matches(Regex("raw-[0-9a-f-]+\\.s23raw")) }
+            .sortedByDescending { it.lastModified() }
+        if (files.isEmpty()) {
+            AlertDialog.Builder(this).setTitle(R.string.raw_sequences).setMessage("No retained RAW sequences. RAW source is private; export before uninstalling. Interrupted sequences are retained here too.")
+                .setPositiveButton(R.string.close, null).show()
+        } else AlertDialog.Builder(this).setTitle("RAW source — may be incomplete")
+            .setItems(files.map { "${it.name} (${it.length() / 1_000_000} MB)" }.toTypedArray()) { _, index ->
+                val file = files[index]
+                val report = File(filesDir, "exports/validation/${file.nameWithoutExtension}.json")
+                AlertDialog.Builder(this).setTitle("Retained RAW source")
+                    .setMessage("Export to the host developer for CRC, timing and colour-profile checks. A crash may leave a truncated final record; source is never silently repaired or deleted.")
+                    .setPositiveButton("Export") { _, _ -> shareFiles(listOf(file) + listOfNotNull(report.takeIf { it.isFile }), "application/octet-stream") }
+                    .setNeutralButton("Keep", null).setNegativeButton("Delete…") { _, _ ->
+                        AlertDialog.Builder(this).setTitle("Permanently delete this RAW source?").setMessage(file.name)
+                            .setNegativeButton("Keep", null).setPositiveButton("Delete") { _, _ ->
+                                if (!file.delete()) Toast.makeText(this, "RAW source could not be deleted", Toast.LENGTH_LONG).show()
+                            }.show()
+                    }.show()
+            }.setNegativeButton(R.string.close, null).show()
+    }
     private fun showRecovery() {
         val entries = PendingMedia.recoverable(this)
         if (entries.isEmpty()) {
@@ -443,7 +511,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val monitorAvailable = state in setOf(EngineState.PREVIEW, EngineState.ADJUSTING) ||
             (state == EngineState.RECORDING && modes.firstOrNull { it.key == modeKey }?.previewDuringRecording == true)
         previewAids.setActive(visible && pages.displayedChild == 0 && monitorAvailable)
-        if (state in setOf(EngineState.STARTING, EngineState.RECORDING, EngineState.STOPPING)) {
+        if (state in setOf(EngineState.STARTING, EngineState.RECORDING, EngineState.STOPPING, EngineState.RAW)) {
             if (preRecordingOrientation == null) {
                 preRecordingOrientation = requestedOrientation
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
@@ -466,7 +534,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             (state == EngineState.RECORDING && mode?.previewDuringRecording == false)
         text(R.id.previewOverlay).visibility = if (showOverlay) View.VISIBLE else View.GONE
         text(R.id.previewOverlay).text = message
-        if (state == EngineState.STARTING || state == EngineState.RECORDING) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        if (state == EngineState.STARTING || state == EngineState.RECORDING || state == EngineState.RAW) window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         else window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         if (state != EngineState.RECORDING) renderAudioIdle()
         updateEnabled()
@@ -528,13 +596,13 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.monitorTransform).setText(if (viewingTransform == MonitorTransform.SDR_TONEMAP) R.string.monitor_sdr else R.string.monitor_signal)
         text(R.id.colourStatus).setText(if (processed) R.string.colour_gpu else R.string.colour_direct)
         val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)
-        button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
+        button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING || engineState == EngineState.RAW
         button(R.id.testMode).isEnabled = canRecord
         button(R.id.audioMode).isEnabled = idle
         button(R.id.modeDetails).isEnabled = idle && latestPlan != null
         button(R.id.previewAids).isEnabled = preview || (recording && mode?.previewDuringRecording == true)
         text(R.id.modeEvidence).setText(if (mode == null) R.string.choose_format else if (mode.ratePlan.requiresManual && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
-        button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
+        button(R.id.record).setText(if (engineState == EngineState.RAW) R.string.stop_raw else if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
         button(R.id.captureLibrary).isEnabled = idle
         button(R.id.clipsTab).isEnabled = idle
@@ -545,6 +613,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val rawAvailable = runCatching { selected?.rawSize != null }.getOrDefault(false)
         button(R.id.rawOne).isEnabled = preview && rawAvailable
         button(R.id.rawFive).isEnabled = preview && rawAvailable
+        button(R.id.rawSequence).isEnabled = preview && selected?.manualSensor == true
+        button(R.id.rawSequences).isEnabled = idle
         val controls = preview || recording
         toggle(R.id.manualExposure).isEnabled = controls && selected?.manualSensor == true
         text(R.id.isoInput).isEnabled = controls && toggle(R.id.manualExposure).isChecked
