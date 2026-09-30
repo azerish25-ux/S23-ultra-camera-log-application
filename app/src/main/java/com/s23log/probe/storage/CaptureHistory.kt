@@ -11,6 +11,8 @@ object CaptureHistory {
         context.getSharedPreferences("capture_history", Context.MODE_PRIVATE).edit()
             .putString("uris", JSONArray(uris.map { it.toString() }).toString())
             .putString("report", report?.name).putString("message", message).commit()
+        // A failed library write must never remove saved footage or its latest-result pointer.
+        CaptureLibrary.remember(context, uris, report, message)
     }
     fun latest(context: Context): Entry {
         val prefs = context.getSharedPreferences("capture_history", Context.MODE_PRIVATE)

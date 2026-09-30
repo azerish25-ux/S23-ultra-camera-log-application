@@ -124,6 +124,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             }
         }
         button(R.id.recoverCaptures).setOnClickListener { showRecovery() }
+        button(R.id.captureLibrary).setOnClickListener { startActivity(Intent(this, CaptureLibraryActivity::class.java)) }
         button(R.id.openControls).setOnClickListener {
             val panel = findViewById<View>(R.id.controlsPanel)
             panel.visibility = if (panel.visibility == View.VISIBLE) View.GONE else View.VISIBLE
@@ -378,6 +379,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         text(R.id.modeEvidence).setText(if (mode?.ratePlan?.requiresManual == true && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
+        button(R.id.captureLibrary).isEnabled = idle
         button(R.id.diagnosticsTab).isEnabled = idle
         button(R.id.cameraTab).isEnabled = idle
         button(R.id.enableCamera).isEnabled = idle

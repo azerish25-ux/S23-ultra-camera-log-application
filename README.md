@@ -56,6 +56,10 @@ See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, high-speed/max
 - Complete schema-versioned JSON/text diagnostics: per-property error isolation, physical-camera metadata, P010 camera outputs, per-size timing, high-speed and maximum-resolution stream maps, and explicit profile classification. Exports do not truncate resolution lists.
 - Application-owned probe work survives activity recreation. Scans remain available when saving fails. File sharing is limited to an exports directory with temporary URI grants.
 
+## Capture library
+
+Open **Controls → Capture library** to find earlier indexed captures, open or share their media, and share original validation reports. Missing files and unverified recovery messages remain explicit. The previous latest capture is imported on upgrade; older unindexed history cannot be reconstructed. See [storage, access and verification boundaries](docs/CAPTURE_LIBRARY.md).
+
 ## Build
 
 JDK 17 or 21, SDK API 36, Build Tools 36.0.0. The checked-in official Gradle 9.6.0 wrapper and distribution are checksum-pinned; AGP is 9.4.0.

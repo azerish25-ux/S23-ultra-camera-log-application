@@ -73,4 +73,24 @@
     <string name="colour_gpu">GPU HLG10 · experimental · Log off</string>
     <string name="colour_direct">Direct capture · custom Log off</string>
     <string name="colour_explanation">GPU HLG records HLG10 through a floating-point processor. Viewing changes affect preview only. Runtime precision and colour checks may reject an unsupported path. Custom Log is reference-only and is not a recording option.</string>
+    <item name="captureLibraryList" type="id" />
+    <item name="captureLibraryStatus" type="id" />
+    <string name="library_added">Added %1$s</string>
+    <string name="capture_library">Capture library</string>
+    <string name="library_back">Back to camera</string>
+    <string name="library_loading">Loading saved captures…</string>
+    <string name="library_video">Video</string>
+    <string name="library_raw">RAW stills</string>
+    <string name="library_empty">No indexed captures yet. New captures and the previous latest capture appear here. Recovery files keep their original unverified status.</string>
+    <string name="library_scope">%1$d captures. Tap for playback, sharing or validation evidence. This list does not certify image quality or physical device support.</string>
+    <string name="library_index_warning">Some library records could not be read or saved. Original media has not been deleted.</string>
+    <string name="library_load_failed">The capture library could not be loaded. Original media has not been deleted.</string>
+    <string name="library_open">Open media</string>
+    <string name="library_share">Share media</string>
+    <string name="library_actions">Capture actions</string>
+    <string name="library_report_missing">The original validation report is unavailable. This does not mean the media is verified.</string>
+    <string name="library_choose_file">Choose a capture file</string>
+    <string name="library_file_number">File %1$d</string>
+    <string name="library_media_missing">Media is missing or no longer accessible. The library record and other files have been kept.</string>
+    <string name="library_no_viewer">No compatible app is available, or the file could not be opened.</string>
 </resources>

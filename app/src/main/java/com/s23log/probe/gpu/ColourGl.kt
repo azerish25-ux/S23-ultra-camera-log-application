@@ -282,7 +282,13 @@ object ColourGpuProbe {
                 renderer.import(source);renderer.record(dstFbo)
                 val before=GlTools.readRgb10(dstFbo,1024,1)
                 val result=ColourPrecision.assessRamp(DoubleArray(1024) { (before[it] and 1023)/1023.0 })
-                check(result.passed) { "GPU precision ramp failed: $result" };measured=result.describe()
+                check(result.passed) {
+                    val working = GlTools.readFloatRgba(renderer.workingFbo, 1024, 1)
+                    val positions = listOf(0, 1, 2, 128, 256, 512, 768, 1023)
+                    "GPU precision ramp failed: $result; samples=" + positions.joinToString { i ->
+                        "$i:packed=0x${before[i].toUInt().toString(16)},linear=${working[4*i]}"
+                    }
+                };measured=result.describe()
                 renderer.monitor(monitorFbo,1024,1,MonitorTransform.SDR_TONEMAP)
                 renderer.record(dstFbo);check(before.contentEquals(GlTools.readRgb10(dstFbo,1024,1))) { "Monitor affected recording pixels" }
                 renderer.monitor(monitorFbo,1024,1,MonitorTransform.HLG_SIGNAL)
