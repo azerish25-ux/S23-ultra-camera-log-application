@@ -4,6 +4,7 @@ export ANDROID_SDK_ROOT="$ANDROID_HOME"
 export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
 export ANDROID_SERIAL=emulator-5554
 mkdir -p evidence/emulator
+{ echo "Host CPUs: $(nproc)"; free -m; if [[ -r /sys/fs/cgroup/cpu.max ]]; then cat /sys/fs/cgroup/cpu.max; fi; } > evidence/emulator/host-resources.txt
 if ! command -v ffprobe >/dev/null || ! command -v ffmpeg >/dev/null; then
   sudo apt-get update -qq
   sudo apt-get install -y ffmpeg
@@ -21,6 +22,8 @@ accel=off
 if [[ -e /dev/kvm ]]; then sudo chmod 666 /dev/kvm; accel=on; fi
 emulator -avd s23log_ci -port 5554 -no-window -no-audio -no-boot-anim -no-snapshot -no-metrics -gpu swiftshader -accel "$accel" -camera-back emulated -camera-front emulated > evidence/emulator/emulator.log 2>&1 &
 emulator_pid=$!
+vmstat_pid=""
+if command -v vmstat >/dev/null; then vmstat -t 5 > evidence/emulator/host-vmstat.txt & vmstat_pid=$!; fi
 cleanup() {
   local status=$?
   trap - EXIT
@@ -37,6 +40,7 @@ cleanup() {
   fi
   timeout 10 adb emu kill
   kill "$emulator_pid" 2>/dev/null
+  if [[ -n "$vmstat_pid" ]]; then kill "$vmstat_pid" 2>/dev/null; fi
   exit "$status"
 }
 trap cleanup EXIT

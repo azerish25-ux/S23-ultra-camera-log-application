@@ -26,6 +26,8 @@ class PreviewAidsView(context: Context, attributes: AttributeSet? = null) : View
     private val busy = AtomicBoolean()
     private val sensors = context.getSystemService(SensorManager::class.java)
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val destinationBounds = RectF()
+    private val chartBounds = RectF()
     private val scale = resources.displayMetrics.density
     private val expireFrame = Runnable { invalidate() }
     private data class Frame(val result: PreviewAnalysis, val observedAt: Long, val zebra: Bitmap,
@@ -136,7 +138,7 @@ class PreviewAidsView(context: Context, attributes: AttributeSet? = null) : View
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         if (!active || selected.isEmpty() || width == 0 || height == 0) return
-        val destination = RectF(0f, 0f, width.toFloat(), height.toFloat())
+        val destination = destinationBounds.apply { set(0f, 0f, width.toFloat(), height.toFloat()) }
         val framing = contentBounds ?: destination
         val current = frame?.takeIf { SystemClock.elapsedRealtime() - it.observedAt <= 750 && it.result.validPixels > 0 }
         paint.style = Paint.Style.FILL; paint.alpha = 255
@@ -169,7 +171,7 @@ class PreviewAidsView(context: Context, attributes: AttributeSet? = null) : View
         val chartHeight = 46 * scale
         val chartWidth = (width - 36 * scale) / 2
         fun chart(left: Float, title: String, draw: (RectF) -> Unit) {
-            val rect = RectF(left, bottom - chartHeight, left + chartWidth, bottom)
+            val rect = chartBounds.apply { set(left, bottom - chartHeight, left + chartWidth, bottom) }
             paint.color = 0xd00c1016.toInt(); canvas.drawRect(rect, paint)
             draw(rect)
             paint.color = Color.WHITE; paint.textSize = 10 * scale

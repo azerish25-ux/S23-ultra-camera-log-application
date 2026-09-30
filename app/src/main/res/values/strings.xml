@@ -43,7 +43,8 @@
     <string name="close_controls">Back to viewfinder</string>
     <string name="mode_details">Info</string>
     <string name="mode_details_description">Recording mode evidence and capabilities</string>
-    <string name="test_mode">5s test</string>
+    <string name="test_mode">5s</string>
+    <string name="test_mode_description">Record a five-second test after confirmation</string>
     <string name="recording_time">Elapsed recording time</string>
     <string name="advertised_only">Advertised candidate · not device-certified</string>
     <string name="manual_timing_required">Manual timing · apply manual exposure before recording</string>

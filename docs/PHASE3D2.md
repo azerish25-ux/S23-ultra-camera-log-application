@@ -46,3 +46,7 @@ Primary contracts:
 - https://developer.android.com/reference/android/media/AudioTimestamp
 - https://developer.android.com/reference/android/media/MediaFormat#KEY_ENCODER_DELAY
 - https://developer.android.com/reference/android/opengl/EGLExt#eglPresentationTimeANDROID(android.opengl.EGLDisplay,%20android.opengl.EGLSurface,%20long)
+
+## Encoder scheduling diagnostics
+
+Audio evidence now also records the maximum queued-pump delay, pump duration and input-callback gap. These are observations of the encoder handler, not direct measures of physical lip sync. CI retains host CPU/memory and periodic vmstat evidence to help distinguish execution-resource stalls from app behavior. The two-second PCM handoff capacity, no-silent-eviction rule, recording duration and acceptance assertions are unchanged. A protection stop during the long-take test fails without accidentally starting another recording.

@@ -2,7 +2,7 @@
 
 The workflow builds debug/release APKs, runs both lint variants, runs JVM and device tests, and validates the debug signature before emulator work.
 
-Reusable GitHub Actions are pinned to immutable upstream commits. The release-signing guard is exercised with absent, partial and invalid configuration, without generating or supplying a production key. Native layout tests temporarily set emulator font scale to 1.3 and restore its original value; they retain portrait/landscape captures and assert that capture-action text and bounds are not clipped. Run these tests only on a designated test device/emulator.
+Reusable GitHub Actions are pinned to immutable upstream commits. The release-signing guard is exercised with absent, partial and invalid configuration, without generating or supplying a production key. Native layout tests temporarily set emulator font scale to 1.3 and restore its original value; they retain portrait/landscape captures and assert that capture-action text and bounds are not clipped. Run these tests only on a designated test device/emulator. Normal teardown restores font scale; a force-killed test process can require resetting it manually.
 
 Host-side validator regressions run with:
 

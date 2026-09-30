@@ -6,6 +6,8 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.AdaptiveIconDrawable
+import android.os.Build
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -91,5 +93,13 @@ class LensRailTest {
         assertTrue(pixels.toSet().size > 3)
         val directory = File(context.filesDir, "exports/lens-ui").apply { mkdirs() }
         File(directory, "launcher-icon.png").outputStream().use { assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)) }; bitmap.recycle()
+        if (Build.VERSION.SDK_INT >= 33) {
+            val monochrome = requireNotNull((drawable as AdaptiveIconDrawable).monochrome)
+            val themed = Bitmap.createBitmap(288, 288, Bitmap.Config.ARGB_8888)
+            monochrome.setBounds(0, 0, 288, 288); monochrome.draw(Canvas(themed))
+            val themedPixels = IntArray(288 * 288); themed.getPixels(themedPixels, 0, 288, 0, 0, 288, 288)
+            assertTrue(themedPixels.any { android.graphics.Color.alpha(it) > 0 })
+            File(directory, "launcher-monochrome.png").outputStream().use { assertTrue(themed.compress(Bitmap.CompressFormat.PNG, 100, it)) }; themed.recycle()
+        }
     }
 }

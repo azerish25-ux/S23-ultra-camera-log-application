@@ -70,6 +70,11 @@ class AudioRecordingTest {
                 assertTrue(audio.getLong("samples") >= 2)
                 assertEquals("AAC timestamps must not inherit partial-read gaps", 0, audio.getInt("largeFrameIntervals"))
                 val capture = json.getJSONObject("audio")
+                val scheduling = capture.getJSONObject("encoderScheduling")
+                assertTrue(scheduling.getLong("pumpRuns") > 0)
+                assertTrue(scheduling.getLong("maximumPumpQueueDelayNs") >= 0)
+                assertTrue(scheduling.getLong("maximumPumpRunNs") >= 0)
+                assertTrue(scheduling.getLong("maximumInputCallbackGapNs") >= 0)
                 assertEquals("Every PCM frame read must reach the encoder", capture.getLong("pcmFramesRead"), capture.getLong("pcmFramesQueued"))
                 val acquisition = capture.getJSONObject("acquisition")
                 assertTrue(acquisition.getBoolean("dedicatedReader"))
@@ -101,7 +106,14 @@ class AudioRecordingTest {
     @Test fun audioVideoTrackTimingSurvivesSixtySeconds() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             val previous = CaptureHistory.latest(context).report?.name
-            begin(scenario); Thread.sleep(65_000); click(scenario, R.id.record)
+            begin(scenario); Thread.sleep(65_000)
+            scenario.onActivity {
+                // A protection stop must fail this uninterrupted-take test, not accidentally
+                // start a second recording when the test thought it was pressing Stop.
+                val record = it.findViewById<Button>(R.id.record)
+                assertEquals("Long take ended prematurely: ${CaptureHistory.latest(context).message}", it.getString(R.string.stop_recording), record.text.toString())
+                record.performClick()
+            }
             val json = output(previous, minSpanUs = 60_000_000)
             assertTrue(json.getJSONObject("verification").getJSONObject("audio").getLong("packetSpanUs") >= 60_000_000)
             ready(scenario)

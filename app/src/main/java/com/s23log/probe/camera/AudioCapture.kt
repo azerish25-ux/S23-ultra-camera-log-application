@@ -61,6 +61,12 @@ class AudioCapture private constructor(
     @Volatile private var route = "Built-in microphone (awaiting route)"
     @Volatile private var routeConfirmed = false
     private val pumpPosted = AtomicBoolean()
+    @Volatile private var pumpPostedAtNs = 0L
+    private var pumpRuns = 0L
+    private var maximumPumpQueueDelayNs = 0L
+    private var maximumPumpRunNs = 0L
+    private var previousInputCallbackNs = 0L
+    private var maximumInputCallbackGapNs = 0L
     private val reader = MicrophoneReader(mode.channels, record.bufferSizeInFrames,
         object : MicrophoneReader.Source {
             private var startedNs = 0L
@@ -94,7 +100,11 @@ class AudioCapture private constructor(
         }, pending, clock, ::schedulePump,
         initializeThread = { android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO) })
     private val pump = Runnable {
+        val postedAt = pumpPostedAtNs
+        val began = System.nanoTime()
         pumpPosted.set(false)
+        pumpRuns++
+        if (postedAt > 0 && began >= postedAt) maximumPumpQueueDelayNs = maxOf(maximumPumpQueueDelayNs, began - postedAt)
         if (!closed && !eosQueued) try {
             if (reader.done && reader.failure != null && !readerFailureNotified) {
                 readerFailureNotified = true
@@ -109,9 +119,11 @@ class AudioCapture private constructor(
                 }
             }
         } catch (e: Exception) { events.failed(e) }
+        finally { maximumPumpRunNs = maxOf(maximumPumpRunNs, System.nanoTime() - began) }
     }
     private fun schedulePump() {
         if (!closed && pumpPosted.compareAndSet(false, true)) {
+            pumpPostedAtNs = System.nanoTime()
             if (!handler.post(pump)) pumpPosted.set(false)
         }
     }
@@ -179,7 +191,10 @@ class AudioCapture private constructor(
         "appEndPaddingUs" to (endPaddingFrames * 1_000_000L / AudioMode.SAMPLE_RATE), "appEndPaddingTrimmed" to false,
         "lastInputEndUs" to lastQueueEndUs, "lastEncoderInputEndUs" to lastEncoderInputEndUs,
         "clippingMeterBlocks" to reader.clippingBlocks, "clock" to clock.describe(),
-        "acquisition" to reader.describe(), "timingSchemaVersion" to 1
+        "acquisition" to reader.describe(), "timingSchemaVersion" to 1,
+        "encoderScheduling" to mapOf("pumpRuns" to pumpRuns, "maximumPumpQueueDelayNs" to maximumPumpQueueDelayNs,
+            "maximumPumpRunNs" to maximumPumpRunNs, "maximumInputCallbackGapNs" to maximumInputCallbackGapNs,
+            "scope" to "Observed encoder-handler scheduling; input callback gaps can include ordinary codec backpressure. Queue capacity and fail-closed policy are unchanged")
     )
 
     companion object {
@@ -206,6 +221,9 @@ class AudioCapture private constructor(
                 val capture = AudioCapture(record, codec, input.id, mode, handler, events)
                 codec.setCallback(object : MediaCodec.Callback() {
                     override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {
+                        val now = System.nanoTime()
+                        if (capture.previousInputCallbackNs > 0) capture.maximumInputCallbackGapNs = maxOf(capture.maximumInputCallbackGapNs, now - capture.previousInputCallbackNs)
+                        capture.previousInputCallbackNs = now
                         if (!capture.closed && !capture.eosQueued) { capture.inputIndices.addLast(index); capture.schedulePump() }
                     }
                     override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {

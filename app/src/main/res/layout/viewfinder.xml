@@ -26,15 +26,15 @@
                 <SeekBar android:id="@+id/compensationSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/compensation_title" />
                 <TextView android:id="@+id/isoValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/iso" android:labelFor="@id/isoSlider" />
                 <SeekBar android:id="@+id/isoSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/iso" />
-                <EditText android:visibility="gone" android:id="@+id/isoInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="number" android:autofillHints="" android:text="100" android:selectAllOnFocus="true" />
+                <EditText android:visibility="gone" android:id="@+id/isoInput" android:hint="@string/iso" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="number" android:autofillHints="" android:text="100" android:selectAllOnFocus="true" />
                 <TextView android:id="@+id/shutterValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/shutter" android:labelFor="@id/shutterSlider" />
                 <SeekBar android:id="@+id/shutterSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/shutter" />
-                <EditText android:visibility="gone" android:id="@+id/shutterInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="16.667" android:selectAllOnFocus="true" />
+                <EditText android:visibility="gone" android:id="@+id/shutterInput" android:hint="@string/shutter" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="16.667" android:selectAllOnFocus="true" />
                 <Button android:id="@+id/shutterAngle" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/shutter_angle" />
                 <Switch android:id="@+id/manualFocus" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_focus" />
                 <TextView android:id="@+id/focusValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/focus" android:labelFor="@id/focusSlider" />
                 <SeekBar android:id="@+id/focusSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/focus" />
-                <EditText android:visibility="gone" android:id="@+id/focusInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="0" android:selectAllOnFocus="true" />
+                <EditText android:visibility="gone" android:id="@+id/focusInput" android:hint="@string/focus" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="0" android:selectAllOnFocus="true" />
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/wb" android:labelFor="@id/wbSelector" />
                 <Spinner android:id="@+id/wbSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/wb" />
                 <CheckBox android:id="@+id/wbLock" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/wb_lock" />
