@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root" android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical" android:background="#0C1016">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:gravity="center_vertical" android:baselineAligned="false">
         <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
             android:text="@string/app_name" android:textSize="20sp" android:textStyle="bold" android:textColor="#F4F6FA" />
         <Button android:id="@+id/cameraTab" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/camera_tab" />
-        <Button android:id="@+id/diagnosticsTab" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/diagnostics_tab" />
+        <Button android:id="@+id/clipsTab" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/clips_tab" />
+        <Button android:id="@+id/diagnosticsTab" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/diagnostics_tab" android:contentDescription="@string/diagnostics_tab_description" />
     </LinearLayout>
     <ViewFlipper android:id="@+id/pages" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
         <include layout="@layout/capture_workspace" />

@@ -1,6 +1,6 @@
 # Touch controls with a visible preview
 
-The Controls drawer occupies at most 65% of the viewfinder height. Part of the live preview and the separate persistent Record/Stop dock remain visible in portrait and landscape. The drawer scrolls independently. It opens with manual controls; monitoring, bitrate, RAW and sharing options follow below.
+The Controls drawer occupies at most 65% of the viewfinder height. Part of the live preview and the separate persistent Record/Stop dock remain visible in portrait and landscape. The drawer scrolls independently. It opens with manual controls; Settings & exports is a separate pane for monitoring, bitrate, RAW and sharing. Clips has its own top-level library entry.
 
 ISO and shutter use capability-bounded logarithmic sliders, and focus uses a linear diopter slider. Shutter is limited by both the advertised sensor range and the selected target frame interval. Focus is available only on routes exposing manual focus. A shutter-angle chooser converts 90/180/270/360 degrees using the selected nominal frame rate; it labels camera clamping and does not claim a measured physical shutter angle. The normal path does not summon a keyboard. Advanced numeric entry remains available for precise requested values.
 

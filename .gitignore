@@ -17,3 +17,4 @@ Thumbs.db
 # Python validation caches
 __pycache__/
 *.py[cod]
+/signing/

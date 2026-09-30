@@ -1,6 +1,6 @@
 # Versioned reference forward/inverse LUT export
 
-Controls → Prepare reference LUTs creates five application-owned files off the UI thread. Completion does not launch a sharing destination. Share reference LUTs then opens the normal user-selected share chooser. Preparation survives an observer/activity detachment; failures stay explicit and never enable sharing a partial bundle.
+Controls → Settings & exports → Prepare reference LUTs creates five application-owned files off the UI thread. Completion does not launch a sharing destination. Share reference LUTs then opens the normal user-selected share chooser. Preparation survives an observer/activity detachment; failures stay explicit and never enable sharing a partial bundle.
 
 - `linear-bt2020-to-reference-log.cube`: the analytic S23Log-reference-0.1 curve, sampled into 8192 1D RGB entries.
 - `reference-log-to-linear-bt2020.cube`: its inverse, with the same entry count.

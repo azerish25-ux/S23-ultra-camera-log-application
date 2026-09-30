@@ -1,4 +1,4 @@
-# Phase 2 acceptance and remaining hardware work
+# Physical-device acceptance and remaining hardware work
 
 ## Evidence boundaries
 

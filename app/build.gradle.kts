@@ -2,6 +2,23 @@ plugins {
     id("com.android.application")
 }
 
+// Opt-in only. CI development builds remain unsigned for release; never fall back to a debug key.
+val releaseSigningInputs = listOf("S23LOG_RELEASE_STORE_FILE", "S23LOG_RELEASE_STORE_PASSWORD",
+    "S23LOG_RELEASE_KEY_ALIAS", "S23LOG_RELEASE_KEY_PASSWORD").associateWith {
+    providers.environmentVariable(it).orNull?.takeIf(String::isNotBlank)
+}
+val hasReleaseSigning = releaseSigningInputs.values.all { it != null }
+val requireSignedRelease = providers.gradleProperty("requireReleaseSigning").orNull?.let {
+    require(it == "true" || it == "false") { "requireReleaseSigning must be true or false" }
+    it == "true"
+} ?: false
+require(releaseSigningInputs.values.none { it != null } || hasReleaseSigning) {
+    "Release signing is partially configured. Supply all four documented environment variables or none."
+}
+require(!requireSignedRelease || hasReleaseSigning) {
+    "A signed release was required, but release-key configuration is absent. No debug-key fallback is allowed."
+}
+
 android {
     namespace = "com.s23log.probe"
     compileSdk = 36
@@ -19,8 +36,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures { buildConfig = true }
+    if (hasReleaseSigning) signingConfigs {
+        create("production") {
+            storeFile = file(requireNotNull(releaseSigningInputs["S23LOG_RELEASE_STORE_FILE"]))
+            require(storeFile?.isFile == true && storeFile?.canRead() == true) { "Configured release keystore is unavailable or unreadable" }
+            storePassword = releaseSigningInputs["S23LOG_RELEASE_STORE_PASSWORD"]
+            keyAlias = releaseSigningInputs["S23LOG_RELEASE_KEY_ALIAS"]
+            keyPassword = releaseSigningInputs["S23LOG_RELEASE_KEY_PASSWORD"]
+        }
+    }
     buildTypes {
-        release { isMinifyEnabled = false }
+        release {
+            isMinifyEnabled = false
+            if (hasReleaseSigning) signingConfig = signingConfigs.getByName("production")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

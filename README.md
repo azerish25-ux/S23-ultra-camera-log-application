@@ -69,7 +69,7 @@ See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, high-speed/max
 
 The capture dock has explicit advertised lens-route shortcuts and separately reported focal/active-physical metadata. Landscape keeps actions fixed while metadata scrolls. See [route identity, UI and tests](docs/LENS_UI.md).
 
-Open **Controls → Capture library** to find earlier indexed captures, open or share their media, and share original validation reports. Missing files and unverified recovery messages remain explicit. The previous latest capture is imported on upgrade; older unindexed history cannot be reconstructed. See [storage, access and verification boundaries](docs/CAPTURE_LIBRARY.md).
+Open **Clips** to find earlier indexed captures, open or share their media, and share original validation reports. **Controls** contains manual drafts; **Settings & exports** is a separate pane, and **Device** opens diagnostics. Missing files and unverified recovery messages remain explicit. The previous latest capture is imported on upgrade; older unindexed history cannot be reconstructed. See [storage, access and verification boundaries](docs/CAPTURE_LIBRARY.md).
 
 ## Recording resource protection
 
@@ -87,7 +87,7 @@ Auto exposure has a capability-bounded EV compensation slider with separate repo
 
 ## Bitrate targets
 
-Controls offers capability-checked Low, Standard and High bitrate targets without silently changing the selected format. Codec limits are shown and the target is retained in each validation report. Actual encoded bitrate varies. See [bitrate policy and tests](docs/BITRATE_PRESETS.md).
+Controls → Settings & exports offers capability-checked Low, Standard and High bitrate targets without silently changing the selected format. Codec limits are shown and the target is retained in each validation report. Actual encoded bitrate varies. See [bitrate policy and tests](docs/BITRATE_PRESETS.md).
 
 ## Preview aids
 
@@ -95,7 +95,7 @@ The **Aids** control provides optional framing, level and bounded display-previe
 
 ## Colour reference assets
 
-Controls can prepare/share versioned forward/inverse mathematical reference LUTs, vectors and identities. These are explicitly **not LUTs for current HLG recordings**, and custom-Log recording remains disabled. See [domains and independent consumer checks](docs/COLOUR_REFERENCE_EXPORT.md).
+Controls → Settings & exports can prepare/share versioned forward/inverse mathematical reference LUTs, vectors and identities. These are explicitly **not LUTs for current HLG recordings**, and custom-Log recording remains disabled. See [domains and independent consumer checks](docs/COLOUR_REFERENCE_EXPORT.md).
 
 ## Build
 
@@ -105,7 +105,7 @@ JDK 17 or 21, SDK API 36, Build Tools 36.0.0. The checked-in official Gradle 9.6
 ./gradlew :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease
 ```
 
-Debug APK: `app/build/outputs/apk/debug/app-debug.apk`. Release is unsigned until a signing configuration is supplied; no signing keys are stored here.
+Debug APK: `app/build/outputs/apk/debug/app-debug.apk`. Release is unsigned until owner-controlled signing is supplied; no signing keys are stored here. Opt-in signing and the fail-closed production command are described in [release signing and update acceptance](docs/RELEASE_SIGNING.md).
 
 An explicit offline Maven mirror can be supplied with `-PofflineMavenRepo=/path/to/mirror`; otherwise all dependencies resolve from Google Maven/Maven Central. A local cache is an optimization, not a build requirement. The CI SDK installer is `.github/scripts/install-android.sh`.
 
@@ -124,7 +124,7 @@ Each recording produces a shareable validation JSON with requested/applied setti
 
 ## Use on the phone
 
-Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. A fixed orientation is requested during a take. Leaving the screen or forcibly recreating the activity stops and finalizes recording; background recording is deliberately not supported.
+Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Device** for complete diagnostics and **Recover captures** for footage retained after an error. A recovery export is not a verified video. A fixed orientation is requested during a take. Leaving the screen or forcibly recreating the activity stops and finalizes recording; background recording is deliberately not supported.
 
 Different debug signing keys can prevent an update over a previous APK: preserve exported evidence before uninstalling an older debug build. Production signing and a release-update policy remain separate work.
 

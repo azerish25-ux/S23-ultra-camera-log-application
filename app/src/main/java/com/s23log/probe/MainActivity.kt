@@ -125,6 +125,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         audioMode = CameraSettings.audio(this)
         button(R.id.audioMode).setOnClickListener { chooseAudioMode() }
         button(R.id.cameraTab).setOnClickListener { pages.displayedChild = 0; maybeOpen() }
+        button(R.id.clipsTab).setOnClickListener { openClips() }
         button(R.id.diagnosticsTab).setOnClickListener { pages.displayedChild = 1; requestedKey = null; controller.close() }
         button(R.id.enableCamera).setOnClickListener { withCameraPermission { requestedKey = null; controller.discover() } }
         button(R.id.runProbe).setOnClickListener { withCameraPermission { reports.start() } }
@@ -159,11 +160,14 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             }
         }
         button(R.id.recoverCaptures).setOnClickListener { showRecovery() }
-        button(R.id.captureLibrary).setOnClickListener { startActivity(Intent(this, CaptureLibraryActivity::class.java)) }
+        button(R.id.captureLibrary).setOnClickListener { openClips() }
         button(R.id.openControls).setOnClickListener {
             val panel = findViewById<View>(R.id.controlsPanel)
+            if (panel.visibility != View.VISIBLE) showSettings(false)
             panel.visibility = if (panel.visibility == View.VISIBLE) View.GONE else View.VISIBLE
         }
+        button(R.id.openSettings).setOnClickListener { showSettings(true) }
+        button(R.id.backToManual).setOnClickListener { showSettings(false) }
         button(R.id.closeControls).setOnClickListener { findViewById<View>(R.id.controlsPanel).visibility = View.GONE }
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
         button(R.id.previewAids).setOnClickListener { choosePreviewAids() }
@@ -265,6 +269,14 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (requestedKey == target.key) return
         requestedKey = target.key
         controller.open(target, surface, displayDegrees(), CameraSettings.mode(this, target.key), CameraSettings.controls(this, target.key))
+    }
+    private fun openClips() {
+        if (CapturePolicy.canChangeCamera(engineState)) startActivity(Intent(this, CaptureLibraryActivity::class.java))
+    }
+    private fun showSettings(settings: Boolean) {
+        findViewById<View>(R.id.manualControlFields).visibility = if (settings) View.GONE else View.VISIBLE
+        findViewById<View>(R.id.settingsFields).visibility = if (settings) View.VISIBLE else View.GONE
+        findViewById<ScrollView>(R.id.controlsPanel).scrollTo(0, 0)
     }
     @Suppress("DEPRECATION") private fun displayDegrees(): Int {
         val rotation = if (Build.VERSION.SDK_INT >= 30) display?.rotation ?: Surface.ROTATION_0 else windowManager.defaultDisplay.rotation
@@ -525,6 +537,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
         button(R.id.captureLibrary).isEnabled = idle
+        button(R.id.clipsTab).isEnabled = idle
         button(R.id.diagnosticsTab).isEnabled = idle
         button(R.id.cameraTab).isEnabled = idle
         button(R.id.enableCamera).isEnabled = idle

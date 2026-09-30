@@ -71,13 +71,13 @@ class LensRailTest {
                 await(scenario, "restored route") { CameraSettings.camera(context) == expected && it.findViewById<TextView>(R.id.cameraStatus).text.startsWith("Live preview") }
                 scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
                 await(scenario, "landscape route") { it.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && it.findViewById<TextView>(R.id.cameraStatus).text.startsWith("Live preview") }
+                screenshot(scenario, File(directory, "lens-rail-landscape.png"))
                 scenario.onActivity { activity ->
                     for (id in listOf(R.id.record, R.id.openControls, R.id.modeDetails, R.id.testMode, R.id.previewAids)) {
                         val view = activity.findViewById<Button>(id); val rect = android.graphics.Rect()
-                        assertTrue(view.getGlobalVisibleRect(rect)); assertEquals(view.height, rect.height())
+                        assertTrue(view.getGlobalVisibleRect(rect)); assertEquals("${view.text} must not be clipped", view.height, rect.height())
                     }
                 }
-                screenshot(scenario, File(directory, "lens-rail-landscape.png"))
                 scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
             }
         } finally { prefs.edit().clear().also { edit -> before.forEach { (key, value) -> edit.putString(key, value as String) } }.commit() }

@@ -16,6 +16,7 @@
     <ScrollView android:id="@+id/controlsPanel" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_gravity="bottom"
         android:visibility="gone" android:background="#FA141A24" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+            <LinearLayout android:id="@+id/manualControlFields" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
             <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal" android:gravity="center_vertical">
                 <Switch android:id="@+id/manualExposure" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/manual_exposure" />
                 <Button android:id="@+id/closeControls" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/close_controls" />
@@ -40,6 +41,11 @@
                 <TextView android:id="@+id/limits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/limits_empty" android:textSize="12sp" />
                 <CheckBox android:id="@+id/numericControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/numeric_controls" />
                 <Button android:id="@+id/applyControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/apply" />
+                <Button android:id="@+id/openSettings" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/open_settings" />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/settingsFields" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <Button android:id="@+id/backToManual" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/back_to_manual" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/settings_heading" android:textStyle="bold" android:paddingBottom="8dp" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/colour_explanation" android:textSize="12sp" />
             <Button android:id="@+id/colourReference" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/colour_reference_prepare" />
             <TextView android:id="@+id/colourReferenceStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/colour_reference_scope" android:textSize="12sp" />
@@ -57,6 +63,7 @@
                 <Button android:id="@+id/recoverCaptures" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/recover_captures" />
                 <Button android:id="@+id/shareCapture" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/share_capture" android:enabled="false" />
                 <Button android:id="@+id/shareValidation" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/share_validation" android:enabled="false" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

@@ -1,6 +1,6 @@
 # Capture library
 
-The capture library keeps an app-private index of capture results so a newer take does not replace access to older footage. Open **Controls → Capture library** while the camera is idle. Tap a row to open media in an installed player/editor, share the selected capture files, or share the original validation JSON. RAW sequences offer an individual-file picker for opening and a grouped share action.
+The capture library keeps an app-private index of capture results so a newer take does not replace access to older footage. Open **Clips** while the camera is idle. Tap a row to open media in an installed player/editor, share the selected capture files, or share the original validation JSON. RAW sequences offer an individual-file picker for opening and a grouped share action.
 
 ## Storage and evidence boundaries
 
