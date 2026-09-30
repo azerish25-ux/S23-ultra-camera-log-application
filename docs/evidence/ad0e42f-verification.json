@@ -1,0 +1,101 @@
+{
+  "appCommit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+  "workflowRun": "https://github.com/azerish25-ux/S23-ultra-camera-log-application/actions/runs/36670584939",
+  "native": {
+    "tests": 46,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "jvm": {
+    "tests": 244,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "separateMicrophonePermissionTest": 1,
+  "hostRegressionTests": 76,
+  "media": {
+    "mediaIdentitiesMatched": true,
+    "recordings": 25,
+    "recordingReports": 25,
+    "probeReports": 1,
+    "longestPacketSpanSeconds": 65.406278,
+    "audioRecordings": 6,
+    "permissionDenialVerified": true,
+    "allAudioFullyDecoded": true,
+    "allVideosFullyDecoded": true,
+    "physicalLipSyncVerified": false,
+    "scope": "emulator evidence; not physical S23 Ultra validation"
+  },
+  "colour": {
+    "commit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+    "gpuPixelTests": "passed",
+    "probe": {
+      "status": "passed",
+      "fp16ToRgb10": {
+        "maximumError": 0,
+        "distinctLevels": 1024,
+        "monotonic": true,
+        "passed": true,
+        "minimumDistinctLevels": 768,
+        "tolerance": 0.0012218963831867058
+      },
+      "negative8Bit": {
+        "maximumError": 0.07624633431085044,
+        "distinctLevels": 246,
+        "monotonic": true,
+        "passed": false,
+        "minimumDistinctLevels": 768,
+        "tolerance": 0.0012218963831867058
+      },
+      "rgb10Readback": "quantized_texture_sample_via_FP16",
+      "monitorIndependent": true,
+      "referenceLogMaximumError": 1.3189962999593519e-07,
+      "referenceLogTolerance": 0.002,
+      "scope": "Synthetic RGB texture -> production FP16 shader -> RGB10 framebuffer. Camera import/encoder are separate gates."
+    },
+    "hdrEncoder": {
+      "kind": "colour-encoder",
+      "status": "unavailable",
+      "stage": "encoder",
+      "reason": "No advertised RGB10 HLG editing encoder at 1024x128/30",
+      "encodedPixelsTested": false,
+      "appCommit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+      "physicalCameraCertified": false
+    },
+    "encodedPixelCheck": null,
+    "cameraIntegration": {
+      "status": "unavailable",
+      "reason": "No advertised non-manual HLG camera plus rendered Main10 encoder candidate",
+      "kind": "colour-camera",
+      "appCommit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+      "physicalS23UltraCertified": false,
+      "colourAccuracyCertified": false
+    },
+    "processedTimingFixturesPresent": true,
+    "timingContentCheck": "separate check_timing.py gate",
+    "customLogRecordingEnabled": false,
+    "physicalS23UltraCertified": false,
+    "scope": "GPU reference/negative-control tests; HDR encoder and camera availability remain distinct"
+  },
+  "referenceLuts": {
+    "status": "passed",
+    "consumer": "FFmpeg lut1d / linear / planar float RGB",
+    "maximumErrors": {
+      "forward": 1.6991215188123451e-06,
+      "inverse": 2.6152064469542324e-07,
+      "roundtrip": 3.252983092894013e-07
+    },
+    "tolerances": {
+      "forward": 3e-06,
+      "inverse": 4e-07,
+      "roundtrip": 8e-07
+    },
+    "customLogRecordingEnabled": false,
+    "physicalCameraCertified": false,
+    "scope": "Exported mathematical reference assets only; not an HLG-file correction or calibrated camera Log workflow",
+    "appCommit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+    "identitiesMatched": true
+  }
+}

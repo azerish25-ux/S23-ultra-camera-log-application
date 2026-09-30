@@ -1,11 +1,14 @@
 # S23Log — native Android camera and capture evidence
 
+<img src="docs/images/launcher-icon.png" width="72" alt="S23Log adaptive launcher icon" />
+
 Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log, custom-Log video or sustained RAW video.**
 
 Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch controls and bitrate targets, preview-only monitoring aids, a thumbnail library, original-video/report identity pairing, storage/thermal safeguards and time-varying control evidence. Reference forward/inverse LUTs are separate mathematical exports, not a claim of a shipping Log recording path.
 
 - [Builds, installable debug APKs and exact-source verification](https://github.com/azerish25-ux/S23-ultra-camera-log-application/actions/workflows/android.yml)
 - [Implementation status and acceptance boundaries](docs/IMPLEMENTATION_STATUS.md)
+- [Native screenshots, architecture and verification evidence](docs/PORTFOLIO.md)
 - [Local-data and permission behavior](docs/PRIVACY_AND_STORAGE.md)
 - [Physical S23 Ultra test plan](docs/DEVICE_TEST_PLAN.md)
 

@@ -18,3 +18,6 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 /signing/
+
+# Generated local/CI capture evidence is retained as workflow artifacts
+/evidence/

@@ -1,0 +1,63 @@
+{
+  "appCommit": "ad0e42fc0dc2f22276556203dc8db4ad4e1cd913",
+  "workflowRun": "https://github.com/azerish25-ux/S23-ultra-camera-log-application/actions/runs/36670584939",
+  "scope": "Unedited native API 36 emulator screenshots; not physical S23 Ultra images or certification",
+  "images": [
+    {
+      "file": "capture-portrait.png",
+      "artifactFile": "lens-rail-portrait.png",
+      "width": 720,
+      "height": 1280,
+      "byteCount": 81805,
+      "sha256": "090dab2f7cbcdad7901eb918623f113c9c5c250a4e09a204f2deb62b6cb0145a"
+    },
+    {
+      "file": "capture-landscape-large-text.png",
+      "artifactFile": "large-text-landscape.png",
+      "width": 1280,
+      "height": 720,
+      "byteCount": 80812,
+      "sha256": "7c34dd8d3388b06b3fb46d783450aeecd643e1d529a9b02be4f1683ba46d6b7a"
+    },
+    {
+      "file": "manual-controls.png",
+      "artifactFile": "manual-pane.png",
+      "width": 720,
+      "height": 1280,
+      "byteCount": 105285,
+      "sha256": "d8dead9f544ffdaa5adb3130c11142acc681f50c62a820d15f7eefabb32ef9b0"
+    },
+    {
+      "file": "settings.png",
+      "artifactFile": "settings-pane.png",
+      "width": 720,
+      "height": 1280,
+      "byteCount": 128544,
+      "sha256": "b071857793e6c321d6d073cb99b5153596dbfc3836985ea04055f99c2a9b1117"
+    },
+    {
+      "file": "capture-library.png",
+      "artifactFile": "library.png",
+      "width": 720,
+      "height": 1280,
+      "byteCount": 137171,
+      "sha256": "b832fc502a6d83f552987341a25f3babdd777b2df94a135c905277990860561c"
+    },
+    {
+      "file": "preview-aids.png",
+      "artifactFile": "preview-aids.png",
+      "width": 720,
+      "height": 1280,
+      "byteCount": 229078,
+      "sha256": "d384d70664b003c82552a3985ec07cb8189a7f0648adbda1e33398fe8df8902e"
+    },
+    {
+      "file": "launcher-icon.png",
+      "artifactFile": "launcher-icon.png",
+      "width": 288,
+      "height": 288,
+      "byteCount": 15065,
+      "sha256": "f00a1d1dd2e1013b870f1978ddec11634e2f86f353ca52de7130052c1ecb4409"
+    }
+  ]
+}
