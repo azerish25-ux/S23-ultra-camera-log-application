@@ -141,7 +141,8 @@ class GpuVideoProcessor private constructor(private val mode: RecordingMode, pri
             "submittedFrames" to submitted,"maximumProcessingNs" to maxProcessingNs,"cleanupConfirmed" to closed,
             "error" to fault,"customLog" to false,"cameraInputPrecisionMeasured" to false,
             "cameraColourCertified" to false,"outputRgbRange" to "0_to_1_clamped_by_RGB10",
-            "losslessIdentityClaimed" to false,"liveCpuPixelReadbacks" to 0)
+            "losslessIdentityClaimed" to false,"liveCpuPixelReadbacks" to 0,
+            "cpuReadbackScope" to "Recording processor only; optional UI aids sample reduced-resolution display RGB8 separately")
     }
     private fun dispose() {
         if(closed) return

@@ -36,6 +36,7 @@ import com.s23log.probe.diagnostics.ModeEvidence
 import com.s23log.probe.core.ModePlanning
 import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
+import com.s23log.probe.core.PreviewAid
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.PendingMedia
@@ -45,6 +46,7 @@ import java.util.Locale
 class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceTextureListener {
     private lateinit var controller: CameraController
     private lateinit var texture: TextureView
+    private lateinit var previewAids: PreviewAidsView
     private lateinit var pages: ViewFlipper
     private val reports: ProbeStore get() = (application as S23Application).reports
     private var visible = false
@@ -95,6 +97,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         pages = findViewById(R.id.pages)
         pages.displayedChild = savedInstanceState?.getInt("page", 0) ?: 0
         texture = findViewById(R.id.preview)
+        texture.isOpaque = false // Aspect-fit padding must stay transparent for display analysis.
+        previewAids = findViewById(R.id.previewAidsOverlay)
         texture.surfaceTextureListener = this
         controller = CameraController(this, this)
         audioMode = CameraSettings.audio(this)
@@ -137,6 +141,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         }
         button(R.id.closeControls).setOnClickListener { findViewById<View>(R.id.controlsPanel).visibility = View.GONE }
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
+        button(R.id.previewAids).setOnClickListener { choosePreviewAids() }
         button(R.id.monitorTransform).setOnClickListener {
             viewingTransform = if (viewingTransform == MonitorTransform.SDR_TONEMAP) MonitorTransform.HLG_SIGNAL else MonitorTransform.SDR_TONEMAP
             controller.setMonitor(viewingTransform); updateEnabled()
@@ -183,13 +188,14 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onStop() {
         visible = false
+        previewAids.setActive(false)
         requestedKey = null
         controller.close()
         reports.remove(observer)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onStop()
     }
-    override fun onDestroy() { destroyed = true; controller.release(); super.onDestroy() }
+    override fun onDestroy() { destroyed = true; previewAids.close(); controller.release(); super.onDestroy() }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putInt("page", pages.displayedChild)
         preRecordingOrientation?.let { outState.putInt("preRecordingOrientation", it) }
@@ -335,6 +341,9 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (destroyed) return
         val previous = engineState
         engineState = state
+        val monitorAvailable = state == EngineState.PREVIEW ||
+            (state == EngineState.RECORDING && modes.firstOrNull { it.key == modeKey }?.previewDuringRecording == true)
+        previewAids.setActive(visible && pages.displayedChild == 0 && monitorAvailable)
         if (state in setOf(EngineState.STARTING, EngineState.RECORDING, EngineState.STOPPING)) {
             if (preRecordingOrientation == null) {
                 preRecordingOrientation = requestedOrientation
@@ -407,6 +416,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.testMode).isEnabled = canRecord
         button(R.id.audioMode).isEnabled = idle
         button(R.id.modeDetails).isEnabled = idle && latestPlan != null
+        button(R.id.previewAids).isEnabled = preview || (recording && mode?.previewDuringRecording == true)
         text(R.id.modeEvidence).setText(if (mode?.ratePlan?.requiresManual == true && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
@@ -466,7 +476,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         }
         audioFailure = null
         onState(EngineState.STARTING, "Starting camera${if (audioMode.enabled) " and microphone" else ""}…")
-        controller.startRecording(mode, testSeconds, audioMode)
+        controller.startRecording(mode, testSeconds, audioMode, previewAids.features())
     }
     private fun renderAudioIdle() {
         if (destroyed) return
@@ -547,6 +557,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val angle = CapturePolicy.orientation(target.characteristics[C.SENSOR_ORIENTATION] ?: 0, displayDegrees(), target.front)
         val rotated = angle % 180 != 0
         val scale = minOf(w / (if (rotated) size.height else size.width), h / (if (rotated) size.width else size.height))
+        val contentWidth = (if (rotated) size.height else size.width) * scale
+        val contentHeight = (if (rotated) size.width else size.height) * scale
+        previewAids.setContentBounds((w - contentWidth) / 2, (h - contentHeight) / 2,
+            (w + contentWidth) / 2, (h + contentHeight) / 2)
         texture.setTransform(Matrix().apply {
             setScale(size.width / w, size.height / h)
             postTranslate(-size.width / 2f, -size.height / 2f)
@@ -558,6 +572,22 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) { requestedKey = null; maybeOpen(); transformPreview() }
     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) { transformPreview() }
-    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean { requestedKey = null; controller.detachTexture(surface); return false }
-    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+    override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean { requestedKey = null; previewAids.clearFrame(); controller.detachTexture(surface); return false }
+    override fun onSurfaceTextureUpdated(surface: SurfaceTexture) { if (visible && pages.displayedChild == 0) previewAids.sample(texture) }
+
+    private fun choosePreviewAids() {
+        val choices = PreviewAid.entries
+        val enabled = choices.map { it in previewAids.features() }.toBooleanArray()
+        fun apply() {
+            val selected = choices.filterIndexed { i, _ -> enabled[i] }.toSet()
+            applyPreviewAids(selected)
+        }
+        AlertDialog.Builder(this).setTitle(R.string.preview_aids_title)
+            .setMultiChoiceItems(R.array.preview_aid_options, enabled) { _, index, checked -> enabled[index] = checked; apply() }
+            .setPositiveButton(R.string.close, null)
+            .setNegativeButton(R.string.preview_aids_off) { _, _ -> enabled.fill(false); apply() }.show()
+    }
+    internal fun applyPreviewAids(features: Set<PreviewAid>) {
+        previewAids.setFeatures(features); controller.notePreviewAids(features)
+    }
 }

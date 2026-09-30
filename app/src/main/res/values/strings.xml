@@ -129,4 +129,19 @@
         <item>Normal</item><item>Light</item><item>Moderate</item><item>Severe</item>
         <item>Critical</item><item>Emergency</item><item>Shutdown</item>
     </string-array>
+    <string name="preview_aids_button">Aids</string>
+    <string name="preview_aids_title">Preview aids · display only</string>
+    <string name="preview_aids_off">All off</string>
+    <string name="preview_aids_description">Preview-only framing and display analysis. Not sensor exposure or recording colour calibration.</string>
+    <string name="preview_aids_scope">Display RGB8 aids · not recorded</string>
+    <string name="preview_aids_waiting">Preview aids waiting for fresh display frames</string>
+    <string name="preview_level_unknown">Level unavailable</string>
+    <string name="preview_level">Level ≈ %1$s°</string>
+    <string name="preview_histogram">Display histogram</string>
+    <string name="preview_waveform">Display waveform</string>
+    <string-array name="preview_aid_options">
+        <item>Rule-of-thirds grid</item><item>Advisory device level</item>
+        <item>Display histogram</item><item>Display waveform</item><item>Zebras ≥95% display code</item>
+        <item>False colour · display code ranges</item><item>Edge peaking · low-resolution preview</item>
+    </string-array>
 </resources>

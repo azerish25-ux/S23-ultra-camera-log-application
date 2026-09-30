@@ -68,6 +68,10 @@ Video capture budgets space for finalization/publication and responds to severe 
 
 Manual recording readiness now requires current sensor-result values to match the effective camera-clamped request. The UI distinguishes actual values, effective targets, missing metadata and mismatches; AE-off alone is not confirmation. See [tolerances and physical-calibration boundaries](docs/MANUAL_RESULT_ACCEPTANCE.md).
 
+## Preview aids
+
+The **Aids** control provides optional framing, level and bounded display-preview scopes. These are RGB8 display aids with explicit freshness/availability limits; they do not certify sensor exposure, HLG precision or optical focus. See [sampling, lifecycle, recording separation and tests](docs/PREVIEW_AIDS.md).
+
 ## Build
 
 JDK 17 or 21, SDK API 36, Build Tools 36.0.0. The checked-in official Gradle 9.6.0 wrapper and distribution are checksum-pinned; AGP is 9.4.0.

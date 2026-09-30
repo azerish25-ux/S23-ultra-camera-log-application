@@ -27,6 +27,7 @@ import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.ManualResultPolicy
+import com.s23log.probe.core.PreviewAid
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.EngineState
@@ -88,6 +89,7 @@ class CameraController(context: Context, listener: Listener) {
     private val retiredTextures = mutableSetOf<SurfaceTexture>()
     private var monitorTransform = MonitorTransform.SDR_TONEMAP
     fun setMonitor(transform: MonitorTransform) { handler.post { monitorTransform = transform; recorder?.setMonitor(transform) } }
+    fun notePreviewAids(features: Set<PreviewAid>) { handler.post { recorder?.notePreviewAids(features) } }
     private fun releaseRetiredTextures() {
         if (recorder == null) { retiredTextures.forEach { runCatching { it.release() } }; retiredTextures.clear() }
     }
@@ -266,7 +268,8 @@ class CameraController(context: Context, listener: Listener) {
             }
         } catch (e: Exception) { rejectManual(job, e.message ?: "Control transition failed") }
     }
-    fun startRecording(mode: RecordingMode, testSeconds: Int? = null, audioMode: AudioMode = AudioMode.OFF) {
+    fun startRecording(mode: RecordingMode, testSeconds: Int? = null, audioMode: AudioMode = AudioMode.OFF,
+                       previewAids: Set<PreviewAid> = emptySet()) {
         handler.post {
             if (!CapturePolicy.canStartRecording(state) || recorder != null || raw != null) return@post
             val request = wanted ?: return@post
@@ -289,6 +292,7 @@ class CameraController(context: Context, listener: Listener) {
                     "selectedMode" to mode.describe(), "nominalFps" to mode.fps, "bitrate" to mode.bitRate,
                     "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
                     "requestedTestSeconds" to testSeconds, "audioMode" to audioMode.name,
+                    "previewAidsAtStart" to previewAids.map { it.name }.sorted(),
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
                 ), audioMode = audioMode, onResources = { snapshot -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onResources(snapshot) }

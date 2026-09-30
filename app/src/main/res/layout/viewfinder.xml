@@ -2,6 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent" android:background="#000000">
     <TextureView android:id="@+id/preview" android:layout_width="match_parent" android:layout_height="match_parent" android:contentDescription="@string/preview_description" />
+    <com.s23log.probe.PreviewAidsView android:id="@+id/previewAidsOverlay" android:layout_width="match_parent" android:layout_height="match_parent"
+        android:contentDescription="@string/preview_aids_description" />
     <TextView android:id="@+id/previewOverlay" android:layout_width="match_parent" android:layout_height="match_parent"
         android:gravity="center" android:padding="24dp" android:background="#C0000000" android:text="@string/preview_idle" android:textColor="#FFFFFF" />
     <TextView android:id="@+id/applied" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="top"

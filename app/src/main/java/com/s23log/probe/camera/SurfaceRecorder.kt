@@ -14,6 +14,7 @@ import android.util.Size
 import com.s23log.probe.gpu.GpuVideoProcessor
 import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
+import com.s23log.probe.core.PreviewAid
 import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.AvMuxCoordinator
 import com.s23log.probe.core.AvMuxCoordinator.Track
@@ -117,6 +118,18 @@ class SurfaceRecorder private constructor(
     private var minimumFreeBytes: Long? = null
     private var lastResourceCheckAt = 0L
     private var resourceStopReason: String? = null
+    private val previewAidChanges = mutableListOf<Map<String, Any>>()
+    private var previewAidChangesDropped = 0
+    private var currentPreviewAids = (request["previewAidsAtStart"] as? List<*>)?.filterIsInstance<String>().orEmpty()
+    fun notePreviewAids(features: Set<PreviewAid>) {
+        val names = features.map { it.name }.sorted()
+        handler.post {
+            if (finished || stopping || names == currentPreviewAids) return@post
+            currentPreviewAids = names
+            if (previewAidChanges.size < 128) previewAidChanges += mapOf("monotonicNs" to System.nanoTime(), "features" to names)
+            else previewAidChangesDropped++
+        }
+    }
     @Volatile private var applied: Map<String, Any?> = emptyMap()
     @Volatile private var sessionConfigured = false
     private val watchdog = object : Runnable {
@@ -306,6 +319,9 @@ class SurfaceRecorder private constructor(
                     .put("audioMode", audioMode.name).put("audio", jsonValue(audioEvidence))
                     .put("resourceSafety", jsonValue(lastResources?.describe())).put("resourceStopReason", resourceStopReason ?: JSONObject.NULL)
                     .put("minimumObservedFreeBytes", minimumFreeBytes ?: JSONObject.NULL)
+                    .put("previewAids", JSONObject().put("initial", jsonValue(request["previewAidsAtStart"] ?: emptyList<String>()))
+                        .put("changes", jsonValue(previewAidChanges)).put("changesDropped", previewAidChangesDropped)
+                        .put("scope", "Display-layer framing/RGB8 analysis, separate from encoded colour and sensor exposure"))
                     .put("timingQuality", timingQuality(audioEvidence, result.verification))
                     .put("audioError", audioFailure ?: JSONObject.NULL).put("audioEncodedSamples", audioSamples)
                     .put("commonEpochUs", coordinator.originUs ?: JSONObject.NULL)
