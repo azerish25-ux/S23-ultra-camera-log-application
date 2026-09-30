@@ -44,6 +44,7 @@ class CameraController(context: Context, listener: Listener) {
         fun onApplied(values: Map<String, Any?>)
         fun onAudioMeter(meter: AudioCapture.Meter) {}
         fun onAudioError(message: String) {}
+        fun onResources(snapshot: RecordingResources.Snapshot) {}
         fun onVideo(outcome: SurfaceRecorder.Outcome)
         fun onRaw(outcome: RawCapture.Outcome)
     }
@@ -279,7 +280,13 @@ class CameraController(context: Context, listener: Listener) {
                     "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
                     "requestedTestSeconds" to testSeconds, "audioMode" to audioMode.name,
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
-                ), audioMode = audioMode, onAudioMeter = { meter -> handler.post {
+                ), audioMode = audioMode, onResources = { snapshot -> handler.post {
+                    if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onResources(snapshot) }
+                } }, onSafetyStop = { reason -> handler.post {
+                    if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) {
+                        closeSession(); state(EngineState.STOPPING, app.getString(com.s23log.probe.R.string.resource_stopping, reason))
+                    }
+                } }, onAudioMeter = { meter -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onAudioMeter(meter) }
                 } }, onAudioFault = { message -> handler.post {
                     if (recorder === current) {
@@ -336,7 +343,8 @@ class CameraController(context: Context, listener: Listener) {
                 else {
                     emit {
                         it.onState(EngineState.PREVIEW, "Recording unavailable: ${e.message}")
-                        if (audioMode.enabled) it.onAudioError("Recording setup failed: ${e.message}. Audio was not disabled.")
+                        if (e is RecordingResources.PreflightRejected) it.onResources(e.snapshot)
+                        else if (audioMode.enabled) it.onAudioError("Recording setup failed: ${e.message}. Audio was not disabled.")
                     }
                     configurePreview()
                 }

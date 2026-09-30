@@ -60,6 +60,10 @@ See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, high-speed/max
 
 Open **Controls → Capture library** to find earlier indexed captures, open or share their media, and share original validation reports. Missing files and unverified recovery messages remain explicit. The previous latest capture is imported on upgrade; older unindexed history cannot be reconstructed. See [storage, access and verification boundaries](docs/CAPTURE_LIBRARY.md).
 
+## Recording resource protection
+
+Video capture budgets space for finalization/publication and responds to severe Android thermal pressure with a controlled stop. Orientation stays locked through each take and returns to the previous policy afterward. Storage estimates and thermal availability remain explicit; these safeguards do not certify physical 4K/8K throughput. See [policy, evidence and remaining hardware gates](docs/RECORDING_RESOURCES.md).
+
 ## Build
 
 JDK 17 or 21, SDK API 36, Build Tools 36.0.0. The checked-in official Gradle 9.6.0 wrapper and distribution are checksum-pinned; AGP is 9.4.0.
@@ -87,7 +91,7 @@ Each recording produces a shareable validation JSON with requested/applied setti
 
 ## Use on the phone
 
-Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. Leaving the screen or rotating the device stops and finalizes an active recording; background recording is deliberately not supported.
+Grant Camera permission, select a publicly exposed lens and advertised mode, then choose Mic mono, Mic stereo or Video only. For audio, grant Microphone permission when prompted and press Record again. Stop to finalize and validate. Use **Share capture** and **Share validation** for the resulting files. Open **Diagnostics** for a complete capability report and **Recover captures** for footage retained after an error. A recovery export is not a verified video. Orientation is locked during a take. Leaving the screen or forcibly recreating the activity stops and finalizes recording; background recording is deliberately not supported.
 
 Different debug signing keys can prevent an update over a previous APK: preserve exported evidence before uninstalling an older debug build. Production signing and a release-update policy remain separate work.
 

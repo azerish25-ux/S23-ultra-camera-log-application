@@ -23,6 +23,7 @@ class PendingMedia private constructor(
 ) {
     private var closed = false
     private var settled = false
+    fun stagedByteCount(): Long = if (stagedVideo) privateFile?.length()?.coerceAtLeast(0) ?: 0 else 0
     fun closeDescriptor() { if (!closed) { descriptor.close(); closed = true } }
 
     fun publish(): Uri {

@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.content.ClipData
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ActivityInfo
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics as C
@@ -62,6 +63,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private var manualApplied = false
     private var audioMode = AudioMode.MONO
     private var audioFailure: String? = null
+    private var resourceProblem: String? = null
+    private var preRecordingOrientation: Int? = null
     private var permissionAction: (() -> Unit)? = null
     private val observer: (ProbeStore.State) -> Unit = { state ->
         text(R.id.status).text = state.message
@@ -76,6 +79,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState?.containsKey("preRecordingOrientation") == true)
+            preRecordingOrientation = savedInstanceState.getInt("preRecordingOrientation")
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_main)
         val root = findViewById<View>(R.id.root)
@@ -184,7 +189,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         super.onStop()
     }
     override fun onDestroy() { destroyed = true; controller.release(); super.onDestroy() }
-    override fun onSaveInstanceState(outState: Bundle) { outState.putInt("page", pages.displayedChild); super.onSaveInstanceState(outState) }
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putInt("page", pages.displayedChild)
+        preRecordingOrientation?.let { outState.putInt("preRecordingOrientation", it) }
+        super.onSaveInstanceState(outState)
+    }
     private fun withCameraPermission(action: () -> Unit) {
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) { action(); return }
         val prefs = getPreferences(MODE_PRIVATE)
@@ -325,6 +334,17 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (destroyed) return
         val previous = engineState
         engineState = state
+        if (state in setOf(EngineState.STARTING, EngineState.RECORDING, EngineState.STOPPING)) {
+            if (preRecordingOrientation == null) {
+                preRecordingOrientation = requestedOrientation
+                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LOCKED
+            }
+        } else preRecordingOrientation?.let {
+            preRecordingOrientation = null
+            requestedOrientation = it
+        }
+        if (state in setOf(EngineState.PREVIEW, EngineState.CLOSED, EngineState.ERROR))
+            text(R.id.resourceStatus).text = resourceProblem ?: getString(R.string.resource_idle)
         if (state == EngineState.OPENING || state == EngineState.CLOSED || state == EngineState.ERROR) manualApplied = false
         val clock = findViewById<Chronometer>(R.id.recordingClock)
         if (state == EngineState.RECORDING && previous != state) { clock.base = SystemClock.elapsedRealtime(); clock.start() }
@@ -466,6 +486,17 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         findViewById<ProgressBar>(R.id.audioRight).progress = meter.levels.getOrNull(1)?.meter ?: 0
     }
     override fun onAudioError(message: String) { audioFailure = message; renderAudioIdle() }
+    override fun onResources(snapshot: RecordingResources.Snapshot) {
+        if (destroyed || !visible) return
+        resourceProblem = snapshot.decision.stopReason?.let { RecordingResources.stopMessage(this, it) }
+        if (resourceProblem != null) { text(R.id.resourceStatus).text = resourceProblem; return }
+        val remaining = snapshot.decision.remainingSecondsEstimate?.let { getString(R.string.resource_seconds, it) }
+            ?: getString(R.string.resource_unknown)
+        val thermal = snapshot.thermalStatus?.let { resources.getStringArray(R.array.resource_thermal_levels).getOrNull(it) }
+            ?.let { getString(R.string.resource_thermal_level, it) }
+            ?: getString(R.string.resource_thermal_unknown)
+        text(R.id.resourceStatus).text = "$remaining · $thermal"
+    }
     private fun applyControls() {
         try {
             val iso = text(R.id.isoInput).text.toString().toInt()

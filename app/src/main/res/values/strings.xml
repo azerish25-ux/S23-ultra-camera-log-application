@@ -115,4 +115,18 @@
     <string name="library_depth_unknown">Bit depth unmeasured</string>
     <string name="library_capture">Capture</string>
     <string name="library_cadence_unknown">File checked · cadence unmeasured</string>
+    <string name="resource_stop_thermal">Android reports severe thermal pressure</string>
+    <string name="resource_stop_storage">Free storage reached the recording/publication reserve</string>
+    <string name="resource_stop_unavailable">Storage availability could not be checked</string>
+    <string name="resource_stopping">%1$s. Finalizing existing footage…</string>
+    <string name="resource_stopped">Protection stop: %1$s.</string>
+    <string name="resource_idle">Storage reserve is checked before and during video recording</string>
+    <string name="resource_seconds">~%1$d s storage estimate</string>
+    <string name="resource_unknown">Storage estimate unavailable</string>
+    <string name="resource_thermal_level">Thermal: %1$s</string>
+    <string name="resource_thermal_unknown">Thermal status unavailable</string>
+    <string-array name="resource_thermal_levels">
+        <item>Normal</item><item>Light</item><item>Moderate</item><item>Severe</item>
+        <item>Critical</item><item>Emergency</item><item>Shutdown</item>
+    </string-array>
 </resources>

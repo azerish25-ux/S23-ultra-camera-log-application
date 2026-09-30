@@ -43,6 +43,8 @@ class SurfaceRecorder private constructor(
     private val onFirstSample: () -> Unit,
     private val onAudioMeter: (AudioCapture.Meter) -> Unit,
     private val onAudioFault: (String) -> Unit,
+    private val onResources: (RecordingResources.Snapshot) -> Unit,
+    private val onSafetyStop: (String) -> Unit,
     private val completed: (Outcome) -> Unit
 ) {
     data class Outcome(val uri: Uri?, val report: File?, val message: String, val audioError: String? = null)
@@ -111,12 +113,25 @@ class SurfaceRecorder private constructor(
     private val frameStats = FrameStatistics(mode.fps)
     private var audioSamples = 0L
     private var audioFailure: String? = null
+    private var lastResources: RecordingResources.Snapshot? = null
+    private var minimumFreeBytes: Long? = null
+    private var lastResourceCheckAt = 0L
+    private var resourceStopReason: String? = null
     @Volatile private var applied: Map<String, Any?> = emptyMap()
     @Volatile private var sessionConfigured = false
     private val watchdog = object : Runnable {
         override fun run() {
             if (finished || stopping) return
             val now = SystemClock.elapsedRealtime()
+            if (now - lastResourceCheckAt >= 2000) {
+                val resources = sampleResources()
+                resources.decision.stopReason?.let { reason ->
+                    resourceStopReason = reason
+                    onSafetyStop(RecordingResources.stopMessage(context, reason))
+                    finish()
+                    return
+                }
+            }
             if (now - maxOf(beganAt, lastVideoAt) > 10_000L) complete(IllegalStateException("No written video frames for ten seconds"))
             else if (audioMode.enabled && now - maxOf(beganAt, lastAudioAt) > 10_000L)
                 failAudio(IllegalStateException("No written AAC samples for ten seconds"))
@@ -126,6 +141,8 @@ class SurfaceRecorder private constructor(
 
     private fun prepare() {
         try {
+            val resources = sampleResources()
+            resources.decision.stopReason?.let { throw RecordingResources.PreflightRejected(resources, RecordingResources.stopMessage(context, it)) }
             output = PendingMedia.create(context, video = true)
             muxer = MediaMuxer(output.descriptor.fileDescriptor, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4).apply { setOrientationHint(orientation) }
             val tracks = mutableMapOf<Track, Int>()
@@ -189,6 +206,15 @@ class SurfaceRecorder private constructor(
             if (failedAudio == null) thread.quitSafely()
             throw e
         }
+    }
+
+    private fun sampleResources(): RecordingResources.Snapshot {
+        val snapshot = RecordingResources.read(context, mode, audioMode, if (::output.isInitialized) output.stagedByteCount() else 0)
+        lastResources = snapshot
+        snapshot.availableBytes?.let { minimumFreeBytes = minOf(minimumFreeBytes ?: it, it) }
+        lastResourceCheckAt = SystemClock.elapsedRealtime()
+        onResources(snapshot)
+        return snapshot
     }
 
     fun sessionStarted() {
@@ -278,6 +304,8 @@ class SurfaceRecorder private constructor(
                     .put("colourPipeline", jsonValue(mode.colour.describe())).put("processing", jsonValue(processingSnapshot))
                     .put("processingError", processingFailure ?: JSONObject.NULL)
                     .put("audioMode", audioMode.name).put("audio", jsonValue(audioEvidence))
+                    .put("resourceSafety", jsonValue(lastResources?.describe())).put("resourceStopReason", resourceStopReason ?: JSONObject.NULL)
+                    .put("minimumObservedFreeBytes", minimumFreeBytes ?: JSONObject.NULL)
                     .put("timingQuality", timingQuality(audioEvidence, result.verification))
                     .put("audioError", audioFailure ?: JSONObject.NULL).put("audioEncodedSamples", audioSamples)
                     .put("commonEpochUs", coordinator.originUs ?: JSONObject.NULL)
@@ -304,7 +332,8 @@ class SurfaceRecorder private constructor(
             VideoDisposition.RECOVERABLE -> "Footage retained privately for recovery, NOT a verified recording: ${outcome.errors.joinToString("; ")}. Open Recover captures to export or delete it."
             VideoDisposition.EMPTY -> "Empty recording rejected; no encoded video footage arrived."
             VideoDisposition.RETENTION_FAILED -> "Recording needs recovery; no further deletion attempted: ${outcome.errors.joinToString("; ")}. Check Recover captures after reopening."
-        } + (outcome.reportError?.let { " Validation report unavailable: $it. Media was not deleted." } ?: "")
+        } + (resourceStopReason?.let { " " + context.getString(com.s23log.probe.R.string.resource_stopped, RecordingResources.stopMessage(context, it)) } ?: "") +
+            (outcome.reportError?.let { " Validation report unavailable: $it. Media was not deleted." } ?: "")
         runCatching { CaptureHistory.save(context, listOfNotNull(outcome.uri), reportFile, message) }
         try { completed(Outcome(outcome.uri, reportFile, message, audioFailure)) } finally { thread.quitSafely() }
     }
@@ -327,7 +356,8 @@ class SurfaceRecorder private constructor(
         fun prepare(context: Context, mode: RecordingMode, orientation: Int, request: Map<String, Any?>,
                     audioMode: AudioMode = AudioMode.OFF, onFirstSample: () -> Unit = {},
                     onAudioMeter: (AudioCapture.Meter) -> Unit = {}, onAudioFault: (String) -> Unit = {},
+                    onResources: (RecordingResources.Snapshot) -> Unit = {}, onSafetyStop: (String) -> Unit = {},
                     completed: (Outcome) -> Unit): SurfaceRecorder =
-            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, onAudioFault, completed).apply { prepare() }
+            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, onAudioFault, onResources, onSafetyStop, completed).apply { prepare() }
     }
 }

@@ -140,6 +140,28 @@ class CameraSmokeTest {
             live(scenario)
         }
     }
+    @Test fun recordingLocksOrientationAndReportsResourceBudget() {
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            val original = java.util.concurrent.atomic.AtomicInteger()
+            scenario.onActivity { original.set(it.requestedOrientation) }
+            val previous = CaptureHistory.latest(context).report?.name
+            begin(scenario)
+            scenario.onActivity { assertEquals(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED, it.requestedOrientation) }
+            Thread.sleep(2500)
+            click(scenario, R.id.record)
+            waitForNewOutput(previous)
+            live(scenario)
+            scenario.onActivity { assertEquals(original.get(), it.requestedOrientation) }
+            val report = JSONObject(requireNotNull(CaptureHistory.latest(context).report).readText())
+            val resources = report.getJSONObject("resourceSafety")
+            assertTrue(resources.getLong("availableBytes") >= resources.getLong("requiredFreeBytes"))
+            assertEquals(android.os.Build.VERSION.SDK_INT >= 29, resources.getBoolean("publicationCopyBudgeted"))
+            assertFalse(resources.getBoolean("estimateIsGuarantee"))
+            assertFalse(resources.getBoolean("physicalThermalCertification"))
+            assertTrue(report.getLong("minimumObservedFreeBytes") > 0)
+            assertTrue(report.isNull("resourceStopReason"))
+        }
+    }
     @Test fun leavingActivityFinalizesRecording() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             val previous = CaptureHistory.latest(context).report?.name
