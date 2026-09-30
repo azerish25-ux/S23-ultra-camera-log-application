@@ -18,6 +18,8 @@
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/colour_explanation" android:textSize="12sp" />
             <Button android:id="@+id/monitorTransform" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/monitor_sdr" />
+            <Button android:id="@+id/bitratePreset" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/bitrate_title" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/bitrate_explanation" android:textSize="12sp" />
             <Button android:id="@+id/closeControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/close_controls" />
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="12dp" android:text="@string/controls_label" android:textStyle="bold" />
                 <TextView android:id="@+id/limits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/limits_empty" android:textSize="12sp" />

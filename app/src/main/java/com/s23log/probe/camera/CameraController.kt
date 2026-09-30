@@ -28,6 +28,8 @@ import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.ManualResultPolicy
 import com.s23log.probe.core.PreviewAid
+import com.s23log.probe.core.BitratePreset
+import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.core.CapturePolicy
 import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.EngineState
@@ -81,6 +83,7 @@ class CameraController(context: Context, listener: Listener) {
     private var recorder: SurfaceRecorder? = null
     private var raw: RawCapture? = null
     private var modes: List<RecordingMode> = emptyList()
+    private var bitratePreset = CameraSettings.bitratePreset(app)
     private var lastAppliedAt = 0L
     private var previewHasFrames = false
     private var previewControlWarning: String? = null
@@ -90,6 +93,36 @@ class CameraController(context: Context, listener: Listener) {
     private var monitorTransform = MonitorTransform.SDR_TONEMAP
     fun setMonitor(transform: MonitorTransform) { handler.post { monitorTransform = transform; recorder?.setMonitor(transform) } }
     fun notePreviewAids(features: Set<PreviewAid>) { handler.post { recorder?.notePreviewAids(features) } }
+    fun setBitratePreset(preset: BitratePreset) {
+        handler.post {
+            if (state != EngineState.PREVIEW || recorder != null || raw != null) return@post
+            val request = wanted ?: return@post
+            val previous = selectedMode
+            var committed = false
+            state(EngineState.ADJUSTING, "Checking the requested bitrate target…")
+            try {
+                val plan = CameraCatalog.plan(request.target, preset)
+                val candidate = requireNotNull(if (previous != null) plan.modes.firstOrNull { it.key == previous.key }
+                    else plan.modes.firstOrNull { !it.ratePlan.requiresManual } ?: plan.modes.firstOrNull()) {
+                    "This preset is unavailable for the selected format; no format fallback was performed"
+                }
+                val size = CameraCatalog.previewSize(request.target, candidate)
+                bitratePreset = preset; modes = plan.modes; selectedMode = candidate; committed = true
+                CameraSettings.saveBitratePreset(app, preset)
+                emit { it.onReady(request.target, size, plan, candidate) }
+                if (previous == null) {
+                    state(EngineState.OPENING, "Matching preview to the newly available format…")
+                    closeSession(); previewSurface?.release()
+                    request.texture.setDefaultBufferSize(size.width, size.height)
+                    previewSurface = Surface(request.texture)
+                    configurePreview()
+                } else state(EngineState.PREVIEW, "Live preview · ${candidate.bitRate} bit/s ${preset.name.lowercase()} target; actual encoded bitrate varies")
+            } catch (e: Exception) {
+                if (committed) fail("Bitrate-mode preview unavailable: ${e.message}")
+                else state(EngineState.PREVIEW, "Bitrate preset rejected: ${e.message}. Previous settings are unchanged.")
+            }
+        }
+    }
     private fun releaseRetiredTextures() {
         if (recorder == null) { retiredTextures.forEach { runCatching { it.release() } }; retiredTextures.clear() }
     }
@@ -274,6 +307,7 @@ class CameraController(context: Context, listener: Listener) {
             if (!CapturePolicy.canStartRecording(state) || recorder != null || raw != null) return@post
             val request = wanted ?: return@post
             if (modes.none { it.key == mode.key } || selectedMode?.key != mode.key) { emit { it.onState(state, "Mode was not planned for this camera") }; return@post }
+            if (mode != selectedMode) { emit { it.onState(state, "Format settings changed; review the current selection before recording") }; return@post }
             if (mode.ratePlan.requiresManual && !controls.manualExposure) {
                 emit { it.onState(state, "This mode requires confirmed manual exposure. Open Controls and apply manual exposure first.") }; return@post
             }
@@ -467,7 +501,7 @@ class CameraController(context: Context, listener: Listener) {
             fail("Camera permission is required"); return
         }
         try {
-            val plan = runCatching { CameraCatalog.plan(request.target) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
+            val plan = runCatching { CameraCatalog.plan(request.target, bitratePreset) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
             modes = plan.modes
             selectedMode = modes.firstOrNull { it.key == request.modeKey || it.legacyKey == request.modeKey }
                 ?: modes.firstOrNull { !it.ratePlan.requiresManual } ?: modes.firstOrNull()

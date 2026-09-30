@@ -94,7 +94,7 @@ object CameraCatalog {
             ?: sizes.minBy { it.width.toLong() * it.height }
     }
 
-    fun plan(target: CameraTarget): ModePlan {
+    fun plan(target: CameraTarget, bitratePreset: BitratePreset = BitratePreset.STANDARD): ModePlan {
         val c = target.characteristics
         val map = c[C.SCALER_STREAM_CONFIGURATION_MAP] ?: return ModePlan(emptyList(), listOf("No stream map"))
         val notes = mutableListOf<String>()
@@ -154,7 +154,9 @@ object CameraCatalog {
                         require(video.areSizeAndRateSupported(size.width, size.height, fps.toDouble())) { "Size/rate rejected" }
                         val bitrate = (size.pixels * fps / 5).coerceIn(video.bitrateRange.lower.toLong(), video.bitrateRange.upper.toLong()).toInt()
                         val candidate = RecordingMode(size.width, size.height, fps, range, encoder.name, mime, bitrate,
-                            range == DynamicRange.SDR || mixed, duration > 0, timing)
+                            range == DynamicRange.SDR || mixed, duration > 0, timing,
+                            minimumBitRate = video.bitrateRange.lower.coerceAtLeast(1), maximumBitRate = video.bitrateRange.upper)
+                            .withBitratePreset(bitratePreset)
                         require(caps.isFormatSupported(videoFormat(candidate))) { "Configured format rejected" }
                         previewSize(target, candidate)
                         modes += candidate

@@ -37,6 +37,8 @@ import com.s23log.probe.core.ModePlanning
 import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.PreviewAid
+import com.s23log.probe.core.BitratePreset
+import com.s23log.probe.core.BitratePolicy
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.PendingMedia
@@ -142,6 +144,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.closeControls).setOnClickListener { findViewById<View>(R.id.controlsPanel).visibility = View.GONE }
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
         button(R.id.previewAids).setOnClickListener { choosePreviewAids() }
+        button(R.id.bitratePreset).setOnClickListener { chooseBitratePreset() }
         button(R.id.monitorTransform).setOnClickListener {
             viewingTransform = if (viewingTransform == MonitorTransform.SDR_TONEMAP) MonitorTransform.HLG_SIGNAL else MonitorTransform.SDR_TONEMAP
             controller.setMonitor(viewingTransform); updateEnabled()
@@ -150,7 +153,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             val mode = modes.firstOrNull { it.key == modeKey } ?: return@setOnClickListener
             AlertDialog.Builder(this).setTitle(R.string.test_title).setMessage(getString(R.string.test_explanation, mode.label, audioLabel(audioMode)))
                 .setNegativeButton(R.string.cancel, null).setPositiveButton(R.string.test_start) { _, _ ->
-                    if (modeKey == mode.key && ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
+                    if (modeKey == mode.key && ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)) {
                         findViewById<View>(R.id.controlsPanel).visibility = View.GONE
                         requestRecording(mode, 5)
                     }
@@ -159,7 +162,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.record).setOnClickListener {
             if (engineState == EngineState.RECORDING || engineState == EngineState.STARTING) controller.stopRecording()
             else modes.firstOrNull { it.key == modeKey }?.let { mode ->
-                if (ModePlanning.recordingAllowed(engineState, mode, manualApplied)) {
+                if (ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)) {
                     requestRecording(mode, null)
                 }
             }
@@ -256,6 +259,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         this.previewSize = previewSize
         modes = plan.modes
         latestPlan = plan
+        renderBitrate(mode)
         manualApplied = false
         bindingControls = true
         modeKey = mode?.key
@@ -277,6 +281,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     override fun onModeChanged(cameraKey: String, mode: RecordingMode, previewSize: Size) {
         if (destroyed || cameraKey != selected?.key || modes.none { it.key == mode.key }) return
         modeKey = mode.key
+        renderBitrate(mode)
         this.previewSize = previewSize
         selected?.let { CameraSettings.saveMode(this, it.key, mode.key) }
         spinner(R.id.modeSelector).setSelection(modes.indexOfFirst { it.key == mode.key })
@@ -284,7 +289,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     }
     override fun onControlsChanged(cameraKey: String, controls: CameraControls) {
         if (destroyed || cameraKey != selected?.key) return
-        manualApplied = controls.manualExposure
+        manualRequested = controls.manualExposure
+        manualApplied = false // Accepted intent is not current sensor-result confirmation.
         renderControls(controls)
         selected?.let { CameraSettings.saveControls(this, it.key, controls) }
         updateEnabled()
@@ -341,7 +347,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (destroyed) return
         val previous = engineState
         engineState = state
-        val monitorAvailable = state == EngineState.PREVIEW ||
+        val monitorAvailable = state in setOf(EngineState.PREVIEW, EngineState.ADJUSTING) ||
             (state == EngineState.RECORDING && modes.firstOrNull { it.key == modeKey }?.previewDuringRecording == true)
         previewAids.setActive(visible && pages.displayedChild == 0 && monitorAvailable)
         if (state in setOf(EngineState.STARTING, EngineState.RECORDING, EngineState.STOPPING)) {
@@ -363,7 +369,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         else if (state != EngineState.RECORDING) { clock.stop(); if (state == EngineState.PREVIEW || state == EngineState.CLOSED) clock.base = SystemClock.elapsedRealtime() }
         text(R.id.cameraStatus).text = message
         val mode = modes.getOrNull(spinner(R.id.modeSelector).selectedItemPosition)
-        val showOverlay = state !in setOf(EngineState.PREVIEW, EngineState.RECORDING) ||
+        val showOverlay = state !in setOf(EngineState.PREVIEW, EngineState.ADJUSTING, EngineState.RECORDING) ||
             (state == EngineState.RECORDING && mode?.previewDuringRecording == false)
         text(R.id.previewOverlay).visibility = if (showOverlay) View.VISIBLE else View.GONE
         text(R.id.previewOverlay).text = message
@@ -411,7 +417,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.monitorTransform).isEnabled = processed && (preview || recording)
         button(R.id.monitorTransform).setText(if (viewingTransform == MonitorTransform.SDR_TONEMAP) R.string.monitor_sdr else R.string.monitor_signal)
         text(R.id.colourStatus).setText(if (processed) R.string.colour_gpu else R.string.colour_direct)
-        val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied) && (!manualRequested || manualApplied)
+        val canRecord = ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)
         button(R.id.record).isEnabled = canRecord || recording || engineState == EngineState.STARTING
         button(R.id.testMode).isEnabled = canRecord
         button(R.id.audioMode).isEnabled = idle
@@ -437,7 +443,33 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         spinner(R.id.wbSelector).isEnabled = controls && wbModes.isNotEmpty()
         toggle(R.id.wbLock).isEnabled = controls && selected?.wbLockAvailable == true
         button(R.id.applyControls).isEnabled = controls
+        button(R.id.bitratePreset).isEnabled = preview
     }
+    private fun bitrateLabel(preset: BitratePreset) = getString(when (preset) {
+        BitratePreset.LOW -> R.string.bitrate_low
+        BitratePreset.STANDARD -> R.string.bitrate_standard
+        BitratePreset.HIGH -> R.string.bitrate_high
+    })
+    private fun bitrateChoice(preset: BitratePreset, mode: RecordingMode?): String {
+        if (mode == null) return bitrateLabel(preset)
+        val target = BitratePolicy.select(mode.baseBitRate, mode.minimumBitRate, mode.maximumBitRate, preset)
+        return "${bitrateLabel(preset)} · ${String.format(Locale.US, "%.1f", target.effective / 1_000_000.0)} Mb/s" +
+            if (target.limited) getString(R.string.bitrate_limited) else ""
+    }
+    private fun renderBitrate(mode: RecordingMode?) {
+        val preset = mode?.bitratePreset ?: CameraSettings.bitratePreset(this)
+        button(R.id.bitratePreset).text = getString(R.string.bitrate_current, bitrateChoice(preset, mode))
+    }
+    private fun chooseBitratePreset() {
+        if (engineState != EngineState.PREVIEW) return
+        val mode = modes.firstOrNull { it.key == modeKey }
+        val choices = BitratePreset.entries
+        AlertDialog.Builder(this).setTitle(R.string.bitrate_title)
+            .setSingleChoiceItems(choices.map { bitrateChoice(it, mode) }.toTypedArray(), choices.indexOf(mode?.bitratePreset ?: CameraSettings.bitratePreset(this))) { dialog, index ->
+                applyBitratePreset(choices[index]); dialog.dismiss()
+            }.setNegativeButton(R.string.cancel, null).show()
+    }
+    internal fun applyBitratePreset(preset: BitratePreset) { if (engineState == EngineState.PREVIEW) controller.setBitratePreset(preset) }
     private fun audioLabel(mode: AudioMode): String = getString(when (mode) {
         AudioMode.OFF -> R.string.audio_video_only
         AudioMode.MONO -> R.string.audio_mono
@@ -456,7 +488,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             }.setNegativeButton(R.string.cancel, null).show()
     }
     private fun requestRecording(mode: RecordingMode, testSeconds: Int?) {
-        if (!visible || pages.displayedChild != 0 || mode.key != modeKey || !ModePlanning.recordingAllowed(engineState, mode, manualApplied)) return
+        if (!visible || pages.displayedChild != 0 || mode.key != modeKey || !ModePlanning.recordingAllowed(engineState, mode, manualApplied, manualRequested)) return
         if (audioMode.enabled && checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             val previouslyAsked = getPreferences(MODE_PRIVATE).getBoolean("audioPermissionAsked", false)
             val openSettings = previouslyAsked && !shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO)

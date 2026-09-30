@@ -43,8 +43,8 @@ object ModePlanning {
             minimumExposureNs != null && minimumExposureNs in 1..interval) RatePlan(RateControl.MANUAL_SENSOR) else null
     }
 
-    fun recordingAllowed(state: EngineState, mode: RecordingMode?, manualApplied: Boolean): Boolean =
-        state == EngineState.PREVIEW && mode != null && (!mode.ratePlan.requiresManual || manualApplied)
+    fun recordingAllowed(state: EngineState, mode: RecordingMode?, manualApplied: Boolean, manualRequested: Boolean = false): Boolean =
+        state == EngineState.PREVIEW && mode != null && (!mode.ratePlan.requiresManual || manualApplied) && (!manualRequested || manualApplied)
 }
 
 /** One acknowledgement, only after a sample was written; Stop is terminal for this recording. */

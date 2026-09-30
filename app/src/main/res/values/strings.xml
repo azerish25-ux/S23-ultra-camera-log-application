@@ -144,4 +144,11 @@
         <item>Display histogram</item><item>Display waveform</item><item>Zebras ≥95% display code</item>
         <item>False colour · display code ranges</item><item>Edge peaking · low-resolution preview</item>
     </string-array>
+    <string name="bitrate_title">Bitrate target</string>
+    <string name="bitrate_current">Bitrate: %1$s</string>
+    <string name="bitrate_low">Low</string>
+    <string name="bitrate_standard">Standard</string>
+    <string name="bitrate_high">High</string>
+    <string name="bitrate_limited"> (codec limit)</string>
+    <string name="bitrate_explanation">Targets are bounded by the selected codec. Actual average bitrate varies with content; no resolution, colour or frame-rate fallback is hidden.</string>
 </resources>
