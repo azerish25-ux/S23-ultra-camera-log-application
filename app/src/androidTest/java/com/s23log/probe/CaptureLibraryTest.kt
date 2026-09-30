@@ -97,6 +97,22 @@ class CaptureLibraryTest {
             }
             val instrumentation = InstrumentationRegistry.getInstrumentation()
             fun screenshot(name: String) {
+                val thumbnailReady = java.util.concurrent.atomic.AtomicBoolean(false)
+                for (attempt in 0 until 200) {
+                    scenario.onActivity { activity ->
+                        val list = activity.findViewById<android.widget.ListView>(R.id.captureLibraryList)
+                        val hasVideos = (0 until list.adapter.count).any {
+                            (list.adapter.getItem(it) as CaptureLibrary.Entry).mimeType == "video/mp4"
+                        }
+                        val visibleThumbnail = (0 until list.childCount).any {
+                            list.getChildAt(it).findViewById<android.widget.ImageView>(R.id.libraryThumbnail)?.contentDescription == activity.getString(R.string.library_thumbnail)
+                        }
+                        thumbnailReady.set(!hasVideos || visibleThumbnail)
+                    }
+                    if (thumbnailReady.get()) break
+                    Thread.sleep(50)
+                }
+                assertTrue("Saved video thumbnail did not render", thumbnailReady.get())
                 val drawn = java.util.concurrent.CountDownLatch(1)
                 scenario.onActivity { activity ->
                     val view = activity.window.decorView

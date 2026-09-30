@@ -31,9 +31,15 @@ object CaptureLibrary {
         check(dir.isDirectory || dir.mkdirs()) { "Capture library is unavailable" }
         val file = File(dir, "$id.json")
         if (file.exists()) return // Repeated completion/recreation does not reorder or duplicate a capture.
+        val providerMime = runCatching { context.contentResolver.getType(uris.first()) }.getOrNull()
+        val mime = when {
+            reportBase?.startsWith("raw-") == true || providerMime == "image/x-adobe-dng" -> "image/x-adobe-dng"
+            reportBase?.startsWith("recording-") == true || providerMime?.startsWith("video/") == true -> "video/mp4"
+            else -> "application/octet-stream"
+        }
         val json = JSONObject().put("schema", 1).put("id", id).put("createdAt", System.currentTimeMillis())
             .put("uris", JSONArray(uris.map(Uri::toString))).put("report", reportBase ?: JSONObject.NULL)
-            .put("message", message).put("mimeType", if (reportBase?.startsWith("raw-") == true) "image/x-adobe-dng" else "video/mp4")
+            .put("message", message).put("mimeType", mime)
         val atomic = AtomicFile(file)
         val stream = atomic.startWrite()
         try { stream.write(json.toString().toByteArray(Charsets.UTF_8)); atomic.finishWrite(stream) }
@@ -62,7 +68,7 @@ object CaptureLibrary {
                 require(uris.all { allowed(context, it) })
                 val reportBase = if (json.isNull("report")) null else json.getString("report").also { require(reportName.matches(it)) }
                 val report = reportBase?.let { File(context.filesDir, "exports/validation/$it").takeIf(File::isFile) }
-                val mime = json.getString("mimeType"); require(mime in setOf("video/mp4", "image/x-adobe-dng"))
+                val mime = json.getString("mimeType"); require(mime in setOf("video/mp4", "image/x-adobe-dng", "application/octet-stream"))
                 Entry(json.getString("id"), timestamp, uris, report, json.getString("message"), mime)
             } catch (_: Exception) { unreadable++; null }
         }.sortedWith(compareByDescending<Entry> { it.createdAt }.thenBy { it.id })

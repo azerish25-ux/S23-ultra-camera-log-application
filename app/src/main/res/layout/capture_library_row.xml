@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="104dp"
+    android:orientation="horizontal" android:gravity="center_vertical" android:padding="12dp" android:background="#171E29">
+    <ImageView android:id="@+id/libraryThumbnail" android:layout_width="96dp" android:layout_height="64dp"
+        android:scaleType="centerCrop" android:background="#080B10" android:contentDescription="@string/library_thumbnail_pending" />
+    <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+        android:orientation="vertical" android:paddingStart="12dp">
+        <TextView android:id="@+id/libraryRowTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textSize="14sp" android:textColor="#F4F6FA" android:textStyle="bold" />
+        <TextView android:id="@+id/libraryRowMetadata" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textSize="12sp" android:textColor="#B6C5DB" android:paddingTop="4dp" />
+        <TextView android:id="@+id/libraryRowStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textSize="12sp" android:textColor="#C7D8FF" android:paddingTop="4dp" />
+    </LinearLayout>
+</LinearLayout>

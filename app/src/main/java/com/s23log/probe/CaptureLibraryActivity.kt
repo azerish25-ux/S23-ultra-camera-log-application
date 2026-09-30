@@ -4,9 +4,15 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.Intent
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.media.MediaFormat
 import android.net.Uri
 import android.os.Bundle
+import android.os.Build
+import android.util.LruCache
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
@@ -16,9 +22,11 @@ import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CaptureLibrary
 import com.s23log.probe.core.CapturePairing
 import com.s23log.probe.core.MediaIdentity
+import com.s23log.probe.core.ClipDetails
 import org.json.JSONObject
 import java.text.DateFormat
 import java.util.Date
+import java.util.Locale
 import java.util.concurrent.Executors
 
 /** App-owned media only. Selected URI grants never require broad storage permission. */
@@ -27,6 +35,12 @@ class CaptureLibraryActivity : Activity() {
     private lateinit var list: ListView
     private lateinit var status: TextView
     private var entries = emptyList<CaptureLibrary.Entry>()
+    private var detailsById = emptyMap<String, ClipDetails>()
+    private val thumbnails = object : LruCache<String, Bitmap>(4 * 1024 * 1024) {
+        override fun sizeOf(key: String, value: Bitmap) = value.byteCount
+    }
+    private val pendingThumbnails = mutableSetOf<String>()
+    private val missingThumbnails = mutableSetOf<String>()
     @Volatile private var generation = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +58,7 @@ class CaptureLibraryActivity : Activity() {
         root.addView(status)
         list = ListView(this).apply {
             id = R.id.captureLibraryList
+            dividerHeight = (8 * resources.displayMetrics.density).toInt()
             setOnItemClickListener { _, _, position, _ -> entries.getOrNull(position)?.let(::details) }
         }
         root.addView(list, LinearLayout.LayoutParams(-1, 0, 1f))
@@ -56,16 +71,44 @@ class CaptureLibraryActivity : Activity() {
         worker.execute {
             val latest = CaptureHistory.latest(this)
             val migrated = runCatching { CaptureLibrary.remember(this, latest.uris, latest.report, latest.message) }
-            val snapshot = runCatching { CaptureLibrary.read(this) }
+            val detailMap = mutableMapOf<String, ClipDetails>()
+            val snapshot = runCatching {
+                CaptureLibrary.read(this).also { result -> result.entries.forEach { entry ->
+                    val report = runCatching {
+                        entry.report?.takeIf { it.isFile && it.length() in 1..(4 * 1024 * 1024) }?.let { JSONObject(it.readText()) }
+                    }.getOrNull()
+                    detailMap[entry.id] = ClipDetails.from(report)
+                } }
+            }
             runOnUiThread {
                 if (isDestroyed || isFinishing || request != generation) return@runOnUiThread
                 snapshot.onSuccess { result ->
                     val scroll = list.onSaveInstanceState()
                     entries = result.entries
+                    detailsById = detailMap.toMap()
                     val dates = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
-                    list.adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, entries.map {
-                        "${getString(R.string.library_added, dates.format(Date(it.createdAt)))} · ${if (it.mimeType == "video/mp4") getString(R.string.library_video) else getString(R.string.library_raw)}\n${it.message}"
-                    })
+                    list.adapter = object : BaseAdapter() {
+                        override fun getCount() = entries.size
+                        override fun getItem(position: Int) = entries[position]
+                        override fun getItemId(position: Int) = position.toLong()
+                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                            val row = convertView ?: layoutInflater.inflate(R.layout.capture_library_row, parent, false)
+                            val entry = getItem(position)
+                            val measured = detailsById[entry.id] ?: ClipDetails.from(null)
+                            val kind = getString(when (entry.mimeType) { "video/mp4" -> R.string.library_video; "image/x-adobe-dng" -> R.string.library_raw; else -> R.string.library_capture })
+                            row.findViewById<TextView>(R.id.libraryRowTitle).text = "${getString(R.string.library_added, dates.format(Date(entry.createdAt)))} · $kind"
+                            row.findViewById<TextView>(R.id.libraryRowMetadata).text = metadata(measured)
+                            row.findViewById<TextView>(R.id.libraryRowStatus).text = when {
+                                measured.status == "recoverable" -> getString(R.string.library_recovery_status)
+                                measured.status != "checked" -> getString(R.string.library_unknown_status)
+                                measured.cadence == "within_tolerance" -> getString(R.string.library_checked_status)
+                                measured.cadence == "warning" -> getString(R.string.library_cadence_warning)
+                                else -> getString(R.string.library_cadence_unknown)
+                            }
+                            thumbnail(row.findViewById(R.id.libraryThumbnail), entry)
+                            return row
+                        }
+                    }
                     list.onRestoreInstanceState(scroll)
                     status.text = if (entries.isEmpty()) getString(R.string.library_empty) else getString(R.string.library_scope, entries.size)
                     if (result.unreadableRecords > 0 || migrated.isFailure) status.append("\n" + getString(R.string.library_index_warning))
@@ -74,13 +117,66 @@ class CaptureLibraryActivity : Activity() {
         }
     }
 
-    override fun onPause() { generation++; super.onPause() }
-    override fun onDestroy() { worker.shutdown(); super.onDestroy() }
+    override fun onPause() { generation++; pendingThumbnails.clear(); super.onPause() }
+    override fun onDestroy() { worker.shutdown(); thumbnails.evictAll(); super.onDestroy() }
+
+    private fun metadata(details: ClipDetails): String {
+        val dimensions = if (details.width != null && details.height != null) "${details.width} × ${details.height}" else getString(R.string.library_dimensions_unknown)
+        val codec = when (details.mime) { "video/avc" -> "AVC"; "video/hevc" -> "HEVC"; else -> getString(R.string.library_codec_unknown) }
+        val transfer = when (details.transfer) {
+            MediaFormat.COLOR_TRANSFER_LINEAR -> "Linear"
+            MediaFormat.COLOR_TRANSFER_SDR_VIDEO -> "SDR"
+            MediaFormat.COLOR_TRANSFER_ST2084 -> "PQ"
+            MediaFormat.COLOR_TRANSFER_HLG -> "HLG"
+            else -> getString(R.string.library_colour_unknown)
+        }
+        val measured = details.measuredFps?.let { getString(R.string.library_measured_fps, String.format(Locale.US, "%.2f", it)) } ?: getString(R.string.library_rate_unknown)
+        val target = details.targetFps?.let { getString(R.string.library_target_fps, it) }.orEmpty()
+        val depth = details.lumaBitDepth?.let { getString(R.string.library_bit_depth, it) } ?: getString(R.string.library_depth_unknown)
+        return "$dimensions · $codec · $transfer\n$measured $target\n$depth"
+    }
+
+    private fun thumbnail(view: ImageView, entry: CaptureLibrary.Entry) {
+        view.tag = entry.id
+        val cached = thumbnails.get(entry.id)
+        if (cached != null) {
+            view.clearColorFilter(); view.setImageBitmap(cached); view.setContentDescription(getString(R.string.library_thumbnail)); return
+        }
+        view.setImageResource(if (entry.mimeType == "video/mp4") android.R.drawable.ic_media_play else android.R.drawable.ic_menu_gallery)
+        view.setColorFilter(0xffb6c5db.toInt())
+        view.contentDescription = getString(R.string.library_thumbnail_pending)
+        if (entry.id in missingThumbnails || !pendingThumbnails.add(entry.id)) return
+        val request = generation
+        worker.execute {
+            if (request != generation) return@execute
+            val bitmap = runCatching {
+                if (Build.VERSION.SDK_INT < 27 || entry.mimeType != "video/mp4") return@runCatching null
+                val retriever = MediaMetadataRetriever()
+                try {
+                    retriever.setDataSource(this, entry.uris.first())
+                    retriever.getScaledFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC, 256, 144)
+                } finally { retriever.release() }
+            }.getOrNull()
+            runOnUiThread {
+                if (isDestroyed || isFinishing || request != generation) { bitmap?.recycle(); return@runOnUiThread }
+                pendingThumbnails.remove(entry.id)
+                if (bitmap != null) thumbnails.put(entry.id, bitmap) else missingThumbnails.add(entry.id)
+                if (view.tag == entry.id) {
+                    if (bitmap != null) { view.clearColorFilter(); view.setImageBitmap(bitmap) }
+                    view.contentDescription = getString(if (bitmap != null) R.string.library_thumbnail else R.string.library_thumbnail_unavailable)
+                }
+            }
+        }
+    }
 
     private fun details(entry: CaptureLibrary.Entry) {
-        val items = arrayOf(getString(R.string.library_open), getString(R.string.library_share), getString(R.string.share_validation), getString(R.string.library_share_pair))
+        val items = arrayOf(getString(R.string.library_open), getString(R.string.library_share), getString(R.string.share_validation), getString(R.string.library_share_pair), getString(R.string.library_details))
         AlertDialog.Builder(this).setTitle(R.string.library_actions).setItems(items) { _, choice ->
-            if (choice == 3) {
+            if (choice == 4) {
+                val text = TextView(this).apply { text = entry.message; setTextIsSelectable(true); setPadding(24, 16, 24, 16) }
+                AlertDialog.Builder(this).setTitle(R.string.library_details).setView(ScrollView(this).apply { addView(text) })
+                    .setPositiveButton(R.string.close, null).show()
+            } else if (choice == 3) {
                 sharePair(entry)
             } else if (choice == 2) {
                 val file = entry.report

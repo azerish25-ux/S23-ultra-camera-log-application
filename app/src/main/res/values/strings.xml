@@ -97,4 +97,22 @@
     <string name="library_checking_pair">Checking original video bytes against the validation report…</string>
     <string name="library_pair_checked">Video bytes match the original report. This is file pairing, not image-quality certification.</string>
     <string name="library_pair_unavailable">A matched export could not be established. The file may have changed, be unavailable, or have an older report without a byte identity. Original files are unchanged; separate sharing is still available.</string>
+    <string name="library_details">Original capture result</string>
+    <string name="library_thumbnail_pending">Thumbnail loading or unavailable</string>
+    <string name="library_thumbnail">Recorded video thumbnail; not a colour reference</string>
+    <string name="library_thumbnail_unavailable">Thumbnail unavailable; original files are unchanged</string>
+    <string name="library_recovery_status">Recovery footage · unverified</string>
+    <string name="library_unknown_status">Verification unavailable</string>
+    <string name="library_checked_status">File checked · cadence within tolerance</string>
+    <string name="library_cadence_warning">File checked · review cadence warning</string>
+    <string name="library_dimensions_unknown">Dimensions unmeasured</string>
+    <string name="library_codec_unknown">Codec unmeasured</string>
+    <string name="library_colour_unknown">Colour tag unavailable</string>
+    <string name="library_rate_unknown">Rate unmeasured</string>
+    <string name="library_measured_fps">%1$s fps measured</string>
+    <string name="library_target_fps">(%1$d target)</string>
+    <string name="library_bit_depth">%1$d-bit luma measured</string>
+    <string name="library_depth_unknown">Bit depth unmeasured</string>
+    <string name="library_capture">Capture</string>
+    <string name="library_cadence_unknown">File checked · cadence unmeasured</string>
 </resources>

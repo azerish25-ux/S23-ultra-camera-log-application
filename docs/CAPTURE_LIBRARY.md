@@ -16,7 +16,9 @@ Only MediaStore and the app's FileProvider content URIs are accepted. No broad s
 
 `CaptureLibraryTest` covers multiple captures, idempotent completion, missing media/report handling, corrupt-record isolation, rejection of foreign/file URIs, preservation of unverified labels and activity recreation without camera permission. It saves a native screenshot in `files/exports/library-ui/library.png` for visual inspection. These checks are software/storage evidence, not physical camera acceptance.
 
-The first library version does not provide an in-app video decoder, thumbnail cache, editing, ratings, user albums or a full-device gallery scan. None is implied by external playback.
+The library keeps a bounded 4 MiB in-memory cache of scaled video thumbnails on API 27+. Missing/undecodable thumbnails and API 26 remain explicit placeholders; they do not change the original media or report status. Recorded dimensions, codec, colour tags and measured cadence are read from the original validation evidence. Requested frame rate is labelled separately, and missing bit-depth evidence remains unmeasured. The full original result remains available under **Original capture result**.
+
+There is no in-app video editor, ratings, user albums or full-device gallery scan. Playback uses an installed compatible player/editor.
 
 ## Matched video and validation export
 
