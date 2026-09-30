@@ -12,25 +12,29 @@ jobs:
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
-          fetch-depth: 2
+          fetch-depth: 3
           persist-credentials: false
-      - name: Verify source transfer and create tree without updating any branch
+      - name: Verify patch and stage content-addressed source blobs only
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           python3 - <<'PY'
-          import base64, gzip, hashlib, json, os, pathlib, subprocess, urllib.request
+          import base64, gzip, hashlib, json, os, pathlib, subprocess, urllib.request, urllib.error
           repo = 'azerish25-ux/S23-ultra-camera-log-application'
           baseline = '073ea54e09f621663c584d6ea0aadfb1dcc78202'
           assert os.environ['GITHUB_REPOSITORY'] == repo
-          assert subprocess.check_output(['git','rev-parse','HEAD^'], text=True).strip() == baseline
+          assert subprocess.check_output(['git','diff','--name-only',baseline,'HEAD'],text=True).strip() == '.github/workflows/raw-source-stage.yml'
           def api(path, data=None):
               body = None if data is None else json.dumps(data).encode()
               request = urllib.request.Request('https://api.github.com/repos/' + repo + path, data=body,
                   headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json',
                            'X-GitHub-Api-Version':'2022-11-28', 'Content-Type':'application/json'})
-              with urllib.request.urlopen(request, timeout=60) as response:
-                  return json.load(response)
+              try:
+                  with urllib.request.urlopen(request, timeout=60) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as error:
+                  print(error.code, error.read().decode())
+                  raise
           blobs = ['e6763f36965098928fe843edd483938afbbe2849', 'ac68efa59a048ee17311610ee5e595192faa7009',
                    'd2b4e8f342dfcca05398228b985a29876e42335c', '548de594029d342da23cfe2b9af1b18196b144d6',
                    '929749f20dee51dd4179dd2bef72d3cc49c926ed', '269f1b54699b5c4b121611d09a330cf216553550']
@@ -61,16 +65,16 @@ jobs:
               'docs/IMPLEMENTATION_STATUS.md','docs/RAW_SEQUENCE.md','scripts/raw_fixture.py',
               'scripts/raw_to_logc3.py','scripts/requirements-raw.txt','scripts/tests/test_raw_logc3.py'}
           assert set(names) == expected
-          entries = []
           identities = {}
           for name in sorted(names):
               mode = subprocess.check_output(['git','ls-files','--stage','--',name],text=True).split()[0]
               assert mode == '100644'
               content = pathlib.Path(name).read_bytes()
-              entries.append({'path':name,'mode':mode,'type':'blob','content':content.decode('utf-8')})
-              identities[name] = hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()
-          tree = api('/git/trees', {'base_tree':'9aa03c17fd4ec6ea2e69ead5c1f17ace18f9a451','tree':entries})
-          manifest = {'baseline':baseline,'stageCommit':os.environ['GITHUB_SHA'],'tree':tree['sha'],'files':identities}
+              expected_sha = hashlib.sha1(b'blob '+str(len(content)).encode()+b'\0'+content).hexdigest()
+              blob = api('/git/blobs', {'content':base64.b64encode(content).decode(),'encoding':'base64'})
+              assert blob['sha'] == expected_sha
+              identities[name] = expected_sha
+          manifest = {'baseline':baseline,'stageCommit':os.environ['GITHUB_SHA'],'files':identities}
           pathlib.Path('raw-source-tree.json').write_text(json.dumps(manifest,indent=2)+'\n')
           print(json.dumps(manifest,indent=2))
           PY
