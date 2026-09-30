@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate selected A/V tracks and fully decode them; packet alignment is not lip-sync proof."""
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -113,7 +114,16 @@ def inspect(path: Path, minimum: float, hlg: bool, expected_audio: str = "auto",
         )
         if audio_decoded.stderr.strip():
             raise ValueError(f"{path}: audio decoder errors: {audio_decoded.stderr.strip()}")
+    digest = hashlib.sha256()
+    byte_count = 0
+    with path.open("rb") as source:
+        for block in iter(lambda: source.read(64 * 1024), b""):
+            digest.update(block)
+            byte_count += len(block)
+    if byte_count == 0:
+        raise ValueError("Cannot identify an empty media container")
     return {"file": str(path), **result, "fullDecodePassed": True,
+            "mediaIdentity": {"algorithm": "SHA-256", "sha256": digest.hexdigest(), "byteCount": byte_count},
             "audioFullDecodePassed": True if result["audioPresent"] else None,
             "scope": "all tracks/packet timestamps and full video/audio decode; not physical lip-sync, thermal or visual-quality certification"}
 

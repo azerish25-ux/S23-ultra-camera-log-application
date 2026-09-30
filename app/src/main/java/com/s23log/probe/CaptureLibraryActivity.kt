@@ -14,6 +14,9 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CaptureLibrary
+import com.s23log.probe.core.CapturePairing
+import com.s23log.probe.core.MediaIdentity
+import org.json.JSONObject
 import java.text.DateFormat
 import java.util.Date
 import java.util.concurrent.Executors
@@ -24,7 +27,7 @@ class CaptureLibraryActivity : Activity() {
     private lateinit var list: ListView
     private lateinit var status: TextView
     private var entries = emptyList<CaptureLibrary.Entry>()
-    private var generation = 0
+    @Volatile private var generation = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,9 +78,11 @@ class CaptureLibraryActivity : Activity() {
     override fun onDestroy() { worker.shutdown(); super.onDestroy() }
 
     private fun details(entry: CaptureLibrary.Entry) {
-        val items = arrayOf(getString(R.string.library_open), getString(R.string.library_share), getString(R.string.share_validation))
+        val items = arrayOf(getString(R.string.library_open), getString(R.string.library_share), getString(R.string.share_validation), getString(R.string.library_share_pair))
         AlertDialog.Builder(this).setTitle(R.string.library_actions).setItems(items) { _, choice ->
-            if (choice == 2) {
+            if (choice == 3) {
+                sharePair(entry)
+            } else if (choice == 2) {
                 val file = entry.report
                 if (file == null || !file.isFile) { notice(R.string.library_report_missing); return@setItems }
                 val uri = FileProvider.getUriForFile(this, "$packageName.files", file)
@@ -89,6 +94,33 @@ class CaptureLibraryActivity : Activity() {
                     }.setNegativeButton(android.R.string.cancel, null).show()
             } else open(entry, entry.uris, choice == 1)
         }.setNegativeButton(R.string.close, null).show()
+    }
+
+    private fun sharePair(entry: CaptureLibrary.Entry) {
+        val request = generation
+        status.setText(R.string.library_checking_pair)
+        worker.execute {
+            val pair = runCatching {
+                require(entry.uris.size == 1 && entry.mimeType == "video/mp4")
+                val report = requireNotNull(entry.report)
+                require(report.isFile && report.length() in 1..(4 * 1024 * 1024))
+                val data = JSONObject(report.readText())
+                val actual = requireNotNull(contentResolver.openInputStream(entry.uris.single())).use { input ->
+                    MediaIdentity.read(input) { request == generation }
+                }
+                require(CapturePairing.matches(data, actual))
+                listOf(entry.uris.single(), FileProvider.getUriForFile(this, "$packageName.files", report))
+            }
+            runOnUiThread {
+                if (isDestroyed || isFinishing || request != generation) return@runOnUiThread
+                status.setText(if (pair.isSuccess) R.string.library_pair_checked else R.string.library_pair_unavailable)
+                pair.onSuccess { uris ->
+                    val intent = Intent(Intent.ACTION_SEND_MULTIPLE).setType("*/*")
+                        .putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+                    launch(intent, uris, true)
+                }.onFailure { notice(R.string.library_pair_unavailable) }
+            }
+        }
     }
 
     private fun open(entry: CaptureLibrary.Entry, uris: List<Uri>, share: Boolean) {

@@ -1,12 +1,28 @@
 #!/usr/bin/env python3
 """Require real device reports plus fully decoded videos in the CI evidence bundle."""
 import json
+import re
 from pathlib import Path, PurePosixPath
 import sys
 import tarfile
 
 
-def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
+def match_media_identities(reports: list[dict], clips: list[dict]) -> None:
+    def key(identity):
+        if (not isinstance(identity, dict) or identity.get("algorithm") != "SHA-256" or
+            not isinstance(identity.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", identity["sha256"]) or
+            type(identity.get("byteCount")) is not int or identity["byteCount"] <= 0):
+            raise ValueError("Missing or invalid finalized-media identity")
+        return identity["sha256"], identity["byteCount"]
+    expected = [key(r.get("verification", {}).get("mediaIdentity")) for r in reports]
+    actual = [key(c.get("mediaIdentity")) for c in clips]
+    if len(set(expected)) != len(expected) or len(set(actual)) != len(actual):
+        raise ValueError("Ambiguous duplicate media identity")
+    if set(expected) != set(actual):
+        raise ValueError("Report identities do not match the independently decoded media bytes")
+
+
+def verify(archive: Path, videos: Path, require_audio: bool = False, require_identity: bool = False) -> dict:
     clips = json.loads(videos.read_text())
     if len(clips) < 12 or not all(c.get("fullDecodePassed") is True for c in clips):
         raise ValueError("Expected twelve independently decoded recordings")
@@ -53,6 +69,8 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
                 probes.append(name[:-5])
     if len(reports) != len(clips):
         raise ValueError("Recording report count does not match captured files")
+    if require_identity:
+        match_media_identities(reports, clips)
     if not probes or not all(p in text_reports for p in probes):
         raise ValueError("Complete JSON/text capability reports were not preserved")
     if max(r["verification"].get("sampleSpanUs", 0) for r in reports) < 60_000_000:
@@ -80,7 +98,7 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
                 report.get("audio", {}).get("clock", {}).get("source") not in
                     {"audio_timestamp_monotonic", "read_completion_estimate_unverified"}):
                 raise ValueError("Missing actual microphone/clock/decoded-audio evidence")
-    return {"recordings": len(clips), "recordingReports": len(reports), "probeReports": len(probes),
+    return {"mediaIdentitiesMatched": require_identity, "recordings": len(clips), "recordingReports": len(reports), "probeReports": len(probes),
             "longestPacketSpanSeconds": max(c["packetSpanSeconds"] for c in clips),
             "audioRecordings": len(audio_clips), "permissionDenialVerified": permission_evidence is not None, "allAudioFullyDecoded": all(c.get("audioFullDecodePassed") is True for c in audio_clips) if audio_clips else None,
             "allVideosFullyDecoded": True, "physicalLipSyncVerified": False, "scope": "emulator evidence; not physical S23 Ultra validation"}
@@ -88,9 +106,10 @@ def verify(archive: Path, videos: Path, require_audio: bool = False) -> dict:
 
 if __name__ == "__main__":
     try:
-        if len(sys.argv) not in (3, 4) or (len(sys.argv) == 4 and sys.argv[3] != "--require-audio"):
-            raise ValueError("Usage: check_evidence.py app-evidence.tar ffprobe.json [--require-audio]")
-        print(json.dumps(verify(Path(sys.argv[1]), Path(sys.argv[2]), len(sys.argv) == 4), indent=2, allow_nan=False))
+        flags = sys.argv[3:]
+        if len(sys.argv) < 3 or len(flags) != len(set(flags)) or any(f not in {"--require-audio", "--require-identity"} for f in flags):
+            raise ValueError("Usage: check_evidence.py app-evidence.tar ffprobe.json [--require-audio] [--require-identity]")
+        print(json.dumps(verify(Path(sys.argv[1]), Path(sys.argv[2]), "--require-audio" in flags, "--require-identity" in flags), indent=2, allow_nan=False))
     except (OSError, ValueError, KeyError, TypeError, tarfile.TarError) as error:
         print(f"Evidence validation failed: {error}", file=sys.stderr)
         sys.exit(1)

@@ -20,7 +20,7 @@ The GitHub `S23Log-verification` artifact includes:
 - Emulator logs, a PNG camera screenshot and a tar of app-owned exports/preferences.
 - Twelve recorded MP4s, full-decode results in `ffprobe.json`, and `summary.json`.
 
-`check_evidence.py` rejects missing/rejected recording reports, missing JSON/text probe pairs, absent full-decode results, and a missing sixty-second recording. It reads regular report files inside the tar without extracting paths. Report/file count agreement is checked; it does not claim cryptographic one-to-one provenance between reports and movies.
+`check_evidence.py` rejects missing/rejected recording reports, missing JSON/text probe pairs, absent full-decode results, and a missing sixty-second recording. It reads regular report files inside the tar without extracting paths. Historical campaigns checked report/file counts only. Current CI additionally uses `--require-identity`: each fully decoded movie must match exactly one device report by finalized-container SHA-256 and byte count. Mismatches, missing identities and ambiguous duplicates fail. A checksum establishes byte pairing, not physical camera performance or independent authenticity.
 
 ## Independent video checks
 

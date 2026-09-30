@@ -93,4 +93,8 @@
     <string name="library_file_number">File %1$d</string>
     <string name="library_media_missing">Media is missing or no longer accessible. The library record and other files have been kept.</string>
     <string name="library_no_viewer">No compatible app is available, or the file could not be opened.</string>
+    <string name="library_share_pair">Share matched video + validation</string>
+    <string name="library_checking_pair">Checking original video bytes against the validation report…</string>
+    <string name="library_pair_checked">Video bytes match the original report. This is file pairing, not image-quality certification.</string>
+    <string name="library_pair_unavailable">A matched export could not be established. The file may have changed, be unavailable, or have an older report without a byte identity. Original files are unchanged; separate sharing is still available.</string>
 </resources>

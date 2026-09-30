@@ -13,6 +13,8 @@ import com.s23log.probe.core.DynamicRange
 import com.s23log.probe.core.FrameStatistics
 import com.s23log.probe.core.HevcSps
 import com.s23log.probe.core.RecordingMode
+import com.s23log.probe.core.MediaIdentity
+import com.s23log.probe.diagnostics.jsonValue
 import com.s23log.probe.core.cadenceStatus
 import org.json.JSONObject
 import java.nio.ByteBuffer
@@ -126,6 +128,9 @@ object RecordingVerifier {
             evidence.put("firstSyncFrameDecoded", true)
         } finally { retriever.release() }
         if (audioMode.enabled) { decodeAudioFrame(context, uri, audioMode); evidence.put("firstAudioPcmDecoded", true) }
+        val identity = requireNotNull(context.contentResolver.openInputStream(uri)) { "Finalized media is unavailable for identity verification" }
+            .use(MediaIdentity::read)
+        evidence.put("mediaIdentity", jsonValue(identity.describe()))
         evidence.put("scope", "Selected tracks, all packet timestamps, one video frame and (if requested) decoded audio PCM; not lip-sync, full-duration quality or thermal certification")
         return evidence
     }
