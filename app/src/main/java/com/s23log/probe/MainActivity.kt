@@ -138,7 +138,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val target = targets.getOrNull(position) ?: return
-                if (target.key != selected?.key) { selected = target; requestedKey = null; maybeOpen() }
+                selectCamera(target)
             }
         }
         spinner(R.id.modeSelector).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -146,7 +146,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 // Adapter/layout callbacks may arrive after a newer selection was bound.
                 if (parent?.selectedItemPosition != position) return
-                val mode = modes.getOrNull(position) ?: return
+                if (position == 0) {
+                    modes.indexOfFirst { it.key == modeKey }.takeIf { it >= 0 }?.let { parent.setSelection(it + 1) }
+                    return
+                }
+                val mode = modes.getOrNull(position - 1) ?: return
                 if (!bindingControls && mode.key != modeKey && engineState == EngineState.PREVIEW) {
                     // Close the UI's ready window immediately, before the camera-thread hop.
                     onState(EngineState.OPENING, "Matching preview to ${mode.label}…")
@@ -267,7 +271,54 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         return when (rotation) { Surface.ROTATION_90 -> 90; Surface.ROTATION_180 -> 180; Surface.ROTATION_270 -> 270; else -> 0 }
     }
     private fun setItems(spinner: Spinner, labels: List<String>) {
-        spinner.adapter = ArrayAdapter(this, R.layout.selector_item, labels).apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+        spinner.adapter = object : ArrayAdapter<String>(this, R.layout.selector_item, labels) {
+            override fun areAllItemsEnabled(): Boolean = spinner.id != R.id.modeSelector
+            override fun isEnabled(position: Int): Boolean = spinner.id != R.id.modeSelector || position != 0
+            override fun getView(position: Int, convertView: View?, parent: android.view.ViewGroup): View {
+                return super.getView(position, convertView, parent).also { view ->
+                    if (spinner.id == R.id.cameraSelector && view is TextView) {
+                        view.text = "⋯"
+                        view.contentDescription = getString(R.string.all_camera_routes, labels.getOrNull(position) ?: "")
+                    }
+                }
+            }
+        }.apply { setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) }
+    }
+    private fun selectCamera(target: CameraTarget) {
+        if (target.key == selected?.key) return
+        if (!CapturePolicy.canChangeCamera(engineState)) {
+            selected?.let { spinner(R.id.cameraSelector).setSelection(targets.indexOf(it)) }
+            return
+        }
+        selected = target; requestedKey = null
+        spinner(R.id.cameraSelector).setSelection(targets.indexOf(target))
+        // Disable recording before the asynchronous camera switch is admitted.
+        onState(EngineState.OPENING, getString(R.string.switching_camera, target.label))
+        renderLensRail(); maybeOpen()
+    }
+    private fun renderLensRail() {
+        val rail = findViewById<LinearLayout>(R.id.lensRail)
+        rail.removeAllViews()
+        targets.forEach { target ->
+            val facing = when (target.characteristics[C.LENS_FACING]) {
+                C.LENS_FACING_BACK -> getString(R.string.lens_rear)
+                C.LENS_FACING_FRONT -> getString(R.string.lens_front)
+                C.LENS_FACING_EXTERNAL -> getString(R.string.lens_external)
+                else -> getString(R.string.lens_unknown)
+            }
+            val focal = target.characteristics[C.LENS_INFO_AVAILABLE_FOCAL_LENGTHS]?.joinToString("/") { String.format(Locale.US, "%.1f", it) } ?: "?"
+            rail.addView(Button(this).apply {
+                text = "$facing $focal mm · ${target.physicalId ?: target.logicalId}"
+                contentDescription = getString(R.string.advertised_camera_route, target.label)
+                tag = target.key; isAllCaps = false
+                isSelected = target.key == selected?.key
+                alpha = if (isSelected) 1f else 0.65f
+                setTextColor(if (isSelected) 0xFF72E5D1.toInt() else 0xFFE4EAF1.toInt())
+                isEnabled = CapturePolicy.canChangeCamera(engineState)
+                setOnClickListener { selectCamera(target) }
+                layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT)
+            })
+        }
     }
     override fun onCatalog(result: CatalogResult) {
         if (destroyed) return
@@ -276,6 +327,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         selected = targets.firstOrNull { it.key == previous } ?: targets.firstOrNull()
         setItems(spinner(R.id.cameraSelector), targets.map { it.label })
         if (selected != null) spinner(R.id.cameraSelector).setSelection(targets.indexOf(selected))
+        renderLensRail()
         if (targets.isEmpty()) onState(EngineState.ERROR, "No accessible camera. ${result.errors.joinToString()}")
         else maybeOpen()
     }
@@ -288,10 +340,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         manualApplied = false
         bindingControls = true
         modeKey = mode?.key
-        setItems(spinner(R.id.modeSelector), modes.map { it.label })
-        if (mode != null) spinner(R.id.modeSelector).setSelection(modes.indexOf(mode))
+        setItems(spinner(R.id.modeSelector), listOf(getString(R.string.choose_format)) + modes.map { it.label })
+        spinner(R.id.modeSelector).setSelection(if (mode != null) modes.indexOf(mode) + 1 else 0)
         CameraSettings.select(this, target.key)
-        CameraSettings.saveMode(this, target.key, modeKey)
+        if (modeKey != null) CameraSettings.saveMode(this, target.key, modeKey)
         text(R.id.planNotes).text = plan.notes.joinToString("\n")
         val c = target.characteristics
         wbModes = target.wbModes
@@ -311,7 +363,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         this.previewSize = previewSize
         selected?.let { quickControls.configure(it, mode) }
         selected?.let { CameraSettings.saveMode(this, it.key, mode.key) }
-        spinner(R.id.modeSelector).setSelection(modes.indexOfFirst { it.key == mode.key })
+        spinner(R.id.modeSelector).setSelection(modes.indexOfFirst { it.key == mode.key } + 1)
         transformPreview()
     }
     override fun onControlsChanged(cameraKey: String, controls: CameraControls) {
@@ -397,7 +449,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (state == EngineState.RECORDING && previous != state) { clock.base = SystemClock.elapsedRealtime(); clock.start() }
         else if (state != EngineState.RECORDING) { clock.stop(); if (state == EngineState.PREVIEW || state == EngineState.CLOSED) clock.base = SystemClock.elapsedRealtime() }
         text(R.id.cameraStatus).text = message
-        val mode = modes.getOrNull(spinner(R.id.modeSelector).selectedItemPosition)
+        val mode = modes.firstOrNull { it.key == modeKey }
         val showOverlay = state !in setOf(EngineState.PREVIEW, EngineState.ADJUSTING, EngineState.RECORDING) ||
             (state == EngineState.RECORDING && mode?.previewDuringRecording == false)
         text(R.id.previewOverlay).visibility = if (showOverlay) View.VISIBLE else View.GONE
@@ -416,6 +468,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (wasManual != manualApplied || wasRequested != manualRequested) updateEnabled()
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
         text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
+        text(R.id.applied).append("\nReported lens · ${values["focalLengthMm"] ?: "?"} mm" +
+            (values["activePhysicalCameraId"]?.let { " · active physical $it" } ?: ""))
         if (values["exposureCompensationActive"] == true) {
             val steps = values["exposureCompensationSteps"] as? Int
             val ev = steps?.let { selected?.exposureCompensation?.ev(it) }?.let { String.format(Locale.US, "%+.2f", it) } ?: "?"
@@ -454,6 +508,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val recording = engineState == EngineState.RECORDING
         val idle = CapturePolicy.canChangeCamera(engineState)
         spinner(R.id.cameraSelector).isEnabled = idle
+        findViewById<LinearLayout>(R.id.lensRail).let { rail -> for (i in 0 until rail.childCount) rail.getChildAt(i).isEnabled = idle }
         spinner(R.id.modeSelector).isEnabled = preview && modes.isNotEmpty()
         val mode = modes.firstOrNull { it.key == modeKey }
         val processed = mode?.processing == ProcessingPath.GPU_HLG10
@@ -466,7 +521,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.audioMode).isEnabled = idle
         button(R.id.modeDetails).isEnabled = idle && latestPlan != null
         button(R.id.previewAids).isEnabled = preview || (recording && mode?.previewDuringRecording == true)
-        text(R.id.modeEvidence).setText(if (mode?.ratePlan?.requiresManual == true && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
+        text(R.id.modeEvidence).setText(if (mode == null) R.string.choose_format else if (mode.ratePlan.requiresManual && !manualApplied) R.string.manual_timing_required else R.string.advertised_only)
         button(R.id.record).setText(if (recording || engineState == EngineState.STARTING) R.string.stop_recording else R.string.start_recording)
         button(R.id.recoverCaptures).isEnabled = idle
         button(R.id.captureLibrary).isEnabled = idle

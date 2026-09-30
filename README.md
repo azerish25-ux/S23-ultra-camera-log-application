@@ -1,6 +1,15 @@
-# S23Log — Phase 3E.1 experimental high-precision HLG processing
+# S23Log — native Android camera and capture evidence
 
-Kotlin/XML Android application for exploring the public camera capabilities of the Samsung Galaxy S23 Ultra and other Android devices. This milestone hardens the Camera2 engine against footage loss and mismatched preview/recording controls. **It does not record proprietary Samsung Log, custom-Log video or sustained RAW video.**
+Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log, custom-Log video or sustained RAW video.**
+
+Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch controls and bitrate targets, preview-only monitoring aids, a thumbnail library, original-video/report identity pairing, storage/thermal safeguards and time-varying control evidence. Reference forward/inverse LUTs are separate mathematical exports, not a claim of a shipping Log recording path.
+
+- [Builds, installable debug APKs and exact-source verification](https://github.com/azerish25-ux/S23-ultra-camera-log-application/actions/workflows/android.yml)
+- [Implementation status and acceptance boundaries](docs/IMPLEMENTATION_STATUS.md)
+- [Local-data and permission behavior](docs/PRIVACY_AND_STORAGE.md)
+- [Physical S23 Ultra test plan](docs/DEVICE_TEST_PLAN.md)
+
+This is an actively developed camera tool, not a device-certified production release. Release APKs remain unsigned until a release-key/update policy is established. Emulator evidence is kept separate from physical 4K/8K, ten-bit input fidelity, thermal endurance and audiovisual synchronization.
 
 ## Phase 3E.1 changes
 
@@ -57,6 +66,8 @@ See [Phase 3B scope and acceptance](docs/PHASE3B.md). Custom Log, high-speed/max
 - Application-owned probe work survives activity recreation. Scans remain available when saving fails. File sharing is limited to an exports directory with temporary URI grants.
 
 ## Capture library
+
+The capture dock has explicit advertised lens-route shortcuts and separately reported focal/active-physical metadata. Landscape keeps actions fixed while metadata scrolls. See [route identity, UI and tests](docs/LENS_UI.md).
 
 Open **Controls → Capture library** to find earlier indexed captures, open or share their media, and share original validation reports. Missing files and unverified recovery messages remain explicit. The previous latest capture is imported on upgrade; older unindexed history cannot be reconstructed. See [storage, access and verification boundaries](docs/CAPTURE_LIBRARY.md).
 

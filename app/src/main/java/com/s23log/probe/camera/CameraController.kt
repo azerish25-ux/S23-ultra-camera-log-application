@@ -27,6 +27,7 @@ import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.ManualExposureGate
 import com.s23log.probe.core.ManualResultPolicy
+import com.s23log.probe.core.ModePlanning
 import com.s23log.probe.core.PreviewAid
 import com.s23log.probe.core.BitratePreset
 import com.s23log.probe.storage.CameraSettings
@@ -102,12 +103,12 @@ class CameraController(context: Context, listener: Listener) {
             state(EngineState.ADJUSTING, "Checking the requested bitrate target…")
             try {
                 val plan = CameraCatalog.plan(request.target, preset)
-                val candidate = requireNotNull(if (previous != null) plan.modes.firstOrNull { it.key == previous.key }
-                    else plan.modes.firstOrNull { !it.ratePlan.requiresManual } ?: plan.modes.firstOrNull()) {
+                val candidate = requireNotNull(ModePlanning.restore(plan.modes, previous?.key ?: request.modeKey)) {
                     "This preset is unavailable for the selected format; no format fallback was performed"
                 }
                 val size = CameraCatalog.previewSize(request.target, candidate)
                 bitratePreset = preset; modes = plan.modes; selectedMode = candidate; committed = true
+                wanted = request.copy(modeKey = candidate.key)
                 CameraSettings.saveBitratePreset(app, preset)
                 emit { it.onReady(request.target, size, plan, candidate) }
                 if (previous == null) {
@@ -174,6 +175,7 @@ class CameraController(context: Context, listener: Listener) {
                 // before doing it, not after the replacement Surface has been created.
                 state(EngineState.OPENING, "Matching preview to ${mode.label}…")
                 selectedMode = mode
+                wanted = request.copy(modeKey = mode.key)
                 closeSession()
                 previewSurface?.release()
                 request.texture.setDefaultBufferSize(size.width, size.height)
@@ -505,8 +507,7 @@ class CameraController(context: Context, listener: Listener) {
         try {
             val plan = runCatching { CameraCatalog.plan(request.target, bitratePreset) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
             modes = plan.modes
-            selectedMode = modes.firstOrNull { it.key == request.modeKey || it.legacyKey == request.modeKey }
-                ?: modes.firstOrNull { !it.ratePlan.requiresManual } ?: modes.firstOrNull()
+            selectedMode = ModePlanning.restore(modes, request.modeKey)
             val size = CameraCatalog.previewSize(request.target, selectedMode)
             request.texture.setDefaultBufferSize(size.width, size.height)
             previewSurface = Surface(request.texture)
@@ -624,7 +625,9 @@ class CameraController(context: Context, listener: Listener) {
                         }
                         return // Restored manual intent is not ready until its locks are confirmed.
                     }
-                    state(EngineState.PREVIEW, "Live preview · SDR · " + (if (selectedMode?.ratePlan?.requiresManual == true && !controls.manualExposure)
+                    state(EngineState.PREVIEW, "Live preview · SDR · " + (if (selectedMode == null)
+                        "no recording format selected; choose an available format explicitly"
+                        else if (selectedMode?.ratePlan?.requiresManual == true && !controls.manualExposure)
                         "manual timing requires applied manual exposure" else "${selectedMode?.fps ?: "auto"} fps target") + " · no Log transform" +
                         (previewControlWarning?.let { ". $it" } ?: ""))
                 }
@@ -643,6 +646,8 @@ class CameraController(context: Context, listener: Listener) {
                 }
                 val values = mapOf<String, Any?>(
                     "metadataCamera" to (if (actual == null) "physical metadata unavailable" else target.key),
+                    "activePhysicalCameraId" to (if (Build.VERSION.SDK_INT >= 29) result[CaptureResult.LOGICAL_MULTI_CAMERA_ACTIVE_PHYSICAL_ID] else null),
+                    "focalLengthMm" to actual?.get(CaptureResult.LENS_FOCAL_LENGTH),
                     "iso" to actual?.get(CaptureResult.SENSOR_SENSITIVITY),
                     "exposureNs" to actual?.get(CaptureResult.SENSOR_EXPOSURE_TIME),
                     "focusDiopters" to actual?.get(CaptureResult.LENS_FOCUS_DISTANCE),

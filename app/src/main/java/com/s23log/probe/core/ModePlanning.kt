@@ -21,6 +21,10 @@ data class ModeRejection(val size: VideoSize, val fps: Int, val range: DynamicRa
 }
 
 object ModePlanning {
+    /** First-run defaults are allowed; a missing saved format must be explicitly reselected. */
+    fun restore(modes: List<RecordingMode>, savedKey: String?): RecordingMode? =
+        if (savedKey == null) modes.firstOrNull { !it.ratePlan.requiresManual } ?: modes.firstOrNull()
+        else modes.firstOrNull { it.key == savedKey } ?: modes.filter { it.legacyKey == savedKey }.singleOrNull()
     val eightK = VideoSize(7680, 4320)
     // Ordinary sessions only. High-speed request lists/session types are a separate feature.
     fun rates(ranges: List<FpsRange>): List<Int> =

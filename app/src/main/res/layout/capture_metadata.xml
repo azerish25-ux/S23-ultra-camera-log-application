@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal">
+        <HorizontalScrollView android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:fillViewport="true" android:scrollbars="none">
+            <LinearLayout android:id="@+id/lensRail" android:layout_width="wrap_content" android:layout_height="48dp" android:orientation="horizontal" />
+        </HorizontalScrollView>
+        <Spinner android:id="@+id/cameraSelector" android:layout_width="48dp" android:layout_height="48dp" android:contentDescription="@string/camera_label" />
+    </LinearLayout>
+    <Spinner android:id="@+id/modeSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/mode_label" />
+    <include layout="@layout/audio_controls" />
+    <TextView android:id="@+id/resourceStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/resource_idle" android:textSize="11sp" android:textColor="#B6C5DB" android:maxLines="2" />
+    <TextView android:id="@+id/colourStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/colour_direct" android:textSize="11sp" android:maxLines="1" android:ellipsize="end" android:textColor="#C7D8FF" />
+    <TextView android:id="@+id/modeEvidence" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/advertised_only" android:textSize="11sp" android:textColor="#B6C5DB" android:maxLines="2" />
+</LinearLayout>

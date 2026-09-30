@@ -36,8 +36,8 @@
     <string name="recover_captures">Recover captures</string>
     <string name="open_controls">Controls</string>
     <string name="close_controls">Back to viewfinder</string>
-    <string name="mode_details">Mode evidence</string>
-    <string name="test_mode">Test 5 seconds</string>
+    <string name="mode_details">Evidence</string>
+    <string name="test_mode">5s test</string>
     <string name="recording_time">Elapsed recording time</string>
     <string name="advertised_only">Advertised candidate · not device-certified</string>
     <string name="manual_timing_required">Manual timing · apply manual exposure before recording</string>
@@ -168,4 +168,12 @@
     <string name="colour_reference_preparing">Preparing versioned forward/inverse references…</string>
     <string name="colour_reference_ready">Five reference files ready, including domains, test vectors and SHA-256 identities. Review the README before use.</string>
     <string name="colour_reference_failed">Reference preparation failed: %1$s</string>
+    <string name="all_camera_routes">All camera routes. Current: %1$s</string>
+    <string name="advertised_camera_route">Advertised camera route: %1$s</string>
+    <string name="switching_camera">Switching camera: %1$s</string>
+    <string name="lens_rear">Rear</string>
+    <string name="lens_front">Front</string>
+    <string name="lens_external">External</string>
+    <string name="lens_unknown">Camera</string>
+    <string name="choose_format">Choose an available recording format</string>
 </resources>
