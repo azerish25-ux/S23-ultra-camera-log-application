@@ -35,6 +35,8 @@ Black maps to0, unity to1. The domain is explicit; CPU calls reject invalid/nonf
 
 There is no accepted MP4 transfer identifier/editing workflow for this project curve yet. It is never stored in a file tagged as HLG by this milestone. Unit tests verify monotonicity, endpoints and the inverse over10001 values; GPU tests compare against the CPU reference. Version and domain must accompany any future LUT/export before recording is enabled.
 
+The app can now export versioned forward/inverse **reference-only** LUTs, analytic vectors and byte identities, independently checked with FFmpeg. See [export contract and tests](COLOUR_REFERENCE_EXPORT.md). Their existence does not enable custom-Log recording or make them valid corrections for current HLG clips.
+
 ## Viewing transform
 
 The initial SDR view multiplies linear BT.2020 by:

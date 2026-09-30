@@ -3,11 +3,13 @@ package com.s23log.probe
 import android.app.Application
 import com.s23log.probe.diagnostics.ProbeStore
 import com.s23log.probe.storage.PendingMedia
+import com.s23log.probe.storage.ColourReferenceStore
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 class S23Application : Application() {
     val reports: ProbeStore by lazy { ProbeStore(this) }
+    val colourReferences: ColourReferenceStore by lazy { ColourReferenceStore(this) }
     private lateinit var recovery: Future<*>
     override fun onCreate() {
         super.onCreate()

@@ -21,7 +21,7 @@ object CameraSettings {
         val json = JSONObject(prefs(context).getString("controls:$key", "{}")!!)
         CameraControls(json.optBoolean("manualExposure"), json.optInt("iso", 100), json.optLong("exposureNs", 16_666_667),
             if (json.has("focusDiopters") && !json.isNull("focusDiopters")) json.getDouble("focusDiopters").toFloat() else null,
-            json.optInt("awbMode", 1), json.optBoolean("awbLock"))
+            json.optInt("awbMode", 1), json.optBoolean("awbLock"), exposureCompensationSteps = json.optInt("exposureCompensationSteps", 0))
     }.getOrDefault(CameraControls())
     fun saveControls(context: Context, key: String, controls: CameraControls) {
         prefs(context).edit().putString("controls:$key", JSONObject(controls.describe()).toString()).apply()

@@ -328,6 +328,7 @@ class CameraController(context: Context, listener: Listener) {
                     "requestedTestSeconds" to testSeconds, "audioMode" to audioMode.name,
                     "previewAidsAtStart" to previewAids.map { it.name }.sorted(),
                     "sensorTimestampSource" to request.target.characteristics[C.SENSOR_INFO_TIMESTAMP_SOURCE],
+                    "exposureCompensationRange" to request.target.exposureCompensation?.describe(),
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
                 ), audioMode = audioMode, onResources = { snapshot -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onResources(snapshot) }
@@ -649,6 +650,11 @@ class CameraController(context: Context, listener: Listener) {
                     "awbState" to actual?.get(CaptureResult.CONTROL_AWB_STATE),
                     "awbLock" to actual?.get(CaptureResult.CONTROL_AWB_LOCK),
                     "aeMode" to actual?.get(CaptureResult.CONTROL_AE_MODE),
+                    "aeState" to actual?.get(CaptureResult.CONTROL_AE_STATE),
+                    "exposureCompensationSteps" to actual?.get(CaptureResult.CONTROL_AE_EXPOSURE_COMPENSATION),
+                    "requestedExposureCompensationSteps" to value.exposureCompensationSteps,
+                    "effectiveExposureCompensationSteps" to effective.exposureCompensationSteps,
+                    "exposureCompensationActive" to (actual?.get(CaptureResult.CONTROL_AE_MODE)?.let { it != CaptureRequest.CONTROL_AE_MODE_OFF } == true && target.exposureCompensation != null),
                     "afMode" to actual?.get(CaptureResult.CONTROL_AF_MODE),
                     "afState" to actual?.get(CaptureResult.CONTROL_AF_STATE),
                     "nominalFps" to (activeRecorder?.mode?.fps ?: selectedMode?.fps),

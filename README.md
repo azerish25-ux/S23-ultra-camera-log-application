@@ -72,6 +72,8 @@ The partial-height Controls drawer provides bounded ISO, shutter and focus slide
 
 Original reports also retain bounded accepted-request changes and sampled sensor-result history, with explicit clock and overflow limits. See [control-history evidence](docs/CONTROL_HISTORY.md).
 
+Auto exposure has a capability-bounded EV compensation slider with separate reported values and convergence state. It is unavailable in manual exposure and on unsupported routes. See [compensation semantics and tests](docs/EXPOSURE_COMPENSATION.md).
+
 ## Bitrate targets
 
 Controls offers capability-checked Low, Standard and High bitrate targets without silently changing the selected format. Codec limits are shown and the target is retained in each validation report. Actual encoded bitrate varies. See [bitrate policy and tests](docs/BITRATE_PRESETS.md).
@@ -79,6 +81,10 @@ Controls offers capability-checked Low, Standard and High bitrate targets withou
 ## Preview aids
 
 The **Aids** control provides optional framing, level and bounded display-preview scopes. These are RGB8 display aids with explicit freshness/availability limits; they do not certify sensor exposure, HLG precision or optical focus. See [sampling, lifecycle, recording separation and tests](docs/PREVIEW_AIDS.md).
+
+## Colour reference assets
+
+Controls can prepare/share versioned forward/inverse mathematical reference LUTs, vectors and identities. These are explicitly **not LUTs for current HLG recordings**, and custom-Log recording remains disabled. See [domains and independent consumer checks](docs/COLOUR_REFERENCE_EXPORT.md).
 
 ## Build
 

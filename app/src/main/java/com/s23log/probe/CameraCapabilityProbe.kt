@@ -104,6 +104,9 @@ class CameraCapabilityProbe(context: Context) {
         s.query("minimumFocusDiopters") { c[C.LENS_INFO_MINIMUM_FOCUS_DISTANCE] }
         s.query("flash") { c[C.FLASH_INFO_AVAILABLE] }
         s.query("aeFpsRanges") { c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.map { listOf(it.lower, it.upper) } }
+        s.query("aeCompensationRange") { c[C.CONTROL_AE_COMPENSATION_RANGE]?.let { listOf(it.lower, it.upper) } }
+        s.query("aeCompensationStep") { c[C.CONTROL_AE_COMPENSATION_STEP]?.let { mapOf("numerator" to it.numerator, "denominator" to it.denominator) } }
+        s.query("sensorTimestampSource") { c[C.SENSOR_INFO_TIMESTAMP_SOURCE] }
         s.query("awbModes") { c[C.CONTROL_AWB_AVAILABLE_MODES] }
         s.query("awbLockAvailable") { c[C.CONTROL_AWB_LOCK_AVAILABLE] }
         s.query("afModes") { c[C.CONTROL_AF_AVAILABLE_MODES] }

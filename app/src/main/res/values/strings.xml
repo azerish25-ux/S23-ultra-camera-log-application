@@ -159,4 +159,13 @@
     <string name="shutter_angle">Shutter angle preset</string>
     <string name="shutter_angle_title">Angle at %1$d fps target</string>
     <string name="numeric_controls">Advanced numeric entry</string>
+    <string name="compensation_title">Auto exposure compensation</string>
+    <string name="compensation_value">Draft AE compensation · %1$s EV · auto only</string>
+    <string name="compensation_unavailable">AE compensation unavailable on this route</string>
+    <string name="colour_reference_prepare">Prepare reference LUTs</string>
+    <string name="colour_reference_share">Share reference LUTs</string>
+    <string name="colour_reference_scope">Mathematical reference only. The app does not record this curve. Not a LUT for HLG clips or Samsung Log.</string>
+    <string name="colour_reference_preparing">Preparing versioned forward/inverse references…</string>
+    <string name="colour_reference_ready">Five reference files ready, including domains, test vectors and SHA-256 identities. Review the README before use.</string>
+    <string name="colour_reference_failed">Reference preparation failed: %1$s</string>
 </resources>

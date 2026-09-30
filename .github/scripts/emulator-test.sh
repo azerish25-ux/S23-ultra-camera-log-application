@@ -72,6 +72,7 @@ python3 scripts/check_video.py evidence/emulator/videos --min-duration 1 > evide
 python3 scripts/check_evidence.py evidence/emulator/app-evidence.tar evidence/emulator/ffprobe.json --require-audio --require-identity > evidence/emulator/summary.json
 python3 scripts/check_timing.py evidence/emulator/app-evidence.tar > evidence/emulator/timing-summary.json
 python3 scripts/check_colour.py evidence/emulator/app-evidence.tar > evidence/emulator/colour-summary.json
+python3 scripts/check_reference_luts.py evidence/emulator/app-evidence.tar > evidence/emulator/reference-luts-summary.json
 timeout 30 adb shell am start -W -n com.s23log.probe/.MainActivity > evidence/emulator/activity-start.txt
 # am may return success even when the requested component is absent.
 grep -q 'Status: ok' evidence/emulator/activity-start.txt

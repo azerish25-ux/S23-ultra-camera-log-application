@@ -42,6 +42,7 @@ import com.s23log.probe.core.BitratePolicy
 import com.s23log.probe.storage.CaptureHistory
 import com.s23log.probe.storage.CameraSettings
 import com.s23log.probe.storage.PendingMedia
+import com.s23log.probe.storage.ColourReferenceStore
 import java.io.File
 import java.util.Locale
 
@@ -52,6 +53,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private lateinit var previewAids: PreviewAidsView
     private lateinit var pages: ViewFlipper
     private val reports: ProbeStore get() = (application as S23Application).reports
+    private val colourReferences: ColourReferenceStore get() = (application as S23Application).colourReferences
     private var visible = false
     private var destroyed = false
     private var targets: List<CameraTarget> = emptyList()
@@ -77,6 +79,16 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (text(R.id.report).text.toString() != state.text) text(R.id.report).text = state.text
         button(R.id.runProbe).isEnabled = !state.running
         button(R.id.shareReport).isEnabled = state.shareable && !state.running
+    }
+    private val colourObserver: (ColourReferenceStore.State) -> Unit = { state ->
+        text(R.id.colourReferenceStatus).text = when {
+            state.running -> getString(R.string.colour_reference_preparing)
+            state.error != null -> getString(R.string.colour_reference_failed, state.error)
+            state.files.isNotEmpty() -> getString(R.string.colour_reference_ready)
+            else -> getString(R.string.colour_reference_scope)
+        }
+        button(R.id.colourReference).setText(if (state.files.isNotEmpty()) R.string.colour_reference_share else R.string.colour_reference_prepare)
+        updateEnabled()
     }
     private fun text(id: Int): TextView = findViewById(id)
     private fun button(id: Int): Button = findViewById(id)
@@ -152,6 +164,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.modeDetails).setOnClickListener { showModeEvidence() }
         button(R.id.previewAids).setOnClickListener { choosePreviewAids() }
         button(R.id.bitratePreset).setOnClickListener { chooseBitratePreset() }
+        button(R.id.colourReference).setOnClickListener {
+            val state = colourReferences.state
+            if (state.files.isNotEmpty() && state.files.all { it.isFile }) shareFiles(state.files, "application/octet-stream")
+            else colourReferences.prepare()
+        }
         button(R.id.monitorTransform).setOnClickListener {
             viewingTransform = if (viewingTransform == MonitorTransform.SDR_TONEMAP) MonitorTransform.HLG_SIGNAL else MonitorTransform.SDR_TONEMAP
             controller.setMonitor(viewingTransform); updateEnabled()
@@ -186,7 +203,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.shareValidation).setOnClickListener { CaptureHistory.latest(this).report?.let { shareFiles(listOf(it), "application/json") } }
         onState(EngineState.CLOSED, "Enable camera to begin. Recording modes are verified only after capture.")
     }
-    override fun onStart() { super.onStart(); reports.observe(observer) }
+    override fun onStart() { super.onStart(); reports.observe(observer); colourReferences.observe(colourObserver) }
     override fun onResume() {
         super.onResume()
         visible = true
@@ -202,6 +219,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         requestedKey = null
         controller.close()
         reports.remove(observer)
+        colourReferences.remove(colourObserver)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onStop()
     }
@@ -311,6 +329,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         text(R.id.isoInput).text = controls.iso.toString()
         text(R.id.shutterInput).text = String.format(Locale.US, "%.6f", controls.exposureNs / 1_000_000.0)
         text(R.id.focusInput).text = (controls.focusDiopters ?: 0f).toString()
+        quickControls.setCompensation(controls.exposureCompensationSteps)
         wbModes.indexOf(controls.wbMode).takeIf { it >= 0 }?.let { spinner(R.id.wbSelector).setSelection(it) }
         quickControls.sync()
     }
@@ -397,6 +416,20 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         if (wasManual != manualApplied || wasRequested != manualRequested) updateEnabled()
         val ms = (values["exposureNs"] as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
         text(R.id.applied).text = "APPLIED · ${values["nominalFps"] ?: "auto"} fps target · ISO ${values["iso"] ?: "?"} · ${ms} ms · focus ${values["focusDiopters"] ?: "?"} dpt · WB ${values["awbMode"] ?: "?"}"
+        if (values["exposureCompensationActive"] == true) {
+            val steps = values["exposureCompensationSteps"] as? Int
+            val ev = steps?.let { selected?.exposureCompensation?.ev(it) }?.let { String.format(Locale.US, "%+.2f", it) } ?: "?"
+            val state = when (values["aeState"]) {
+                CaptureRequest.CONTROL_AE_STATE_INACTIVE -> "inactive"
+                CaptureRequest.CONTROL_AE_STATE_SEARCHING -> "searching"
+                CaptureRequest.CONTROL_AE_STATE_CONVERGED -> "converged"
+                CaptureRequest.CONTROL_AE_STATE_LOCKED -> "locked"
+                CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED -> "flash required"
+                CaptureRequest.CONTROL_AE_STATE_PRECAPTURE -> "precapture"
+                else -> "unreported"
+            }
+            text(R.id.applied).append("\nAE compensation · $ev EV reported · $state")
+        }
         if (manualRequested) {
             val check = values["manualControlMatch"] as? Map<*, *>
             val targetMs = (check?.get("targetExposureNs") as? Long)?.let { String.format(Locale.US, "%.3f", it / 1_000_000.0) } ?: "?"
@@ -454,8 +487,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         toggle(R.id.wbLock).isEnabled = controls && selected?.wbLockAvailable == true
         button(R.id.applyControls).isEnabled = controls
         button(R.id.bitratePreset).isEnabled = preview
+        button(R.id.colourReference).isEnabled = idle && !colourReferences.state.running
         quickControls.enabled(controls && toggle(R.id.manualExposure).isChecked && selected?.manualSensor == true,
-            controls && toggle(R.id.manualFocus).isChecked && selected?.manualFocus == true)
+            controls && toggle(R.id.manualFocus).isChecked && selected?.manualFocus == true,
+            controls && !toggle(R.id.manualExposure).isChecked)
     }
     private fun bitrateLabel(preset: BitratePreset) = getString(when (preset) {
         BitratePreset.LOW -> R.string.bitrate_low
@@ -570,7 +605,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
             val focus = if (toggle(R.id.manualFocus).isChecked) text(R.id.focusInput).text.toString().toFloat().also { require(it.isFinite() && it >= 0) } else null
             controller.applyControls(CameraControls(toggle(R.id.manualExposure).isChecked, iso, (ms * 1_000_000).toLong(), focus,
                 wbModes.getOrNull(spinner(R.id.wbSelector).selectedItemPosition) ?: CaptureRequest.CONTROL_AWB_MODE_AUTO,
-                toggle(R.id.wbLock).isChecked))
+                toggle(R.id.wbLock).isChecked, exposureCompensationSteps = quickControls.compensationSteps))
         } catch (e: Exception) { text(R.id.cameraStatus).text = "Invalid controls: ${e.message}" }
     }
     private fun wbName(mode: Int): String = when (mode) {

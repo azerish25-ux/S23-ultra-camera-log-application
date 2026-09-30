@@ -32,6 +32,12 @@ data class CameraTarget(val logicalId: String, val physicalId: String?, val char
     val physicalKeys: Set<R.Key<*>> get() = if (physicalId != null && Build.VERSION.SDK_INT >= 28)
         logicalCharacteristics.availablePhysicalCameraRequestKeys.orEmpty().toSet() else emptySet()
     fun independentlySettable(key: R.Key<*>): Boolean = key in requestKeys && (physicalId == null || key in physicalKeys)
+    val exposureCompensation: ExposureCompensation? get() = runCatching {
+        if (!independentlySettable(R.CONTROL_AE_EXPOSURE_COMPENSATION)) return@runCatching null
+        val range = characteristics[C.CONTROL_AE_COMPENSATION_RANGE] ?: return@runCatching null
+        val step = characteristics[C.CONTROL_AE_COMPENSATION_STEP] ?: return@runCatching null
+        ExposureCompensation(range.lower, range.upper, step.numerator, step.denominator)
+    }.getOrNull()
     val manualSensor: Boolean get() = characteristics[C.REQUEST_AVAILABLE_CAPABILITIES]?.contains(C.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR) == true &&
         listOf(R.SENSOR_SENSITIVITY, R.SENSOR_EXPOSURE_TIME, R.SENSOR_FRAME_DURATION).all(::independentlySettable)
     val manualFocus: Boolean get() = minFocus > 0 && independentlySettable(R.LENS_FOCUS_DISTANCE) &&

@@ -14,10 +14,12 @@ data class CameraControls(
     val focusDiopters: Float? = null,
     val wbMode: Int = R.CONTROL_AWB_MODE_AUTO,
     val wbLock: Boolean = false,
-    internal val afModeOverride: Int? = null
+    internal val afModeOverride: Int? = null,
+    val exposureCompensationSteps: Int = 0
 ) {
     fun describe(): Map<String, Any?> = mapOf("manualExposure" to manualExposure, "iso" to iso,
-        "exposureNs" to exposureNs, "focusDiopters" to focusDiopters, "awbMode" to wbMode, "awbLock" to wbLock, "afModeOverride" to afModeOverride)
+        "exposureNs" to exposureNs, "focusDiopters" to focusDiopters, "awbMode" to wbMode, "awbLock" to wbLock, "afModeOverride" to afModeOverride,
+        "exposureCompensationSteps" to exposureCompensationSteps)
 
     fun effective(target: CameraTarget, fps: Int?): CameraControls {
         val c = target.characteristics
@@ -27,7 +29,8 @@ data class CameraControls(
             exposureNs = if (manualExposure && exposure != null) {
                 if (fps != null) CapturePolicy.exposureForRate(exposureNs, exposure.lower, exposure.upper, fps)
                 else exposureNs.coerceIn(exposure.lower, exposure.upper)
-            } else exposureNs, focusDiopters = focusDiopters?.coerceIn(0f, target.minFocus))
+            } else exposureNs, focusDiopters = focusDiopters?.coerceIn(0f, target.minFocus),
+            exposureCompensationSteps = if (manualExposure) 0 else target.exposureCompensation?.bounded(exposureCompensationSteps) ?: 0)
     }
 
     fun apply(builder: R.Builder, target: CameraTarget, fps: Int?, ratePlan: RatePlan? = null) {
@@ -51,6 +54,9 @@ data class CameraControls(
             set(R.SENSOR_FRAME_DURATION, if (fps != null) 1_000_000_000L / fps else exposure)
         } else {
             set(R.CONTROL_AE_MODE, R.CONTROL_AE_MODE_ON)
+            val compensation = target.exposureCompensation
+            require(compensation != null || exposureCompensationSteps == 0) { "Exposure compensation is unavailable on this camera route" }
+            compensation?.let { set(R.CONTROL_AE_EXPOSURE_COMPENSATION, it.bounded(exposureCompensationSteps)) }
             if (fps != null) {
                 val planned = ratePlan?.aeRange?.let { Range(it.lower, it.upper) }
                 val chosen = planned ?: c[C.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]?.filter { it.upper == fps }?.maxByOrNull { it.lower }
