@@ -211,11 +211,30 @@ object GlTools {
         GL.glReadPixels(0,0,width,height,GL.GL_RGBA,GL.GL_FLOAT,b); check("float pixel readback")
         return FloatArray(width*height*4).also { b.asFloatBuffer().get(it) }
     }
-    fun readRgb10(fbo: Int, width: Int, height: Int): IntArray {
-        GL.glBindFramebuffer(GL.GL_FRAMEBUFFER,fbo)
-        val b=ByteBuffer.allocateDirect(width*height*4).order(ByteOrder.nativeOrder())
-        GL.glReadPixels(0,0,width,height,GL.GL_RGBA,GL.GL_UNSIGNED_INT_2_10_10_10_REV,b); check("RGB10 pixel readback")
-        return IntArray(width*height).also { b.asIntBuffer().get(it) }
+    fun readRgb10Texture(texture: Int, width: Int, height: Int): IntArray {
+        // SwiftShader advertises packed RGB10 readback but can leave the destination
+        // untouched without a GL error. Sample the actual quantized RGB10 texture into
+        // a renderable float target, then use the tested float readback instead.
+        // This small setup/test-only copy is never used on live camera frames.
+        val staging = GlTools.texture(width, height, GL.GL_RGBA16F)
+        var target = 0; var copy = 0
+        try {
+            target = fbo(staging); copy = program(ColourShaders.copy)
+            draw(copy, texture, target, width, height)
+            val pixels = readFloatRgba(target, width, height)
+            fun code(value: Float, maximum: Int): Int {
+                require(value.isFinite() && value in 0f..1f) { "Invalid normalized RGB10 sample: $value" }
+                return kotlin.math.round(value * maximum).toInt().coerceIn(0, maximum)
+            }
+            return IntArray(width * height) { i ->
+                code(pixels[4*i],1023) or (code(pixels[4*i+1],1023) shl 10) or
+                    (code(pixels[4*i+2],1023) shl 20) or (code(pixels[4*i+3],3) shl 30)
+            }
+        } finally {
+            if(copy != 0) GL.glDeleteProgram(copy)
+            if(target != 0) GL.glDeleteFramebuffers(1,intArrayOf(target),0)
+            GL.glDeleteTextures(1,intArrayOf(staging),0)
+        }
     }
     fun draw(program: Int, texture: Int, fbo: Int, width: Int, height: Int, target: Int = GL.GL_TEXTURE_2D) {
         GL.glBindFramebuffer(GL.GL_FRAMEBUFFER,fbo);GL.glViewport(0,0,width,height)
@@ -280,7 +299,7 @@ object ColourGpuProbe {
             var measured: Map<String, Any> = emptyMap(); var refError=0.0
             ColourRenderer(1024,1).use { renderer ->
                 renderer.import(source);renderer.record(dstFbo)
-                val before=GlTools.readRgb10(dstFbo,1024,1)
+                val before=GlTools.readRgb10Texture(dst,1024,1)
                 val result=ColourPrecision.assessRamp(DoubleArray(1024) { (before[it] and 1023)/1023.0 })
                 check(result.passed) {
                     val working = GlTools.readFloatRgba(renderer.workingFbo, 1024, 1)
@@ -290,9 +309,9 @@ object ColourGpuProbe {
                     }
                 };measured=result.describe()
                 renderer.monitor(monitorFbo,1024,1,MonitorTransform.SDR_TONEMAP)
-                renderer.record(dstFbo);check(before.contentEquals(GlTools.readRgb10(dstFbo,1024,1))) { "Monitor affected recording pixels" }
+                renderer.record(dstFbo);check(before.contentEquals(GlTools.readRgb10Texture(dst,1024,1))) { "Monitor affected recording pixels" }
                 renderer.monitor(monitorFbo,1024,1,MonitorTransform.HLG_SIGNAL)
-                renderer.record(dstFbo);check(before.contentEquals(GlTools.readRgb10(dstFbo,1024,1)))
+                renderer.record(dstFbo);check(before.contentEquals(GlTools.readRgb10Texture(dst,1024,1)))
                 renderer.referenceLog(floatFbo)
                 val values=GlTools.readFloatRgba(floatFbo,1024,1)
                 for(i in 0..1023) {
@@ -303,11 +322,12 @@ object ColourGpuProbe {
             }
             val negative=ColourRenderer(1024,1,internalFormat=GL.GL_RGBA8).use { renderer ->
                 renderer.import(source);renderer.record(dstFbo)
-                val pixels=GlTools.readRgb10(dstFbo,1024,1)
+                val pixels=GlTools.readRgb10Texture(dst,1024,1)
                 ColourPrecision.assessRamp(DoubleArray(1024){(pixels[it] and 1023)/1023.0})
             }
             check(!negative.passed) { "Precision checker accepted an 8-bit intermediate" }
             return mapOf("status" to "passed", "fp16ToRgb10" to measured,"negative8Bit" to negative.describe(),
+                "rgb10Readback" to "quantized_texture_sample_via_FP16",
                 "monitorIndependent" to true,"referenceLogMaximumError" to refError,"referenceLogTolerance" to 0.002,
                 "scope" to "Synthetic RGB texture -> production FP16 shader -> RGB10 framebuffer. Camera import/encoder are separate gates.")
         } finally {
