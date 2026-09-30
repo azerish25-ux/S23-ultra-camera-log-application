@@ -2,7 +2,6 @@ package com.s23log.probe.gpu
 
 import android.annotation.TargetApi
 import android.graphics.SurfaceTexture
-import android.hardware.DataSpace
 import android.opengl.EGL14
 import android.opengl.EGLSurface
 import android.opengl.EGLExt
@@ -89,16 +88,14 @@ class GpuVideoProcessor private constructor(private val mode: RecordingMode, pri
             val timestamp=cameraTexture.timestamp
             if(timestamp==lastTimestamp) return // Multiple notifications can describe the same newest buffer.
             val dataSpace=cameraTexture.dataSpace
-            require(DataSpace.getStandard(dataSpace)==DataSpace.STANDARD_BT2020 &&
-                DataSpace.getTransfer(dataSpace)==DataSpace.TRANSFER_HLG &&
-                DataSpace.getRange(dataSpace) in setOf(DataSpace.RANGE_LIMITED,DataSpace.RANGE_FULL)) {
+            val fullRange = requireNotNull(HlgInputDataSpace.fullRange(dataSpace)) {
                 "Camera supplied dataspace $dataSpace, not explicit full/limited BT.2020 HLG; no guessed conversion performed"
             }
             if(!frameClock.accept(timestamp,System.nanoTime())) return
             lastTimestamp=timestamp;lastDataSpace=dataSpace
             val began=System.nanoTime()
             cameraTexture.getTransformMatrix(transform)
-            requireNotNull(renderer).import(inputTexture,transform,fullRange=DataSpace.getRange(dataSpace)==DataSpace.RANGE_FULL)
+            requireNotNull(renderer).import(inputTexture,transform,fullRange=fullRange)
             environment.current(encoderWindow)
             requireNotNull(renderer).record()
             check(EGLExt.eglPresentationTimeANDROID(environment.display,encoderWindow,timestamp)) { "Encoder presentation timestamp rejected" }
