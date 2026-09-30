@@ -13,28 +13,35 @@
         android:text="@string/status_ready" android:textColor="#C7D8FF" android:accessibilityLiveRegion="polite" />
     <Button android:id="@+id/enableCamera" android:layout_width="wrap_content" android:layout_height="48dp"
         android:layout_gravity="center" android:text="@string/grant_camera" />
-    <ScrollView android:id="@+id/controlsPanel" android:layout_width="match_parent" android:layout_height="match_parent"
+    <ScrollView android:id="@+id/controlsPanel" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_gravity="bottom"
         android:visibility="gone" android:background="#FA141A24" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal" android:gravity="center_vertical">
+                <Switch android:id="@+id/manualExposure" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/manual_exposure" />
+                <Button android:id="@+id/closeControls" android:layout_width="wrap_content" android:layout_height="48dp" android:text="@string/close_controls" />
+            </LinearLayout>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/control_draft_help" />
+                <TextView android:id="@+id/isoValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/iso" android:labelFor="@id/isoSlider" />
+                <SeekBar android:id="@+id/isoSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/iso" />
+                <EditText android:visibility="gone" android:id="@+id/isoInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="number" android:autofillHints="" android:text="100" android:selectAllOnFocus="true" />
+                <TextView android:id="@+id/shutterValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/shutter" android:labelFor="@id/shutterSlider" />
+                <SeekBar android:id="@+id/shutterSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/shutter" />
+                <EditText android:visibility="gone" android:id="@+id/shutterInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="16.667" android:selectAllOnFocus="true" />
+                <Button android:id="@+id/shutterAngle" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/shutter_angle" />
+                <Switch android:id="@+id/manualFocus" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_focus" />
+                <TextView android:id="@+id/focusValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/focus" android:labelFor="@id/focusSlider" />
+                <SeekBar android:id="@+id/focusSlider" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/focus" />
+                <EditText android:visibility="gone" android:id="@+id/focusInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="0" android:selectAllOnFocus="true" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/wb" android:labelFor="@id/wbSelector" />
+                <Spinner android:id="@+id/wbSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/wb" />
+                <CheckBox android:id="@+id/wbLock" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/wb_lock" />
+                <TextView android:id="@+id/limits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/limits_empty" android:textSize="12sp" />
+                <CheckBox android:id="@+id/numericControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/numeric_controls" />
+                <Button android:id="@+id/applyControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/apply" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/colour_explanation" android:textSize="12sp" />
             <Button android:id="@+id/monitorTransform" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/monitor_sdr" />
             <Button android:id="@+id/bitratePreset" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/bitrate_title" />
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/bitrate_explanation" android:textSize="12sp" />
-            <Button android:id="@+id/closeControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/close_controls" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="12dp" android:text="@string/controls_label" android:textStyle="bold" />
-                <TextView android:id="@+id/limits" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/limits_empty" android:textSize="12sp" />
-                <Switch android:id="@+id/manualExposure" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_exposure" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/iso" android:labelFor="@id/isoInput" />
-                <EditText android:id="@+id/isoInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="number" android:autofillHints="" android:text="100" android:selectAllOnFocus="true" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/shutter" android:labelFor="@id/shutterInput" />
-                <EditText android:id="@+id/shutterInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="16.667" android:selectAllOnFocus="true" />
-                <Switch android:id="@+id/manualFocus" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/manual_focus" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/focus" android:labelFor="@id/focusInput" />
-                <EditText android:id="@+id/focusInput" android:layout_width="match_parent" android:layout_height="48dp" android:inputType="numberDecimal" android:autofillHints="" android:text="0" android:selectAllOnFocus="true" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/wb" android:labelFor="@id/wbSelector" />
-                <Spinner android:id="@+id/wbSelector" android:layout_width="match_parent" android:layout_height="48dp" android:contentDescription="@string/wb" />
-                <CheckBox android:id="@+id/wbLock" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/wb_lock" />
-                <Button android:id="@+id/applyControls" android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/apply" />
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
                     <Button android:id="@+id/rawOne" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_one" android:enabled="false" />
                     <Button android:id="@+id/rawFive" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_five" android:enabled="false" />

@@ -6,7 +6,7 @@ The workflow builds debug/release APKs, runs both lint variants, runs JVM and de
 python3 -m unittest discover -s scripts/tests -v
 ```
 
-The API 36 emulator tests perform ten independent recordings, one 65-second recording, one lifecycle-finalized recording, preview recovery, probe restoration/sharing, and FileProvider containment checks. These are tests of an emulated camera and encoder, not physical Galaxy S23 Ultra or HLG10/RAW performance certification.
+The API 36 emulator tests perform repeated independent recordings, a 65-second recording, lifecycle-finalized recording, preview recovery, probe restoration/sharing, FileProvider containment and newer capture/control regressions. The exact recording/test counts are reported in each artifact rather than fixed here. These are tests of an emulated camera and encoder, not physical Galaxy S23 Ultra or HLG10/RAW performance certification.
 
 ## Retaining device evidence
 
@@ -18,7 +18,7 @@ The GitHub `S23Log-verification` artifact includes:
 
 - Exact source archive, commit SHA and Git tree; JVM/device XML results and lint reports.
 - Emulator logs, a PNG camera screenshot and a tar of app-owned exports/preferences.
-- Twelve recorded MP4s, full-decode results in `ffprobe.json`, and `summary.json`.
+- Recorded MP4s, full-decode results in `ffprobe.json`, and exact counts and identity checks in `summary.json`.
 
 `check_evidence.py` rejects missing/rejected recording reports, missing JSON/text probe pairs, absent full-decode results, and a missing sixty-second recording. It reads regular report files inside the tar without extracting paths. Historical campaigns checked report/file counts only. Current CI additionally uses `--require-identity`: each fully decoded movie must match exactly one device report by finalized-container SHA-256 and byte count. Mismatches, missing identities and ambiguous duplicates fail. A checksum establishes byte pairing, not physical camera performance or independent authenticity.
 

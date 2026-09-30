@@ -151,4 +151,12 @@
     <string name="bitrate_high">High</string>
     <string name="bitrate_limited"> (codec limit)</string>
     <string name="bitrate_explanation">Targets are bounded by the selected codec. Actual average bitrate varies with content; no resolution, colour or frame-rate fallback is hidden.</string>
+    <string name="control_draft_help">Draft values · Apply to submit. Sensor results stay above.</string>
+    <string name="control_iso_value">Draft ISO · %1$s</string>
+    <string name="control_shutter_value">Draft shutter · %1$s ms</string>
+    <string name="control_focus_value">Draft focus · %1$s diopters</string>
+    <string name="control_limited"> · limited by camera</string>
+    <string name="shutter_angle">Shutter angle preset</string>
+    <string name="shutter_angle_title">Angle at %1$d fps target</string>
+    <string name="numeric_controls">Advanced numeric entry</string>
 </resources>

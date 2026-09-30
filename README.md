@@ -68,6 +68,10 @@ Video capture budgets space for finalization/publication and responds to severe 
 
 Manual recording readiness now requires current sensor-result values to match the effective camera-clamped request. The UI distinguishes actual values, effective targets, missing metadata and mismatches; AE-off alone is not confirmation. See [tolerances and physical-calibration boundaries](docs/MANUAL_RESULT_ACCEPTANCE.md).
 
+The partial-height Controls drawer provides bounded ISO, shutter and focus sliders, shutter-angle drafts, and optional precise numeric entry. Drafts apply only when explicitly submitted; the live preview and Record dock remain visible. See [touch controls and verification](docs/QUICK_CONTROLS.md).
+
+Original reports also retain bounded accepted-request changes and sampled sensor-result history, with explicit clock and overflow limits. See [control-history evidence](docs/CONTROL_HISTORY.md).
+
 ## Bitrate targets
 
 Controls offers capability-checked Low, Standard and High bitrate targets without silently changing the selected format. Codec limits are shown and the target is retained in each validation report. Actual encoded bitrate varies. See [bitrate policy and tests](docs/BITRATE_PRESETS.md).

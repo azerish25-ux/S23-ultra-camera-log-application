@@ -15,6 +15,7 @@ import com.s23log.probe.gpu.GpuVideoProcessor
 import com.s23log.probe.core.ProcessingPath
 import com.s23log.probe.core.MonitorTransform
 import com.s23log.probe.core.PreviewAid
+import com.s23log.probe.core.ControlJournal
 import com.s23log.probe.core.AudioMode
 import com.s23log.probe.core.AvMuxCoordinator
 import com.s23log.probe.core.AvMuxCoordinator.Track
@@ -131,6 +132,7 @@ class SurfaceRecorder private constructor(
         }
     }
     @Volatile private var applied: Map<String, Any?> = emptyMap()
+    private val controlJournal = ControlJournal()
     @Volatile private var sessionConfigured = false
     private val watchdog = object : Runnable {
         override fun run() {
@@ -238,7 +240,14 @@ class SurfaceRecorder private constructor(
             try { audio?.start(); handler.post(watchdog) } catch (e: Exception) { failAudio(e) }
         }
     }
-    fun noteApplied(values: Map<String, Any?>) { applied = values.toMap() }
+    fun noteApplied(values: Map<String, Any?>) {
+        if (finished) return
+        applied = values.toMap()
+        controlJournal.noteApplied(System.nanoTime(), values)
+    }
+    fun noteControlRequest(requested: Map<String, Any?>, effective: Map<String, Any?>) {
+        if (!finished) controlJournal.noteRequest(System.nanoTime(), mapOf("requested" to requested, "effective" to effective))
+    }
     fun requestStopBoundary(cutoffNs: Long) { audio?.requestStopBoundary(cutoffNs); processor?.requestStop() }
     fun finish(cutoffNs: Long = System.nanoTime()) {
         requestStopBoundary(cutoffNs)
@@ -313,6 +322,7 @@ class SurfaceRecorder private constructor(
                     .put("device", jsonValue(ModeEvidence.device())).put("selectedMode", jsonValue(mode.describe()))
                     .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
                     .put("orientation", orientation).put("latestApplied", jsonValue(applied))
+                    .put("controlHistory", jsonValue(controlJournal.describe()))
                     .put("videoOnly", !audioMode.enabled).put("customLog", false)
                     .put("colourPipeline", jsonValue(mode.colour.describe())).put("processing", jsonValue(processingSnapshot))
                     .put("processingError", processingFailure ?: JSONObject.NULL)

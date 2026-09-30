@@ -327,6 +327,7 @@ class CameraController(context: Context, listener: Listener) {
                     "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
                     "requestedTestSeconds" to testSeconds, "audioMode" to audioMode.name,
                     "previewAidsAtStart" to previewAids.map { it.name }.sorted(),
+                    "sensorTimestampSource" to request.target.characteristics[C.SENSOR_INFO_TIMESTAMP_SOURCE],
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
                 ), audioMode = audioMode, onResources = { snapshot -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onResources(snapshot) }
@@ -670,6 +671,7 @@ class CameraController(context: Context, listener: Listener) {
         }
         val activeSession = requireNotNull(session)
         activeSession.setRepeatingRequest(builder.build(), callback, handler)
+        activeRecorder?.noteControlRequest(value.describe(), effective.describe())
         val chosenAf = if (target.physicalId != null && CaptureRequest.CONTROL_AF_MODE in target.physicalKeys && Build.VERSION.SDK_INT >= 28)
             builder.getPhysicalCameraKey(CaptureRequest.CONTROL_AF_MODE, target.physicalId) else builder.get(CaptureRequest.CONTROL_AF_MODE)
         val trigger = afTrigger ?: if (chosenAf == CaptureRequest.CONTROL_AF_MODE_AUTO && !value.manualExposure) CaptureRequest.CONTROL_AF_TRIGGER_START else null

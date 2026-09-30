@@ -1,0 +1,9 @@
+# Touch controls with a visible preview
+
+The Controls drawer occupies at most 65% of the viewfinder height. Part of the live preview and the separate persistent Record/Stop dock remain visible in portrait and landscape. The drawer scrolls independently. It opens with manual controls; monitoring, bitrate, RAW and sharing options follow below.
+
+ISO and shutter use capability-bounded logarithmic sliders, and focus uses a linear diopter slider. Shutter is limited by both the advertised sensor range and the selected target frame interval. Focus is available only on routes exposing manual focus. A shutter-angle chooser converts 90/180/270/360 degrees using the selected nominal frame rate; it labels camera clamping and does not claim a measured physical shutter angle. The normal path does not summon a keyboard. Advanced numeric entry remains available for precise requested values.
+
+These are explicitly **draft** values. Apply submits the request through the same controller validation and focus/white-balance locking sequence as before. Merely sliding, opening the panel or selecting a shutter-angle draft does not alter the camera or start recording. The separate APPLIED display remains sourced from current sensor results. Unsupported routes disable controls, and a rejected request restores the accepted values. Switching modes rebuilds the bounds. Accepted intent persists per camera; it must still be revalidated after recreation.
+
+Pure tests cover exact endpoints, monotonicity, fixed-value capabilities, photographic-stop mapping, invalid ranges and angle conversion. A native emulator test exercises keyboard-free slider events, the draft/apply boundary, partial preview visibility, persistent Record, saved intent and recreation. Hosted screenshots are retained in the verification artifact. Physical smoothness, focus behavior and manual sensor accuracy still need the actual device matrix.

@@ -48,6 +48,7 @@ import java.util.Locale
 class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceTextureListener {
     private lateinit var controller: CameraController
     private lateinit var texture: TextureView
+    private lateinit var quickControls: QuickControls
     private lateinit var previewAids: PreviewAidsView
     private lateinit var pages: ViewFlipper
     private val reports: ProbeStore get() = (application as S23Application).reports
@@ -103,6 +104,12 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         previewAids = findViewById(R.id.previewAidsOverlay)
         texture.surfaceTextureListener = this
         controller = CameraController(this, this)
+        quickControls = QuickControls(this)
+        texture.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            val panel = findViewById<View>(R.id.controlsPanel)
+            val desired = (texture.height * 0.65f).toInt().coerceAtLeast(1)
+            if (panel.layoutParams.height != desired) panel.layoutParams = panel.layoutParams.apply { height = desired }
+        }
         audioMode = CameraSettings.audio(this)
         button(R.id.audioMode).setOnClickListener { chooseAudioMode() }
         button(R.id.cameraTab).setOnClickListener { pages.displayedChild = 0; maybeOpen() }
@@ -271,6 +278,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         val c = target.characteristics
         wbModes = target.wbModes
         setItems(spinner(R.id.wbSelector), wbModes.map(::wbName))
+        quickControls.configure(target, mode)
         renderControls(CameraSettings.controls(this, target.key))
         bindingControls = false
         val isoRange = c[C.SENSOR_INFO_SENSITIVITY_RANGE]
@@ -283,6 +291,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         modeKey = mode.key
         renderBitrate(mode)
         this.previewSize = previewSize
+        selected?.let { quickControls.configure(it, mode) }
         selected?.let { CameraSettings.saveMode(this, it.key, mode.key) }
         spinner(R.id.modeSelector).setSelection(modes.indexOfFirst { it.key == mode.key })
         transformPreview()
@@ -303,6 +312,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         text(R.id.shutterInput).text = String.format(Locale.US, "%.6f", controls.exposureNs / 1_000_000.0)
         text(R.id.focusInput).text = (controls.focusDiopters ?: 0f).toString()
         wbModes.indexOf(controls.wbMode).takeIf { it >= 0 }?.let { spinner(R.id.wbSelector).setSelection(it) }
+        quickControls.sync()
     }
     private fun showModeEvidence() {
         val target = selected ?: return
@@ -444,6 +454,8 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         toggle(R.id.wbLock).isEnabled = controls && selected?.wbLockAvailable == true
         button(R.id.applyControls).isEnabled = controls
         button(R.id.bitratePreset).isEnabled = preview
+        quickControls.enabled(controls && toggle(R.id.manualExposure).isChecked && selected?.manualSensor == true,
+            controls && toggle(R.id.manualFocus).isChecked && selected?.manualFocus == true)
     }
     private fun bitrateLabel(preset: BitratePreset) = getString(when (preset) {
         BitratePreset.LOW -> R.string.bitrate_low
