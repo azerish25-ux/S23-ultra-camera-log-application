@@ -90,7 +90,11 @@ class CaptureLibraryTest {
                 fail("Library did not finish loading")
             }
             loaded(); scenario.recreate(); loaded()
-            scenario.onActivity { assertTrue(it.findViewById<android.widget.ListView>(R.id.captureLibraryList).isShown) }
+            scenario.onActivity {
+                val list = it.findViewById<android.widget.ListView>(R.id.captureLibraryList)
+                assertTrue(list.isShown)
+                assertNotNull("Successful load must bind the adapter; an error message is not success", list.adapter)
+            }
             val instrumentation = InstrumentationRegistry.getInstrumentation()
             instrumentation.waitForIdleSync()
             val image = instrumentation.uiAutomation.takeScreenshot()
