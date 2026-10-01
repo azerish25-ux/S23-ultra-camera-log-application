@@ -1,22 +1,34 @@
-name: Recover uploaded directive payload
+name: Prepare verified master directive import
 on:
   push:
     branches: [main]
     paths: ['.github/workflows/directive-import-recovery.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
-  recover:
+  prepare:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
-      - name: Retrieve and verify previously uploaded Git blobs
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Reconstruct original files and prepare a tree without moving main
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
         run: |
           python3 - <<'PY'
-          import base64, concurrent.futures, hashlib, json, os, pathlib, urllib.request
+          import base64, concurrent.futures, hashlib, json, lzma, os, pathlib, re, subprocess, sys, urllib.request
+          def api(path, data=None):
+              request = urllib.request.Request(
+                  f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/' + path,
+                  data=None if data is None else json.dumps(data).encode(),
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=60) as response:
+                  return json.load(response)
           shas = '''61f242fda3128393ea5b571aaa1907dde365ca42
           6461521b69907b928d3d5f7236f93a7715060a91
           513637fbfb0f94d7cc483869c28eef9a9b1156c4
@@ -36,47 +48,118 @@ jobs:
           99b8540aec6188beb5d4898d79130aca7c760079
           64b5632297c59680c63f620b6a8850df6630bf2f
           f411671cbdc28972f973e75fb251fc90ef24fc31
-          87794c5a5744d092a7e9585864f4a8a30c7f8bdc
-          ba2fa1800e30ece5a2a719b9bf3e0fe272ad8ecc
-          8b7b185a335ecf6fcc609325f73f5ab4983d23bd
-          d33744d607d370e1d7ee23ff5335d76be6eebf23
-          6bc1954ac080b60337aed97199018b07db10207a
-          8d85b4702959815bfe6be017b4c8e9d5df720918
-          76bc98b3cfdd06e59429ad4fc2f9825aadbe2ea2
-          3a715d10d44d10eb993d190e741fb60f8ed2f92c
-          b8fc76a5499e178ae322d11c05e527e8345b9753
-          73e9835087356503c37be5a10e4757a8270723fa
-          e49d06940e64fb1abf97e05ffb12ece7efc92066
-          939ed21d18ce0c2d0d9368d9801785c4ac5eb57f
-          bda313859fd04fc22fe472714538fe256dd17b91'''.split()
-          root = pathlib.Path('recovered-directive')
-          root.mkdir()
-          def retrieve(item):
-              index, sha = item
-              request = urllib.request.Request(
-                  f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/git/blobs/{sha}',
-                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
-                           'Accept': 'application/vnd.github+json',
-                           'X-GitHub-Api-Version': '2022-11-28'})
-              with urllib.request.urlopen(request, timeout=45) as response:
-                  blob = json.load(response)
+          9e93453795bd102117730863f0a7b5dc6645feae
+          00241c8fad0616937a4a5d17b819cec1756893c1
+          81cd4008324a6c5684425e3b29b4b585c6b4abd5'''.split()
+          def git_sha(data):
+              return hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+          def retrieve(sha):
+              blob = api('git/blobs/' + sha)
               data = base64.b64decode(blob['content'])
-              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-              if actual != sha or blob['sha'] != sha:
-                  raise ValueError(f'Blob identity mismatch: {sha}')
-              name = f'{index:02d}-{sha}.bin'
-              (root / name).write_bytes(data)
-              return {'index': index, 'sha': sha, 'bytes': len(data),
-                      'sha256': hashlib.sha256(data).hexdigest(), 'prefix': data[:12].hex(), 'file': name}
+              if git_sha(data) != sha:
+                  raise ValueError('Uploaded blob identity mismatch: ' + sha)
+              return data
           with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
-              records = list(pool.map(retrieve, enumerate(shas)))
-          (root / 'manifest.json').write_text(json.dumps(records, indent=2) + '\n')
-          print(json.dumps(records, indent=2))
+              payload = b''.join(pool.map(retrieve, shas))
+          if len(payload) != 128000 or hashlib.sha256(payload).hexdigest() != 'c64ba426dce1b262868d589b19f70dc6c90d6bddd57e19ba3c71aeb4f3ecbb01':
+              raise ValueError('Transport does not match the locally verified reconstruction')
+          obj = json.loads(lzma.decompress(payload))
+          manifest = obj['manifest']
+          manifest['cases'] = [dict(id=cid, phase=pid, **obj['case_templates'][index])
+                               for cid, pid, index in obj['case_assign']]
+          phases = {p['id']: p for p in manifest['phases']}
+          cases = {c['id']: c for c in manifest['cases']}
+          def expand(template, phase, case=None):
+              def replace(match):
+                  source = phase if match[1] == 'p' else case
+                  return source['id'].lower() if match[2] == 'lower' else str(source[match[2]])
+              return re.sub(r'@\{([pc]):([^}]+)\}@', replace, template)
+          chunks = {}
+          for pid, hi, cs in obj['chunks']:
+              phase = phases[pid]
+              chunks[pid] = expand(obj['heads'][hi], phase) + ''.join(
+                  expand(obj['case_bodies'][index], phase, cases[cid]) for cid, index in cs)
+          text = re.sub(r'@\{phase:(P\d{3})\}@', lambda m: chunks[m[1]], obj['skeleton'])
+          text = re.sub(r'@\{file:([^}]+)\}@', lambda m: obj['files'][m[1]], text)
+          files = {name: value.encode('utf-8') for name, value in obj['files'].items()}
+          files['S23_Cinema_Master_Directive_200000_Words.md'] = text.encode('utf-8')
+          files['directive_manifest.json'] = (json.dumps(manifest, ensure_ascii=False, indent=2) + '\n').encode()
+          expected = {
+              'README.md': '4bc43b10c37ed347a8566c4d5246988f687218b663792c10c923eddab1790172',
+              'S23_Cinema_Master_Directive_200000_Words.md': '6c8b91612767e7f9c733ff4bc908eed2d385cc0250f3239d7cc0b8a4346dfefc',
+              'artifact_verification.json': '0c0d4885d5d609bc540f2dd5865ca3c9e2e1e3c0e483dae347da45a29c7cbcce',
+              'directive_manifest.json': 'de0f4c8b55387678e2b9c1111f3b2acd9eb72b77a60ed92df9c2e20295a77a1e',
+              'evidence/kotlin_green.log': 'b332da939fec30cbe4b826949f979ab92f3ae0901cda2ce7efb924e863c59f49',
+              'evidence/kotlin_green_compile.log': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+              'evidence/kotlin_red.log': '4c50bd227ec354d25f7e384f81ed56f875093275523be0dbacd3197afbb4b29f',
+              'evidence/kotlin_red_compile.log': 'b39d664b10ce1d41893a22fbf69d0583f0bcd31ea4865c3a9dd9813f5cd12980',
+              'evidence/kotlin_red_stub.kt.txt': 'c5f0764a335ca52f5798f29657af2f36444eeb055cb30932c41d1d57d065b3a9',
+              'evidence/reference_green.log': 'bc7ab620b0b93e1ef5d7bd8e36e3efc1aeebb78e56a5b42b45e222a440c24343',
+              'evidence/reference_green_initial.log': 'c9f21ff9f285535a215e3af7dc9bac2a402bec189ead46da5a9c5839083444b0',
+              'evidence/reference_hardening_red.log': '90713202c9377de53329a251abd02db9afe3b0575492e8ca91d60ab3ab7004c9',
+              'evidence/reference_red.log': '7c0a07032b8d888f589632ced3cabf564ccce9fdcdabe840f65a2669f40bb137',
+              'evidence/runtime.json': '1e4e6663678adf87a4e3c99118fd025468e2500f281df184400f829fe94a7a95',
+              'reference/README.md': 'cbd00caca5bf4c6145df48be31f2ab15cf9e8b9da7594a8af319cb183376bf53',
+              'reference/cinema_reference.py': '5884a9881d72dba86652948f89a99732046a4cd1b9c596365ea7df9b2e138f36',
+              'reference/kotlin/Contracts.kt': 'b64f7447666b0ca7f637f165c27ff439f78955a79ff7099ca1c02b9ba134c0c5',
+              'reference/kotlin/ContractsTest.kt': '6a384ce2214036e2219c9c7aad30269070f74009a44ce1c608261be393f6e6b1',
+              'reference/test_reference.py': '3c4b2fc0dbcf77673d6ac2f318489f317f0f428250252b769971968e9e5f81ca',
+              'verify_directive.py': '4b62d4291ba282e62c7fad2c1d6a78d262899cee246961775909914df175e3bc'
+          }
+          if set(files) != set(expected):
+              raise ValueError('Original package membership mismatch')
+          evidence = pathlib.Path('directive-import-evidence')
+          package = evidence / 'package'
+          for name, data in files.items():
+              if hashlib.sha256(data).hexdigest() != expected[name]:
+                  raise ValueError('Original source bytes changed: ' + name)
+              path = package / name
+              path.parent.mkdir(parents=True, exist_ok=True)
+              path.write_bytes(data)
+          checksums = {
+              'schema_version': 1,
+              'source_archive_name': 'S23_Cinema_Master_Directive_Complete_Package(1).zip',
+              'source_archive_sha256': '405d94c125b230701932e4561baa1c1b8c0f705218b6cd8dd492a39f9e5ac02f',
+              'source_archive_bytes': 311389,
+              'source_member_root': 'S23_Cinema_Master_Directive/',
+              'files': {name: {'bytes': len(files[name]), 'sha256': expected[name]} for name in sorted(files)}
+          }
+          files['PACKAGE_SHA256SUMS.json'] = (json.dumps(checksums, indent=2) + '\n').encode()
+          (package / 'PACKAGE_SHA256SUMS.json').write_bytes(files['PACKAGE_SHA256SUMS.json'])
+          with (evidence / 'integrity.json').open('w') as log:
+              subprocess.run([sys.executable, str(package / 'verify_directive.py')], stdout=log, check=True)
+          with (evidence / 'reference-tests.log').open('w') as log:
+              subprocess.run([sys.executable, '-m', 'unittest', '-v', 'test_reference.py'],
+                             cwd=package / 'reference', stdout=log, stderr=subprocess.STDOUT, check=True)
+          changes = {'docs/master-directive/' + name: data for name, data in files.items()}
+          for name, notice in [
+              ('README.md', '> **Governing specification:** [MASTER_DIRECTIVE.md](MASTER_DIRECTIVE.md) is the project-wide entry point to the complete S23 Cinema directive. Read [AGENTS.md](AGENTS.md) before implementation. The [original 200,208-word specification](docs/master-directive/S23_Cinema_Master_Directive_200000_Words.md) governs scope, architecture, development order and acceptance; the implementation history below describes current evidence, not completion of the new roadmap.\n'),
+              ('docs/IMPLEMENTATION_STATUS.md', '> **Specification authority:** [MASTER_DIRECTIVE.md](../MASTER_DIRECTIVE.md) and its linked complete package govern future development. This file records implementation evidence; its legacy phase names are not completion claims for the new P001-P160 programme. See [directive integration](master-directive/INTEGRATION.md).\n')]:
+              old = pathlib.Path(name).read_text()
+              title, rest = old.split('\n', 1)
+              changes[name] = (title + '\n\n' + notice + '\n' + rest).encode()
+          def publish(item):
+              name, data = item
+              result = api('git/blobs', {'content': base64.b64encode(data).decode(), 'encoding': 'base64'})
+              if result['sha'] != git_sha(data):
+                  raise ValueError('Published blob identity mismatch: ' + name)
+              return {'path': name, 'mode': '100644', 'type': 'blob', 'sha': result['sha']}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              entries = list(pool.map(publish, sorted(changes.items())))
+          entries.append({'path': '.github/workflows/directive-import-recovery.yml', 'mode': '100644', 'type': 'blob', 'sha': None})
+          base_commit = os.environ['GITHUB_SHA']
+          base_tree = api('git/commits/' + base_commit)['tree']['sha']
+          tree = api('git/trees', {'base_tree': base_tree, 'tree': entries})
+          result = {'base_commit': base_commit, 'base_tree': base_tree, 'prepared_tree': tree['sha'],
+                    'original_files_verified': 20, 'source_archive_sha256': checksums['source_archive_sha256'],
+                    'entries': entries, 'branch_updated': False}
+          (evidence / 'prepared-tree.json').write_text(json.dumps(result, indent=2) + '\n')
+          print(json.dumps(result, indent=2))
           PY
-      - name: Retain verified payload for exact local reconstruction
+      - name: Retain exact reconstructed package and preparation evidence
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: recovered-directive-payload
-          path: recovered-directive/
+          name: prepared-master-directive
+          path: directive-import-evidence/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
