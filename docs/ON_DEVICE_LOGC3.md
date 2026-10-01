@@ -11,7 +11,7 @@ This milestone develops a **saved sensor RAW sequence into LogC3/AWG3 on Android
 5. Confirm provisional development separately when using a starting profile. Output clipping requires its own explicit checkbox; it is not silently enabled. Press **Develop as LogC3**.
 6. The app qualifies an advertised P010/Main10 codec route, develops the sequence, fully decodes and compares every output frame, and only then promotes the file from `.partial.mp4` to `.mp4`. Share the video **with its `.logc3.json` sidecar**. Checked outputs are indexed in the existing Clips library with their LogC3 and calibration labels.
 
-Remain on the development screen. Rotation reattaches to the same application-owned task without starting another export; leaving the screen cancels it. A controlled cancellation, failed encoder, low storage or severe thermal event does not delete RAW sources. Partial/unpublished MP4s remain explicitly named `.partial.mp4` in **Retained development exports**. They are not accepted clips and may not be playable. Export before uninstalling: all private source/profile/export data is removed by uninstalling the app.
+Remain on the development screen. Rotation reattaches to the same application-owned task without starting another export; leaving the screen cancels it. A controlled cancellation, failed encoder, low storage or severe thermal event does not delete RAW sources. Partial/unpublished MP4s remain explicitly named `.partial.mp4` in **Retained exports / partial files**. They are not accepted clips and may not be playable. Export before uninstalling: all private source/profile/export data is removed by uninstalling the app.
 
 ## Colour profiles
 
@@ -56,7 +56,7 @@ AWG3 LogC3 RGB is represented as limited-range 10-bit YUV using BT.709 **matrix 
 
 The bounded Annex-B parser changes SPS VUI metadata, not picture data, and rewrites any repeated in-band SPS as well as configuration data. It rejects unsupported/malformed data and non-ten-bit SPS. An independent desktop x265 test verifies that metadata rewriting leaves decoded frame hashes unchanged. Main10 and all stored signal fields are inspected again from the finalized file before acceptance.
 
-In the editor, assign **ARRI Wide Gamut 3 / LogC3, video levels**, then the desired viewing/output transform once. Do not assign HLG, LogC4 or Rec.709 primaries. A generic player's thumbnail/preview is not a colour-correct viewing transform. Editor automatic detection is not certified. The sidecar contains the exact profile, source/output hashes, calibration status, transfer/gamut/range, encoder qualification, every-frame verification, timing, orientation and clipping counts.
+In the editor, assign **ARRI Wide Gamut 3 / LogC3, video levels**, then the desired viewing/output transform once. Do not assign HLG, LogC4 or Rec.709 primaries. A generic player's thumbnail/preview is not a colour-correct viewing transform. Editor automatic detection is not certified. The sidecar identifies the development app commit/version and contains the exact profile, source/output hashes, calibration status, transfer/gamut/range, encoder qualification, every-frame verification, timing, orientation and clipping counts.
 
 ## Acceptance and remaining gates
 

@@ -57,7 +57,8 @@ class RawDevelopmentEvidenceTest(unittest.TestCase):
                                  ("android-math", "distinctMathLevels", 256),
                                  ("p010-codec", "physicalCameraCertified", True),
                                  ("p010-codec", "encodedPixelsTested", True),
-                                 ("p010-codec", "appCommit", "")):
+                                 ("p010-codec", "appCommit", ""),
+                                 ("p010-codec", "appCommit", "different-build")):
             reports = self.reports(); reports[name][key] = value
             with self.subTest(key=key), self.assertRaises(ValueError): self.check(reports)
 

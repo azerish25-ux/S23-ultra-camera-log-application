@@ -40,10 +40,11 @@ def verify(path: Path) -> dict:
             raise ValueError("10-bit encoder/decode/negative-control acceptance failed")
     else:
         raise ValueError("Unexpected codec status")
-    if not all(r.get("physicalCameraCertified") is False and r.get("appCommit") for r in reports.values()):
+    if (not all(r.get("physicalCameraCertified") is False and isinstance(r.get("appCommit"), str) and r["appCommit"] for r in reports.values())
+            or len({r["appCommit"] for r in reports.values()}) != 1):
         raise ValueError("Missing provenance or false physical-camera certification")
     return {"nativeUi": "passed", "androidReferenceMath": "passed", "codecRoute": codec["status"],
-            "encodedPixelsTested": codec["encodedPixelsTested"], "physicalCameraCertified": False}
+            "encodedPixelsTested": codec["encodedPixelsTested"], "physicalCameraCertified": False, "appCommit": ui["appCommit"]}
 
 
 if __name__ == "__main__":

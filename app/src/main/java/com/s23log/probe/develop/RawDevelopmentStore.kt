@@ -8,6 +8,7 @@ import android.os.Looper
 import android.os.PowerManager
 import androidx.core.content.FileProvider
 import com.s23log.probe.core.*
+import com.s23log.probe.BuildConfig
 import com.s23log.probe.diagnostics.atomicWrite
 import com.s23log.probe.storage.CaptureHistory
 import org.json.JSONArray
@@ -136,6 +137,7 @@ class RawDevelopmentStore(context:Context) {
             .put("comparison","Every decoded Y/Cb/Cr sample against developed RAW after explicit 4:2:0 subsampling")
             .put("meanErrorLimitCodes",4.0).put("peakErrorLimitCodes",64)
         val report=JSONObject().put("schemaVersion",1).put("kind","raw-derived-logc3").put("status","checked")
+            .put("developmentAppCommit",BuildConfig.SOURCE_REVISION).put("developmentVersion",BuildConfig.VERSION_NAME)
             .put("source",index.file.name).put("sourceSha256",sourceHash).put("sourceHeader",index.header)
             .put("profileSha256",profileHash).put("profile",profile.json).put("calibrationStatus",profile.status)
             .put("calibrationClaimIndependentlyVerified",false).put("outputSha256",hash).put("output",output.name)

@@ -11,9 +11,12 @@ object RawCalibrationSnapshot {
         val out=JSONObject().put("schemaVersion",1).put("origin","Camera2_characteristics_at_capture")
             .put("independentlyMeasured",false)
         fun matrix(name:String,key:C.Key<ColorSpaceTransform>) {
-            runCatching { c[key] }.onSuccess { value ->
-                out.put(name,if(value==null)JSONObject.NULL else JSONArray((0..2).map { row -> (0..2).map { col -> value.getElement(col,row).toDouble() } }))
-            }.onFailure { out.put(name,JSONObject.NULL);out.put("${name}Error",it.javaClass.simpleName) }
+            runCatching {
+                c[key]?.let { value -> JSONArray((0..2).map { row -> (0..2).map { col ->
+                    value.getElement(col,row).toDouble().also { require(it.isFinite()) { "Nonfinite camera calibration matrix" } }
+                } }) }
+            }.onSuccess { value -> out.put(name,value ?: JSONObject.NULL) }
+                .onFailure { out.put(name,JSONObject.NULL);out.put("${name}Error",it.javaClass.simpleName) }
         }
         matrix("forwardMatrix1",C.SENSOR_FORWARD_MATRIX1);matrix("forwardMatrix2",C.SENSOR_FORWARD_MATRIX2)
         matrix("calibrationTransform1",C.SENSOR_CALIBRATION_TRANSFORM1);matrix("calibrationTransform2",C.SENSOR_CALIBRATION_TRANSFORM2)

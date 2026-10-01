@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Build
 import android.widget.Button
+import android.widget.CheckBox
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
@@ -48,7 +49,7 @@ class RawDevelopmentAndroidTest {
     private fun await(store:RawDevelopmentStore){for(i in 0..400){instrumentation.waitForIdleSync();if(!store.state.busy)return;Thread.sleep(25)};fail("Development worker did not finish")}
     @Test fun androidParserProfileImportAndScreenRecreationPreserveSource(){
         val source=fixture();val original=RawJson.hash(source);val index=RawSourceReader.scan(source)
-        val imported=File(context.filesDir,"exports/raw-development/import-fixture.json").apply{parentFile!!.mkdirs();writeText(profile(index).toString())}
+        val imported=File(context.filesDir,"exports/raw-development/import-fixture.json").apply{parentFile!!.mkdirs();writeText(profile(index).apply { getJSONObject("calibration").put("status","provisional") }.toString())}
         val app=context.applicationContext as S23Application;val store=app.rawDevelopment
         try {
             ActivityScenario.launch<RawDevelopActivity>(Intent(context,RawDevelopActivity::class.java).putExtra("sourceName",source.name)).use { scenario ->
@@ -57,7 +58,8 @@ class RawDevelopmentAndroidTest {
                 instrumentation.runOnMainSync{store.importProfile(uri)};await(store);assertNull(store.state.error);assertNotNull(store.state.profileFile)
                 scenario.recreate();instrumentation.waitForIdleSync();assertNotNull(store.state.profile)
                 fun hasButton(view:View,label:String):Boolean=if(view is Button && view.text.toString()==label)true else if(view is ViewGroup)(0 until view.childCount).any{hasButton(view.getChildAt(it),label)}else false
-                scenario.onActivity { a -> assertTrue(hasButton(a.window.decorView,"Develop as LogC3"));assertTrue(hasButton(a.window.decorView,"Share selected profile")) }
+                fun consentUnchecked(view:View):Boolean=if(view is CheckBox && view.text.toString()=="Allow provisional, unmeasured colour profile")!view.isChecked else if(view is ViewGroup)(0 until view.childCount).any{consentUnchecked(view.getChildAt(it))}else false
+                scenario.onActivity { a -> assertTrue(hasButton(a.window.decorView,"Develop as LogC3"));assertTrue(hasButton(a.window.decorView,"Share selected profile"));assertTrue(consentUnchecked(a.window.decorView)) }
                 val drawn=CountDownLatch(1);scenario.onActivity{a->a.window.decorView.postOnAnimation{a.window.decorView.postOnAnimation{drawn.countDown()}}};assertTrue(drawn.await(10,TimeUnit.SECONDS))
                 val image=instrumentation.uiAutomation.takeScreenshot();assertNotNull(image)
                 val destination=File(context.filesDir,"exports/raw-development/developer-screen.png")

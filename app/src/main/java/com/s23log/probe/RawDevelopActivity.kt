@@ -113,7 +113,8 @@ class RawDevelopActivity:Activity() {
                 divisors=listOf(1,2,4).filter { p.crop[2]%(2*it)==0 && p.crop[3]%(2*it)==0 }
                 scale.adapter=ArrayAdapter(this,android.R.layout.simple_spinner_dropdown_item,divisors.map { d -> "${p.crop[2]/d} × ${p.crop[3]/d} · ${if(d==1)"full crop" else "1/$d linear reduction"}" })
                 scale.setSelection(divisors.indexOf(2).takeIf { it>=0 } ?: 0)
-                provisional.isChecked=p.status=="provisional"
+                // Loading a provisional profile is not consent to use it for export.
+                provisional.isChecked=false
             }
         }
         profileStatus.text=state.profile?.let { p ->
