@@ -1,0 +1,33 @@
+name: Master directive integrity
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - name: Verify original package and governing entry points
+        run: |
+          mkdir -p evidence/master-directive
+          git rev-parse HEAD > evidence/master-directive/commit.txt
+          python3 scripts/verify_master_directive.py | tee evidence/master-directive/integrity.json
+      - name: Test corruption detection and repository governance
+        run: python3 -m unittest discover -s scripts/tests -p 'test_master_directive.py' -v 2>&1 | tee evidence/master-directive/guard-tests.log
+      - name: Execute preserved Python reference contracts
+        run: python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v 2>&1 | tee evidence/master-directive/reference-tests.log
+      - name: Retain exact-commit directive verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: master-directive-verification
+          path: evidence/master-directive/
+          if-no-files-found: error

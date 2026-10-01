@@ -1,0 +1,13 @@
+{
+  "python": "3.13.5",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "kotlin": "info: kotlinc-jvm 1.9.0 (JRE 21.0.11+10-1-deb13u2-Debian)",
+  "java": "openjdk version \"21.0.11\" 2026-04-21\nOpenJDK Runtime Environment (build 21.0.11+10-1-deb13u2-Debian)\nOpenJDK 64-Bit Server VM (build 21.0.11+10-1-deb13u2-Debian, mixed mode, sharing)",
+  "source_sha256": {
+    "reference/cinema_reference.py": "5884a9881d72dba86652948f89a99732046a4cd1b9c596365ea7df9b2e138f36",
+    "reference/test_reference.py": "3c4b2fc0dbcf77673d6ac2f318489f317f0f428250252b769971968e9e5f81ca",
+    "reference/kotlin/Contracts.kt": "b64f7447666b0ca7f637f165c27ff439f78955a79ff7099ca1c02b9ba134c0c5",
+    "reference/kotlin/ContractsTest.kt": "6a384ce2214036e2219c9c7aad30269070f74009a44ce1c608261be393f6e6b1"
+  },
+  "notes": "Host environment only. Not an Android or physical S23 execution environment."
+}

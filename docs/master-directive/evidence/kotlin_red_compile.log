@@ -1,0 +1,48 @@
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:6:17: warning: parameter 'capacity' is never used
+class LeasePool(capacity:Int) {
+                ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:7:24: warning: parameter 'value' is never used
+    fun <T> tryAcquire(value:T, release:()->Unit = {}):FrameLease<T>? = throw NotImplementedError("pool")
+                       ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:7:33: warning: parameter 'release' is never used
+    fun <T> tryAcquire(value:T, release:()->Unit = {}):FrameLease<T>? = throw NotImplementedError("pool")
+                                ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:10:20: warning: parameter 'index' is never used
+fun presentationUs(index:Long, numerator:Long, denominator:Long):Long = throw NotImplementedError("timeline")
+                   ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:10:32: warning: parameter 'numerator' is never used
+fun presentationUs(index:Long, numerator:Long, denominator:Long):Long = throw NotImplementedError("timeline")
+                               ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:10:48: warning: parameter 'denominator' is never used
+fun presentationUs(index:Long, numerator:Long, denominator:Long):Long = throw NotImplementedError("timeline")
+                                               ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:12:19: warning: parameter 'origin' is never used
+fun validateLabel(origin:Origin,label:String):Unit = throw NotImplementedError("lineage")
+                  ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:12:33: warning: parameter 'label' is never used
+fun validateLabel(origin:Origin,label:String):Unit = throw NotImplementedError("lineage")
+                                ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:14:23: warning: parameter 'output' is never used
+fun requireCompatible(output:Signal,input:Signal):Unit = throw NotImplementedError("graph")
+                      ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:14:37: warning: parameter 'input' is never used
+fun requireCompatible(output:Signal,input:Signal):Unit = throw NotImplementedError("graph")
+                                    ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:17:17: warning: parameter 'target' is never used
+fun manualReady(target:ManualTarget,result:ManualResult):Boolean = throw NotImplementedError("controls")
+                ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:17:37: warning: parameter 'result' is never used
+fun manualReady(target:ManualTarget,result:ManualResult):Boolean = throw NotImplementedError("controls")
+                                    ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:18:11: warning: parameter 'focal' is never used
+fun cocMm(focal:Double,fNumber:Double,focus:Double,subject:Double):Double = throw NotImplementedError("optics")
+          ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:18:24: warning: parameter 'fNumber' is never used
+fun cocMm(focal:Double,fNumber:Double,focus:Double,subject:Double):Double = throw NotImplementedError("optics")
+                       ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:18:39: warning: parameter 'focus' is never used
+fun cocMm(focal:Double,fNumber:Double,focus:Double,subject:Double):Double = throw NotImplementedError("optics")
+                                      ^
+mnt/data/s23_cinema_directive/reference/kotlin/Contracts.kt:18:52: warning: parameter 'subject' is never used
+fun cocMm(focal:Double,fNumber:Double,focus:Double,subject:Double):Double = throw NotImplementedError("optics")
+                                                   ^

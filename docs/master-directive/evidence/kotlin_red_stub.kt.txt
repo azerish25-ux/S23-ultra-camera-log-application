@@ -1,0 +1,18 @@
+package cinema.reference
+class FrameLease<T>(private val value:T, private val release:()->Unit):AutoCloseable {
+    fun get():T = throw NotImplementedError("resource contract not implemented")
+    override fun close():Unit = throw NotImplementedError("release contract not implemented")
+}
+class LeasePool(capacity:Int) {
+    fun <T> tryAcquire(value:T, release:()->Unit = {}):FrameLease<T>? = throw NotImplementedError("pool")
+    fun inUse():Int = throw NotImplementedError("pool count")
+}
+fun presentationUs(index:Long, numerator:Long, denominator:Long):Long = throw NotImplementedError("timeline")
+enum class Origin { RAW, HLG, SDR }
+fun validateLabel(origin:Origin,label:String):Unit = throw NotImplementedError("lineage")
+data class Signal(val primaries:String,val transfer:String,val bits:Int)
+fun requireCompatible(output:Signal,input:Signal):Unit = throw NotImplementedError("graph")
+data class ManualTarget(val generation:Long,val exposureNs:Long,val iso:Int)
+data class ManualResult(val generation:Long,val exposureNs:Long?,val iso:Int?,val aeOff:Boolean)
+fun manualReady(target:ManualTarget,result:ManualResult):Boolean = throw NotImplementedError("controls")
+fun cocMm(focal:Double,fNumber:Double,focus:Double,subject:Double):Double = throw NotImplementedError("optics")

@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "source_archive_name": "S23_Cinema_Master_Directive_Complete_Package(1).zip",
+  "source_archive_sha256": "405d94c125b230701932e4561baa1c1b8c0f705218b6cd8dd492a39f9e5ac02f",
+  "source_archive_bytes": 311389,
+  "source_member_root": "S23_Cinema_Master_Directive/",
+  "files": {
+    "README.md": {
+      "bytes": 1871,
+      "sha256": "4bc43b10c37ed347a8566c4d5246988f687218b663792c10c923eddab1790172"
+    },
+    "S23_Cinema_Master_Directive_200000_Words.md": {
+      "bytes": 1589585,
+      "sha256": "6c8b91612767e7f9c733ff4bc908eed2d385cc0250f3239d7cc0b8a4346dfefc"
+    },
+    "artifact_verification.json": {
+      "bytes": 680,
+      "sha256": "0c0d4885d5d609bc540f2dd5865ca3c9e2e1e3c0e483dae347da45a29c7cbcce"
+    },
+    "directive_manifest.json": {
+      "bytes": 873317,
+      "sha256": "de0f4c8b55387678e2b9c1111f3b2acd9eb72b77a60ed92df9c2e20295a77a1e"
+    },
+    "evidence/kotlin_green.log": {
+      "bytes": 1491,
+      "sha256": "b332da939fec30cbe4b826949f979ab92f3ae0901cda2ce7efb924e863c59f49"
+    },
+    "evidence/kotlin_green_compile.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/kotlin_red.log": {
+      "bytes": 3325,
+      "sha256": "4c50bd227ec354d25f7e384f81ed56f875093275523be0dbacd3197afbb4b29f"
+    },
+    "evidence/kotlin_red_compile.log": {
+      "bytes": 3826,
+      "sha256": "b39d664b10ce1d41893a22fbf69d0583f0bcd31ea4865c3a9dd9813f5cd12980"
+    },
+    "evidence/kotlin_red_stub.kt.txt": {
+      "bytes": 1283,
+      "sha256": "c5f0764a335ca52f5798f29657af2f36444eeb055cb30932c41d1d57d065b3a9"
+    },
+    "evidence/reference_green.log": {
+      "bytes": 6886,
+      "sha256": "bc7ab620b0b93e1ef5d7bd8e36e3efc1aeebb78e56a5b42b45e222a440c24343"
+    },
+    "evidence/reference_green_initial.log": {
+      "bytes": 6227,
+      "sha256": "c9f21ff9f285535a215e3af7dc9bac2a402bec189ead46da5a9c5839083444b0"
+    },
+    "evidence/reference_hardening_red.log": {
+      "bytes": 9828,
+      "sha256": "90713202c9377de53329a251abd02db9afe3b0575492e8ca91d60ab3ab7004c9"
+    },
+    "evidence/reference_red.log": {
+      "bytes": 42508,
+      "sha256": "7c0a07032b8d888f589632ced3cabf564ccce9fdcdabe840f65a2669f40bb137"
+    },
+    "evidence/runtime.json": {
+      "bytes": 889,
+      "sha256": "1e4e6663678adf87a4e3c99118fd025468e2500f281df184400f829fe94a7a95"
+    },
+    "reference/README.md": {
+      "bytes": 2184,
+      "sha256": "cbd00caca5bf4c6145df48be31f2ab15cf9e8b9da7594a8af319cb183376bf53"
+    },
+    "reference/cinema_reference.py": {
+      "bytes": 12310,
+      "sha256": "5884a9881d72dba86652948f89a99732046a4cd1b9c596365ea7df9b2e138f36"
+    },
+    "reference/kotlin/Contracts.kt": {
+      "bytes": 3944,
+      "sha256": "b64f7447666b0ca7f637f165c27ff439f78955a79ff7099ca1c02b9ba134c0c5"
+    },
+    "reference/kotlin/ContractsTest.kt": {
+      "bytes": 7765,
+      "sha256": "6a384ce2214036e2219c9c7aad30269070f74009a44ce1c608261be393f6e6b1"
+    },
+    "reference/test_reference.py": {
+      "bytes": 10750,
+      "sha256": "3c4b2fc0dbcf77673d6ac2f318489f317f0f428250252b769971968e9e5f81ca"
+    },
+    "verify_directive.py": {
+      "bytes": 4137,
+      "sha256": "4b62d4291ba282e62c7fad2c1d6a78d262899cee246961775909914df175e3bc"
+    }
+  }
+}

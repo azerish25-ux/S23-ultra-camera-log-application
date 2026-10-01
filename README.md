@@ -1,5 +1,8 @@
 # S23Log — native Android camera and capture evidence
 
+> **Governing specification:** [MASTER_DIRECTIVE.md](MASTER_DIRECTIVE.md) is the project-wide entry point to the complete S23 Cinema directive. Read [AGENTS.md](AGENTS.md) before implementation. The [original 200,208-word specification](docs/master-directive/S23_Cinema_Master_Directive_200000_Words.md) governs scope, architecture, development order and acceptance; the implementation history below describes current evidence, not completion of the new roadmap.
+
+
 <img src="docs/images/launcher-icon.png" width="72" alt="S23Log adaptive launcher icon" />
 
 Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log. Saved-RAW development and an experimental live RAW-derived LogC3 path are implemented behind separate ten-bit GPU/codec checks. Physical S23 performance and calibration remain unverified.**

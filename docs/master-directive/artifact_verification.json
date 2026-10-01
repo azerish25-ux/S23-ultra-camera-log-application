@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "artifact": "S23_Cinema_Master_Directive_200000_Words.md",
+  "word_count_whitespace": 200208,
+  "bytes": 1589585,
+  "sha256": "6c8b91612767e7f9c733ff4bc908eed2d385cc0250f3239d7cc0b8a4346dfefc",
+  "phases": 160,
+  "expanded_case_specifications": 1280,
+  "source_references": 30,
+  "code_blocks": 21,
+  "internal_anchors": 1479,
+  "dependency_graph": "acyclic",
+  "executed_tests": {
+    "python_passed": 53,
+    "kotlin_passed": 32,
+    "android_build": "not_run",
+    "physical_s23": "not_run",
+    "catalogue_cases": "specifications_only"
+  },
+  "scope": "Document integrity and included host references; not Android or physical-device certification"
+}

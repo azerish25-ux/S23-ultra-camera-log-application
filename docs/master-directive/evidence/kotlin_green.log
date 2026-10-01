@@ -1,0 +1,33 @@
+PASS lease exposes the owned value before release
+PASS lease refuses access after release
+PASS lease callback executes once
+PASS concurrent closes release exactly once
+PASS throwing release still leaves lease closed
+PASS pool rejects nonpositive capacity
+PASS pool refuses an excess lease
+PASS pool capacity returns on close
+PASS double close cannot underflow pool
+PASS failing resource callback restores capacity
+PASS concurrent pool admissions remain bounded
+PASS rational timestamp starts at zero
+PASS rational timestamp does not accumulate rounded intervals
+PASS rational timestamp floors exact fraction
+PASS rational timestamp rejects invalid rates
+PASS rational timestamp reports overflow
+PASS RAW-derived label requires RAW origin
+PASS SDR cannot be promoted by an output label
+PASS HLG remains HDR-derived
+PASS HLG does not become proprietary Samsung Log
+PASS graph rejects incompatible transfer contracts
+PASS graph rejects a hidden precision change
+PASS graph accepts identical declared signals
+PASS manual readiness requires current matching generation
+PASS AE-off alone does not establish exposure match
+PASS missing manual metadata stays unready
+PASS matching manual result establishes model readiness
+PASS active auto exposure blocks manual readiness
+PASS focus plane has zero geometric blur
+PASS infinity has finite signed geometric blur
+PASS foreground and background blur retain opposite signs
+PASS optics rejects NaN and impossible focus geometry
+RESULT passed=32 failed=0

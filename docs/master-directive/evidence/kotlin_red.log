@@ -1,0 +1,36 @@
+FAIL lease exposes the owned value before release: NotImplementedError: resource contract not implemented
+FAIL lease refuses access after release: NotImplementedError: release contract not implemented
+FAIL lease callback executes once: NotImplementedError: release contract not implemented
+FAIL concurrent closes release exactly once: IllegalStateException: Worker failure: kotlin.NotImplementedError: release contract not implemented
+FAIL throwing release still leaves lease closed: IllegalStateException: Expected IllegalStateException, received NotImplementedError
+FAIL pool rejects nonpositive capacity: IllegalStateException: Expected IllegalArgumentException
+FAIL pool refuses an excess lease: NotImplementedError: pool
+FAIL pool capacity returns on close: NotImplementedError: pool
+FAIL double close cannot underflow pool: NotImplementedError: pool
+FAIL failing resource callback restores capacity: NotImplementedError: pool
+FAIL concurrent pool admissions remain bounded: IllegalStateException: Worker failure: kotlin.NotImplementedError: pool
+FAIL rational timestamp starts at zero: NotImplementedError: timeline
+FAIL rational timestamp does not accumulate rounded intervals: NotImplementedError: timeline
+FAIL rational timestamp floors exact fraction: NotImplementedError: timeline
+FAIL rational timestamp rejects invalid rates: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+FAIL rational timestamp reports overflow: IllegalStateException: Expected ArithmeticException, received NotImplementedError
+FAIL RAW-derived label requires RAW origin: NotImplementedError: lineage
+FAIL SDR cannot be promoted by an output label: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+FAIL HLG remains HDR-derived: NotImplementedError: lineage
+FAIL HLG does not become proprietary Samsung Log: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+FAIL graph rejects incompatible transfer contracts: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+FAIL graph rejects a hidden precision change: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+FAIL graph accepts identical declared signals: NotImplementedError: graph
+FAIL manual readiness requires current matching generation: NotImplementedError: controls
+FAIL AE-off alone does not establish exposure match: NotImplementedError: controls
+FAIL missing manual metadata stays unready: NotImplementedError: controls
+FAIL matching manual result establishes model readiness: NotImplementedError: controls
+FAIL active auto exposure blocks manual readiness: NotImplementedError: controls
+FAIL focus plane has zero geometric blur: NotImplementedError: optics
+FAIL infinity has finite signed geometric blur: NotImplementedError: optics
+FAIL foreground and background blur retain opposite signs: NotImplementedError: optics
+FAIL optics rejects NaN and impossible focus geometry: IllegalStateException: Expected IllegalArgumentException, received NotImplementedError
+RESULT passed=0 failed=32
+Exception in thread "main" java.lang.IllegalStateException: 32 contract tests failed
+	at cinema.reference.ContractsTestKt.main(ContractsTest.kt:153)
+	at cinema.reference.ContractsTestKt.main(ContractsTest.kt)

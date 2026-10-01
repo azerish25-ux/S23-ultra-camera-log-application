@@ -1,0 +1,581 @@
+test_advertised_is_not_certified (test_reference.EvidenceAndPersistenceTests.test_advertised_is_not_certified) ... ERROR
+test_all_evidence_required (test_reference.EvidenceAndPersistenceTests.test_all_evidence_required) ... ERROR
+test_atomic_write_preserves_unrelated_source (test_reference.EvidenceAndPersistenceTests.test_atomic_write_preserves_unrelated_source) ... ERROR
+test_canonical_manifest_is_order_independent (test_reference.EvidenceAndPersistenceTests.test_canonical_manifest_is_order_independent) ... ERROR
+test_corrupt_manifest_does_not_replace_valid_output (test_reference.EvidenceAndPersistenceTests.test_corrupt_manifest_does_not_replace_valid_output) ... ERROR
+test_counter_noise_has_reasonable_synthetic_statistics (test_reference.EvidenceAndPersistenceTests.test_counter_noise_has_reasonable_synthetic_statistics) ... ERROR
+test_counter_noise_is_reproducible (test_reference.EvidenceAndPersistenceTests.test_counter_noise_is_reproducible) ... ERROR
+test_density_to_transmission (test_reference.EvidenceAndPersistenceTests.test_density_to_transmission) ... ERROR
+test_film_density_responds_monotonically (test_reference.EvidenceAndPersistenceTests.test_film_density_responds_monotonically) ... ERROR
+test_no_claimed_movie_lens_from_null_fact (test_reference.EvidenceAndPersistenceTests.test_no_claimed_movie_lens_from_null_fact) ... ERROR
+test_recipe_requires_evidence_for_documented_claims (test_reference.EvidenceAndPersistenceTests.test_recipe_requires_evidence_for_documented_claims) ... ERROR
+test_resume_key_covers_model_and_source (test_reference.EvidenceAndPersistenceTests.test_resume_key_covers_model_and_source) ... ERROR
+test_source_lineage_disallows_raw_label_for_sdr (test_reference.EvidenceAndPersistenceTests.test_source_lineage_disallows_raw_label_for_sdr) ... ERROR
+test_ten_bit_output_alone_does_not_upgrade_source (test_reference.EvidenceAndPersistenceTests.test_ten_bit_output_alone_does_not_upgrade_source) ... ERROR
+test_black_is_published_ei800_intercept (test_reference.LogEncodingTests.test_black_is_published_ei800_intercept) ... ERROR
+test_curve_is_monotonic_over_operating_domain (test_reference.LogEncodingTests.test_curve_is_monotonic_over_operating_domain) ... ERROR
+test_middle_grey_is_near_documented_value (test_reference.LogEncodingTests.test_middle_grey_is_near_documented_value) ... ERROR
+test_nonfinite_values_are_rejected (test_reference.LogEncodingTests.test_nonfinite_values_are_rejected) ... ERROR
+test_rounded_branch_coefficients_have_bounded_join (test_reference.LogEncodingTests.test_rounded_branch_coefficients_have_bounded_join) ... ERROR
+test_signed_values_round_trip (test_reference.LogEncodingTests.test_signed_values_round_trip) ... ERROR
+test_black_normalization_retains_negative_noise (test_reference.NumericContractsTests.test_black_normalization_retains_negative_noise) ... ERROR
+test_cfr_integer_arithmetic_avoids_accumulating_rounding (test_reference.NumericContractsTests.test_cfr_integer_arithmetic_avoids_accumulating_rounding) ... ERROR
+test_cfr_invalid_values_rejected (test_reference.NumericContractsTests.test_cfr_invalid_values_rejected) ... ERROR
+test_duplicate_sensor_timestamps_rejected (test_reference.NumericContractsTests.test_duplicate_sensor_timestamps_rejected) ... ERROR
+test_invalid_white_level_rejected (test_reference.NumericContractsTests.test_invalid_white_level_rejected) ... ERROR
+test_legal_luma_endpoints (test_reference.NumericContractsTests.test_legal_luma_endpoints) ... ERROR
+test_p010_invalid_codes_and_stride_are_rejected (test_reference.NumericContractsTests.test_p010_invalid_codes_and_stride_are_rejected) ... ERROR
+test_p010_row_obeys_stride_and_bit_alignment (test_reference.NumericContractsTests.test_p010_row_obeys_stride_and_bit_alignment) ... ERROR
+test_p010_unpack_rejects_low_bit_pollution (test_reference.NumericContractsTests.test_p010_unpack_rejects_low_bit_pollution) ... ERROR
+test_quantization_rejects_unconsented_clipping (test_reference.NumericContractsTests.test_quantization_rejects_unconsented_clipping) ... ERROR
+test_timestamp_pairing_is_exact_not_nearest (test_reference.NumericContractsTests.test_timestamp_pairing_is_exact_not_nearest) ... ERROR
+test_focus_plane_is_sharp (test_reference.OpticalContractsTests.test_focus_plane_is_sharp) ... ERROR
+test_fov_lens_is_derived_from_gate_and_angle (test_reference.OpticalContractsTests.test_fov_lens_is_derived_from_gate_and_angle) ... ERROR
+test_gate_conversion_is_explicit (test_reference.OpticalContractsTests.test_gate_conversion_is_explicit) ... ERROR
+test_infinity_limit_is_finite (test_reference.OpticalContractsTests.test_infinity_limit_is_finite) ... ERROR
+test_invalid_optical_geometry_rejected (test_reference.OpticalContractsTests.test_invalid_optical_geometry_rejected) ... ERROR
+test_near_and_far_blur_have_opposite_signs (test_reference.OpticalContractsTests.test_near_and_far_blur_have_opposite_signs) ... ERROR
+test_occlusion_disables_history_blending (test_reference.OpticalContractsTests.test_occlusion_disables_history_blending) ... ERROR
+test_relative_depth_cannot_masquerade_as_metres (test_reference.OpticalContractsTests.test_relative_depth_cannot_masquerade_as_metres) ... ERROR
+test_shutter_angle_converts_to_seconds (test_reference.OpticalContractsTests.test_shutter_angle_converts_to_seconds) ... ERROR
+test_stopping_down_halves_diameter (test_reference.OpticalContractsTests.test_stopping_down_halves_diameter) ... ERROR
+test_temporal_history_weight_is_bounded (test_reference.OpticalContractsTests.test_temporal_history_weight_is_bounded) ... ERROR
+test_finalize_retains_recorded_status (test_reference.RecorderStateTests.test_finalize_retains_recorded_status) ... ERROR
+test_invalid_event_rejected (test_reference.RecorderStateTests.test_invalid_event_rejected) ... ERROR
+test_recording_waits_for_every_selected_track (test_reference.RecorderStateTests.test_recording_waits_for_every_selected_track) ... ERROR
+test_stale_generation_is_ignored (test_reference.RecorderStateTests.test_stale_generation_is_ignored) ... ERROR
+test_stop_cannot_be_undone_by_late_sample (test_reference.RecorderStateTests.test_stop_cannot_be_undone_by_late_sample) ... ERROR
+test_unexpected_track_rejected (test_reference.RecorderStateTests.test_unexpected_track_rejected) ... ERROR
+
+======================================================================
+ERROR: test_advertised_is_not_certified (test_reference.EvidenceAndPersistenceTests.test_advertised_is_not_certified)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 123, in test_advertised_is_not_certified
+    e = c.ModeEvidence(True, True, True, True, False)
+        ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: ModeEvidence
+
+======================================================================
+ERROR: test_all_evidence_required (test_reference.EvidenceAndPersistenceTests.test_all_evidence_required)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 127, in test_all_evidence_required
+    self.assertTrue(c.ModeEvidence(True,True,True,True,True).certified)
+                    ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: ModeEvidence
+
+======================================================================
+ERROR: test_atomic_write_preserves_unrelated_source (test_reference.EvidenceAndPersistenceTests.test_atomic_write_preserves_unrelated_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 150, in test_atomic_write_preserves_unrelated_source
+    c.atomic_json_write(p, {'status':'partial'})
+    ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: atomic_json_write
+
+======================================================================
+ERROR: test_canonical_manifest_is_order_independent (test_reference.EvidenceAndPersistenceTests.test_canonical_manifest_is_order_independent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 143, in test_canonical_manifest_is_order_independent
+    self.assertEqual(c.canonical_json({'a':1,'b':2}),c.canonical_json({'b':2,'a':1}))
+                     ^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: canonical_json
+
+======================================================================
+ERROR: test_corrupt_manifest_does_not_replace_valid_output (test_reference.EvidenceAndPersistenceTests.test_corrupt_manifest_does_not_replace_valid_output)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 158, in test_corrupt_manifest_does_not_replace_valid_output
+    with self.assertRaises(ValueError): c.atomic_json_write(p, {'bad': math.nan})
+                                        ^^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: atomic_json_write
+
+======================================================================
+ERROR: test_counter_noise_has_reasonable_synthetic_statistics (test_reference.EvidenceAndPersistenceTests.test_counter_noise_has_reasonable_synthetic_statistics)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 166, in test_counter_noise_has_reasonable_synthetic_statistics
+    values=[c.grain_sample(991, i, 2,3,0) for i in range(5000)]
+            ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: grain_sample
+
+======================================================================
+ERROR: test_counter_noise_is_reproducible (test_reference.EvidenceAndPersistenceTests.test_counter_noise_is_reproducible)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 162, in test_counter_noise_is_reproducible
+    self.assertEqual(c.grain_sample(123,4,5,6,0), c.grain_sample(123,4,5,6,0))
+                     ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: grain_sample
+
+======================================================================
+ERROR: test_density_to_transmission (test_reference.EvidenceAndPersistenceTests.test_density_to_transmission)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 177, in test_density_to_transmission
+    self.assertAlmostEqual(c.transmittance(2), .01)
+                           ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: transmittance
+
+======================================================================
+ERROR: test_film_density_responds_monotonically (test_reference.EvidenceAndPersistenceTests.test_film_density_responds_monotonically)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 173, in test_film_density_responds_monotonically
+    ys=[c.toy_density(2**(i/10)) for i in range(-100,100)]
+        ^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: toy_density
+
+======================================================================
+ERROR: test_no_claimed_movie_lens_from_null_fact (test_reference.EvidenceAndPersistenceTests.test_no_claimed_movie_lens_from_null_fact)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 185, in test_no_claimed_movie_lens_from_null_fact
+    with self.assertRaises(ValueError): c.validate_claim('invented', ['source-1'])
+                                        ^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: validate_claim
+
+======================================================================
+ERROR: test_recipe_requires_evidence_for_documented_claims (test_reference.EvidenceAndPersistenceTests.test_recipe_requires_evidence_for_documented_claims)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 180, in test_recipe_requires_evidence_for_documented_claims
+    with self.assertRaises(ValueError): c.validate_claim('documented', [])
+                                        ^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: validate_claim
+
+======================================================================
+ERROR: test_resume_key_covers_model_and_source (test_reference.EvidenceAndPersistenceTests.test_resume_key_covers_model_and_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 138, in test_resume_key_covers_model_and_source
+    a = c.resume_key('a','m1','graph','v1')
+        ^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: resume_key
+
+======================================================================
+ERROR: test_source_lineage_disallows_raw_label_for_sdr (test_reference.EvidenceAndPersistenceTests.test_source_lineage_disallows_raw_label_for_sdr)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 130, in test_source_lineage_disallows_raw_label_for_sdr
+    with self.assertRaises(ValueError): c.validate_lineage('SDR8', 'RAW_DERIVED_LOG', 10)
+                                        ^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: validate_lineage
+
+======================================================================
+ERROR: test_ten_bit_output_alone_does_not_upgrade_source (test_reference.EvidenceAndPersistenceTests.test_ten_bit_output_alone_does_not_upgrade_source)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 134, in test_ten_bit_output_alone_does_not_upgrade_source
+    c.validate_lineage('SDR8', 'SDR_DERIVED_LOOK', 10)
+    ^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: validate_lineage
+
+======================================================================
+ERROR: test_black_is_published_ei800_intercept (test_reference.LogEncodingTests.test_black_is_published_ei800_intercept)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 11, in test_black_is_published_ei800_intercept
+    self.assertAlmostEqual(c.logc3_encode(0), 0.092809, places=12)
+                           ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_encode
+
+======================================================================
+ERROR: test_curve_is_monotonic_over_operating_domain (test_reference.LogEncodingTests.test_curve_is_monotonic_over_operating_domain)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 22, in test_curve_is_monotonic_over_operating_domain
+    ys = [c.logc3_encode(x) for x in xs]
+          ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_encode
+
+======================================================================
+ERROR: test_middle_grey_is_near_documented_value (test_reference.LogEncodingTests.test_middle_grey_is_near_documented_value)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 14, in test_middle_grey_is_near_documented_value
+    self.assertAlmostEqual(c.logc3_encode(0.18), 0.3910068, places=6)
+                           ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_encode
+
+======================================================================
+ERROR: test_nonfinite_values_are_rejected (test_reference.LogEncodingTests.test_nonfinite_values_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 27, in test_nonfinite_values_are_rejected
+    with self.assertRaises(ValueError): c.logc3_encode(x)
+                                        ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_encode
+
+======================================================================
+ERROR: test_rounded_branch_coefficients_have_bounded_join (test_reference.LogEncodingTests.test_rounded_branch_coefficients_have_bounded_join)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 32, in test_rounded_branch_coefficients_have_bounded_join
+    self.assertLess(abs(c.logc3_encode(x) - c.logc3_encode(x + 1e-12)), 3e-7)
+                        ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_encode
+
+======================================================================
+ERROR: test_signed_values_round_trip (test_reference.LogEncodingTests.test_signed_values_round_trip)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 18, in test_signed_values_round_trip
+    self.assertAlmostEqual(c.logc3_decode(c.logc3_encode(x)), x, places=9)
+                           ^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: logc3_decode
+
+======================================================================
+ERROR: test_black_normalization_retains_negative_noise (test_reference.NumericContractsTests.test_black_normalization_retains_negative_noise)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 37, in test_black_normalization_retains_negative_noise
+    self.assertLess(c.normalize_raw(60, 64, 1023), 0)
+                    ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: normalize_raw
+
+======================================================================
+ERROR: test_cfr_integer_arithmetic_avoids_accumulating_rounding (test_reference.NumericContractsTests.test_cfr_integer_arithmetic_avoids_accumulating_rounding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 65, in test_cfr_integer_arithmetic_avoids_accumulating_rounding
+    self.assertEqual(c.pts_us(24000, 24000, 1001), 1001000000)
+                     ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pts_us
+
+======================================================================
+ERROR: test_cfr_invalid_values_rejected (test_reference.NumericContractsTests.test_cfr_invalid_values_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 71, in test_cfr_invalid_values_rejected
+    with self.assertRaises(ValueError): c.pts_us(*args)
+                                        ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pts_us
+
+======================================================================
+ERROR: test_duplicate_sensor_timestamps_rejected (test_reference.NumericContractsTests.test_duplicate_sensor_timestamps_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 78, in test_duplicate_sensor_timestamps_rejected
+    with self.assertRaises(ValueError): c.pair_exact([100,100], {100:'a'})
+                                        ^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pair_exact
+
+======================================================================
+ERROR: test_invalid_white_level_rejected (test_reference.NumericContractsTests.test_invalid_white_level_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 40, in test_invalid_white_level_rejected
+    with self.assertRaises(ValueError): c.normalize_raw(64, 64, 64)
+                                        ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: normalize_raw
+
+======================================================================
+ERROR: test_legal_luma_endpoints (test_reference.NumericContractsTests.test_legal_luma_endpoints)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 43, in test_legal_luma_endpoints
+    self.assertEqual(c.quantize_luma10(0), 64)
+                     ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: quantize_luma10
+
+======================================================================
+ERROR: test_p010_invalid_codes_and_stride_are_rejected (test_reference.NumericContractsTests.test_p010_invalid_codes_and_stride_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 59, in test_p010_invalid_codes_and_stride_are_rejected
+    with self.assertRaises(ValueError): c.pack_p010_row(codes, stride)
+                                        ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pack_p010_row
+
+======================================================================
+ERROR: test_p010_row_obeys_stride_and_bit_alignment (test_reference.NumericContractsTests.test_p010_row_obeys_stride_and_bit_alignment)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 51, in test_p010_row_obeys_stride_and_bit_alignment
+    row = c.pack_p010_row([64, 512, 940], row_stride=10)
+          ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pack_p010_row
+
+======================================================================
+ERROR: test_p010_unpack_rejects_low_bit_pollution (test_reference.NumericContractsTests.test_p010_unpack_rejects_low_bit_pollution)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 62, in test_p010_unpack_rejects_low_bit_pollution
+    with self.assertRaises(ValueError): c.unpack_p010_row(b'\x01\x10', 1)
+                                        ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: unpack_p010_row
+
+======================================================================
+ERROR: test_quantization_rejects_unconsented_clipping (test_reference.NumericContractsTests.test_quantization_rejects_unconsented_clipping)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 47, in test_quantization_rejects_unconsented_clipping
+    with self.assertRaises(ValueError): c.quantize_luma10(1.1)
+                                        ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: quantize_luma10
+
+======================================================================
+ERROR: test_timestamp_pairing_is_exact_not_nearest (test_reference.NumericContractsTests.test_timestamp_pairing_is_exact_not_nearest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 74, in test_timestamp_pairing_is_exact_not_nearest
+    self.assertEqual(c.pair_exact([100,200], {200:'b',100:'a'}), ['a','b'])
+                     ^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: pair_exact
+
+======================================================================
+ERROR: test_focus_plane_is_sharp (test_reference.OpticalContractsTests.test_focus_plane_is_sharp)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 83, in test_focus_plane_is_sharp
+    self.assertEqual(c.coc_mm(50, 2, 2000, 2000), 0)
+                     ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_mm
+
+======================================================================
+ERROR: test_fov_lens_is_derived_from_gate_and_angle (test_reference.OpticalContractsTests.test_fov_lens_is_derived_from_gate_and_angle)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 107, in test_fov_lens_is_derived_from_gate_and_angle
+    self.assertAlmostEqual(c.focal_for_fov(36, 90), 18)
+                           ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: focal_for_fov
+
+======================================================================
+ERROR: test_gate_conversion_is_explicit (test_reference.OpticalContractsTests.test_gate_conversion_is_explicit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 96, in test_gate_conversion_is_explicit
+    self.assertAlmostEqual(c.coc_pixels(0.1, 50, 4000), 8)
+                           ^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_pixels
+
+======================================================================
+ERROR: test_infinity_limit_is_finite (test_reference.OpticalContractsTests.test_infinity_limit_is_finite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 93, in test_infinity_limit_is_finite
+    self.assertAlmostEqual(c.coc_mm(50,2,2000,math.inf), 2500/(2*1950))
+                           ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_mm
+
+======================================================================
+ERROR: test_invalid_optical_geometry_rejected (test_reference.OpticalContractsTests.test_invalid_optical_geometry_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 100, in test_invalid_optical_geometry_rejected
+    with self.assertRaises(ValueError): c.coc_mm(*args)
+                                        ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_mm
+
+======================================================================
+ERROR: test_near_and_far_blur_have_opposite_signs (test_reference.OpticalContractsTests.test_near_and_far_blur_have_opposite_signs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 86, in test_near_and_far_blur_have_opposite_signs
+    self.assertLess(c.coc_mm(50, 2, 2000, 1000), 0)
+                    ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_mm
+
+======================================================================
+ERROR: test_occlusion_disables_history_blending (test_reference.OpticalContractsTests.test_occlusion_disables_history_blending)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 110, in test_occlusion_disables_history_blending
+    self.assertEqual(c.temporal_depth(2, 100, 0.9, occluded=True), 2)
+                     ^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: temporal_depth
+
+======================================================================
+ERROR: test_relative_depth_cannot_masquerade_as_metres (test_reference.OpticalContractsTests.test_relative_depth_cannot_masquerade_as_metres)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 103, in test_relative_depth_cannot_masquerade_as_metres
+    with self.assertRaises(ValueError): c.metric_distance(c.DepthSample(0.5, 'relative'))
+                                        ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: metric_distance
+
+======================================================================
+ERROR: test_shutter_angle_converts_to_seconds (test_reference.OpticalContractsTests.test_shutter_angle_converts_to_seconds)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 117, in test_shutter_angle_converts_to_seconds
+    self.assertAlmostEqual(c.exposure_seconds(180,24,1), 1/48)
+                           ^^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: exposure_seconds
+
+======================================================================
+ERROR: test_stopping_down_halves_diameter (test_reference.OpticalContractsTests.test_stopping_down_halves_diameter)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 90, in test_stopping_down_halves_diameter
+    self.assertAlmostEqual(c.coc_mm(50,4,2000,4000)*2, c.coc_mm(50,2,2000,4000))
+                           ^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: coc_mm
+
+======================================================================
+ERROR: test_temporal_history_weight_is_bounded (test_reference.OpticalContractsTests.test_temporal_history_weight_is_bounded)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 113, in test_temporal_history_weight_is_bounded
+    self.assertAlmostEqual(c.temporal_depth(2,4,0.25), 2.5)
+                           ^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: temporal_depth
+
+======================================================================
+ERROR: test_finalize_retains_recorded_status (test_reference.RecorderStateTests.test_finalize_retains_recorded_status)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 207, in test_finalize_retains_recorded_status
+    s=c.reduce_recorder(c.RecorderState(),'start',1)
+      ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: reduce_recorder
+
+======================================================================
+ERROR: test_invalid_event_rejected (test_reference.RecorderStateTests.test_invalid_event_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 219, in test_invalid_event_rejected
+    with self.assertRaises(ValueError): c.reduce_recorder(c.RecorderState(),'mystery',0)
+                                        ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: reduce_recorder
+
+======================================================================
+ERROR: test_recording_waits_for_every_selected_track (test_reference.RecorderStateTests.test_recording_waits_for_every_selected_track)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 190, in test_recording_waits_for_every_selected_track
+    s = c.RecorderState()
+        ^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: RecorderState
+
+======================================================================
+ERROR: test_stale_generation_is_ignored (test_reference.RecorderStateTests.test_stale_generation_is_ignored)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 203, in test_stale_generation_is_ignored
+    s=c.reduce_recorder(c.RecorderState(),'start',8)
+      ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: reduce_recorder
+
+======================================================================
+ERROR: test_stop_cannot_be_undone_by_late_sample (test_reference.RecorderStateTests.test_stop_cannot_be_undone_by_late_sample)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 198, in test_stop_cannot_be_undone_by_late_sample
+    s=c.reduce_recorder(c.RecorderState(), 'start', 1)
+      ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: reduce_recorder
+
+======================================================================
+ERROR: test_unexpected_track_rejected (test_reference.RecorderStateTests.test_unexpected_track_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/data/s23_cinema_directive/reference/test_reference.py", line 215, in test_unexpected_track_rejected
+    s=c.reduce_recorder(c.RecorderState(),'start',1)
+      ^^^^^^^^^^^^^^^^^
+  File "/mnt/data/s23_cinema_directive/reference/cinema_reference.py", line 3, in __getattr__
+    raise NotImplementedError(f'Contract not implemented: {name}')
+NotImplementedError: Contract not implemented: reduce_recorder
+
+----------------------------------------------------------------------
+Ran 48 tests in 0.010s
+
+FAILED (errors=48)
