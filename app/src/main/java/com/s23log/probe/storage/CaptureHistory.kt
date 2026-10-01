@@ -21,7 +21,7 @@ object CaptureHistory {
             (0 until array.length()).map { Uri.parse(array.getString(it)) }
         }.getOrDefault(emptyList())
         val name = prefs.getString("report", null)
-        val file = if (name != null && name.matches(Regex("(recording|raw)-[0-9a-f-]+\\.json")))
+        val file = if (name != null && name.matches(Regex("(recording|raw|developed)-[0-9a-f-]+\\.json")))
             File(context.filesDir, "exports/validation/$name").takeIf { it.isFile } else null
         return Entry(uris, file, prefs.getString("message", "") ?: "")
     }

@@ -4,6 +4,10 @@
 
 Continuous RAW acquisition/source retention and an offline LogC3/AWG3 developer are implemented. Exact source/profile binding, checksum/cadence/clipping checks and full decode protect the conversion contract. Physical S23 capture, calibration, real-time processing and high-resolution endurance remain unverified. See [RAW sequence scope and workflow](RAW_SEQUENCE.md).
 
+## On-device RAW development addition (0.8)
+
+Saved RAW sequences can be developed on Android through a row-streaming CPU reference engine into ten-bit LogC3/AWG3 HEVC, subject to explicit P010 encoder/decoder qualification. Includes imported profile binding, captured manufacturer calibration metadata, provisional grey-reference starting profiles, every-frame decode/pixel comparison, cancellation and retained output/source recovery. See [complete contract](ON_DEVICE_LOGC3.md). This does not enable live RAW-to-Log recording or certify physical S23 colour/performance; devices lacking the required codec route remain unavailable.
+
 ## Implemented software paths
 
 - Public Camera2 capability discovery, logical/physical route identity, explicit unsupported/query-failed states, complete mode diagnostics and independently revalidated per-camera settings.

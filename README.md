@@ -22,6 +22,14 @@ The opt-in **Continuous RAW lab** now uses repeating Camera2 RAW requests, exact
 
 See [RAW capture, calibration contract, offline commands and acceptance gates](docs/RAW_SEQUENCE.md). Host development/tests additionally require Python 3.11+, NumPy (`scripts/requirements-raw.txt`) and FFmpeg/FFprobe; these add no Android runtime dependencies.
 
+## Version 0.8 — on-device RAW development
+
+Retained RAW sequences now have **Develop as LogC3**: an Android row-streamed CPU reference engine, profile import/storage, capture-time manufacturer calibration snapshots and explicitly provisional grey-reference starting profiles. It develops saved sensor sequences on the phone; it is **not live Log recording**. The existing direct SDR/HLG recorder is unchanged.
+
+A dedicated P010/Main10 backend requires real ten-bit Image input/output, positive and degraded-eight-bit codec controls, and complete decoded-pixel comparison against the RAW source. Unsupported codecs remain unavailable; no HLG/8-bit fallback is hidden. Source/profile identity, limited-range LogC3/AWG3 interpretation and verification travel with the output sidecar. Source frames and interrupted exports are retained. No calibrated S23 profile or measured ARRI-equivalent dynamic range is included.
+
+See [on-device workflow, precision gates and remaining limitations](docs/ON_DEVICE_LOGC3.md).
+
 ## Phase 3E.1 changes
 
 Opt-in **GPU HLG (experimental)** candidates add a Camera2 → explicit YUV/BT.2020 conversion → FP16 → RGB10 HLG encoder path with independently rendered SDR/HLG-signal monitoring. Direct recording choices and saved identifiers are preserved. The initial GPU route is limited to advertised <=1080p24/30 configurations and gated by rendered-HDR encoder, EGL and YUV-import capabilities. No format fallback is hidden.

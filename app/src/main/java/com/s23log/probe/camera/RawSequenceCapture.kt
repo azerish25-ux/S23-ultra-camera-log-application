@@ -44,6 +44,7 @@ class RawSequenceCapture(
 ) : RawCaptureJob {
     private data class Packet(val metadata: ByteArray, val pixels: ByteArray, val timestamp: Long)
     private val c = target.characteristics
+    private val calibrationSnapshot = RawCalibrationSnapshot.capture(c)
     private val id = UUID.randomUUID().toString()
     private val directory = File(context.filesDir, "exports/raw-sequences")
     private val file = File(directory, "raw-$id.s23raw")
@@ -294,7 +295,7 @@ class RawSequenceCapture(
         .put("blackLevels", jsonValue(blackLevels())).put("whiteLevel", c[C.SENSOR_INFO_WHITE_LEVEL] ?: JSONObject.NULL)
         .put("activeArray", c[C.SENSOR_INFO_ACTIVE_ARRAY_SIZE]?.let { jsonValue(listOf(it.left, it.top, it.right, it.bottom)) } ?: JSONObject.NULL)
         .put("requestedControls", jsonValue(controls.describe())).put("effectiveControls", jsonValue(effective.describe()))
-        .put("colourCalibration", "not_supplied").put("audio", "none").put("samsungLog", false)
+        .put("rawCalibration", calibrationSnapshot).put("colourCalibration", "not_supplied").put("audio", "none").put("samsungLog", false)
         .put("physicalCameraCertified", false).put("arriraw", false)
     private fun finishOnCameraThread() {
         if (finalized) return

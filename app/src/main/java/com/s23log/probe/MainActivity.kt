@@ -451,7 +451,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                             .setMessage("${plan.width}×${plan.height} at requested ${plan.fps} fps, five seconds.\n" +
                                 "${plan.expectedPayloadBytes / 1_000_000} MB expected source payload. Preview pauses; no audio. " +
                                 "Stop RAW remains available. Overflow stops acquisition and retains written frames. " +
-                                "This does not certify sustained RAW video or produce Log on the phone; use the documented offline LogC3 developer.")
+                                "This does not certify sustained RAW video. Develop the saved source on this phone from Retained RAW sequences, or use the desktop developer.")
                             .setNegativeButton(R.string.cancel, null).setPositiveButton("Start RAW") { _, _ ->
                                 if (selected?.key == target.key && engineState == EngineState.PREVIEW && manualApplied) {
                                     findViewById<View>(R.id.controlsPanel).visibility = View.GONE
@@ -473,9 +473,11 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                 val file = files[index]
                 val report = File(filesDir, "exports/validation/${file.nameWithoutExtension}.json")
                 AlertDialog.Builder(this).setTitle("Retained RAW source")
-                    .setMessage("Export to the host developer for CRC, timing and colour-profile checks. A crash may leave a truncated final record; source is never silently repaired or deleted.")
+                    .setMessage("Develop this source as LogC3 on this phone, or export it for desktop development. Checksums, timing and a bound colour profile are required. Incomplete sources are never silently repaired.")
                     .setPositiveButton("Export") { _, _ -> shareFiles(listOf(file) + listOfNotNull(report.takeIf { it.isFile }), "application/octet-stream") }
-                    .setNeutralButton("Keep", null).setNegativeButton("Delete…") { _, _ ->
+                    .setNeutralButton("Develop as LogC3") { _, _ ->
+                        startActivity(Intent(this, RawDevelopActivity::class.java).putExtra("sourceName", file.name))
+                    }.setNegativeButton("Delete…") { _, _ ->
                         AlertDialog.Builder(this).setTitle("Permanently delete this RAW source?").setMessage(file.name)
                             .setNegativeButton("Keep", null).setPositiveButton("Delete") { _, _ ->
                                 if (!file.delete()) Toast.makeText(this, "RAW source could not be deleted", Toast.LENGTH_LONG).show()

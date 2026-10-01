@@ -1,6 +1,10 @@
 # Continuous RAW lab and offline LogC3 developer (0.7)
 
-## What ships
+## Version 0.8 addition
+
+The original desktop developer remains available. Android now offers [on-device saved-source LogC3 development](ON_DEVICE_LOGC3.md) with explicit profile and P010 codec gates. The continuous RAW experiment itself is still bounded and video-only; no live Log recorder or physical calibration is implied.
+
+## What ships in the original 0.7 path
 
 An opt-in, five-second **continuous Camera2 RAW acquisition experiment**, with separate acquisition-only and source-saving modes. The existing DNG still buttons and direct SDR/HLG/audio recorder are unchanged. RAW source is developed **on a computer**, not encoded into Log on the phone. No Samsung/ARRI sensor equivalence, physical S23 qualification, real-time Log, 4K/8K throughput or additional firmware access is certified.
 

@@ -4,7 +4,7 @@ import org.json.JSONObject
 
 /** Recorded measurements and requested settings stay separate; missing evidence stays unknown. */
 data class ClipDetails(val width: Int?, val height: Int?, val mime: String?, val measuredFps: Double?,
-    val targetFps: Int?, val transfer: Int?, val lumaBitDepth: Int?, val status: String, val cadence: String) {
+    val targetFps: Int?, val transfer: Int?, val lumaBitDepth: Int?, val status: String, val cadence: String, val logLabel: String? = null) {
     companion object {
         fun from(report: JSONObject?): ClipDetails {
             val measured = report?.optJSONObject("verification")
@@ -14,7 +14,8 @@ data class ClipDetails(val width: Int?, val height: Int?, val mime: String?, val
                 report?.optJSONObject("selectedMode")?.optInt("fps")?.takeIf { it > 0 },
                 measured?.optInt("colorTransfer")?.takeIf { it > 0 }, positive("lumaBitDepth"),
                 report?.optString("status")?.takeIf { it.isNotBlank() } ?: "unknown",
-                measured?.optString("cadenceStatus")?.takeIf { it.isNotBlank() } ?: "unknown")
+                measured?.optString("cadenceStatus")?.takeIf { it.isNotBlank() } ?: "unknown",
+                if (report?.optString("kind") == "raw-derived-logc3") "LogC3 / AWG3 · ${report.optString("calibrationStatus", "unknown")} profile" else null)
         }
     }
 }

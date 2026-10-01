@@ -88,4 +88,5 @@ image = Path('evidence/emulator/camera-screen.png').read_bytes()
 if not image.startswith(b'\x89PNG\r\n\x1a\n') or len(image) < 100:
     raise SystemExit('Missing or invalid camera screenshot')
 PY_CHECK
+python3 scripts/check_raw_development.py evidence/emulator/app-evidence.tar > evidence/emulator/raw-development-summary.json
 cat evidence/emulator/summary.json

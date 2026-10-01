@@ -123,7 +123,7 @@ class CaptureLibraryActivity : Activity() {
     private fun metadata(details: ClipDetails): String {
         val dimensions = if (details.width != null && details.height != null) "${details.width} × ${details.height}" else getString(R.string.library_dimensions_unknown)
         val codec = when (details.mime) { "video/avc" -> "AVC"; "video/hevc" -> "HEVC"; else -> getString(R.string.library_codec_unknown) }
-        val transfer = when (details.transfer) {
+        val transfer = details.logLabel ?: when (details.transfer) {
             MediaFormat.COLOR_TRANSFER_LINEAR -> "Linear"
             MediaFormat.COLOR_TRANSFER_SDR_VIDEO -> "SDR"
             MediaFormat.COLOR_TRANSFER_ST2084 -> "PQ"

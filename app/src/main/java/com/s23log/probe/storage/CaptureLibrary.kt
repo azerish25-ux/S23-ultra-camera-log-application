@@ -14,7 +14,7 @@ object CaptureLibrary {
         val message: String, val mimeType: String)
     data class Snapshot(val entries: List<Entry>, val unreadableRecords: Int)
 
-    private val reportName = Regex("(recording|raw)-[0-9a-f-]+\\.json")
+    private val reportName = Regex("(recording|raw|developed)-[0-9a-f-]+\\.json")
     private val recordName = Regex("[0-9a-f]{64}\\.json")
     private fun directory(context: Context) = File(context.filesDir, "capture-library")
     private fun allowed(context: Context, uri: Uri): Boolean = uri.scheme == "content" &&
@@ -35,7 +35,7 @@ object CaptureLibrary {
         val mime = when {
             uris.first().lastPathSegment?.endsWith(".s23raw") == true -> "application/octet-stream"
             reportBase?.startsWith("raw-") == true || providerMime == "image/x-adobe-dng" -> "image/x-adobe-dng"
-            reportBase?.startsWith("recording-") == true || providerMime?.startsWith("video/") == true -> "video/mp4"
+            (reportBase?.startsWith("recording-") == true || reportBase?.startsWith("developed-") == true) || providerMime?.startsWith("video/") == true -> "video/mp4"
             else -> "application/octet-stream"
         }
         val json = JSONObject().put("schema", 1).put("id", id).put("createdAt", System.currentTimeMillis())
