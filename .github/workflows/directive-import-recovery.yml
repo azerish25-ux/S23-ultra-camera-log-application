@@ -1,0 +1,82 @@
+name: Recover uploaded directive payload
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/directive-import-recovery.yml']
+permissions:
+  contents: read
+jobs:
+  recover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Retrieve and verify previously uploaded Git blobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import base64, concurrent.futures, hashlib, json, os, pathlib, urllib.request
+          shas = '''61f242fda3128393ea5b571aaa1907dde365ca42
+          6461521b69907b928d3d5f7236f93a7715060a91
+          513637fbfb0f94d7cc483869c28eef9a9b1156c4
+          bab161bf16340bd16352d960289a4ea96b7941fd
+          0de06760c83980097efd60e489a171e56dc42f50
+          e63d9a85a66fd63b31f01835c7f38d9ffd66283d
+          7773780f4843c1710d42b91466e3ac703caee8b8
+          1b12e6ea2d95e6bca86d2516cd4c5d3ea1f6afad
+          87b2b12ee51118160944d2db838bb9ce8d45ccfd
+          da415fcf110c21191d69740edee15c0269db4976
+          a1a137416f753ae4719d245cc7020219795bf975
+          c21bc00e2ec1bc34f4a63ec18e2f5de45131b0da
+          7f253d34de45f97e5aab8015b507a7a6e7a32f0a
+          1a36377a31c6647a85f8d71e00ddcb44811bc0bc
+          fd554bc72351fe296375fc7e7179e31b43b06391
+          e649f59692e3c19a95d19aa5c82925239a71bb9d
+          99b8540aec6188beb5d4898d79130aca7c760079
+          64b5632297c59680c63f620b6a8850df6630bf2f
+          f411671cbdc28972f973e75fb251fc90ef24fc31
+          87794c5a5744d092a7e9585864f4a8a30c7f8bdc
+          ba2fa1800e30ece5a2a719b9bf3e0fe272ad8ecc
+          8b7b185a335ecf6fcc609325f73f5ab4983d23bd
+          d33744d607d370e1d7ee23ff5335d76be6eebf23
+          6bc1954ac080b60337aed97199018b07db10207a
+          8d85b4702959815bfe6be017b4c8e9d5df720918
+          76bc98b3cfdd06e59429ad4fc2f9825aadbe2ea2
+          3a715d10d44d10eb993d190e741fb60f8ed2f92c
+          b8fc76a5499e178ae322d11c05e527e8345b9753
+          73e9835087356503c37be5a10e4757a8270723fa
+          e49d06940e64fb1abf97e05ffb12ece7efc92066
+          939ed21d18ce0c2d0d9368d9801785c4ac5eb57f
+          bda313859fd04fc22fe472714538fe256dd17b91'''.split()
+          root = pathlib.Path('recovered-directive')
+          root.mkdir()
+          def retrieve(item):
+              index, sha = item
+              request = urllib.request.Request(
+                  f'https://api.github.com/repos/{os.environ["REPOSITORY"]}/git/blobs/{sha}',
+                  headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                           'Accept': 'application/vnd.github+json',
+                           'X-GitHub-Api-Version': '2022-11-28'})
+              with urllib.request.urlopen(request, timeout=45) as response:
+                  blob = json.load(response)
+              data = base64.b64decode(blob['content'])
+              actual = hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
+              if actual != sha or blob['sha'] != sha:
+                  raise ValueError(f'Blob identity mismatch: {sha}')
+              name = f'{index:02d}-{sha}.bin'
+              (root / name).write_bytes(data)
+              return {'index': index, 'sha': sha, 'bytes': len(data),
+                      'sha256': hashlib.sha256(data).hexdigest(), 'prefix': data[:12].hex(), 'file': name}
+          with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+              records = list(pool.map(retrieve, enumerate(shas)))
+          (root / 'manifest.json').write_text(json.dumps(records, indent=2) + '\n')
+          print(json.dumps(records, indent=2))
+          PY
+      - name: Retain verified payload for exact local reconstruction
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: recovered-directive-payload
+          path: recovered-directive/
+          if-no-files-found: error
+          retention-days: 7
