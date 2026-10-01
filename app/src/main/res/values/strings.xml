@@ -186,4 +186,5 @@
     <string name="raw_sequence">Continuous RAW lab</string>
     <string name="raw_sequences">Retained RAW sequences</string>
     <string name="stop_raw">Stop RAW</string>
+    <string name="live_log_mode">Experimental live RAW-derived LogC3</string>
 </resources>

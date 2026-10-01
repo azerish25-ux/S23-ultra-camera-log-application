@@ -133,7 +133,8 @@ object LogP010Codec {
 
     /** Fully decode every frame through a separate P010 decoder; a Bitmap is never precision evidence. */
     fun verify(file:File,width:Int,height:Int,fps:Int,count:Int,check:()->Unit,
-               consume:(Int,P010Rows)->Unit):JSONObject {
+               expectedPtsUs:List<Long>?=null,consume:(Int,P010Rows)->Unit):JSONObject {
+        require(expectedPtsUs==null || (expectedPtsUs.size==count && expectedPtsUs.zipWithNext().all { (a,b) -> b>a }))
         val extractor=MediaExtractor(); var decoder:MediaCodec?=null; var started=false
         try {
             extractor.setDataSource(file.absolutePath); require(extractor.trackCount==1)
@@ -171,7 +172,7 @@ object LogP010Codec {
                 if(index>=0) {
                     try {
                         if(info.size>0 && info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG==0) {
-                            require(decoded<count && abs(info.presentationTimeUs-decoded*1_000_000L/fps)<=2) { "Decoded frame count/order/timestamps differ from input" }
+                            require(decoded<count && abs(info.presentationTimeUs-(expectedPtsUs?.getOrNull(decoded) ?: (decoded*1_000_000L/fps)))<=2) { "Decoded frame count/order/timestamps differ from input" }
                             val image=requireNotNull(c.getOutputImage(index)) { "Decoder did not expose an Image for 10-bit verification" }
                             image.use { consume(decoded,planes(it,width,height)) }; decoded++
                         }
@@ -185,7 +186,10 @@ object LogP010Codec {
             return JSONObject().put("decoder",c.name).put("decodedFrames",decoded).put("fullDecodeVerified",true)
                 .put("width",width).put("height",height).put("mime",MIME).put("lumaBitDepth",signal.lumaBits).put("chromaBitDepth",signal.chromaBits)
                 .put("colorPrimariesCode",signal.primaries).put("transferCharacteristicsCode",signal.transfer).put("matrixCoefficientsCode",signal.matrix)
-                .put("colorRange",MediaFormat.COLOR_RANGE_LIMITED).put("colorTransfer",0).put("measuredFps",fps).put("cadenceStatus","within_tolerance")
+                .put("colorRange",MediaFormat.COLOR_RANGE_LIMITED).put("colorTransfer",0)
+                .put("measuredFps",if(expectedPtsUs!=null && count>1) (count-1)*1e6/(expectedPtsUs.last()-expectedPtsUs.first()) else fps.toDouble())
+                .put("cadenceStatus",if(expectedPtsUs==null)"within_tolerance" else "original_pts_verified_not_cadence_certification")
+                .put("timestampContract",if(expectedPtsUs==null)"CFR" else "relative_sensor_timestamps")
         } finally { if(started)runCatching { decoder?.stop() }; runCatching { decoder?.release() }; extractor.release() }
     }
     /** The positive AND deliberately 8-bit-degraded control use the same encoder and decoder.

@@ -90,3 +90,5 @@ if not image.startswith(b'\x89PNG\r\n\x1a\n') or len(image) < 100:
 PY_CHECK
 python3 scripts/check_raw_development.py evidence/emulator/app-evidence.tar > evidence/emulator/raw-development-summary.json
 cat evidence/emulator/summary.json
+
+python3 scripts/check_live_log.py evidence/emulator/app-evidence.tar > evidence/emulator/live-log-summary.json

@@ -8,6 +8,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 class S23Application : Application() {
+    val liveLog by lazy { com.s23log.probe.live.LiveLogSession(this) }
     val rawDevelopment by lazy { com.s23log.probe.develop.RawDevelopmentStore(this) }
     val reports: ProbeStore by lazy { ProbeStore(this) }
     val colourReferences: ColourReferenceStore by lazy { ColourReferenceStore(this) }

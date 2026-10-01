@@ -11,6 +11,15 @@ class CapturePairingTest {
     private fun report() = JSONObject().put("kind", "recording-validation").put("verification",
         JSONObject().put("mediaIdentity", JSONObject(identity.describe())))
     @Test fun matchesOriginalBytes() { assertTrue(CapturePairing.matches(report(), identity)) }
+    @Test fun logReportsRequireTheSameOriginalByteIdentity() {
+        for (kind in listOf("raw-derived-logc3", "live-raw-logc3")) {
+            assertTrue(CapturePairing.matches(report().put("kind",kind),identity))
+            assertFalse(CapturePairing.matches(report().put("kind",kind),identity.copy(byteCount=124)))
+        }
+    }
+    @Test fun logLabelDoesNotReplaceMissingIdentity() {
+        assertFalse(CapturePairing.matches(JSONObject().put("kind","live-raw-logc3").put("status","container_checked"),identity))
+    }
     @Test fun rejectsChangedBytes() { assertFalse(CapturePairing.matches(report(), identity.copy(sha256 = "b".repeat(64)))) }
     @Test fun rejectsChangedLength() { assertFalse(CapturePairing.matches(report(), identity.copy(byteCount = 124))) }
     @Test fun historicalReportIsNotSilentlyCertified() { assertFalse(CapturePairing.matches(JSONObject().put("kind", "recording-validation"), identity)) }

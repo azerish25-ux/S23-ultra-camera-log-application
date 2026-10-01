@@ -56,6 +56,7 @@
                     <Button android:id="@+id/rawOne" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_one" android:enabled="false" />
                     <Button android:id="@+id/rawFive" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:text="@string/raw_five" android:enabled="false" />
                 </LinearLayout>
+                <Button android:id="@+id/liveLog" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/live_log_mode" />
                 <Button android:id="@+id/rawSequence" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/raw_sequence" android:enabled="false" />
                 <Button android:id="@+id/rawSequences" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/raw_sequences" />
                 <TextView android:id="@+id/planNotes" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:paddingTop="8dp" />

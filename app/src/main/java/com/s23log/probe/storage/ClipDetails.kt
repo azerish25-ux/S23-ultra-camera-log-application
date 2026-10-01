@@ -15,7 +15,7 @@ data class ClipDetails(val width: Int?, val height: Int?, val mime: String?, val
                 measured?.optInt("colorTransfer")?.takeIf { it > 0 }, positive("lumaBitDepth"),
                 report?.optString("status")?.takeIf { it.isNotBlank() } ?: "unknown",
                 measured?.optString("cadenceStatus")?.takeIf { it.isNotBlank() } ?: "unknown",
-                if (report?.optString("kind") == "raw-derived-logc3") "LogC3 / AWG3 · ${report.optString("calibrationStatus", "unknown")} profile" else null)
+                if (report?.optString("kind") in setOf("raw-derived-logc3", "live-raw-logc3")) "LogC3 / AWG3 · ${report?.optString("calibrationStatus", "unknown")} profile" else null)
         }
     }
 }

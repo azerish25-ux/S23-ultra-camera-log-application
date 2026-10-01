@@ -28,8 +28,8 @@ android {
         applicationId = "com.s23log.probe"
         minSdk = 26
         targetSdk = 36
-        versionCode = 10
-        versionName = "0.8.0-on-device-logc3"
+        versionCode = 11
+        versionName = "0.9.0-live-logc3-lab"
         val revision = System.getenv("GITHUB_SHA") ?: providers.gradleProperty("sourceRevision").orNull ?: "local-unversioned"
         require(revision.matches(Regex("[a-zA-Z0-9-]+")))
         buildConfigField("String", "SOURCE_REVISION", "\"$revision\"")

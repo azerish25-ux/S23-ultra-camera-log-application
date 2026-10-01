@@ -2,7 +2,7 @@
 
 <img src="docs/images/launcher-icon.png" width="72" alt="S23Log adaptive launcher icon" />
 
-Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log or live RAW-derived Log video. Saved RAW sequences can be developed into LogC3 on the phone where the dedicated 10-bit codec checks pass. Physical S23 performance and calibration remain unverified.**
+Kotlin/XML Android camera application focused on explicit capabilities, recoverable footage and independently inspectable recording evidence. It targets the Samsung Galaxy S23 Ultra through public Android APIs and runs supported paths on other Android devices. **It does not record proprietary Samsung Log. Saved-RAW development and an experimental live RAW-derived LogC3 path are implemented behind separate ten-bit GPU/codec checks. Physical S23 performance and calibration remain unverified.**
 
 Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch controls and bitrate targets, preview-only monitoring aids, a thumbnail library, original-video/report identity pairing, storage/thermal safeguards and time-varying control evidence. Reference forward/inverse LUTs are separate mathematical exports, not a claim of a shipping Log recording path.
 
@@ -13,6 +13,14 @@ Version 0.6 adds a persistent capture dock, explicit lens routes, bounded touch 
 - [Physical S23 Ultra test plan](docs/DEVICE_TEST_PLAN.md)
 
 This is an actively developed camera tool, not a device-certified production release. Release APKs remain unsigned until a release-key/update policy is established. Emulator evidence is kept separate from physical 4K/8K, ten-bit input fidelity, thermal endurance and audiovisual synchronization.
+
+## Version 0.9 — experimental live RAW-derived LogC3
+
+**Experimental live RAW-derived LogC3** is a separate camera screen with standalone backend qualification, a GLSL RAW-development engine, original-relative-sensor timestamps, asynchronous streaming encoding and an independent corrected/Log preview. It tests P010 Image and candidate RGB10 Surface interfaces; missing or degraded routes remain unavailable. Existing SDR/HLG and saved-source paths are preserved.
+
+The first backend allows at most 16 MP RAW input and 1080p output at 24/30 fps, with explicit crop/reduction and matching profile consent. Normal live capture retains compressed video and metadata, not a RAW master. It is video-only, includes RAW copies and P010 readback where applicable, and has not been physically qualified on the S23. A successful build or synthetic ramp is not a live-camera success or an ARRI dynamic-range claim.
+
+See [live workflow, precision gates, ownership and physical acceptance](docs/LIVE_LOGC3.md).
 
 ## Version 0.8 — on-device RAW development
 

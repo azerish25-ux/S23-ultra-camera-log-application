@@ -36,3 +36,7 @@ Saved RAW sequences can be developed on Android through a row-streaming CPU refe
 ## Evidence rules
 
 An advertised capability, a configured session, received encoded frames, a checked container and a physically qualified mode are distinct states. Unavailable hardware must remain unavailable rather than being converted into a passing test. Existing tests retain their failure thresholds; diagnostic/precision repairs must preserve negative controls. Every meaningful source batch is tied to a main-branch revision and CI evidence. A green emulator campaign does not close the device gates above.
+
+## Live lab 0.9
+
+Standalone backend qualification, GPU RAW development, relative-sensor-timestamp streaming and independent live preview are implemented in a separate experimental path. See [LIVE_LOGC3.md](LIVE_LOGC3.md). Physical camera operation, actual end-to-end precision/throughput, audio synchronization, high resolutions and long-duration image quality remain unqualified. Surface capability advertisements are not accepted in place of decoded-pixel proof.

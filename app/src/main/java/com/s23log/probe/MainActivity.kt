@@ -200,6 +200,10 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
                 }
             }
         }
+        button(R.id.liveLog).setOnClickListener {
+            if (Build.VERSION.SDK_INT >= 33) startActivity(Intent(this, LiveLogActivity::class.java))
+            else onState(engineState, "Live Log requires Android 13 or newer")
+        }
         button(R.id.rawSequence).setOnClickListener { chooseRawSequence() }
         button(R.id.rawSequences).setOnClickListener { showRawSequences() }
         button(R.id.rawOne).setOnClickListener { controller.captureRaw(1) }
@@ -617,6 +621,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.rawFive).isEnabled = preview && rawAvailable
         button(R.id.rawSequence).isEnabled = preview && selected?.manualSensor == true
         button(R.id.rawSequences).isEnabled = idle
+        button(R.id.liveLog).isEnabled = idle && Build.VERSION.SDK_INT >= 33
         val controls = preview || recording
         toggle(R.id.manualExposure).isEnabled = controls && selected?.manualSensor == true
         text(R.id.isoInput).isEnabled = controls && toggle(R.id.manualExposure).isChecked
