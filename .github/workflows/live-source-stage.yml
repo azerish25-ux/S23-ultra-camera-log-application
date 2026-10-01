@@ -1,0 +1,93 @@
+name: Verify staged live RAW LogC3 source
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/live-source-stage.yml]
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Verify patch and publish immutable source blobs only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, lzma, os, pathlib, subprocess, urllib.request
+          repo = 'azerish25-ux/S23-ultra-camera-log-application'
+          baseline = 'b728d3e5527b87c1adf6a7457ffb88556f8a127d'
+          assert os.environ['GITHUB_REPOSITORY'] == repo
+          assert subprocess.check_output(['git','rev-parse','HEAD^'],text=True).strip() == baseline
+          def api(path, data=None):
+              request = urllib.request.Request('https://api.github.com/repos/'+repo+path,
+                  data=None if data is None else json.dumps(data).encode(),
+                  headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json',
+                           'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+              with urllib.request.urlopen(request,timeout=60) as response: return json.load(response)
+          def identity(data):
+              return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          parts=[]
+          for sha in ['c6387738d78a4e29e1970b849366661597839be1','8e1a9fb4798df4922073ff2c4cd221fbfbcfa9fd','661494a548c89305eb1d8eb50538d1c7a93354ae']:
+              blob=api('/git/blobs/'+sha)
+              assert blob['encoding']=='base64'
+              data=base64.b64decode(blob['content']);assert identity(data)==sha;parts.append(data)
+          patch=lzma.decompress(base64.b64decode(b''.join(parts),validate=True))
+          assert len(patch)==137439
+          assert hashlib.sha256(patch).hexdigest()=='c6d67a313c696fcee94e99ed7ba1769ce21a25e19d67a0541fe3c7efc5da6420'
+          path=pathlib.Path(os.environ['RUNNER_TEMP'])/'live-log.patch';path.write_bytes(patch)
+          subprocess.run(['git','apply','--index','--whitespace=error',str(path)],check=True)
+          names=subprocess.check_output(['git','diff','--cached','--name-only','-z']).decode().rstrip('\0').split('\0')
+          expected={'.github/scripts/emulator-test.sh','README.md','app/build.gradle.kts','app/src/main/AndroidManifest.xml',
+              'app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt',
+              'app/src/main/java/com/s23log/probe/LiveLogActivity.kt','app/src/main/java/com/s23log/probe/MainActivity.kt',
+              'app/src/main/java/com/s23log/probe/S23Application.kt','app/src/main/java/com/s23log/probe/core/LiveLogPolicy.kt',
+              'app/src/main/java/com/s23log/probe/develop/LogP010Codec.kt','app/src/main/java/com/s23log/probe/live/LiveBackendProbe.kt',
+              'app/src/main/java/com/s23log/probe/live/LiveLogEncoder.kt','app/src/main/java/com/s23log/probe/live/LiveLogMonitor.kt',
+              'app/src/main/java/com/s23log/probe/live/LiveLogSession.kt','app/src/main/java/com/s23log/probe/live/RawLogGpu.kt',
+              'app/src/main/java/com/s23log/probe/live/RawLogShaders.kt','app/src/main/java/com/s23log/probe/storage/CapturePairing.kt',
+              'app/src/main/java/com/s23log/probe/storage/ClipDetails.kt','app/src/main/res/layout/viewfinder.xml',
+              'app/src/main/res/values/strings.xml','app/src/test/java/com/s23log/probe/CapturePairingTest.kt',
+              'app/src/test/java/com/s23log/probe/LiveLogPolicyTest.kt','docs/IMPLEMENTATION_STATUS.md',
+              'docs/LIVE_LOGC3.md','scripts/check_live_log.py','scripts/tests/test_live_log.py'}
+          assert set(names)==expected
+          files={}
+          for name in sorted(names):
+              mode=subprocess.check_output(['git','ls-files','--stage','--',name],text=True).split()[0]
+              assert mode==('100755' if name=='.github/scripts/emulator-test.sh' else '100644')
+              data=pathlib.Path(name).read_bytes()
+              blob=api('/git/blobs',{'encoding':'base64','content':base64.b64encode(data).decode()})
+              assert blob['sha']==identity(data)
+              files[name]={'sha':blob['sha'],'mode':mode}
+          manifest={'baseline':baseline,'stageCommit':os.environ['GITHUB_SHA'],'files':files}
+          pathlib.Path('live-source-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print(json.dumps(manifest,indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: Live-Log-source-manifest
+          path: live-source-manifest.json
+          if-no-files-found: error
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install pinned Android build packages
+        env:
+          ANDROID_HOME: ${{ runner.temp }}/s23log-android-sdk
+        run: bash .github/scripts/install-android.sh
+      - name: Compile and test staged live implementation
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: Live-Log-stage-build-reports
+          path: |
+            app/build/reports/
+            app/build/test-results/
+          if-no-files-found: warn
