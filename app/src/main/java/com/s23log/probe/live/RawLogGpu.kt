@@ -27,7 +27,6 @@ class RawLogGpu(val environment: GlEnvironment, val rawWidth: Int, val rawHeight
     private var surfaceProgram=0
     private val query=IntArray(1)
     private val transfer=ByteBuffer.allocateDirect(width*height*3).order(ByteOrder.LITTLE_ENDIAN)
-    private var wideReadback:ByteBuffer?=null
     var packedReadbackType=0;private set
     var frames=0L; private set
     var clippedFrames=0L; private set
@@ -41,7 +40,9 @@ class RawLogGpu(val environment: GlEnvironment, val rawWidth: Int, val rawHeight
             require(maxOf(rawWidth,rawHeight,width,height+height/2)<=limit[0]) { "GPU texture limit excludes this mode" }
             rawTexture=integerTexture(rawWidth,rawHeight,GL.GL_R16UI)
             logTexture=GlTools.texture(width,height,GL.GL_RGBA16F);logFbo=GlTools.fbo(logTexture)
-            packedTexture=integerTexture(width/2,height+height/2,GL.GL_RGBA8UI);packedFbo=GlTools.fbo(packedTexture)
+            // RGBA8 contains byte pairs, NOT an 8-bit RGB working image. Each
+            // ten-bit sample occupies two channels with its six low padding bits.
+            packedTexture=GlTools.texture(width/2,height+height/2,GL.GL_RGBA8);packedFbo=GlTools.fbo(packedTexture)
             val rb=IntArray(1);GL.glGenRenderbuffers(1,rb,0);clipBuffer=rb[0]
             GL.glBindRenderbuffer(GL.GL_RENDERBUFFER,clipBuffer);GL.glRenderbufferStorage(GL.GL_RENDERBUFFER,GL.GL_RGBA4,width,height)
             val f=IntArray(1);GL.glGenFramebuffers(1,f,0);clipFbo=f[0];GL.glBindFramebuffer(GL.GL_FRAMEBUFFER,clipFbo)
@@ -98,22 +99,19 @@ class RawLogGpu(val environment: GlEnvironment, val rawWidth: Int, val rawHeight
         val began=System.nanoTime();environment.current()
         GL.glUseProgram(packProgram);GL.glUniform1i(GL.glGetUniformLocation(packProgram,"outputHeight"),height)
         GlTools.draw(packProgram,logTexture,packedFbo,width/2,height+height/2)
-        transfer.clear();GL.glPixelStorei(GL.GL_PACK_ALIGNMENT,1)
-        val nativeFormat=IntArray(1);val nativeType=IntArray(1)
-        GL.glGetIntegerv(GL.GL_IMPLEMENTATION_COLOR_READ_FORMAT,nativeFormat,0)
-        GL.glGetIntegerv(GL.GL_IMPLEMENTATION_COLOR_READ_TYPE,nativeType,0)
-        if(nativeFormat[0]==GL.GL_RGBA_INTEGER && nativeType[0]==GL.GL_UNSIGNED_BYTE) {
-            packedReadbackType=GL.GL_UNSIGNED_BYTE
-            GL.glReadPixels(0,0,width/2,height+height/2,GL.GL_RGBA_INTEGER,GL.GL_UNSIGNED_BYTE,transfer)
-        } else {
-            // ES3 guarantees RGBA_INTEGER/UNSIGNED_INT for unsigned integer attachments.
-            // Exact byte values are repacked, not normalized or reduced in precision.
-            packedReadbackType=GL.GL_UNSIGNED_INT
-            val wide=wideReadback ?: ByteBuffer.allocateDirect(width*height*12).order(ByteOrder.nativeOrder()).also{wideReadback=it}
-            wide.clear();GL.glReadPixels(0,0,width/2,height+height/2,GL.GL_RGBA_INTEGER,GL.GL_UNSIGNED_INT,wide)
-            GlTools.check("GPU integer readback");val words=wide.asIntBuffer()
-            while(words.hasRemaining()){val v=words.get();require(v in 0..255){"Invalid packed byte from GPU"};transfer.put(v.toByte())}
-        }
+        // Use the core normalized RGBA/UNSIGNED_BYTE transfer. The integer
+        // framebuffer transfer failed the API-36 emulator comparison despite
+        // matching floating-point RGB. Encoding exact byte/255 values avoids that
+        // driver path without quantizing the Log image to eight bits.
+        transfer.clear()
+        GL.glBindBuffer(GL.GL_PIXEL_PACK_BUFFER,0)
+        GL.glPixelStorei(GL.GL_PACK_ALIGNMENT,1)
+        GL.glPixelStorei(GL.GL_PACK_ROW_LENGTH,0)
+        GL.glPixelStorei(GL.GL_PACK_SKIP_ROWS,0)
+        GL.glPixelStorei(GL.GL_PACK_SKIP_PIXELS,0)
+        GL.glReadBuffer(GL.GL_COLOR_ATTACHMENT0)
+        packedReadbackType=GL.GL_UNSIGNED_BYTE
+        GL.glReadPixels(0,0,width/2,height+height/2,GL.GL_RGBA,GL.GL_UNSIGNED_BYTE,transfer)
         GlTools.check("GPU packed P010 readback")
         transfer.position(0);transfer.limit(width*height*3)
         maximumReadbackNs=maxOf(maximumReadbackNs,System.nanoTime()-began)

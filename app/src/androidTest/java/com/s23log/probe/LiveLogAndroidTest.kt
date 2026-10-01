@@ -10,6 +10,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.s23log.probe.live.LiveBackendProbe
 import com.s23log.probe.live.RawLogGpuProbe
+import com.s23log.probe.live.RawLogGpu
+import com.s23log.probe.gpu.GlEnvironment
+import com.s23log.probe.core.LiveP010
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import kotlin.math.abs
 import com.s23log.probe.diagnostics.ModeEvidence
 import com.s23log.probe.diagnostics.jsonValue
 import org.json.JSONObject
@@ -29,6 +35,54 @@ class LiveLogAndroidTest {
     }
     @Test fun actualGpuMatchesCpuAcrossBayerCropsAndReductions(){
         val report=RawLogGpuProbe.run();assertEquals("passed",report.getString("status"));assertEquals(12,report.getInt("bayerReductionCases"));save("gpu-test.json",report)
+    }
+    @Test fun packedP010PreservesRampsChromaPaddingAndRepeatedReadback(){
+        var peak=0;var cases=0;var rampLevels=0
+        GlEnvironment.create().use { env ->
+            for((w,h) in listOf(1024 to 4,12 to 8,2 to 2)) {
+                RawLogGpu(env,w,h,w,h).use { gpu ->
+                    for(frame in 0..2) {
+                        val values=FloatArray(w*h*4)
+                        for(y in 0 until h)for(x in 0 until w) {
+                            val at=(y*w+x)*4
+                            for(c in 0..2)values[at+c]=if(y<2) ((x+frame*73)%877)/876f
+                                else ((x*(c*6+1)+y*(17-c*7)+frame*73)%877)/876f
+                            values[at+3]=1f
+                        }
+                        gpu.fixture(values)
+                        // Compare the actual FP16 source with independent CPU YUV math.
+                        // Reading floats first also exercises framebuffer-state changes.
+                        val pixels=gpu.referencePixels()
+                        val expected=LiveP010.rows(ByteBuffer.allocate(w*h*3).order(ByteOrder.LITTLE_ENDIAN),w,h)
+                        for(y in 0 until h step 2)expected.pair(y,
+                            DoubleArray(w*3){j->pixels[(y*w+j/3)*4+j%3].toDouble()},
+                            DoubleArray(w*3){j->pixels[((y+1)*w+j/3)*4+j%3].toDouble()})
+                        repeat(2) {
+                            val bytes=gpu.p010()
+                            assertEquals(w*h*3,bytes.remaining())
+                            assertEquals(ByteOrder.LITTLE_ENDIAN,bytes.order())
+                            for(j in 0 until bytes.limit() step 2)
+                                assertEquals("P010 low six bits at $j",0,bytes.getShort(j).toInt() and 63)
+                            val actual=LiveP010.rows(bytes,w,h)
+                            for(y in 0 until h)for(x in 0 until w)
+                                peak=maxOf(peak,abs(expected.y.get(x,y)-actual.y.get(x,y)))
+                            for(y in 0 until h/2)for(x in 0 until w/2)
+                                peak=maxOf(peak,abs(expected.u.get(x,y)-actual.u.get(x,y)),abs(expected.v.get(x,y)-actual.v.get(x,y)))
+                            assertTrue("Packed P010 differs from CPU: $peak",peak<=1)
+                            if(w==1024) {
+                                val levels=(0 until w).map{actual.y.get(it,0)}.toSet().size
+                                assertTrue("Ten-bit ramp collapsed to $levels levels",levels>=800)
+                                rampLevels=maxOf(rampLevels,levels)
+                            }
+                            cases++
+                        }
+                    }
+                }
+            }
+        }
+        save("byte-pack-test.json",JSONObject().put("status","passed").put("synthetic",true)
+            .put("cases",cases).put("maximumP010CodeError",peak).put("rampLevels",rampLevels)
+            .put("transport","rgba8-packed-bytes").put("sensorPrecisionMeasured",false))
     }
     @Test fun actualEncoderRoutesAreQualifiedOrExplicitlyUnavailable(){
         val result=LiveBackendProbe.run(context.cacheDir,1024,128,24)

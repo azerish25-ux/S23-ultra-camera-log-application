@@ -68,22 +68,25 @@ object RawLogShaders {
         precision highp int;
         uniform highp sampler2D source;
         uniform int outputHeight;
-        layout(location=0) out uvec4 codes;
+        layout(location=0) out vec4 codes;
         vec3 rgb(ivec2 p) { return clamp(texelFetch(source,p,0).rgb,0.0,1.0); }
         float luma(vec3 r) { return dot(r,vec3(.2126,.7152,.0722)); }
         void main() {
-            ivec2 p=ivec2(gl_FragCoord.xy); uint a;uint b;
+            ivec2 p=ivec2(gl_FragCoord.xy); float a;float b;
             if(p.y<outputHeight) {
-                a=uint(floor(64.0+876.0*luma(rgb(ivec2(p.x*2,p.y)))+.5));
-                b=uint(floor(64.0+876.0*luma(rgb(ivec2(p.x*2+1,p.y)))+.5));
+                a=floor(64.0+876.0*luma(rgb(ivec2(p.x*2,p.y)))+.5);
+                b=floor(64.0+876.0*luma(rgb(ivec2(p.x*2+1,p.y)))+.5);
             } else {
                 ivec2 q=ivec2(p.x*2,(p.y-outputHeight)*2);
                 vec3 r=(rgb(q)+rgb(q+ivec2(1,0))+rgb(q+ivec2(0,1))+rgb(q+ivec2(1,1)))*.25;
                 float y=luma(r);
-                a=uint(clamp(floor(512.0+896.0*(r.b-y)/1.8556+.5),64.0,960.0));
-                b=uint(clamp(floor(512.0+896.0*(r.r-y)/1.5748+.5),64.0,960.0));
+                a=clamp(floor(512.0+896.0*(r.b-y)/1.8556+.5),64.0,960.0);
+                b=clamp(floor(512.0+896.0*(r.r-y)/1.5748+.5),64.0,960.0);
             }
-            a<<=6;b<<=6;codes=uvec4(a&255u,a>>8,b&255u,b>>8);
+            // Little-endian (code << 6): low byte = (code mod 4)*64;
+            // high byte = floor(code/4). All arithmetic here is exact for codes
+            // 0..1023. RGBA8 stores four independent bytes, not four colour values.
+            codes=vec4(mod(a,4.0)*64.0,floor(a/4.0),mod(b,4.0)*64.0,floor(b/4.0))/255.0;
         }
     """.trimIndent()
     val clipping = """#version 300 es
