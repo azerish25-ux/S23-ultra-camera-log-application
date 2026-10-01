@@ -1,0 +1,69 @@
+name: Stage on-device LogC3 source
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/on-device-source-stage.yml]
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 2
+          persist-credentials: false
+      - name: Validate source patch and stage immutable blobs without branch updates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import base64, hashlib, json, lzma, os, pathlib, subprocess, urllib.request
+          repo = 'azerish25-ux/S23-ultra-camera-log-application'
+          baseline = '01c76bc345ed24efd2d8fcbddbffab4aebaa17bf'
+          assert os.environ['GITHUB_REPOSITORY'] == repo
+          assert subprocess.check_output(['git','rev-parse','HEAD^'],text=True).strip() == baseline
+          def api(path, data=None):
+              body = None if data is None else json.dumps(data).encode()
+              req = urllib.request.Request('https://api.github.com/repos/'+repo+path, data=body,
+                  headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'], 'Accept':'application/vnd.github+json',
+                           'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'})
+              with urllib.request.urlopen(req, timeout=60) as response: return json.load(response)
+          def identity(data):
+              return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
+          parts = []
+          for sha in ['f4d1d270884b3275dadfc827ad3a6052b329fc70','b504ba886257d3d28f588970da214ea586383127',
+                      '27c40ada42dba9ed3a26dac4db3be8a9080574b6','1387ff80c287ab4808b8a0ec5dfeb19f75abea15',
+                      '0ee5ae59be24f7591f539654d7fe46ced6855796','3a2cce41137fd774d7d7d372186e7ef430fa4fa4']:
+              value = api('/git/blobs/'+sha)
+              assert value['encoding'] == 'base64'
+              data = base64.b64decode(value['content'])
+              assert identity(data) == sha
+              parts.append(data)
+          patch = lzma.decompress(base64.b64decode(b''.join(parts),validate=True))
+          assert len(patch) == 166035
+          assert hashlib.sha256(patch).hexdigest() == 'bad2419cff0b7a64831d590e6d199c8facfefe152cd4ca1b5be94ef2c8b13904'
+          path = pathlib.Path(os.environ['RUNNER_TEMP'])/'on-device.patch'
+          path.write_bytes(patch)
+          subprocess.run(['git','apply','--index','--whitespace=error',str(path)],check=True)
+          names = subprocess.check_output(['git','diff','--cached','--name-only','-z']).decode().rstrip('\0').split('\0')
+          assert len(names) == 27
+          files = {}
+          for name in sorted(names):
+              assert not name.startswith('.github/workflows/')
+              mode = subprocess.check_output(['git','ls-files','--stage','--',name],text=True).split()[0]
+              assert mode in ('100644','100755')
+              data = pathlib.Path(name).read_bytes()
+              blob = api('/git/blobs',{'encoding':'base64','content':base64.b64encode(data).decode()})
+              assert blob['sha'] == identity(data)
+              files[name] = {'sha':blob['sha'],'mode':mode}
+          manifest = {'baseline':baseline,'stageCommit':os.environ['GITHUB_SHA'],'files':files}
+          pathlib.Path('on-device-source-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print(json.dumps(manifest,indent=2))
+          PY
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: On-device-source-manifest
+          path: on-device-source-manifest.json
+          if-no-files-found: error
