@@ -14,23 +14,13 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - name: Install existing host prerequisites
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 -m venv "$RUNNER_TEMP/p003-import-venv"
-          "$RUNNER_TEMP/p003-import-venv/bin/pip" install -r scripts/requirements-raw.txt
-          echo "$RUNNER_TEMP/p003-import-venv/bin" >> "$GITHUB_PATH"
-          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null || ! command -v zstd >/dev/null; then
-            sudo apt-get update -qq
-            sudo apt-get install -y ffmpeg zstd
-          fi
       - name: Verify exact saved source and register original commits
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
+          command -v zstd
           python3 - <<'PY'
           import base64, hashlib, json, os, pathlib, subprocess, sys, urllib.request
           sha = 'd931d4ea1b65ba3bf13bb853ba068e64c6021a95'
@@ -40,14 +30,16 @@ jobs:
               data = base64.b64decode(json.load(response)['content'])
           assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
           code = data.decode()
-          before = "git('read-tree', BASE_TREE)"
-          after = "git('read-tree', '--reset', '-u', BASE_TREE)"
-          assert code.count(before) == 1
-          code = code.replace(before, after)
-          before = "git('bundle', 'create', str(OUT / 'restored-history.bundle'), 'refs/heads/main')"
-          after = "git('bundle', 'create', str(OUT / 'restored-history.bundle'), '--all')"
-          assert code.count(before) == 1
-          code = code.replace(before, after)
+          replacements = [
+              ("git('read-tree', BASE_TREE)", "git('read-tree', '--reset', '-u', BASE_TREE)"),
+              ("git('bundle', 'create', str(OUT / 'restored-history.bundle'), 'refs/heads/main')", "git('bundle', 'create', str(OUT / 'restored-history.bundle'), '--all')"),
+              ("('host-tests', [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts/tests', '-v'], 249)", "('focused-live-tests', [sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts/tests', '-p', 'test_live_evidence.py', '-v'], 47)"),
+          ]
+          for before, after in replacements:
+              assert code.count(before) == 1, before
+              code = code.replace(before, after)
+          # Full host tests require NumPy/FFmpeg. They are executed separately on
+          # the returned complete history, not represented by this focused run.
           path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'import-saved-p003.py'
           path.write_text(code)
           subprocess.run([sys.executable, str(path)], check=True)
