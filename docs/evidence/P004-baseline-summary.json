@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "baselineId": "P004-d3a6ada-v1",
+  "source": {
+    "revision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "tree": "99b83b61ca40b25fe2e0a0dadeb47b004d8a672c"
+  },
+  "originalRun": 37024421010,
+  "originalJob": 110895707817,
+  "counts": {
+    "host": {
+      "passed": 249
+    },
+    "jvm": {
+      "passed": 340
+    },
+    "emulator": {
+      "passed": 62
+    },
+    "permission": {
+      "passed": 1
+    }
+  },
+  "sourceFileCount": 299,
+  "apk": {
+    "member": "app-debug.apk",
+    "sha256": "d7809b0c587a4fcfcc74148f0aa76352e551a1e0ad26253c5bad196a91d948ba",
+    "bytes": 3130891,
+    "signatureScope": "Original CI signing checks; artifact replay is not a new apksigner run."
+  },
+  "physical": {
+    "outcome": "unavailable",
+    "certified": false,
+    "reason": "No physical S23 measurement is supplied by this software baseline."
+  },
+  "p003Adapters": {
+    "savedRaw": 5,
+    "ordinary": 28,
+    "live": 5
+  },
+  "recordings": {
+    "mediaIdentitiesMatched": true,
+    "recordings": 25,
+    "recordingReports": 25,
+    "probeReports": 1,
+    "longestPacketSpanSeconds": 65.436944,
+    "audioRecordings": 6,
+    "permissionDenialVerified": true,
+    "allAudioFullyDecoded": true,
+    "allVideosFullyDecoded": true,
+    "physicalLipSyncVerified": false,
+    "scope": "emulator evidence; not physical S23 Ultra validation"
+  },
+  "savedRawBackend": {
+    "nativeUi": "passed",
+    "androidReferenceMath": "passed",
+    "codecRoute": "unavailable",
+    "encodedPixelsTested": false,
+    "physicalCameraCertified": false,
+    "appCommit": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df"
+  },
+  "liveBackend": {
+    "appCommit": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "gpuReference": "passed",
+    "backend": "unavailable",
+    "liveCameraTested": false,
+    "physicalCameraCertified": false
+  },
+  "canonicalReportSha256": "617beeae819a7782ab73babb421680c08c272bc594749fb687884a505a5b0497",
+  "scope": "Original d3a6ada execution and independent artifact replay. Not execution of the new P004 tests or a physical phone experiment.",
+  "reproduction": "Separate frozen-source workflow; compare its actual artifacts, not its plan or queue state."
+}

@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "baselineId": "P004-d3a6ada-v1",
+  "repository": "azerish25-ux/S23-ultra-camera-log-application",
+  "source": {
+    "revision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "tree": "99b83b61ca40b25fe2e0a0dadeb47b004d8a672c"
+  },
+  "run": {
+    "id": 37024421010,
+    "jobId": 110895707817,
+    "attempt": 1,
+    "workflowRevision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df"
+  },
+  "inputs": {
+    "verification.zip": {
+      "sha256": "f4977660d1880b78eec74eba3882675d64a58d6a91a939166296d80a2559f62d",
+      "bytes": 10390707,
+      "apiPath": "/actions/artifacts/11235233287/zip",
+      "owner": "azerish25-ux/S23-ultra-camera-log-application",
+      "purpose": "Retained original GitHub Actions evidence, private project verification; no new third-party redistribution grant."
+    },
+    "apk.zip": {
+      "sha256": "f0dff35d7586ac78f3eed2ba3fda0426e2780c5fab9647690034feff83a742bb",
+      "bytes": 2999567,
+      "apiPath": "/actions/artifacts/11235033489/zip",
+      "owner": "azerish25-ux/S23-ultra-camera-log-application",
+      "purpose": "Retained original GitHub Actions evidence, private project verification; no new third-party redistribution grant."
+    },
+    "job.json": {
+      "sha256": "39695e28c4a1022e4224dc105a0b44e6d46bc845744d5e2a63b91728ee7fdc4f",
+      "bytes": 4274,
+      "apiPath": "/actions/jobs/110895707817",
+      "owner": "azerish25-ux/S23-ultra-camera-log-application",
+      "purpose": "Retained original GitHub Actions evidence, private project verification; no new third-party redistribution grant."
+    },
+    "job.log": {
+      "sha256": "12bd41de43c300f1640d0d9d111ec259e2237cbbcd988702e1ef73a95e82b34e",
+      "bytes": 198924,
+      "apiPath": "/actions/jobs/110895707817/logs",
+      "owner": "azerish25-ux/S23-ultra-camera-log-application",
+      "purpose": "Retained original GitHub Actions evidence, private project verification; no new third-party redistribution grant."
+    }
+  },
+  "expectedCounts": {
+    "host": 249,
+    "jvm": 340,
+    "emulator": 62,
+    "permission": 1
+  },
+  "scope": "Frozen software baseline; exact original CI artifacts and independent replay, not a new Android run or physical S23 qualification."
+}

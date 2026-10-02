@@ -153,3 +153,21 @@ See [P003 live evidence](P003_LIVE_EVIDENCE.md) for operation, negative controls
 reproduction. This source change does not claim new Android runtime execution or
 physical S23 qualification. Exact-commit Android/JVM/emulator and actual exported
 report acceptance remain required before P003 closure; P004 is subsequent work.
+
+## P004 — frozen software baseline
+
+The original `d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df` Android run
+37024421010 passed its complete software campaign: 249 host tests, 340 JVM cases,
+62 connected instrumentation cases and one separately executed permission-denial
+case. Independent artifact replay validates 25 ordinary recordings and all 38
+P003 attempts, while preserving the unavailable saved-RAW codec and live backend.
+This accepts P003's tested runtime/exported-report gate, not physical qualification.
+
+The P004 collector now binds source trees, original artifacts, individual test
+outcomes, build/command identities and classified reports. A frozen lock and
+summary support one-command offline verification. The separate reproduction
+workflow runs the unmodified original source, records resolved tools/dependencies
+and preserves new failures independently. See [P004 operation and limits](P004_BASELINE.md).
+New P004 tests are not part of the historical 249-test baseline. Physical S23,
+calibration, high-resolution/endurance and byte-identical APK reproduction remain
+unclaimed. P005 follows inspection of actual clean reproduction outcomes.

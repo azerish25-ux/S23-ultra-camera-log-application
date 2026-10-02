@@ -1,0 +1,122 @@
+name: P004 baseline integrity and reproduction acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/baseline.py
+      - scripts/tests/test_baseline.py
+      - docs/P004_BASELINE.md
+      - docs/evidence/P004-*.json
+      - .github/workflows/baseline-verify.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install existing media consumer prerequisites
+        run: |
+          set -euo pipefail
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+          mkdir -p evidence/p004
+      - name: Test baseline fault detection
+        env:
+          S23_P004_EVIDENCE_DIR: ${{ github.workspace }}/evidence/p004/cases
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -p test_baseline.py -v 2>&1 | tee evidence/p004/acceptance-tests.log
+      - name: Retrieve and verify immutable original inputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 scripts/baseline.py fetch --inputs evidence/p004/original-inputs --expected-head "$GITHUB_SHA" > evidence/p004/acquisition.json
+          python3 scripts/baseline.py collect --inputs evidence/p004/original-inputs --reference docs/evidence/P004-baseline-summary.json --expected-head "$GITHUB_SHA" > evidence/p004/original-report.json
+          python3 scripts/baseline.py verify --inputs evidence/p004/original-inputs --report evidence/p004/original-report.json --expected-head "$GITHUB_SHA" > evidence/p004/original-verification.json
+      - name: Retain independently reproduced inputs and original workflow failures
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, sys, urllib.request
+          sys.path.insert(0, 'scripts')
+          from baseline import SafeRedirect, MAX_INPUT
+          root = pathlib.Path('evidence/p004')
+          inputs = root / 'reproduction-inputs'
+          inputs.mkdir()
+          api = 'https://api.github.com/repos/azerish25-ux/S23-ultra-camera-log-application'
+          opener = urllib.request.build_opener(SafeRedirect())
+          def get(path):
+              request = urllib.request.Request(api + path, headers={
+                  'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                  'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'})
+              with opener.open(request, timeout=90) as response:
+                  data = response.read(MAX_INPUT + 1)
+              if not data or len(data) > MAX_INPUT:
+                  raise ValueError('Empty or oversized input: ' + path)
+              return data
+          job_path = '/actions/jobs/110943616038'
+          job_raw = get(job_path)
+          job = json.loads(job_raw)
+          assert job['run_id'] == 37038828185 and job['run_attempt'] == 1
+          assert job['head_sha'] == 'cf57c9dd2fa2fea5e5fe6e84103cd596bfbb44a4'
+          assert job['status'] == 'completed', 'Frozen reproduction has not completed; do not accept pending execution'
+          listing_raw = get('/actions/runs/37038828185/artifacts?per_page=100')
+          listing = json.loads(listing_raw)
+          assert listing['total_count'] == len(listing['artifacts']), 'Incomplete artifact inventory'
+          (root / 'reproduction-artifacts.json').write_bytes(listing_raw)
+          lock = json.loads(pathlib.Path('docs/evidence/P004-baseline-lock.json').read_text())
+          lock['baselineId'] = 'P004-d3a6ada-reproduction-37038828185'
+          lock['run'] = {'id': job['run_id'], 'jobId': job['id'], 'attempt': 1, 'workflowRevision': job['head_sha']}
+          lock['scope'] = 'Fresh frozen-source Android execution, retained independently from original baseline; not physical S23 qualification.'
+          def keep(name, data, endpoint):
+              (inputs / name).write_bytes(data)
+              lock['inputs'][name] = {'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data),
+                  'apiPath': endpoint, 'owner': lock['repository'],
+                  'purpose': 'Original bytes of the independent frozen-source reproduction; no relabelled baseline or new redistribution grant.'}
+          keep('job.json', job_raw, job_path)
+          keep('job.log', get(job_path + '/logs'), job_path + '/logs')
+          for name, artifact_name in [('verification.zip', 'P004-reproduced-evidence'), ('apk.zip', 'P004-reproduced-apk')]:
+              matches = [a for a in listing['artifacts'] if a['name'] == artifact_name and not a['expired']]
+              assert len(matches) == 1, 'Missing or ambiguous ' + artifact_name
+              artifact = matches[0]
+              assert artifact['workflow_run']['head_sha'] == lock['run']['workflowRevision']
+              endpoint = '/actions/artifacts/' + str(artifact['id']) + '/zip'
+              data = get(endpoint)
+              assert 'sha256:' + hashlib.sha256(data).hexdigest() == artifact['digest']
+              keep(name, data, endpoint)
+          (root / 'reproduction-lock.json').write_text(json.dumps(lock, indent=2) + '\n')
+          failures = root / 'initial-workflow-failures'
+          failures.mkdir()
+          for job_id in (110942777317, 110942778019):
+              for suffix, extension in [('', '.json'), ('/logs', '.log')]:
+                  (failures / (str(job_id) + extension)).write_bytes(get('/actions/jobs/' + str(job_id) + suffix))
+          PY
+      - name: Independently collect and compare the frozen execution
+        run: |
+          set -euo pipefail
+          python3 scripts/baseline.py collect --lock evidence/p004/reproduction-lock.json --inputs evidence/p004/reproduction-inputs > evidence/p004/reproduction-report.json
+          python3 scripts/baseline.py verify --lock evidence/p004/reproduction-lock.json --inputs evidence/p004/reproduction-inputs --report evidence/p004/reproduction-report.json > evidence/p004/reproduction-verification.json
+          python3 scripts/baseline.py compare --report evidence/p004/original-report.json --other evidence/p004/reproduction-report.json > evidence/p004/comparison.json
+          git diff --exit-code
+      - name: Retain original outcomes and acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P004-baseline-acceptance
+          path: evidence/p004/
+          if-no-files-found: error

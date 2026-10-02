@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "phase": "P004",
+  "cases": [
+    "TC-P004-01",
+    "TC-P004-02",
+    "TC-P004-03",
+    "TC-P004-04",
+    "TC-P004-05",
+    "TC-P004-06",
+    "TC-P004-07",
+    "TC-P004-08"
+  ],
+  "scope": "Local host execution of the baseline collector and synthetic acceptance cases. Original Android replay and independent clean Android reproduction remain separately identified.",
+  "checkoutRevision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+  "testedWorkingFiles": {
+    "scripts/baseline.py": "d69b3da8915a992c9ec91726f3b1f55ababc7ed9c2d5f624023fce820ac2dde6",
+    "scripts/tests/test_baseline.py": "0365a14383c9c91fcddc52cd5fa4f8d804dc05ce27b16c6ae755bf6ff31f1120"
+  },
+  "environment": {
+    "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "git": "git version 2.47.3"
+  },
+  "red": {
+    "tests": 2,
+    "assertionFailures": 2,
+    "log": "test_tc_p004_01_unsupported_physical_claim_preserves_software (test_baseline.BaselineTests.test_tc_p004_01_unsupported_physical_claim_preserves_software) ... FAIL\ntest_tc_p004_04_omitted_failure_is_rejected (test_baseline.BaselineTests.test_tc_p004_04_omitted_failure_is_rejected) ... FAIL\n\n======================================================================\nFAIL: test_tc_p004_01_unsupported_physical_claim_preserves_software (test_baseline.BaselineTests.test_tc_p004_01_unsupported_physical_claim_preserves_software)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/mnt/data/S23-ultra-camera-log-application/scripts/tests/test_baseline.py\", line 16, in test_tc_p004_01_unsupported_physical_claim_preserves_software\n    self.assertEqual('failed', result['status'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'failed' != 'passed'\n- failed\n+ passed\n\n\n======================================================================\nFAIL: test_tc_p004_04_omitted_failure_is_rejected (test_baseline.BaselineTests.test_tc_p004_04_omitted_failure_is_rejected)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/mnt/data/S23-ultra-camera-log-application/scripts/tests/test_baseline.py\", line 26, in test_tc_p004_04_omitted_failure_is_rejected\n    self.assertEqual('failed', result['status'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'failed' != 'passed'\n- failed\n+ passed\n\n\n----------------------------------------------------------------------\nRan 2 tests in 0.001s\n\nFAILED (failures=2)\n",
+    "boundary": "\"\"\"P004 test-first boundary. Not a completed validator.\"\"\"\ndef verify_report(claimed, observed):\n    return {'status': 'passed', 'issues': [], 'observed': observed}\n",
+    "scope": "Two initial false-pass fixtures against an intentionally unimplemented boundary; no Android execution."
+  },
+  "green": {
+    "focused": {
+      "command": "python3 -m unittest discover -s scripts/tests -p test_baseline.py -v",
+      "tests": 33,
+      "outcome": "passed",
+      "logSha256": "02770c0a9a16c7f8b0b8edfb08f18eeffccb491fd921635200986cf7e0d25209"
+    },
+    "host": {
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 282,
+      "outcome": "passed",
+      "logSha256": "5608e36fe8926fae1ebb73376c29695ee85c7ed9ae03021d07417d66263bfb0f"
+    },
+    "reference": {
+      "command": "python3 -m unittest discover -s docs/master-directive/reference -p test_reference.py -v",
+      "tests": 53,
+      "outcome": "passed",
+      "logSha256": "875718089e9c5c0c450138b496f47a5b4e3dbb56d13434432548a4a2462df4cb"
+    }
+  },
+  "mutationControls": {
+    "originalSha256": "d69b3da8915a992c9ec91726f3b1f55ababc7ed9c2d5f624023fce820ac2dde6",
+    "restored": true,
+    "experiments": [
+      {
+        "name": "omitted-case",
+        "test": "BaselineTests.test_tc_p004_04_omitted_failure_is_rejected",
+        "exitCode": 1,
+        "detected": true,
+        "before": "if canonical_hash(claimed) != canonical_hash(observed):",
+        "after": "if False:",
+        "mutantSha256": "237f8f5531e01ceabc85bc5ce7d8c60580a323e6a14d6c895c21e560ec70a9d2",
+        "observedLog": "test_tc_p004_04_omitted_failure_is_rejected (test_baseline.BaselineTests.test_tc_p004_04_omitted_failure_is_rejected) ... FAIL\n\n======================================================================\nFAIL: test_tc_p004_04_omitted_failure_is_rejected (test_baseline.BaselineTests.test_tc_p004_04_omitted_failure_is_rejected)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/mnt/data/S23-ultra-camera-log-application/scripts/tests/test_baseline.py\", line 26, in test_tc_p004_04_omitted_failure_is_rejected\n    self.assertEqual('failed', result['status'])\n    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 'failed' != 'passed'\n- failed\n+ passed\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.004s\n\nFAILED (failures=1)\n"
+      },
+      {
+        "name": "aggregate-count",
+        "test": "BaselineParserTests.test_nested_junit_wrappers_are_checked",
+        "exitCode": 1,
+        "detected": true,
+        "before": "if not raw.isdecimal() or int(raw) != value:",
+        "after": "if False:",
+        "mutantSha256": "cf3fcdf77f7bfe49324aa56775ac729d0307cb211f3f816554c05393db29d747",
+        "observedLog": "test_nested_junit_wrappers_are_checked (test_baseline.BaselineParserTests.test_nested_junit_wrappers_are_checked) ... FAIL\n\n======================================================================\nFAIL: test_nested_junit_wrappers_are_checked (test_baseline.BaselineParserTests.test_nested_junit_wrappers_are_checked)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/mnt/data/S23-ultra-camera-log-application/scripts/tests/test_baseline.py\", line 282, in test_nested_junit_wrappers_are_checked\n    self.assertTrue(issues)\n    ~~~~~~~~~~~~~~~^^^^^^^^\nAssertionError: [] is not true\n\n----------------------------------------------------------------------\nRan 1 test in 0.003s\n\nFAILED (failures=1)\n"
+      },
+      {
+        "name": "changed-source",
+        "test": "BaselineFixtureTests.test_tc_p004_02_source_content_cannot_keep_old_tree",
+        "exitCode": 1,
+        "detected": true,
+        "before": "require(object_id('blob', data) == manifest[path][1], 'Source blob mismatch: ' + path)",
+        "after": "require(True, 'Source blob mismatch: ' + path)",
+        "mutantSha256": "0a627c6855d9e86e7983fabea8a8fd667b7fc403a97b137c1bda31450a2bbf4f",
+        "observedLog": "test_tc_p004_02_source_content_cannot_keep_old_tree (test_baseline.BaselineFixtureTests.test_tc_p004_02_source_content_cannot_keep_old_tree) ... FAIL\n\n======================================================================\nFAIL: test_tc_p004_02_source_content_cannot_keep_old_tree (test_baseline.BaselineFixtureTests.test_tc_p004_02_source_content_cannot_keep_old_tree)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/mnt/data/S23-ultra-camera-log-application/scripts/tests/test_baseline.py\", line 145, in test_tc_p004_02_source_content_cannot_keep_old_tree\n    with self.assertRaisesRegex(ValueError, 'Source blob mismatch'):\n         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 1 test in 0.008s\n\nFAILED (failures=1)\n"
+      }
+    ]
+  },
+  "originalBaseline": {
+    "revision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "verification": "Offline collector and original-source media consumers executed against checksum-locked original inputs.",
+    "sourceFiles": 299,
+    "hostTests": 249,
+    "jvmTests": 340,
+    "instrumentationTests": 62,
+    "isolatedPermissionTests": 1,
+    "physicalS23": "unavailable",
+    "fullReportCanonicalSha256": "617beeae819a7782ab73babb421680c08c272bc594749fb687884a505a5b0497"
+  },
+  "reproduction": {
+    "workflowRun": 37038828185,
+    "jobId": 110943616038,
+    "workflowRevision": "cf57c9dd2fa2fea5e5fe6e84103cd596bfbb44a4",
+    "sourceRevision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "acceptance": "Retained by the separate baseline acceptance workflow. Queue or plan is never counted as successful execution."
+  },
+  "initialWorkflowFailures": {
+    "runId": 37038580826,
+    "jobs": [
+      110942777317,
+      110942778019
+    ],
+    "details": [
+      "Original log retrieval rejected terminal escapes; original artifact checksums had passed.",
+      "Frozen checkout source-identity guard stopped reproduction before a build; corrected workflow binds the baseline SHA explicitly in each shell."
+    ],
+    "policy": "Original failures retained, not rewritten. Application source and numerical gates were unchanged."
+  },
+  "limits": [
+    "The original dependency set was not fully locked; recorded tool/dependency versions identify the new execution, not a promise of hermetic or byte-identical builds.",
+    "No physical S23 capture, sensor precision, colour, dynamic range or sustained mode is certified by this phase."
+  ]
+}
