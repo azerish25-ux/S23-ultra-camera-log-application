@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "phase": "P001",
+  "cases": [
+    "TC-P001-02",
+    "TC-P001-08"
+  ],
+  "base_revision": "cfed9cbb09b5b88443d5b6517add41bf5ee316b4",
+  "issue": "The Android workflow ran the shared host suite from a depth-1 checkout that omitted the inspection revision. The independent P001 workflow already fetched history and passed.",
+  "observed_ci_failure": {
+    "run_id": 36944119829,
+    "job_id": 110642134211,
+    "tests": 136,
+    "failures": 1,
+    "test": "test_checkout_contract_has_no_accepted_product_claims",
+    "reason": "Missing Git prerequisite: c90625ce302b69dd1c193226aeeb492fe04b334b:MASTER_DIRECTIVE.md",
+    "url": "https://github.com/azerish25-ux/S23-ultra-camera-log-application/actions/runs/36944119829/job/110642134211"
+  },
+  "fix": {
+    "path": ".github/workflows/android.yml",
+    "change": "Set actions/checkout fetch-depth to 0. No tests, source-identity gates, Android source or build pins were weakened or changed.",
+    "sha256": "0d665d1cda42c305ba4bdc978936aa360eada14cf6b4b5a58e1f4749535dbe10"
+  },
+  "local_reproduction": {
+    "red": {
+      "checkout": "Exact published commit cloned with --no-local --depth 1",
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v",
+      "tests": 21,
+      "failures": 1,
+      "exit_code": 1
+    },
+    "green": {
+      "checkout": "Fresh exact published source with its available history and the proposed workflow change",
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 136,
+      "failures": 0,
+      "exit_code": 0
+    },
+    "contract_cli": {
+      "command": "python3 scripts/verify_research_contract.py --expected-head cfed9cbb09b5b88443d5b6517add41bf5ee316b4",
+      "outcome": "passed"
+    }
+  },
+  "scope": "Checkout prerequisite repair; remote Android build and physical S23 results are separate and not claimed by these host runs."
+}
