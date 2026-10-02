@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "phase": "P004",
+  "acceptanceScope": "Frozen application software-result reproduction and baseline record consistency; not physical S23 qualification or every research-case repetition.",
+  "acceptedSoftwareBaseline": {
+    "revision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "tree": "99b83b61ca40b25fe2e0a0dadeb47b004d8a672c"
+  },
+  "collectorRevision": "393034d380a984ff6a4cbf85d676f5e7bd6927f7",
+  "acceptanceWorkflow": {
+    "runId": 37041448585,
+    "jobId": 110952291693,
+    "attempt": 1,
+    "conclusion": "success",
+    "artifactId": 11242752517,
+    "artifactSha256": "919c6febe543dd5750c0618f17be47aa02e2a4c217fa65ddaf0ad3500cf2dc2b",
+    "artifactBytes": 27028799
+  },
+  "originalExecution": {
+    "runId": 37024421010,
+    "jobId": 110895707817,
+    "reportCanonicalSha256": "617beeae819a7782ab73babb421680c08c272bc594749fb687884a505a5b0497",
+    "counts": {
+      "host": {
+        "passed": 249
+      },
+      "jvm": {
+        "passed": 340
+      },
+      "emulator": {
+        "passed": 62
+      },
+      "permission": {
+        "passed": 1
+      }
+    },
+    "apk": {
+      "member": "app-debug.apk",
+      "sha256": "d7809b0c587a4fcfcc74148f0aa76352e551a1e0ad26253c5bad196a91d948ba",
+      "bytes": 3130891,
+      "signatureScope": "Original CI signing checks; artifact replay is not a new apksigner run."
+    }
+  },
+  "reproducedExecution": {
+    "runId": 37038828185,
+    "jobId": 110943616038,
+    "sourceRevision": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+    "workflowRevision": "cf57c9dd2fa2fea5e5fe6e84103cd596bfbb44a4",
+    "reportCanonicalSha256": "82acf57e7784618adaa7b5fd0c20fe014fbd18452f7ac52dd8b98e0ca2b66765",
+    "counts": {
+      "host": {
+        "passed": 249
+      },
+      "jvm": {
+        "passed": 340
+      },
+      "emulator": {
+        "passed": 62
+      },
+      "permission": {
+        "passed": 1
+      }
+    },
+    "apk": {
+      "member": "app-debug.apk",
+      "sha256": "9a4bc4ca7314aaf0974eea187f18c158c4b3f7d8d60657eaa802c4aca0752d1f",
+      "bytes": 3130891,
+      "signatureScope": "Original CI signing checks; artifact replay is not a new apksigner run."
+    },
+    "lockedInputs": {
+      "verification.zip": {
+        "sha256": "8cbccca9596dfe887b781741e52d217cb848fd3b8adf26d6f298b2442ec99c09",
+        "bytes": 10562994,
+        "apiPath": "/actions/artifacts/11242676215/zip",
+        "owner": "azerish25-ux/S23-ultra-camera-log-application",
+        "purpose": "Original bytes of the independent frozen-source reproduction; no relabelled baseline or new redistribution grant."
+      },
+      "apk.zip": {
+        "sha256": "3e265006994e0597152e78d75e167dcd0f6c58ec73741de8860e4732d949740e",
+        "bytes": 2999567,
+        "apiPath": "/actions/artifacts/11242401533/zip",
+        "owner": "azerish25-ux/S23-ultra-camera-log-application",
+        "purpose": "Original bytes of the independent frozen-source reproduction; no relabelled baseline or new redistribution grant."
+      },
+      "job.json": {
+        "sha256": "f44df50170af140b2b089bff8cbb9d01e70abcf6242ed5c65ebf803e7c81d365",
+        "bytes": 4278,
+        "apiPath": "/actions/jobs/110943616038",
+        "owner": "azerish25-ux/S23-ultra-camera-log-application",
+        "purpose": "Original bytes of the independent frozen-source reproduction; no relabelled baseline or new redistribution grant."
+      },
+      "job.log": {
+        "sha256": "7f7b376fc554b9c0c60f2f724ff08e72ebd30f7ac5b899b9f9ba5a4d3a2835d7",
+        "bytes": 211805,
+        "apiPath": "/actions/jobs/110943616038/logs",
+        "owner": "azerish25-ux/S23-ultra-camera-log-application",
+        "purpose": "Original bytes of the independent frozen-source reproduction; no relabelled baseline or new redistribution grant."
+      }
+    }
+  },
+  "comparison": {
+    "status": "passed",
+    "sameTestOutcomes": true,
+    "sameSoftwareResult": true,
+    "originalSoftwareResult": "passed",
+    "reproducedSoftwareResult": "passed",
+    "sameApkBytes": false,
+    "originalTools": [
+      "Resolved Java 21.0.12+1 from tool-cache",
+      "Successfully installed numpy-2.5.3",
+      "Version: 20260901.588",
+      "Version: 20260927.320.1",
+      "git version 2.55.0"
+    ],
+    "reproducedTools": [
+      "Resolved Java 21.0.12+1 from tool-cache",
+      "Successfully installed numpy-2.5.3",
+      "Version: 20260901.588",
+      "Version: 20260927.320.1",
+      "git version 2.55.0"
+    ],
+    "resolvedEnvironmentAvailable": {
+      "original": [],
+      "reproduced": [
+        "evidence/reproduction/gradle-dependencies.txt",
+        "evidence/reproduction/sdk-packages.txt",
+        "evidence/reproduction/tools.txt"
+      ]
+    },
+    "originalBackend": {
+      "appCommit": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+      "gpuReference": "passed",
+      "backend": "unavailable",
+      "liveCameraTested": false,
+      "physicalCameraCertified": false
+    },
+    "reproducedBackend": {
+      "appCommit": "d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df",
+      "gpuReference": "passed",
+      "backend": "unavailable",
+      "liveCameraTested": false,
+      "physicalCameraCertified": false
+    },
+    "physicalCameraCertified": false,
+    "scope": "Comparison of recorded software cases, not image/performance equivalence."
+  },
+  "acceptedPrerequisite": "The tested P003 build, JVM, emulator and exported-report gates are supported by the original and fresh frozen-source runs. Hardware probes still labelled unavailable are not promoted to capture successes.",
+  "limitations": [
+    "Not bit-for-bit build reproducibility: debug keys and packaging may differ.",
+    "Original dependency inventory is incomplete: version ranges, runner image and SDK packages may resolve differently.",
+    "A hash establishes byte identity, not measurement honesty or physical S23 calibration."
+  ],
+  "nextDependencyReadyPhase": "P005"
+}
