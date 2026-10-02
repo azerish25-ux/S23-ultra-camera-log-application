@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "phase": "P002",
+  "cases": [
+    "TC-P002-01",
+    "TC-P002-02",
+    "TC-P002-03",
+    "TC-P002-04",
+    "TC-P002-05",
+    "TC-P002-06",
+    "TC-P002-07",
+    "TC-P002-08"
+  ],
+  "base_revision": "835f67aca7576397e11faafe71ecfb5c93be8a57",
+  "scope": "Bounded source continuity and host contract enforcement; not an Android build or physical S23 qualification.",
+  "review": {
+    "source_files_identity_verified": 258,
+    "selected_files": 31,
+    "reviewed_lines": 1297,
+    "ownership_seams": 13,
+    "test_references": 23,
+    "unique_referenced_tests": 22,
+    "charter_obligations_mapped": 20
+  },
+  "local_development": {
+    "record": {
+      "schema_version": 1,
+      "phase": "P002",
+      "cases": [
+        "TC-P002-01",
+        "TC-P002-02",
+        "TC-P002-03",
+        "TC-P002-04",
+        "TC-P002-05",
+        "TC-P002-06",
+        "TC-P002-07",
+        "TC-P002-08"
+      ],
+      "base_revision": "835f67aca7576397e11faafe71ecfb5c93be8a57",
+      "scope": "Bounded source continuity and host contract enforcement; not an Android build or physical S23 qualification.",
+      "review": {
+        "source_files_identity_verified": 258,
+        "selected_files": 31,
+        "reviewed_lines": 1297,
+        "ownership_seams": 13,
+        "test_references": 23,
+        "unique_referenced_tests": 22,
+        "charter_obligations_mapped": 20
+      },
+      "environment": {
+        "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+        "git": "git version 2.47.3",
+        "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+        "network_required_by_new_gate": false
+      },
+      "red": {
+        "log": "execution/red.log",
+        "boundary": "execution/red-boundary.py.txt",
+        "test_methods": 15,
+        "assertion_failures": 11,
+        "unimplemented_boundary_errors": 4,
+        "limits": "Initial evolving suite against an unimplemented boundary. The four infrastructure/boundary errors are not counted as meaningful red assertions. Intermediate implementation failures are retained too."
+      },
+      "green": {
+        "focused": {
+          "command": "python3 -m unittest discover -s scripts/tests -p 'test_repository_continuity.py' -v",
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "log": "execution/focused-final.log"
+        },
+        "host": {
+          "command": "python3 -m unittest discover -s scripts/tests -v",
+          "tests": 158,
+          "failures": 0,
+          "errors": 0,
+          "log": "execution/host-green.log"
+        },
+        "companion": {
+          "command": "python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v",
+          "tests": 53,
+          "failures": 0,
+          "errors": 0,
+          "log": "execution/reference-green.log"
+        },
+        "directive_integrity": {
+          "command": "python3 scripts/verify_master_directive.py",
+          "original_files": 20,
+          "outcome": "passed",
+          "log": "execution/integrity-green.json"
+        }
+      },
+      "mutation_experiments": {
+        "scope": "Temporary P002 checker mutations; no Android or preserved source changed",
+        "original_checker_sha256": "17c6a022c054edf9a0504734d33c46477c82c680420097561b680caa04a9d61c",
+        "restored": true,
+        "experiments": [
+          {
+            "mutation": "ignore-historical-blob",
+            "case": "TC-P002-02",
+            "test": "RepositoryContinuityTests.test_tc_p002_02_changed_code_and_fabricated_blob_require_review",
+            "command": [
+              "python3",
+              "-B",
+              "-m",
+              "unittest",
+              "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_02_changed_code_and_fabricated_blob_require_review",
+              "-v"
+            ],
+            "exit_code": 1,
+            "detected_by": "AssertionError (no test infrastructure error)",
+            "mutated_checker_sha256": "6188752db527e2fdbe14a66e7c579868c12add372c4ddd9e400314b0635aa49b",
+            "patch": "ignore-historical-blob.patch",
+            "log": "ignore-historical-blob.log"
+          },
+          {
+            "mutation": "allow-replacement-engine",
+            "case": "TC-P002-02",
+            "test": "RepositoryContinuityTests.test_readme_only_and_duplicate_camera_plan_fail",
+            "command": [
+              "python3",
+              "-B",
+              "-m",
+              "unittest",
+              "test_repository_continuity.RepositoryContinuityTests.test_readme_only_and_duplicate_camera_plan_fail",
+              "-v"
+            ],
+            "exit_code": 1,
+            "detected_by": "AssertionError (no test infrastructure error)",
+            "mutated_checker_sha256": "438d52689af219ae77360b90e9934eda3688db06ad1d9e1691a46544c9657335",
+            "patch": "allow-replacement-engine.patch",
+            "log": "allow-replacement-engine.log"
+          },
+          {
+            "mutation": "trust-green-junit-summary",
+            "case": "TC-P002-04",
+            "test": "ContinuityCiTests.test_tc_p002_04_green_summary_cannot_hide_failed_child",
+            "command": [
+              "python3",
+              "-B",
+              "-m",
+              "unittest",
+              "test_repository_continuity.ContinuityCiTests.test_tc_p002_04_green_summary_cannot_hide_failed_child",
+              "-v"
+            ],
+            "exit_code": 1,
+            "detected_by": "AssertionError (no test infrastructure error)",
+            "mutated_checker_sha256": "17a3c6ead9f9fd455d68ea864800d11e8fb298ed4ff5814c76abbd1725ed12f1",
+            "patch": "trust-green-junit-summary.patch",
+            "log": "trust-green-junit-summary.log"
+          },
+          {
+            "mutation": "ignore-research-rejection",
+            "case": "TC-P002-01",
+            "test": "RepositoryContinuityTests.test_tc_p002_01_uncertainty_and_narrower_findings_are_preserved",
+            "command": [
+              "python3",
+              "-B",
+              "-m",
+              "unittest",
+              "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_01_uncertainty_and_narrower_findings_are_preserved",
+              "-v"
+            ],
+            "exit_code": 1,
+            "detected_by": "AssertionError (no test infrastructure error)",
+            "mutated_checker_sha256": "cfc17762e7012bfcb7ba5a3912977f5406e776967eb845d19e9f6424acf37a0d",
+            "patch": "ignore-research-rejection.patch",
+            "log": "ignore-research-rejection.log"
+          },
+          {
+            "mutation": "ignore-moving-head",
+            "case": "TC-P002-07",
+            "test": "RepositoryContinuityTests.test_tc_p002_07_head_moving_during_validation_is_rejected",
+            "command": [
+              "python3",
+              "-B",
+              "-m",
+              "unittest",
+              "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_07_head_moving_during_validation_is_rejected",
+              "-v"
+            ],
+            "exit_code": 1,
+            "detected_by": "AssertionError (no test infrastructure error)",
+            "mutated_checker_sha256": "f7d56cf18c7520ba18e30c9c6425dba6a12bd90d519d553df5a0fa8bcb3f71f3",
+            "patch": "ignore-moving-head.patch",
+            "log": "ignore-moving-head.log"
+          }
+        ]
+      },
+      "archive": {
+        "path": "docs/evidence/P002-tdd-evidence.tar.xz",
+        "sha256": "a293cf62d4bc7e3ddc394310ed221f0cfcaf9f3abbb47e57a95dc99e859fc918",
+        "bytes": 33276,
+        "members": 65
+      },
+      "publication": "Exact published SHA and fresh CI results must be verified separately; this record names the inspected baseline and tested source hashes to avoid a self-referential commit identity.",
+      "remaining_gates": [
+        "Uninspected files and unselected source ranges are not claimed reviewed.",
+        "P003 production report adapters and stage classification.",
+        "P004 formal application baseline acceptance.",
+        "Physical S23 RAW, colour, precision, high-resolution and endurance qualification."
+      ]
+    },
+    "archive_location": "Original local archive retained in the conversation handoff bundle under local-original/P002-tdd-evidence.tar.xz; it is not the CI archive below."
+  },
+  "ci_reproduction": {
+    "checkout_revision": "0bc33150b767f3b5c5d6c66a597942bd8429953b",
+    "candidate_source": "Verified blobs applied to checkout; not a committed candidate at execution time.",
+    "run_id": 36991292681,
+    "run_attempt": 1,
+    "environment": {
+      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39"
+    },
+    "checks": {
+      "integrity": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "scripts/verify_master_directive.py"
+        ],
+        "exit_code": 0,
+        "test_count": null,
+        "log": "execution/integrity.log",
+        "expected_rejection": false
+      },
+      "p001": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "scripts/verify_research_contract.py",
+          "--expected-head",
+          "0bc33150b767f3b5c5d6c66a597942bd8429953b"
+        ],
+        "exit_code": 0,
+        "test_count": null,
+        "log": "execution/p001.log",
+        "expected_rejection": false
+      },
+      "p002": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "scripts/verify_repository_continuity.py",
+          "--expected-head",
+          "0bc33150b767f3b5c5d6c66a597942bd8429953b"
+        ],
+        "exit_code": 0,
+        "test_count": null,
+        "log": "execution/p002.log",
+        "expected_rejection": false
+      },
+      "focused": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/tests",
+          "-p",
+          "test_repository_continuity.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "test_count": 22,
+        "log": "execution/focused-green.log",
+        "expected_rejection": false
+      },
+      "host": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "scripts/tests",
+          "-v"
+        ],
+        "exit_code": 0,
+        "test_count": 158,
+        "log": "execution/host-green.log",
+        "expected_rejection": false
+      },
+      "reference": {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "docs/master-directive/reference",
+          "-p",
+          "test_reference.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "test_count": 53,
+        "log": "execution/reference-green.log",
+        "expected_rejection": false
+      }
+    },
+    "mutation_experiments": [
+      {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_02_changed_code_and_fabricated_blob_require_review",
+          "-v"
+        ],
+        "exit_code": 1,
+        "test_count": null,
+        "log": "execution/red-historical-blob.log",
+        "expected_rejection": true
+      },
+      {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_repository_continuity.RepositoryContinuityTests.test_readme_only_and_duplicate_camera_plan_fail",
+          "-v"
+        ],
+        "exit_code": 1,
+        "test_count": null,
+        "log": "execution/red-replacement-engine.log",
+        "expected_rejection": true
+      },
+      {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_repository_continuity.ContinuityCiTests.test_tc_p002_04_green_summary_cannot_hide_failed_child",
+          "-v"
+        ],
+        "exit_code": 1,
+        "test_count": null,
+        "log": "execution/red-green-summary.log",
+        "expected_rejection": true
+      },
+      {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_01_uncertainty_and_narrower_findings_are_preserved",
+          "-v"
+        ],
+        "exit_code": 1,
+        "test_count": null,
+        "log": "execution/red-research-rejection.log",
+        "expected_rejection": true
+      },
+      {
+        "command": [
+          "/home/runner/work/_temp/p002-venv/bin/python3",
+          "-B",
+          "-m",
+          "unittest",
+          "test_repository_continuity.RepositoryContinuityTests.test_tc_p002_07_head_moving_during_validation_is_rejected",
+          "-v"
+        ],
+        "exit_code": 1,
+        "test_count": null,
+        "log": "execution/red-moving-head.log",
+        "expected_rejection": true
+      }
+    ],
+    "restored_checker_sha256": "17c6a022c054edf9a0504734d33c46477c82c680420097561b680caa04a9d61c"
+  },
+  "remaining_gates": [
+    "Uninspected files and unselected source ranges are not claimed reviewed.",
+    "P003 production report adapters and stage classification.",
+    "P004 formal application baseline acceptance.",
+    "Physical S23 RAW, colour, precision, high-resolution and endurance qualification."
+  ],
+  "archive": {
+    "path": "docs/evidence/P002-tdd-evidence.tar.xz",
+    "sha256": "7f008a625c90a55b529bfdb86cb21c891add121374bf0a044d9169d84c617067",
+    "bytes": 23308,
+    "scope": "Fresh CI verification and mutation reproduction; original local initial red logs are in the separately retained local archive."
+  }
+}

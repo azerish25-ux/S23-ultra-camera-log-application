@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "id": "EVIDENCE-P002-CONTINUITY",
+  "run_id": "P002-STATIC-835f67aca7576397e11faafe71ecfb5c93be8a57",
+  "inspection_id": "INSPECTION-P002-CONTINUITY",
+  "source_revision": "835f67aca7576397e11faafe71ecfb5c93be8a57",
+  "requirement_ids": [
+    "REQ-EVIDENCE"
+  ],
+  "evidence_class": "static_inspection",
+  "origin": "static_source",
+  "environment": {
+    "kind": "host",
+    "detail": "Exact source recovered from GitHub CI archive; all 258 file blobs and Git tree verified."
+  },
+  "fixture_ids": [
+    "FIXTURE-P002-RAW-SOURCE"
+  ],
+  "source_paths": [
+    "app/build.gradle.kts",
+    "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
+    "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+    "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
+    "app/src/main/java/com/s23log/probe/CameraCapabilityProbe.kt",
+    "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
+    "app/src/main/java/com/s23log/probe/MainActivity.kt",
+    "app/src/main/java/com/s23log/probe/RawDevelopActivity.kt",
+    "app/src/main/java/com/s23log/probe/S23Application.kt",
+    "app/src/main/java/com/s23log/probe/camera/CameraController.kt",
+    "app/src/main/java/com/s23log/probe/camera/RawSequenceCapture.kt",
+    "app/src/main/java/com/s23log/probe/camera/SurfaceRecorder.kt",
+    "app/src/main/java/com/s23log/probe/core/RawColourProfile.kt",
+    "app/src/main/java/com/s23log/probe/core/RawDevelopMath.kt",
+    "app/src/main/java/com/s23log/probe/core/RawDevelopmentSource.kt",
+    "app/src/main/java/com/s23log/probe/core/RawSequence.kt",
+    "app/src/main/java/com/s23log/probe/core/VideoFinalizer.kt",
+    "app/src/main/java/com/s23log/probe/develop/LogP010Codec.kt",
+    "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+    "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+    "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+    "app/src/main/java/com/s23log/probe/storage/PendingMedia.kt",
+    "app/src/test/java/com/s23log/probe/LiveLogPolicyTest.kt",
+    "app/src/test/java/com/s23log/probe/ModePlanningTest.kt",
+    "app/src/test/java/com/s23log/probe/ProbeReportTest.kt",
+    "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+    "app/src/test/java/com/s23log/probe/RawSequenceTest.kt",
+    "app/src/test/java/com/s23log/probe/VideoFinalizerTest.kt",
+    "build.gradle.kts",
+    "gradle/wrapper/gradle-wrapper.properties",
+    "settings.gradle.kts"
+  ],
+  "scope": {},
+  "command": "Read selected source ranges recorded in docs/REPOSITORY_CONTINUITY.json; compare Git blobs and existing caller/test anchors.",
+  "outcome": "passed",
+  "checks": [
+    {
+      "id": "bounded-source-review",
+      "outcome": "passed",
+      "reason": "Reusable ownership seams and their stated limits were inspected; no claim of full feature/device acceptance."
+    }
+  ],
+  "measurements": []
+}

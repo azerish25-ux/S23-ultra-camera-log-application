@@ -1,4 +1,4 @@
-name: Master directive integrity and research contract
+name: Master directive, research contract and source continuity
 on:
   push:
     branches: [main]
@@ -30,6 +30,12 @@ jobs:
         env:
           S23_P001_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P001-cases
         run: python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v 2>&1 | tee evidence/master-directive/research-contract-tests.log
+      - name: Verify bounded production source continuity
+        run: python3 scripts/verify_repository_continuity.py --expected-head "$GITHUB_SHA" | tee evidence/master-directive/repository-continuity.json
+      - name: Execute P002 continuity acceptance cases
+        env:
+          S23_P002_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P002-cases
+        run: python3 -m unittest discover -s scripts/tests -p 'test_repository_continuity.py' -v 2>&1 | tee evidence/master-directive/repository-continuity-tests.log
       - name: Execute preserved Python reference contracts
         run: python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v 2>&1 | tee evidence/master-directive/reference-tests.log
       - name: Retain exact-commit directive verification

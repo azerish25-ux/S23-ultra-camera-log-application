@@ -1,0 +1,1374 @@
+{
+  "schema_version": 1,
+  "phase": "P002",
+  "inspection_id": "INSPECTION-P002-CONTINUITY",
+  "source_revision": "835f67aca7576397e11faafe71ecfb5c93be8a57",
+  "source_tree": "86726832a2bc722ab7c0ae58e5b044cb21fdab89",
+  "scope": "Bounded selected-line source review of capture, retained RAW development, output verification, recovery, presentation and evidence seams. Entire-file hashes bind the reviewed snapshot but do not imply unlisted lines or other files were audited.",
+  "files": [
+    {
+      "path": "app/build.gradle.kts",
+      "blob_sha": "bdb0e19ab63b235a8b1296d1c38f496198f1161f",
+      "sha256": "50b81f59f399483cdc2421aea62fc5363a5a9718c663d8b08044257d33d0fe1e",
+      "role": "build",
+      "reviewed_lines": [
+        [
+          20,
+          35
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
+      "blob_sha": "ee53a54b67ae5853d7e43a77c169972fa3017597",
+      "sha256": "c4bbd7d672f29b149c10312137df312aae4a5649e2195b1785d1ad0f1100080c",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          84,
+          99
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+      "blob_sha": "12f404484c3f6bdfdff6b77d1c86fb79e268a658",
+      "sha256": "1426c0822cf709a47f1027420d51683581486f361d13b19a08e509abcf34c611",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          47,
+          62
+        ],
+        [
+          80,
+          95
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
+      "blob_sha": "931724f01a15a7b513b1962d65ac9d8fcc7d50cc",
+      "sha256": "fc156270dcb71f23271a507cccdbdb79888610c6dbbc85995a675f35d7111e17",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          24,
+          52
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/CameraCapabilityProbe.kt",
+      "blob_sha": "8d17ab9e93bc2021b937a7c0dda39f2b0c223f6d",
+      "sha256": "57ee4ce0a3ff6156e1c282624a455f639fc923d5c05ae1c91b01852abfa1e451",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          78,
+          93
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
+      "blob_sha": "092e30d617fafbe31f6e6cf2ec48e9afd77e615e",
+      "sha256": "bccecfbb38c601d7810ff2fb77b0966fcb4bf115a920bab0cc6236d3a8332f97",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          163,
+          178
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/MainActivity.kt",
+      "blob_sha": "cfffe648abcd6daba6760a7aab9005f032fbc7fd",
+      "sha256": "1dac057eab5107ebd71d3cd2c0a4550749c659d7be25554886b7f9a85c23956b",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          480,
+          495
+        ],
+        [
+          700,
+          715
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/RawDevelopActivity.kt",
+      "blob_sha": "6187ab10b14bf29e59b8fc7d20f2a0f66825e147",
+      "sha256": "a10c2159b6f5e7b74fea4b2984507a0fc29a3d3dd31ef172fa9215387f29cb2d",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          83,
+          111
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/S23Application.kt",
+      "blob_sha": "1fcfc4958f3f048f78a3bbb480b5c76cd8c2a470",
+      "sha256": "3d9716a9840aff29fa06ef34ba8deea6fe8a1516d018c066634d44cf2935bfc4",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          16,
+          24
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/camera/CameraController.kt",
+      "blob_sha": "79abaec49f3053e0725ce78885cb3333bcdc6985",
+      "sha256": "9015e442a4a5dc42a3387e62b8684ea8dc339ee2eaa09bd038f64faf37675a31",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          303,
+          318
+        ],
+        [
+          450,
+          465
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/camera/RawSequenceCapture.kt",
+      "blob_sha": "3d7077a3b9a5082c3337dda8045e387eb78a002c",
+      "sha256": "29388f8055b4d35f756cfe167c4a8380fc782284b5ba61248073dfc17c1fd2b3",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          103,
+          118
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/camera/SurfaceRecorder.kt",
+      "blob_sha": "6e3b617c1ba2e882c28dff1624ba25e245d3cc91",
+      "sha256": "f58c2e6ba9bf6a57a87162929fb5247d3de98e9758435f95eb6c1e25f6b827a7",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          305,
+          341
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/RawColourProfile.kt",
+      "blob_sha": "985917c7a3f05acd100fee4a08e64a2a6447cdcd",
+      "sha256": "4aed2282a9fa6f234dafeccfbc488f293ef917cd85f45305d4e7a9516d62344b",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          14,
+          29
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/RawDevelopMath.kt",
+      "blob_sha": "c66d072e30125142923770612cf1c2ba0474624d",
+      "sha256": "b254aafec95a04a612d7dba21dfa1690970131ed406b4db8345bed9219692831",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          178
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/RawDevelopmentSource.kt",
+      "blob_sha": "b23e60a2c137215c34c0b206bfb507569438522e",
+      "sha256": "164950ff4d47f2d3e9726b0bba05d3e7e106e87c07c6e400b0cf588085fef2e9",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          124
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/RawSequence.kt",
+      "blob_sha": "05239b13f6f90c8c358159c815017460df66ebf4",
+      "sha256": "1a79cfa738c7c2cebd597435183382f9b51c4b0cbaac3b37fc4c965af6ef6459",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          76
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/VideoFinalizer.kt",
+      "blob_sha": "3b827a05ab301e499b3888a3510072ead26c39d9",
+      "sha256": "170428b51060dfbb6904a3d48ad963e0ca5d1beb76340c17f4e09aff014f1c04",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          52
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/develop/LogP010Codec.kt",
+      "blob_sha": "cd183c525c32a1f9734d249225c826932c75288f",
+      "sha256": "824282a200ce97d7648c68cf0883839fc28d0084e853c4baffe61ea6a53569c0",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          194,
+          236
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+      "blob_sha": "0d373ee574867e1b96f8676d7a11eab299304840",
+      "sha256": "a73be0595d49299ad3e7cabbefcf66b005bd2e5eb17a96d3413a362b6c7ca9cc",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          24,
+          170
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+      "blob_sha": "5a3d1f129ab7d0cfd109398b794f9c453f4d3c80",
+      "sha256": "335b4755932ea05c70befb6295a38fd35c2ede01e3b87ef2224849cf10d67b99",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          24,
+          39
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+      "blob_sha": "48f98ef0bdd9a4cdf70a7d366fafdc218df2193f",
+      "sha256": "dcce377a12b628f8652a87ad743aaa5a68ecd700d3e1163f3721cce27b695ff7",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          141,
+          156
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/storage/PendingMedia.kt",
+      "blob_sha": "ef1fa1128b01ae3871b132045a8b67c14efc4f6b",
+      "sha256": "f7661ed49865c8a9c37d6a1c518c61b730013bd37cf6bc4373894dbf4def0d1f",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          16,
+          99
+        ],
+        [
+          174,
+          223
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/LiveLogPolicyTest.kt",
+      "blob_sha": "f69e212b6987dbbae7c3e3ccbe41eaa43335108b",
+      "sha256": "6a2b31353c7843493a5bcd3dbf22ad4424845e589fd302a695e1817413df64ab",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          24,
+          38
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/ModePlanningTest.kt",
+      "blob_sha": "03902e98fb9627911c59ca37a3502741f8db86a8",
+      "sha256": "a943b27e8a7be5ff875eb8fc9e8fca5bc820718e38cbf303a3095577c24a44f3",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          42,
+          57
+        ],
+        [
+          70,
+          85
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/ProbeReportTest.kt",
+      "blob_sha": "fae4e639ddb71232f590f8c54d695123e38141d1",
+      "sha256": "38342a73af99f10b416ffad81c57bd791edf2615f64f092414d899429074bcff",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          22,
+          44
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+      "blob_sha": "7087fe73daa35071816b08f966d7072fd50a7a61",
+      "sha256": "acdd5218fe46453bb994ae68747d3bfb02750209bba6a06cd3750157504a039c",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          30,
+          45
+        ],
+        [
+          60,
+          75
+        ],
+        [
+          84,
+          124
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/RawSequenceTest.kt",
+      "blob_sha": "563d260d1e404124204a333ca5df6b9ca585c75c",
+      "sha256": "e829f3bee61f98482c0c33032a0361dd31d94d0f034460873051487fd998bc2e",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          25,
+          40
+        ],
+        [
+          44,
+          59
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/VideoFinalizerTest.kt",
+      "blob_sha": "b6fe6d187f388bc3ad985ce06f2d42ecdbf3b2c3",
+      "sha256": "ea80a955fd22f550c8bad2d72b4edf23681c3e0c0fb33fde1dcc6d21fb2c4c02",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          28,
+          50
+        ]
+      ]
+    },
+    {
+      "path": "build.gradle.kts",
+      "blob_sha": "f928a84390b953ebfda7816eae78d728b7d5a6fe",
+      "sha256": "786a6aef9d41e1075240be92fad07fb11f25717c0253245646957542649034f3",
+      "role": "build",
+      "reviewed_lines": [
+        [
+          1,
+          3
+        ]
+      ]
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "blob_sha": "65d8749eabe0ced0bdda3a2cafb2f10019d9ddb5",
+      "sha256": "c629b14195c2b627ef184fba4416f5dfce6f69c8b088230965bf3f77b8a1a7b4",
+      "role": "build",
+      "reviewed_lines": [
+        [
+          1,
+          10
+        ]
+      ]
+    },
+    {
+      "path": "settings.gradle.kts",
+      "blob_sha": "6bb20e6db83295d2d4b2c15e148c07c59642cb51",
+      "sha256": "041ba18c3dd3aae8d3f1647f9ad957abc3023e37bde81280528d37908d080999",
+      "role": "build",
+      "reviewed_lines": [
+        [
+          18,
+          21
+        ]
+      ]
+    }
+  ],
+  "seams": [
+    {
+      "id": "build",
+      "owner": {
+        "path": "app/build.gradle.kts",
+        "anchor": "namespace = \"com.s23log.probe\"",
+        "purpose": "Preserve package, SDK and version pins"
+      },
+      "callers": [
+        {
+          "path": "build.gradle.kts",
+          "anchor": "id(\"com.android.application\")",
+          "purpose": "Pinned Android plugin"
+        },
+        {
+          "path": "settings.gradle.kts",
+          "anchor": "include(\":app\")",
+          "purpose": "Single existing app module"
+        },
+        {
+          "path": "gradle/wrapper/gradle-wrapper.properties",
+          "anchor": "distributionUrl=",
+          "purpose": "Pinned wrapper and checksum"
+        }
+      ],
+      "tests": [],
+      "inputs": "Existing Gradle wrapper and Java/Android dependencies",
+      "outputs": "Existing com.s23log.probe APK variants",
+      "limits": [
+        "P002 does not upgrade SDK, Gradle, Kotlin, package identity or signing policy."
+      ]
+    },
+    {
+      "id": "capture",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/camera/CameraController.kt",
+        "anchor": "fun startRecording(",
+        "purpose": "Controller owns camera-thread recording transitions"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/MainActivity.kt",
+          "anchor": "controller.startRecording(",
+          "purpose": "Existing Record action"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/ModePlanningTest.kt",
+          "anchor": "fun stoppingBeforeFirstFramePreventsRecordingResurrection(",
+          "purpose": "A late first sample cannot restart stopped capture",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.ModePlanningTest.xml",
+            "classname": "com.s23log.probe.ModePlanningTest",
+            "testcase": "stoppingBeforeFirstFramePreventsRecordingResurrection",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/ModePlanningTest.kt",
+          "anchor": "fun manualModeCannotStartWithUnappliedManualIntent(",
+          "purpose": "Manual intent must be applied",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.ModePlanningTest.xml",
+            "classname": "com.s23log.probe.ModePlanningTest",
+            "testcase": "manualModeCannotStartWithUnappliedManualIntent",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Selected RecordingMode, camera route, controls and audio intent",
+      "outputs": "SurfaceRecorder output with requested/applied metadata",
+      "limits": [
+        "Ordinary-session planning is not sustained 4K/8K qualification; real phone results remain pending."
+      ]
+    },
+    {
+      "id": "raw_capture",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/camera/RawSequenceCapture.kt",
+        "anchor": "override fun start(",
+        "purpose": "Bounded RAW acquisition/writer owner"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/camera/CameraController.kt",
+          "anchor": "job = RawSequenceCapture(",
+          "purpose": "Reuse the controller RAW job"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawSequenceTest.kt",
+          "anchor": "fun eitherArrivalOrderMatchesTheExactTimestamp(",
+          "purpose": "Timestamp pairing, not nearest wall-clock metadata",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawSequenceTest.xml",
+            "classname": "com.s23log.probe.RawSequenceTest",
+            "testcase": "eitherArrivalOrderMatchesTheExactTimestamp",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawSequenceTest.kt",
+          "anchor": "fun recordsHaveIndependentLittleEndianLengthAndCrc(",
+          "purpose": "Record layout checked independently",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawSequenceTest.xml",
+            "classname": "com.s23log.probe.RawSequenceTest",
+            "testcase": "recordsHaveIndependentLittleEndianLengthAndCrc",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Camera RAW_SENSOR images and matching capture results",
+      "outputs": "S23RAW01 records or acquisition-only benchmark",
+      "limits": [
+        "Requested 24/30 fps and bounded short sequences do not establish actual physical throughput.",
+        "storeFrames=false is a benchmark, not retained RAW video."
+      ]
+    },
+    {
+      "id": "raw_source",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/core/RawDevelopmentSource.kt",
+        "anchor": "fun scan(file:File",
+        "purpose": "Read/validate existing S23RAW01 without replacing its format"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+          "anchor": "val index=RawSourceReader.scan(file,check)",
+          "purpose": "Saved-source inspection entry"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun scansChecksumsAndCadenceWithoutChangingSource(",
+          "purpose": "Checksums/cadence/source immutability",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "scansChecksumsAndCadenceWithoutChangingSource",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun truncatedSourceIsRetained(",
+          "purpose": "Reject truncated source without deletion",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "truncatedSourceIsRetained",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Retained .s23raw file, per-frame metadata, CRC and source identity",
+      "outputs": "RawSourceIndex and row access",
+      "limits": [
+        "The Android reader refuses incomplete tails; explicit desktop recovery is a separate operation.",
+        "The source index is bounded to 4096 frames and does not silently retime cadence gaps."
+      ]
+    },
+    {
+      "id": "development",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+        "anchor": "fun develop(divisor:Int",
+        "purpose": "Application-owned CPU development task"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/RawDevelopActivity.kt",
+          "anchor": "store.develop(divisor",
+          "purpose": "Existing Develop action; explicit clipping/profile consent"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+          "anchor": "fun androidParserProfileImportAndScreenRecreationPreserveSource(",
+          "purpose": "Profile/UI recreation and source retention",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.RawDevelopmentAndroidTest",
+            "testcase": "androidParserProfileImportAndScreenRecreationPreserveSource",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun cancellationIsCheckedInsideRows(",
+          "purpose": "Cancellation inside CPU row processing",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "cancellationIsCheckedInsideRows",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Validated retained source, bound profile, size divisor and explicit consent",
+      "outputs": "Partial then verified LogC3/AWG3 HEVC plus sidecar",
+      "limits": [
+        "Activity onStop cancels outside configuration changes; this is not resumable background rendering.",
+        "Current saved-RAW output is video-only, and orientation is sidecar metadata rather than rotated pixels."
+      ]
+    },
+    {
+      "id": "colour",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/core/RawDevelopMath.kt",
+        "anchor": "class RawFrameDeveloper",
+        "purpose": "Reuse row-streaming numeric reference before any film branch"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+          "anchor": "val value=index.rows(frame)",
+          "purpose": "CPU row developer integrated into codec input"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun publishedLogValuesAndSignedToe(",
+          "purpose": "Published scalar values and signed toe",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "publishedLogValuesAndSignedToe",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun boxReductionIsBeforeLog(",
+          "purpose": "Linear reduction before encoding",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "boxReductionIsBeforeLog",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun matchesFrozenOfflineReferenceForAllMosaicsAndLinearReduction(",
+          "purpose": "Frozen independent vectors",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "matchesFrozenOfflineReferenceForAllMosaicsAndLinearReduction",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "RawRowSource, RawDevelopParameters and camera-to-working interpretation",
+      "outputs": "LogRowSink pairs and explicit clipping counts",
+      "limits": [
+        "Bilinear demosaic/Log arithmetic are reference implementations, not measured S23 colour or a calibrated stock model."
+      ]
+    },
+    {
+      "id": "profile",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/core/RawColourProfile.kt",
+        "anchor": "fun parse(json:JSONObject",
+        "purpose": "Strict profile and source binding"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+          "anchor": "val profile=RawColourProfile.parse",
+          "purpose": "Existing profile-validation consumers"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun profileBindingAndExposureAreEnforced(",
+          "purpose": "Exact profile applicability",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "profileBindingAndExposureAreEnforced",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "anchor": "fun provisionalProfileNeedsConsent(",
+          "purpose": "Unmeasured profile cannot imply permission",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.RawDevelopmentTest.xml",
+            "classname": "com.s23log.probe.RawDevelopmentTest",
+            "testcase": "provisionalProfileNeedsConsent",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Imported profile or captured-metadata starting profile plus source binding",
+      "outputs": "Explicit synthetic/provisional/measured declaration",
+      "limits": [
+        "Imported measured status is supplied data, not an app-certified physical colour calibration."
+      ]
+    },
+    {
+      "id": "codec",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/develop/LogP010Codec.kt",
+        "anchor": "fun qualify(cache:File",
+        "purpose": "P010 encode/decode route qualification, independent of camera support"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+          "anchor": "val choice=LogP010Codec.qualify",
+          "purpose": "Qualify before creating saved-RAW output"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+          "anchor": "fun actualP010CodecRouteIsQualifiedOrExplicitlyUnavailable(",
+          "purpose": "A passing test may record an unavailable codec",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.RawDevelopmentAndroidTest",
+            "testcase": "actualP010CodecRouteIsQualifiedOrExplicitlyUnavailable",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Candidate P010 codec route and known precision ramps",
+      "outputs": "Explicit route result with degraded-eight-bit negative control",
+      "limits": [
+        "Prior emulator reports codecRoute=unavailable and encodedPixelsTested=false; JUnit pass is not a codec pass."
+      ]
+    },
+    {
+      "id": "verification",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/core/VideoFinalizer.kt",
+        "anchor": "fun <V, U> finish(",
+        "purpose": "Keep verification/publication/report failure independent"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/camera/SurfaceRecorder.kt",
+          "anchor": "val outcome = VideoFinalizer.finish(",
+          "purpose": "Existing ordinary-recorder finalization call"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/VideoFinalizerTest.kt",
+          "anchor": "fun reportFailureNeverDeletesPublishedVideo(",
+          "purpose": "Do not roll back useful media after report failure",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.VideoFinalizerTest.xml",
+            "classname": "com.s23log.probe.VideoFinalizerTest",
+            "testcase": "reportFailureNeverDeletesPublishedVideo",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/VideoFinalizerTest.kt",
+          "anchor": "fun failedPublicationRetainsOriginal(",
+          "purpose": "Failed publication retains original",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.VideoFinalizerTest.xml",
+            "classname": "com.s23log.probe.VideoFinalizerTest",
+            "testcase": "failedPublicationRetainsOriginal",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Encoded-sample count, verification callbacks and media transaction",
+      "outputs": "PUBLISHED, RECOVERABLE, EMPTY or RETENTION_FAILED result",
+      "limits": [
+        "Ordinary recording verification and saved-RAW every-pixel verification have distinct contracts; do not merge their success flags."
+      ]
+    },
+    {
+      "id": "recovery",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/storage/PendingMedia.kt",
+        "anchor": "fun recover(context: Context)",
+        "purpose": "Existing startup journal recovery"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/S23Application.kt",
+          "anchor": "PendingMedia.recover(this)",
+          "purpose": "Application startup recovery task"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
+          "anchor": "fun retainedVideoSurvivesAbortAndRecovery(",
+          "purpose": "Retained bytes survive abort/recovery",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.StorageIntegrityTest",
+            "testcase": "retainedVideoSurvivesAbortAndRecovery",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
+          "anchor": "fun interruptedNonemptyVideoIsNeverSweptAway(",
+          "purpose": "Do not sweep nonempty interrupted media",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.StorageIntegrityTest",
+            "testcase": "interruptedNonemptyVideoIsNeverSweptAway",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Private staging files and pending-output journal",
+      "outputs": "Retained private media with explicit unverified reason",
+      "limits": [
+        "PendingMedia journal governs ordinary capture; RAW/developed outputs use separate directories and retention paths.",
+        "P002 does not claim every storage provider or process-death scenario is qualified."
+      ]
+    },
+    {
+      "id": "presentation",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/RawDevelopActivity.kt",
+        "anchor": "override fun onStop()",
+        "purpose": "Document cancellation/recreation rather than claim background jobs"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/MainActivity.kt",
+          "anchor": "startActivity(Intent(this, RawDevelopActivity::class.java)",
+          "purpose": "Retained-source navigation from camera"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+          "anchor": "fun androidParserProfileImportAndScreenRecreationPreserveSource(",
+          "purpose": "Existing UI recreation/consent behaviour",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.RawDevelopmentAndroidTest",
+            "testcase": "androidParserProfileImportAndScreenRecreationPreserveSource",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Source selection, profile consent and development choices",
+      "outputs": "Preview, status, cancellation and retained-export access",
+      "limits": [
+        "No six-format selector, depth-aware virtual lens or movie catalogue is inferred from existing RAW development controls."
+      ]
+    },
+    {
+      "id": "evidence",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+        "anchor": "class ProbeReport",
+        "purpose": "Existing advertised-only diagnostics schema"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/CameraCapabilityProbe.kt",
+          "anchor": "return ProbeReport(",
+          "purpose": "Capability probe constructs the report"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/ProbeReportTest.kt",
+          "anchor": "fun nullUnsupportedAndFailureRemainDistinct(",
+          "purpose": "Unknown and unsupported remain distinct",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.ProbeReportTest.xml",
+            "classname": "com.s23log.probe.ProbeReportTest",
+            "testcase": "nullUnsupportedAndFailureRemainDistinct",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/ProbeReportTest.kt",
+          "anchor": "fun jsonCarriesVersionAndEvidenceLevel(",
+          "purpose": "Version/evidence scope retained",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.ProbeReportTest.xml",
+            "classname": "com.s23log.probe.ProbeReportTest",
+            "testcase": "jsonCarriesVersionAndEvidenceLevel",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Camera/codec query fields and per-property failures",
+      "outputs": "Versioned advertised-only report",
+      "limits": [
+        "The P001 host receipt schema is not the Android report schema; P003 owns production adapters and stage classification."
+      ]
+    },
+    {
+      "id": "live",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+        "anchor": "fun prepare(profileJson:JSONObject",
+        "purpose": "Separate experimental live-session owner"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
+          "anchor": "store.prepare(json,option",
+          "purpose": "Explicit live-lab prepare action"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
+          "anchor": "fun actualEncoderRoutesAreQualifiedOrExplicitlyUnavailable(",
+          "purpose": "Backend qualification or explicit unavailable",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/outputs/androidTest-results/connected/debug/TEST-s23log_ci(AVD) - 16.xml",
+            "classname": "com.s23log.probe.LiveLogAndroidTest",
+            "testcase": "actualEncoderRoutesAreQualifiedOrExplicitlyUnavailable",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveLogPolicyTest.kt",
+          "anchor": "fun precisionCheckerRejectsEightBitControl(",
+          "purpose": "Independent degraded precision control",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "passed",
+            "ci_entry": "app/build/test-results/testDebugUnitTest/TEST-com.s23log.probe.LiveLogPolicyTest.xml",
+            "classname": "com.s23log.probe.LiveLogPolicyTest",
+            "testcase": "precisionCheckerRejectsEightBitControl",
+            "reason": "Observed at 835f67a in retained CI XML; not re-executed by this static inspection and not physical qualification."
+          }
+        }
+      ],
+      "inputs": "Profile-bound camera route, live output choice and preview surface",
+      "outputs": "Experimental live Log stream/monitor with verification metadata",
+      "limits": [
+        "Prior emulator reports backend=unavailable and liveCameraTested=false; it does not demonstrate S23 live capture."
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "requirement_id": "REQ-RAW-LOG",
+      "implementation": "partial",
+      "seam_ids": [
+        "raw_capture",
+        "raw_source",
+        "development",
+        "codec",
+        "live"
+      ],
+      "summary": "RAW retention and saved/live developer seams exist; physical RAW-to-Log behaviour remains unqualified.",
+      "gaps": [
+        {
+          "phase": "P040",
+          "reason": "Physical S23 RAW stream, checksum/cadence and source metadata remain unqualified; the retained CI inputs are synthetic or emulator-produced."
+        },
+        {
+          "phase": "P059",
+          "reason": "Independent sensor-derived precision is not established by the available/unavailable encoder self-test. Keep saved and live routes separate."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-NATIVE-HIRES",
+      "implementation": "conditional",
+      "seam_ids": [
+        "capture",
+        "raw_capture",
+        "live"
+      ],
+      "summary": "Native-resolution targets remain conditional experiments, not container-dimension claims.",
+      "gaps": [
+        {
+          "phase": "P014",
+          "reason": "Qualify native sensor geometry, encode/decode, cadence, sustained storage and thermal behaviour for each advertised high-resolution route; container dimensions alone are insufficient."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-LOGC3-MATH",
+      "implementation": "partial",
+      "seam_ids": [
+        "colour",
+        "profile"
+      ],
+      "summary": "Reuse numeric reference and binding; do not equate encoding with ARRI sensor characteristics.",
+      "gaps": [
+        {
+          "phase": "P057",
+          "reason": "Existing published-point and inverse tests are reusable; reconcile the complete P057 laboratory before accepting that phase."
+        },
+        {
+          "phase": "P058",
+          "reason": "Profile direction, reference white and phone calibration must be reviewed separately from the scalar Log curve."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-SOURCE-RETENTION",
+      "implementation": "partial",
+      "seam_ids": [
+        "raw_source",
+        "development",
+        "verification",
+        "recovery"
+      ],
+      "summary": "Separate RAW retention, ordinary capture finalization and derived-output retention are present.",
+      "gaps": [
+        {
+          "phase": "P039",
+          "reason": "Extend cancellation/process-death coverage to integrated development without deleting the original source or treating a partial derivative as verified."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-SIX-FORMATS",
+      "implementation": "planned",
+      "seam_ids": [],
+      "summary": "Six formats remain required scope; no completed format registry is established by the inspected path.",
+      "gaps": [
+        {
+          "phase": "P089",
+          "reason": "Implement a versioned six-format geometry registry with explicit gate/aspect and sampling policies after prerequisites; menu names are not rendering profiles."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-FILM-LAB",
+      "implementation": "partial",
+      "seam_ids": [
+        "colour",
+        "development"
+      ],
+      "summary": "Existing CPU colour/development seams are reusable; a stock/material pipeline is not implemented by this audit.",
+      "gaps": [
+        {
+          "phase": "P065",
+          "reason": "A typed versioned working-image graph with an independent clean-master branch is not established by RawFrameDeveloper or its P010 sink."
+        },
+        {
+          "phase": "P073",
+          "reason": "Introduce stock interpretation and provenance contracts before material effects; the existing colour transform is not a film stock."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-VIRTUAL-OPTICS",
+      "implementation": "planned",
+      "seam_ids": [],
+      "summary": "No depth/flow/virtual-lens integration is established in this bounded audit.",
+      "gaps": [
+        {
+          "phase": "P097",
+          "reason": "No depth-provider/model/confidence contract is established by this inspected RAW path."
+        },
+        {
+          "phase": "P110",
+          "reason": "Depth-ordered rendering and temporal edge behaviour need independent sequence tests; do not blur encoded Log values as though scene-linear."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-OFFLINE",
+      "implementation": "partial",
+      "seam_ids": [
+        "development"
+      ],
+      "summary": "The saved-RAW development seam is local; whole future film/model/catalogue offline acceptance remains open.",
+      "gaps": [
+        {
+          "phase": "P148",
+          "reason": "Verify the future integrated model/recipe/development workflow without network access. Local saved-RAW code does not certify offline behaviour of features not integrated yet."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-CONTROL-SEPARATION",
+      "implementation": "partial",
+      "seam_ids": [
+        "capture",
+        "presentation"
+      ],
+      "summary": "Capture and saved-development screens are distinct; future virtual controls require explicit separation.",
+      "gaps": [
+        {
+          "phase": "P130",
+          "reason": "Preserve physical capture controls independently of future recipe/virtual-focus controls; changing a look must not silently reconfigure the camera."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-MOVIE-CATALOGUE",
+      "implementation": "planned",
+      "seam_ids": [],
+      "summary": "A movie recipe catalogue is not established by the inspected camera/development path.",
+      "gaps": [
+        {
+          "phase": "P137",
+          "reason": "Define local versioned movie claims, sources, scene variants and reconstruction confidence; no catalogue implementation is established here."
+        },
+        {
+          "phase": "P140",
+          "reason": "Implement offline search only after schema and recipe-version prerequisites; do not add an account/cloud platform."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-DEFERRED-JOBS",
+      "implementation": "partial",
+      "seam_ids": [
+        "development",
+        "presentation"
+      ],
+      "summary": "A single development worker exists; onStop cancellation is not resumable background rendering.",
+      "gaps": [
+        {
+          "phase": "P123",
+          "reason": "RawDevelopmentStore has one in-memory worker and screen-lifetime cancellation, not a durable job-state machine."
+        },
+        {
+          "phase": "P124",
+          "reason": "Checkpoint identity, temporal warm-up, restart/resume and source/profile-version invalidation require new tests before resumable exports are claimed."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-RECOVERY",
+      "implementation": "partial",
+      "seam_ids": [
+        "verification",
+        "recovery"
+      ],
+      "summary": "Reuse the existing journal/finalizer; extend tests only for demonstrated gaps.",
+      "gaps": [
+        {
+          "phase": "P031",
+          "reason": "Existing PendingMedia and VideoFinalizer cover ordinary recordings. Reconcile provider/cold-start cases without applying that journal blindly to RAW and developed-file directories."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-EVIDENCE",
+      "implementation": "partial",
+      "seam_ids": [
+        "evidence",
+        "verification"
+      ],
+      "summary": "Reuse advertised-only reports and separate verification stages; production receipt adapters remain P003.",
+      "gaps": [
+        {
+          "phase": "P003",
+          "reason": "Adapt ProbeReport, SurfaceRecorder, saved-RAW and live reports into independently classified stages without translating an unavailable codec test into a pass."
+        },
+        {
+          "phase": "P004",
+          "reason": "Record application baseline execution and its unavailable hardware separately from this source-map validation."
+        }
+      ]
+    },
+    {
+      "requirement_id": "REQ-FIRMWARE",
+      "implementation": "conditional",
+      "seam_ids": [],
+      "summary": "No blocked stream, device modification or firmware success is established by P002.",
+      "gaps": [
+        {
+          "phase": "P156",
+          "reason": "No device-specific blocked stream or fresh modification authorization is established. Preserve a separate safety/recovery decision before any irreversible action."
+        }
+      ]
+    },
+    {
+      "requirement_id": "CLAIM-SDR-ADDS-DR",
+      "implementation": "prohibited",
+      "seam_ids": [
+        "evidence"
+      ],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P064",
+          "reason": "Keep the prohibited sensor-range claim excluded while retaining narrower appearance results and the research question."
+        }
+      ]
+    },
+    {
+      "requirement_id": "CLAIM-LOG-IS-ARRI",
+      "implementation": "prohibited",
+      "seam_ids": [
+        "colour",
+        "profile"
+      ],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P064",
+          "reason": "Keep LogC3/AWG3 encoding distinct from ARRI sensor, noise, spectral and dynamic-range characteristics."
+        }
+      ]
+    },
+    {
+      "requirement_id": "CLAIM-VIRTUAL-SENSOR",
+      "implementation": "prohibited",
+      "seam_ids": [],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P089",
+          "reason": "A virtual format changes interpretation, not the phone sensor; the future registry and UI must retain that boundary."
+        }
+      ]
+    },
+    {
+      "requirement_id": "CLAIM-UPSCALED-NATIVE",
+      "implementation": "prohibited",
+      "seam_ids": [
+        "capture"
+      ],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P014",
+          "reason": "Retain source-geometry provenance independently of output geometry; upscaled output cannot satisfy native capture."
+        }
+      ]
+    },
+    {
+      "requirement_id": "EXCLUDED-CLOUD-GENERATION",
+      "implementation": "excluded",
+      "seam_ids": [],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P148",
+          "reason": "Core operation must not acquire a required cloud-generation dependency or silently replace the recorded scene."
+        }
+      ]
+    },
+    {
+      "requirement_id": "EXCLUDED-PLATFORM",
+      "implementation": "excluded",
+      "seam_ids": [],
+      "summary": "Preserve this charter boundary; this static map grants no new product claim or authorization.",
+      "gaps": [
+        {
+          "phase": "P128",
+          "reason": "Do not expand the scoped film laboratory into a general editor, account system or cloud platform without a new owner requirement."
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "component": "camera acquisition",
+      "seam_id": "capture",
+      "action": "reuse",
+      "phase": "P003",
+      "reason": "Reuse CameraController/SurfaceRecorder and existing RAW job. No second camera engine or module."
+    },
+    {
+      "component": "production evidence integration",
+      "seam_id": "evidence",
+      "action": "extend_existing",
+      "phase": "P003",
+      "reason": "Adapt current reports; maintain separate advertised, configured, decoded and physical evidence."
+    },
+    {
+      "component": "film development branch",
+      "seam_id": "colour",
+      "action": "defer",
+      "phase": "P065",
+      "reason": "Reuse source/profile/row seams after prerequisite gates; preserve a clean branch before irreversible looks."
+    },
+    {
+      "component": "virtual optics",
+      "seam_id": "development",
+      "action": "defer",
+      "phase": "P097",
+      "reason": "Keep expensive optics in deferred interpretation, not capture callbacks; depth and temporal gates remain open."
+    },
+    {
+      "component": "durable jobs",
+      "seam_id": "development",
+      "action": "extend_existing",
+      "phase": "P123",
+      "reason": "Retain store/source boundaries; add durable ownership/checkpoints only after its owning prerequisite phases. Current onStop cancellation is a recorded gap."
+    },
+    {
+      "component": "movie recipes",
+      "seam_id": "presentation",
+      "action": "defer",
+      "phase": "P137",
+      "reason": "Future local versioned catalogue must not silently alter acquisition. No account/cloud platform."
+    }
+  ],
+  "prior_ci": {
+    "path": "docs/evidence/P002-baseline-ci.zip",
+    "sha256": "cbd4c6ed794c85e9b30fa22e33e8dcc79ca787ad6dbe52e37772e2189b726742"
+  }
+}

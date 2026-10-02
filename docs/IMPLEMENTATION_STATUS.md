@@ -67,3 +67,32 @@ new capture mode. Existing Android code and pinned build configuration are
 unchanged. The next dependency-ready work package is P002: reconcile the current
 production interfaces/tests with the directive without duplicating the camera
 engine. P003 and P004 remain subsequent gated work.
+
+## P002 — bounded repository continuity (host scope)
+
+The [source-backed continuity map](REPOSITORY_CONTINUITY.json) maps all twenty
+charter obligations across thirteen existing ownership seams. It records 1,297
+reviewed lines in 31 production/build/test files at
+`835f67aca7576397e11faafe71ecfb5c93be8a57`, including the retained RAW → profile →
+development → verification/retention path. Whole-file identity checking is not a
+claim that every line or every other repository file was semantically audited.
+The checker explicitly lists uninspected baseline files and unrelated changes.
+
+`scripts/verify_repository_continuity.py` reuses P001 record validation and adds
+source/blob/range checks, caller/test anchors, minimum ownership coverage,
+requirement completeness, minimal-change decisions and independently parsed
+historical JUnit evidence. Twenty-two focused tests cover TC-P002-01 through
+TC-P002-08 and CI/archive negative controls. No Android source, package, build
+pin or original directive file was changed.
+
+The recorded prior Android run passed its JVM/instrumentation tests, while its
+saved-RAW codec route and live backend remained explicitly unavailable. P002 does
+not turn those results into physical S23 qualification. Current saved-RAW
+processing also cancels on non-configuration screen exit; durable background
+jobs, film graphs, virtual optics and the catalogue remain future work.
+
+See [P002 decisions, reproduction and limits](P002_REPOSITORY_CONTINUITY.md).
+The next dependency-ready work is **P003 production evidence adapters and stage
+classification**; P004 baseline acceptance remains subsequent work. This is a
+bounded continuity implementation, not a complete audit of every application
+file or a new capture/film-rendering feature.
