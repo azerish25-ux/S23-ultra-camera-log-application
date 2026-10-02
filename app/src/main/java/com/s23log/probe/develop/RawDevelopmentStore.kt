@@ -25,12 +25,14 @@ import kotlin.math.roundToInt
 /** Application-owned single worker; rotation reattaches observers. Leaving the screen cancels work.
  * Sources and imported profiles are read-only. Unverified MP4s remain explicitly named partial.
  */
-class RawDevelopmentStore(context:Context) {
+class RawDevelopmentStore(context:Context,
+    private val qualifyCodec:(File,Int,Int,Int,()->Unit,(String)->Unit)->LogP010Codec.Choice = LogP010Codec::qualify
+) {
     data class Preview(val width:Int,val height:Int,val argb:IntArray,val rawWidth:Int,val rawHeight:Int)
     data class State(val busy:Boolean=false,val message:String="Select a retained RAW sequence.",
         val index:RawSourceIndex?=null,val preview:Preview?=null,val profile:RawColourProfile?=null,
         val profileFile:File?=null,val savedProfiles:List<File> = emptyList(),val media:File?=null,
-        val sidecar:File?=null,val error:String?=null)
+        val sidecar:File?=null,val error:String?=null,val evidenceReport:File?=null)
     private val app=context.applicationContext
     private val main=Handler(Looper.getMainLooper())
     private val worker=Executors.newSingleThreadExecutor()
@@ -41,11 +43,12 @@ class RawDevelopmentStore(context:Context) {
     private val sources=File(app.filesDir,"exports/raw-sequences")
     private val profiles=File(app.filesDir,"exports/raw-profiles")
     val outputDirectory=File(app.filesDir,"exports/logc3")
+    val evidenceDirectory=File(app.filesDir,"exports/raw-development-evidence")
     fun observe(observer:(State)->Unit) { check(Looper.myLooper()==Looper.getMainLooper()); observers+=observer; observer(state) }
     fun remove(observer:(State)->Unit) { observers-=observer }
     private fun publish(value:State) { state=value; observers.toList().forEach { it(value) } }
     fun cancel() { if(state.busy)cancelled.set(true) }
-    private fun task(label:String,body:(State,()->Unit,(String)->Unit)->State) {
+    private fun task(label:String,checkBeforeBody:Boolean=true,body:(State,()->Unit,(String)->Unit)->State) {
         check(Looper.myLooper()==Looper.getMainLooper()); if(state.busy)return
         val previous=state; val id=++serial; cancelled.set(false); publish(previous.copy(busy=true,message=label,error=null))
         worker.execute {
@@ -62,7 +65,7 @@ class RawDevelopmentStore(context:Context) {
                 Unit
             }
             val progress:(String)->Unit={ message -> main.post { if(id==serial && state.busy)publish(state.copy(message=message)) }; Unit }
-            val result=try { check(); body(previous,check,progress) }
+            val result=try { if(checkBeforeBody)check(); body(previous,check,progress) }
                 catch(e:Exception) { previous.copy(message=e.message ?: e.javaClass.simpleName,error=e.message ?: e.javaClass.simpleName) }
             main.post { if(id==serial)publish(result.copy(busy=false)) }
         }
@@ -104,65 +107,127 @@ class RawDevelopmentStore(context:Context) {
         check(profiles.isDirectory || profiles.mkdirs())
         return File(profiles,"profile-${UUID.randomUUID()}.json").also { atomicWrite(it,json.toString(2)) }
     }
-    fun develop(divisor:Int,allowProvisional:Boolean,allowClipping:Boolean)=task("Validating source, profile and timing…") { previous,check,progress ->
-        require(Build.VERSION.SDK_INT>=33) { "Explicit P010 encoding requires Android 13/API 33 or newer. Existing recording modes are unchanged." }
-        val original=requireNotNull(previous.index); val index=RawSourceReader.scan(original.file,check)
-        val profileFile=requireNotNull(previous.profileFile); require(profileFile.length() in 1..1_048_576)
-        val profile=RawColourProfile.parse(RawJson.parse(profileFile.readBytes()),index,allowProvisional)
-        val timing=index.timing(); val p=profile.parameters(index,index.frames.first(),divisor)
-        require(p.width.toLong()*p.height*3<=128L*1024*1024) { "Output exceeds this milestone's native codec buffer budget" }
-        val sourceHash=RawJson.hash(index.file,check); val profileHash=RawJson.hash(profileFile,check)
-        check(outputDirectory.isDirectory || outputDirectory.mkdirs())
-        val choice=LogP010Codec.qualify(app.cacheDir,p.width,p.height,index.fps,check,progress)
-        val id=UUID.randomUUID().toString(); val partial=File(outputDirectory,"logc3-$id.partial.mp4")
-        val output=File(outputDirectory,"logc3-$id.mp4"); val sidecar=File(outputDirectory,"logc3-$id.mp4.logc3.json")
-        val frameDeveloper=RawFrameDeveloper(); val counts=DevelopCounts()
-        val encoded=LogP010Codec.encode(partial,choice.name,p.width,p.height,index.fps,index.frames.size,check) { number,sink ->
-            progress("Developing frame ${number+1} / ${index.frames.size} as LogC3…")
-            val frame=index.frames[number]
-            val value=index.rows(frame).use { rows -> frameDeveloper.develop(rows,profile.parameters(index,frame,divisor),allowClipping,check,sink) }
-            counts.sensorSaturated+=value.sensorSaturated; counts.below+=value.below; counts.above+=value.above
-        }
-        var maxY=0.0; var maxC=0.0; var maxCode=0
-        val verification=LogP010Codec.verify(partial,p.width,p.height,index.fps,index.frames.size,check) { number,actual ->
-            progress("Checking decoded pixels ${number+1} / ${index.frames.size}…")
-            val compare=LogFrameComparison(actual); val frame=index.frames[number]
-            index.rows(frame).use { rows -> frameDeveloper.develop(rows,profile.parameters(index,frame,divisor),allowClipping,check,compare) }
-            val result=compare.result(); maxY=maxOf(maxY,result.getDouble("meanLumaCodeError")); maxC=maxOf(maxC,result.getDouble("meanChromaCodeError"));maxCode=maxOf(maxCode,result.getInt("maximumCodeError"))
-        }
-        index.unchanged(); require(sourceHash==RawJson.hash(index.file,check) && profileHash==RawJson.hash(profileFile,check)) { "Source or profile changed during development" }
-        val hash=RawJson.hash(partial,check)
-        verification.put("mediaIdentity",JSONObject().put("algorithm","SHA-256").put("sha256",hash).put("byteCount",partial.length()))
-            .put("maximumFrameMeanLumaCodeError",maxY).put("maximumFrameMeanChromaCodeError",maxC).put("maximumCodeError",maxCode)
-            .put("comparison","Every decoded Y/Cb/Cr sample against developed RAW after explicit 4:2:0 subsampling")
-            .put("meanErrorLimitCodes",4.0).put("peakErrorLimitCodes",64)
-        val report=JSONObject().put("schemaVersion",1).put("kind","raw-derived-logc3").put("status","checked")
-            .put("developmentAppCommit",BuildConfig.SOURCE_REVISION).put("developmentVersion",BuildConfig.VERSION_NAME)
-            .put("source",index.file.name).put("sourceSha256",sourceHash).put("sourceHeader",index.header)
-            .put("profileSha256",profileHash).put("profile",profile.json).put("calibrationStatus",profile.status)
-            .put("calibrationClaimIndependentlyVerified",false).put("outputSha256",hash).put("output",output.name)
-            .put("transfer","ARRI_LogC3_EI800_exposure").put("primaries","ARRI_Wide_Gamut_3").put("whitePoint","D65")
-            .put("dataLevels","video").put("storageBits",10).put("yuvMatrix","BT709_coefficients_not_primaries")
-            .put("encoder",encoded).put("precisionQualification",choice.qualification).put("verification",verification)
-            .put("timing",timing).put("selectedMode",JSONObject().put("fps",index.fps))
-            .put("clipping",JSONObject().put("sensorSaturatedSamples",counts.sensorSaturated).put("outputBelowZero",counts.below).put("outputAboveOne",counts.above))
-            .put("outputClippingExplicitlyAllowed",allowClipping).put("provisionalExplicitlyAllowed",allowProvisional)
-            .put("demosaic","bilinear_reference_cpu_row_streaming").put("linearBoxReductionDivisor",divisor)
-            .put("orientationDegrees",index.header.optInt("orientationDegrees",0)).put("orientationApplied",false)
-            .put("audio","none").put("realTime",false).put("physicalCameraCertified",false).put("arriSensorDynamicRangeClaimed",false)
-            .put("editorImport","Assign ARRI Wide Gamut 3 / LogC3, video data levels; apply stated orientation separately. A generic player is not a colour-correct monitor.")
-        check(); require(!output.exists() && partial.renameTo(output)) { "Verified video retained as ${partial.name}; final naming failed" }
-        // Once a verified movie exists, auxiliary report/library failures must not delete it.
+    fun develop(divisor:Int,allowProvisional:Boolean,allowClipping:Boolean)=task("Validating source, profile and timing…",checkBeforeBody=false) { previous,check,progress ->
+        val attempt=DevelopmentAttempt(evidenceDirectory,BuildConfig.SOURCE_REVISION,
+            JSONObject().put("developmentDevice",JSONObject().put("model",Build.MODEL).put("fingerprint",Build.FINGERPRINT))
+                .put("environment","android_saved_raw_development").put("sourceName",previous.index?.file?.name ?: JSONObject.NULL)
+                .put("profileName",previous.profileFile?.name ?: JSONObject.NULL).put("linearBoxReductionDivisor",divisor)
+                .put("provisionalExplicitlyAllowed",allowProvisional).put("outputClippingExplicitlyAllowed",allowClipping),::atomicWrite)
+        attempt.start()
+        var result=previous.copy(media=null,sidecar=null,evidenceReport=null)
         try {
-            atomicWrite(sidecar,report.toString(2))
-            val validation=File(app.filesDir,"exports/validation/developed-$id.json")
-            check(validation.parentFile!!.isDirectory || validation.parentFile!!.mkdirs()); atomicWrite(validation,report.toString(2))
-            val uri=FileProvider.getUriForFile(app,"${app.packageName}.files",output)
-            CaptureHistory.save(app,listOf(uri),validation,"RAW-derived LogC3/AWG3 · ${profile.status} profile · video only · offline phone development")
-            previous.copy(media=output,sidecar=sidecar,message="Saved ${p.width} × ${p.height} LogC3/AWG3 video. Every frame decoded and compared. ${profile.status} profile; no physical camera certification.",error=null)
+            val (index,timing,sourceHash)=attempt.step(DevelopmentStage.SOURCE) { facts ->
+                check()
+                val source=RawSourceReader.scan(requireNotNull(previous.index).file,check)
+                val timing=source.timing();val hash=RawJson.hash(source.file,check)
+                val span=source.frames.last().metadata.getLong("sensorTimestampNs")-source.frames.first().metadata.getLong("sensorTimestampNs")
+                facts.put("source",JSONObject().put("name",source.file.name).put("sha256",hash).put("byteCount",source.bytes))
+                    .put("sourceBinding",source.binding()).put("frames",source.frames.size).put("allFrameChecksumsChecked",true)
+                    .put("timestampSpanNs",span).put("durationUnit","ns").put("durationDomain","source_sensor_timestamp_span").put("timing",timing)
+                attempt.context("sourceBinding",source.binding());attempt.context("sourceSha256",hash)
+                attempt.context("expectedFrames",source.frames.size);attempt.context("fps",source.fps)
+                attempt.context("timestampSpanNs",span)
+                Triple(source,timing,hash)
+            }
+            lateinit var profileFile:File
+            val (profile,p,profileHash)=attempt.step(DevelopmentStage.PROFILE) { facts ->
+                profileFile=requireNotNull(previous.profileFile) { "Select a colour profile" }
+                require(profileFile.length() in 1..1_048_576)
+                val profile=RawColourProfile.parse(RawJson.parse(profileFile.readBytes()),index,allowProvisional)
+                val p=profile.parameters(index,index.frames.first(),divisor)
+                require(p.width.toLong()*p.height*3<=128L*1024*1024) { "Output exceeds this milestone's native codec buffer budget" }
+                val hash=RawJson.hash(profileFile,check)
+                facts.put("profile",JSONObject().put("name",profileFile.name).put("sha256",hash).put("byteCount",profileFile.length()))
+                    .put("sourceBindingChecked",true).put("calibrationStatus",profile.status).put("width",p.width).put("height",p.height)
+                attempt.context("width",p.width);attempt.context("height",p.height);attempt.context("profileSha256",hash)
+                attempt.context("calibrationStatus",profile.status)
+                Triple(profile,p,hash)
+            }
+            val choice=attempt.step(DevelopmentStage.CODEC) { facts ->
+                if(Build.VERSION.SDK_INT<33)throw DevelopmentUnavailable("Explicit P010 encoding requires Android 13/API 33 or newer")
+                val choice=qualifyCodec(app.cacheDir,p.width,p.height,index.fps,check,progress)
+                facts.put("codec",choice.name).put("qualification",choice.qualification)
+                attempt.context("codec",choice.name);choice
+            }
+            val id=attempt.id;val partial=File(outputDirectory,"logc3-$id.partial.mp4")
+            val output=File(outputDirectory,"logc3-$id.mp4");val sidecar=File(outputDirectory,"logc3-$id.mp4.logc3.json")
+            val frameDeveloper=RawFrameDeveloper();val counts=DevelopCounts()
+            val encoded=attempt.step(DevelopmentStage.ENCODED) { facts ->
+                check(outputDirectory.isDirectory || outputDirectory.mkdirs())
+                val encoded=LogP010Codec.encode(partial,choice.name,p.width,p.height,index.fps,index.frames.size,check) { number,sink ->
+                    progress("Developing frame ${number+1} / ${index.frames.size} as LogC3…")
+                    val frame=index.frames[number]
+                    val value=index.rows(frame).use { rows -> frameDeveloper.develop(rows,profile.parameters(index,frame,divisor),allowClipping,check,sink) }
+                    counts.sensorSaturated+=value.sensorSaturated;counts.below+=value.below;counts.above+=value.above
+                }
+                facts.put("encoder",encoded).put("name",partial.name).put("byteCount",partial.length());encoded
+            }
+            var maxY=0.0;var maxC=0.0;var maxCode=0
+            val verification=attempt.step(DevelopmentStage.DECODED) { facts ->
+                val verified=LogP010Codec.verify(partial,p.width,p.height,index.fps,index.frames.size,check) { number,actual ->
+                    progress("Checking decoded pixels ${number+1} / ${index.frames.size}…")
+                    val compare=LogFrameComparison(actual);val frame=index.frames[number]
+                    index.rows(frame).use { rows -> frameDeveloper.develop(rows,profile.parameters(index,frame,divisor),allowClipping,check,compare) }
+                    val value=compare.result();maxY=maxOf(maxY,value.getDouble("meanLumaCodeError"));maxC=maxOf(maxC,value.getDouble("meanChromaCodeError"));maxCode=maxOf(maxCode,value.getInt("maximumCodeError"))
+                }
+                val hash=RawJson.hash(partial,check)
+                verified.put("mediaIdentity",JSONObject().put("algorithm","SHA-256").put("sha256",hash).put("byteCount",partial.length()).put("name",partial.name))
+                    .put("maximumFrameMeanLumaCodeError",maxY).put("maximumFrameMeanChromaCodeError",maxC).put("maximumCodeError",maxCode)
+                    .put("comparison","Every decoded Y/Cb/Cr sample against developed RAW after explicit 4:2:0 subsampling")
+                    .put("meanErrorLimitCodes",4.0).put("peakErrorLimitCodes",64)
+                facts.put("verification",verified);verified
+            }
+            attempt.step(DevelopmentStage.UNCHANGED) { facts ->
+                index.unchanged()
+                val currentSource=RawJson.hash(index.file,check);val currentProfile=RawJson.hash(profileFile,check)
+                facts.put("sourceBefore",sourceHash).put("sourceAfter",currentSource).put("profileBefore",profileHash).put("profileAfter",currentProfile)
+                require(sourceHash==currentSource && profileHash==currentProfile) { "Source or profile changed during development" }
+            }
+            val hash=verification.getJSONObject("mediaIdentity").getString("sha256")
+            val report=JSONObject().put("schemaVersion",1).put("kind","raw-derived-logc3").put("status","checked")
+                .put("developmentAppCommit",BuildConfig.SOURCE_REVISION).put("developmentVersion",BuildConfig.VERSION_NAME)
+                .put("source",index.file.name).put("sourceSha256",sourceHash).put("sourceHeader",index.header)
+                .put("profileSha256",profileHash).put("profile",profile.json).put("calibrationStatus",profile.status)
+                .put("calibrationClaimIndependentlyVerified",false).put("outputSha256",hash).put("output",output.name)
+                .put("transfer","ARRI_LogC3_EI800_exposure").put("primaries","ARRI_Wide_Gamut_3").put("whitePoint","D65")
+                .put("dataLevels","video").put("storageBits",10).put("yuvMatrix","BT709_coefficients_not_primaries")
+                .put("encoder",encoded).put("precisionQualification",choice.qualification).put("verification",verification)
+                .put("timing",timing).put("selectedMode",JSONObject().put("fps",index.fps))
+                .put("clipping",JSONObject().put("sensorSaturatedSamples",counts.sensorSaturated).put("outputBelowZero",counts.below).put("outputAboveOne",counts.above))
+                .put("outputClippingExplicitlyAllowed",allowClipping).put("provisionalExplicitlyAllowed",allowProvisional)
+                .put("demosaic","bilinear_reference_cpu_row_streaming").put("linearBoxReductionDivisor",divisor)
+                .put("orientationDegrees",index.header.optInt("orientationDegrees",0)).put("orientationApplied",false)
+                .put("audio","none").put("realTime",false).put("physicalCameraCertified",false).put("arriSensorDynamicRangeClaimed",false)
+                .put("editorImport","Assign ARRI Wide Gamut 3 / LogC3, video data levels; apply stated orientation separately. A generic player is not a colour-correct monitor.")
+            report.put("developmentEvidenceFile",attempt.file.name)
+            attempt.step(DevelopmentStage.PUBLICATION) { facts ->
+                check();require(!output.exists() && partial.renameTo(output)) { "Verified video retained as ${partial.name}; final naming failed" }
+                facts.put("renamedWithoutOverwrite",true).put("name",output.name).put("byteCount",output.length())
+            }
+            // Once a verified movie exists, auxiliary report/library failures must not delete it.
+            result=try {
+                atomicWrite(sidecar,report.toString(2))
+                val validation=File(app.filesDir,"exports/validation/developed-$id.json")
+                check(validation.parentFile!!.isDirectory || validation.parentFile!!.mkdirs());atomicWrite(validation,report.toString(2))
+                val uri=FileProvider.getUriForFile(app,"${app.packageName}.files",output)
+                CaptureHistory.save(app,listOf(uri),validation,"RAW-derived LogC3/AWG3 · ${profile.status} profile · video only · offline phone development")
+                result.copy(media=output,sidecar=sidecar,message="Saved ${p.width} × ${p.height} LogC3/AWG3 video. Every frame decoded and compared. ${profile.status} profile; no physical camera certification.",error=null)
+            } catch(e:Exception) {
+                attempt.context("auxiliaryReportError",e.message ?: e.javaClass.simpleName)
+                result.copy(media=output,sidecar=sidecar.takeIf { it.isFile },message="Verified video retained at ${output.name}; report/library publication failed: ${e.message}",error=e.message)
+            }
         } catch(e:Exception) {
-            previous.copy(media=output,sidecar=sidecar.takeIf { it.isFile },message="Verified video retained at ${output.name}; report/library publication failed: ${e.message}",error=e.message)
+            attempt.context("attemptError",e.message ?: e.javaClass.simpleName)
+            result=result.copy(message=e.message ?: e.javaClass.simpleName,error=e.message ?: e.javaClass.simpleName)
+        } finally {
+            attempt.context("retainedOutputs",JSONArray(listOf("logc3-${attempt.id}.partial.mp4","logc3-${attempt.id}.mp4").mapNotNull { name ->
+                File(outputDirectory,name).takeIf { it.isFile }?.let { JSONObject().put("name",it.name).put("byteCount",it.length()) }
+            }))
+            attempt.finish()
         }
+        val reportError=attempt.persistenceError
+        result.copy(evidenceReport=attempt.retainedReport,
+            message=result.message+(reportError?.let { " Evidence report write issue: $it. Sources and outputs were not deleted." } ?: ""))
     }
     private fun preview(index:RawSourceIndex,check:()->Unit):Preview {
         val scale=minOf(512.0/index.width,320.0/index.height,1.0)

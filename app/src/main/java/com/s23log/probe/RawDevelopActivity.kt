@@ -38,6 +38,7 @@ class RawDevelopActivity:Activity() {
     private lateinit var shareButton:Button
     private lateinit var profileShare:Button
     private lateinit var retained:Button
+    private lateinit var attemptReports:Button
     private lateinit var coordinateButton:Button
     private var grey:IntArray?=null
     private var divisors=listOf(1)
@@ -88,6 +89,7 @@ class RawDevelopActivity:Activity() {
         cancelButton=button("Cancel development") { store.cancel() }
         shareButton=button("Share verified video + colour sidecar") { store.state.media?.let { media -> share(listOf(media)+listOfNotNull(store.state.sidecar),"application/octet-stream") } }
         retained=button("Retained exports / partial files") { showRetained() }
+        attemptReports=button("Development attempt reports") { showAttemptReports() }
         button("Open clip library") { if(!store.state.busy)startActivity(Intent(this,CaptureLibraryActivity::class.java)) }
         button("Return to camera") { if(store.state.busy)store.cancel();finish() }
         grey=savedInstanceState?.getIntArray("grey")
@@ -126,6 +128,7 @@ class RawDevelopActivity:Activity() {
         coordinateButton.isEnabled=ready;preview.isEnabled=ready
         exportButton.isEnabled=ready && state.profile!=null;scale.isEnabled=exportButton.isEnabled
         clipping.isEnabled=!state.busy;provisional.isEnabled=!state.busy
+        attemptReports.isEnabled=!state.busy
         cancelButton.isEnabled=state.busy;shareButton.isEnabled=!state.busy && state.media?.isFile==true
         profileShare.isEnabled=!state.busy && state.profileFile?.isFile==true;retained.isEnabled=!state.busy
     }
@@ -152,6 +155,15 @@ class RawDevelopActivity:Activity() {
                     .setMessage("Confirm that the selected rectangle is a uniformly lit 18% grey reference in frame one, and the selected illuminant matches the shot. This uses manufacturer matrices and a grey normalization, not a measured colour-chart fit. No automatic illuminant interpolation or dynamic-range equivalence is claimed.")
                     .setNegativeButton("Cancel",null).setPositiveButton("Create provisional profile") { _,_ -> store.deriveProfile(endpoints[i],roi.copyOf()) }.show()
             }.setNegativeButton("Cancel",null).show()
+    }
+    private fun showAttemptReports() {
+        val files=store.evidenceDirectory.listFiles().orEmpty().filter { it.isFile && it.name.matches(Regex("attempt-[0-9a-f-]+\\.json")) && it.length()>0 }
+            .sortedByDescending { it.lastModified() }
+        if(files.isEmpty()) {
+            AlertDialog.Builder(this).setMessage("No attempt reports retained. After development, reports show each observed stage, including unavailable or failed routes. They do not certify a physical camera.").setPositiveButton("Close",null).show();return
+        }
+        AlertDialog.Builder(this).setTitle("Attempt reports · not camera certification").setItems(files.map { it.name }.toTypedArray()) { _,i -> share(listOf(files[i]),"application/json") }
+            .setNegativeButton("Close",null).show()
     }
     private fun showRetained() {
         val files=store.outputDirectory.listFiles().orEmpty().filter { it.isFile && it.name.matches(Regex("logc3-[0-9a-f-]+(\\.partial)?\\.mp4")) }.sortedByDescending { it.lastModified() }

@@ -92,3 +92,5 @@ python3 scripts/check_raw_development.py evidence/emulator/app-evidence.tar > ev
 cat evidence/emulator/summary.json
 
 python3 scripts/check_live_log.py evidence/emulator/app-evidence.tar > evidence/emulator/live-log-summary.json
+
+python3 scripts/check_development_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" > evidence/emulator/development-attempts-summary.json

@@ -229,7 +229,8 @@ object LogP010Codec {
                     .put("physicalCameraPrecisionMeasured",false))
             } catch(e:Exception) { check(); failures.put(JSONObject().put("codec",name).put("reason",e.message ?: e.javaClass.simpleName)) }
         }
-        error("No P010 route passed encode/decode precision checks. Source retained; no 8-bit/HLG substitution. $failures")
+        throw DevelopmentUnavailable("No P010 route passed encode/decode precision checks. Source retained; no 8-bit/HLG substitution. $failures",
+            JSONObject().put("rejectedRoutes",failures))
     }
 }
 
