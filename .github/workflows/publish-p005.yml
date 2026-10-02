@@ -21,6 +21,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install existing host prerequisites
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/p005-venv"
+          "$RUNNER_TEMP/p005-venv/bin/pip" install -r scripts/requirements-raw.txt
+          echo "$RUNNER_TEMP/p005-venv/bin" >> "$GITHUB_PATH"
+
       - name: Reconstruct and verify saved Git bundle
         env:
           GH_TOKEN: ${{ github.token }}
@@ -62,12 +69,13 @@ jobs:
         run: |
           set -euo pipefail
           trigger="$(git rev-parse HEAD)"
-          test "$(git rev-parse "$trigger^^")" = c1386a4b9376403ac70dd35c6609dbe5a2bd5116
-          test "$(git diff --name-only c1386a4b9376403ac70dd35c6609dbe5a2bd5116 "$trigger")" = .github/workflows/publish-p005.yml
+          base=c1386a4b9376403ac70dd35c6609dbe5a2bd5116
+          git merge-base --is-ancestor "$base" "$trigger"
+          test "$(git diff --name-only "$base" "$trigger")" = .github/workflows/publish-p005.yml
           git fetch "$RUNNER_TEMP/p005.bundle" refs/heads/main:refs/remotes/saved/p005
           test "$(git rev-parse refs/remotes/saved/p005)" = e028e98ed11714beb497afa1353e356848eb0198
           test "$(git rev-parse e028e98ed11714beb497afa1353e356848eb0198^)" = 9ea528cde9149891ed4f54ef93080da19c7be0a7
-          test "$(git rev-parse 9ea528cde9149891ed4f54ef93080da19c7be0a7^)" = c1386a4b9376403ac70dd35c6609dbe5a2bd5116
+          test "$(git rev-parse 9ea528cde9149891ed4f54ef93080da19c7be0a7^)" = "$base"
           test "$(git rev-parse 9ea528cde9149891ed4f54ef93080da19c7be0a7^{tree})" = cc89fec54afaaf26a9804b761fda31ecc790d254
           test "$(git rev-parse e028e98ed11714beb497afa1353e356848eb0198^{tree})" = 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee
           test -z "$(git ls-tree 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee .github/workflows/publish-p005.yml)"
@@ -90,7 +98,7 @@ jobs:
 
           Merge the exact saved P005 implementation and evidence commits into main while preserving their original identities. The final tree is the tested e028e98 snapshot and removes the temporary publisher.
 
-          The publication runner independently verified the registry, 28 focused P005 cases, 310 host regressions, 53 preserved reference tests, directive integrity, research contract, source continuity, and retained mutation evidence. The first truncated transfer failure remains preserved in workflow history. No Android source, capture path, build pin, numerical imaging threshold, or preserved directive file changed.
+          The publication runner independently verified the registry, 28 focused P005 cases, 310 host regressions, 53 preserved reference tests, directive integrity, research contract, source continuity, and retained mutation evidence. Earlier transfer and missing-prerequisite failures remain preserved in workflow history. No Android source, capture path, build pin, numerical imaging threshold, or preserved directive file changed.
 
           This establishes host-side measurement semantics only. Physical S23 cadence/content integrity, calibrated colour, effective sensor precision, and dynamic-range claims remain unqualified. P006 is the next dependency-ready phase.
           EOF
