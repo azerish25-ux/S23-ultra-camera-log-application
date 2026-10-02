@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "phase": "P005",
+  "templateId": "measurement-uncertainty-budget-v1",
+  "registryId": "s23-cinema-measurements-v1",
+  "requiredSections": [
+    {
+      "id": "identity",
+      "fields": [
+        "measurementId",
+        "sourceRevision",
+        "registrySha256",
+        "policySha256"
+      ]
+    },
+    {
+      "id": "environment",
+      "fields": [
+        "environmentId",
+        "kind",
+        "backend",
+        "deviceOrHostIdentity",
+        "availability"
+      ]
+    },
+    {
+      "id": "provenance",
+      "fields": [
+        "fixtureId",
+        "contentIdentity",
+        "origin",
+        "owner",
+        "acquiredAt",
+        "permittedUse"
+      ]
+    },
+    {
+      "id": "sampling",
+      "fields": [
+        "unit",
+        "domain",
+        "samplingProcedure",
+        "sampleCount",
+        "completeSequence",
+        "outlierPolicy"
+      ]
+    },
+    {
+      "id": "uncertainty",
+      "fields": [
+        "source",
+        "direction",
+        "estimatedMagnitude",
+        "unit",
+        "evaluationMethod",
+        "status"
+      ]
+    },
+    {
+      "id": "calibration",
+      "fields": [
+        "required",
+        "inputsPresent",
+        "trace",
+        "limitations"
+      ]
+    },
+    {
+      "id": "claims",
+      "fields": [
+        "claimClass",
+        "dependsOn",
+        "supportedScope",
+        "excludedScope"
+      ]
+    }
+  ],
+  "outcomeVocabulary": [
+    "passed",
+    "failed",
+    "exploratory",
+    "inconclusive",
+    "unavailable",
+    "invalid"
+  ],
+  "rules": [
+    "Unknown uncertainty remains unknown rather than zero.",
+    "All individual samples and outliers remain inspectable.",
+    "Average cadence does not establish per-frame integrity.",
+    "Container or codec bit depth does not establish effective sensor precision.",
+    "A colour result without known illuminant and traceable calibration remains exploratory.",
+    "Threshold revisions require a new policy identity, rationale and independent validation evidence."
+  ]
+}

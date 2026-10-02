@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "phase": "P005",
+  "cases": [
+    "TC-P005-01",
+    "TC-P005-02",
+    "TC-P005-03",
+    "TC-P005-04",
+    "TC-P005-05",
+    "TC-P005-06",
+    "TC-P005-07",
+    "TC-P005-08"
+  ],
+  "scope": "Host measurement-registry, uncertainty and inference validation; no physical S23 execution or Android source change.",
+  "implementation": {
+    "revision": "9ea528cde9149891ed4f54ef93080da19c7be0a7",
+    "tree": "cc89fec54afaaf26a9804b761fda31ecc790d254",
+    "baseRevision": "c1386a4b9376403ac70dd35c6609dbe5a2bd5116",
+    "registryId": "s23-cinema-measurements-v1",
+    "registrySha256": "7d6d24e105cb967ec3f6ed4e4a8dd456f7b2771682a24830495d57289411d691",
+    "policies": 8
+  },
+  "tests": {
+    "focused": {
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_measurements.py' -v",
+      "passed": 28,
+      "failed": 0,
+      "errors": 0
+    },
+    "host": {
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "passed": 310,
+      "failed": 0,
+      "errors": 0
+    },
+    "reference": {
+      "command": "python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v",
+      "passed": 53,
+      "failed": 0,
+      "errors": 0
+    },
+    "directiveIntegrity": "passed",
+    "researchContract": "passed",
+    "sourceContinuity": "passed"
+  },
+  "requiredFixture": {
+    "meanCadenceOutcome": "passed",
+    "perFrameIntegrityOutcome": "failed",
+    "duplicateContentIndices": [
+      30
+    ],
+    "colourOutcome": "exploratory",
+    "physicalCameraCertified": false
+  },
+  "p003Adapter": {
+    "inputSha256": "4993f1b1fb6bafdf43081154fc401d97f100adf9385b950e71da3574816a74d7",
+    "adaptedRecordSha256": "6cbe1567819b953280ae70dca8f568fd1c46518659b40574a78fbcb9b1c55704",
+    "assessmentCanonicalSha256": "152457e6ed864ed0042e2015431cdc954f7b92d0ef1dcbe1d8f67131a4873905",
+    "status": "passed",
+    "acceptedClaims": [
+      "average-cadence"
+    ],
+    "rejectedClaims": [
+      "per-frame-integrity"
+    ],
+    "physicalCameraCertified": false,
+    "scope": "One existing emulator ordinary-recording report from the accepted P004 artifact; no new Android or phone run."
+  },
+  "mutations": [
+    {
+      "id": "discard-duplicate-content",
+      "detected": true,
+      "case": "TC-P005-04"
+    },
+    {
+      "id": "certify-unknown-illuminant",
+      "detected": true,
+      "case": "TC-P005-01"
+    },
+    {
+      "id": "inflate-physical-from-average",
+      "detected": true,
+      "case": "TC-P005-01"
+    }
+  ],
+  "evidenceArchive": {
+    "path": "docs/evidence/P005-tdd-evidence.tar.xz",
+    "sha256": "bd82bd43dfc914966d7b8ae3875a5c84091a430efca7fd7052084b9a2a567e53",
+    "bytes": 22488,
+    "members": 38
+  },
+  "limitations": [
+    "No physical S23 measurements were executed.",
+    "Aggregate P003 cadence remains insufficient for per-frame content integrity.",
+    "Codec-ramp precision remains distinct from effective sensor precision.",
+    "Unknown-illuminant chart data remains exploratory.",
+    "Registry thresholds are provisional project policies and require versioned review to change."
+  ],
+  "nextDependencyReadyPhase": "P006"
+}

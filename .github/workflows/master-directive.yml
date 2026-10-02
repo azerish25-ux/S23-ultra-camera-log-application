@@ -48,6 +48,12 @@ jobs:
         env:
           S23_LIVE_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P003-live-cases
         run: python3 -m unittest discover -s scripts/tests -p 'test_live_evidence.py' -v 2>&1 | tee evidence/master-directive/live-evidence-tests.log
+      - name: Execute P005 measurement uncertainty and integrity cases
+        env:
+          S23_P005_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P005-cases
+        run: |
+          python3 scripts/measurements.py validate-registry --expected-head "$GITHUB_SHA" | tee evidence/master-directive/measurement-registry.json
+          python3 -m unittest discover -s scripts/tests -p 'test_measurements.py' -v 2>&1 | tee evidence/master-directive/measurement-tests.log
       - name: Execute preserved Python reference contracts
         run: python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v 2>&1 | tee evidence/master-directive/reference-tests.log
       - name: Retain exact-commit directive verification

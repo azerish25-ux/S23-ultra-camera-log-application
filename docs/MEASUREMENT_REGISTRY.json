@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "phase": "P005",
+  "registryId": "s23-cinema-measurements-v1",
+  "implementationBaseRevision": "c1386a4b9376403ac70dd35c6609dbe5a2bd5116",
+  "scope": "Measurement identity, uncertainty and inference limits. Policies are provisional project gates, not physical S23 certification.",
+  "policies": [
+    {
+      "id": "cadence.sensor-timestamp.v1",
+      "version": 1,
+      "kind": "cadence",
+      "unit": "ns",
+      "domain": "sensor_timestamp",
+      "samplingProcedure": "Record every sensor timestamp in acquisition order and preserve every adjacent interval. A changing-content protocol supplies one frame identifier per timestamp when content integrity is claimed.",
+      "statisticalScope": "Complete sequence; no trimming, outlier deletion, resampling or replacement by an aggregate mean.",
+      "uncertaintySources": [
+        "sensor-clock resolution",
+        "timestamp quantization",
+        "camera/OS scheduling",
+        "content-identifier generation and readout"
+      ],
+      "thresholds": {
+        "nominalFpsToleranceFraction": {
+          "value": 0.03,
+          "unit": "ratio",
+          "domain": "rate_fraction",
+          "operator": "le",
+          "provisional": true
+        },
+        "largeGapMultiplier": {
+          "value": 1.5,
+          "unit": "ratio",
+          "domain": "adjacent_interval",
+          "operator": "le",
+          "provisional": true
+        },
+        "minimumSpan": {
+          "value": 2000000000,
+          "unit": "ns",
+          "domain": "sensor_timestamp_span",
+          "operator": "ge",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": false,
+        "inputs": [
+          "timestamp resolution and domain declaration"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cadence.muxed-presentation.v1",
+      "version": 1,
+      "kind": "cadence",
+      "unit": "us",
+      "domain": "muxed_video_presentation_timestamp",
+      "samplingProcedure": "Record every selected video packet presentation timestamp in mux order; retain all intervals and decoder/container context.",
+      "statisticalScope": "Complete selected video stream; no dropped packets or aggregate-only substitution when per-frame integrity is claimed.",
+      "uncertaintySources": [
+        "container time-base quantization",
+        "encoder reordering",
+        "muxer rounding",
+        "packet extraction precision"
+      ],
+      "thresholds": {
+        "nominalFpsToleranceFraction": {
+          "value": 0.03,
+          "unit": "ratio",
+          "domain": "rate_fraction",
+          "operator": "le",
+          "provisional": true
+        },
+        "largeGapMultiplier": {
+          "value": 1.5,
+          "unit": "ratio",
+          "domain": "adjacent_interval",
+          "operator": "le",
+          "provisional": true
+        },
+        "minimumSpan": {
+          "value": 2000000,
+          "unit": "us",
+          "domain": "muxed_video_presentation_timestamp_span",
+          "operator": "ge",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": false,
+        "inputs": [
+          "stream index and time base"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "precision.codec-p010.v1",
+      "version": 1,
+      "kind": "precision",
+      "unit": "code_value",
+      "domain": "decoded_P010",
+      "samplingProcedure": "Compare every retained decoded ramp sample against its expected ten-bit code value; preserve individual errors and distinguishable decoded levels.",
+      "statisticalScope": "At least 600 samples; mean, peak and level count are all retained. This is codec/arithmetic evidence only.",
+      "uncertaintySources": [
+        "decoder implementation",
+        "rounding",
+        "limited-range packing",
+        "sample generation"
+      ],
+      "thresholds": {
+        "meanCodeError": {
+          "value": 0.75,
+          "unit": "code_value",
+          "domain": "decoded_P010",
+          "operator": "le",
+          "provisional": true
+        },
+        "peakCodeError": {
+          "value": 2.0,
+          "unit": "code_value",
+          "domain": "decoded_P010",
+          "operator": "le",
+          "provisional": true
+        },
+        "minimumLevels": {
+          "value": 600,
+          "unit": "count",
+          "domain": "decoded_P010_distinguishable_levels",
+          "operator": "ge",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": false,
+        "inputs": [
+          "expected ramp generation contract"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "precision.sensor-effective.v1",
+      "version": 1,
+      "kind": "sensor_precision",
+      "unit": "bits",
+      "domain": "physical_sensor_signal",
+      "samplingProcedure": "Estimate effective sensor precision only from retained physical sensor samples under a documented exposure/noise protocol and calibration trace.",
+      "statisticalScope": "No synthetic, emulator, container-bit-depth or decoded-ramp result may substitute for physical sensor samples.",
+      "uncertaintySources": [
+        "shot noise",
+        "read noise",
+        "black-level drift",
+        "temperature",
+        "exposure repeatability",
+        "ADC/ISP behavior"
+      ],
+      "thresholds": {},
+      "calibration": {
+        "required": true,
+        "inputs": [
+          "physical S23 identity",
+          "retained sensor samples",
+          "black/white calibration",
+          "exposure protocol",
+          "temperature"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "colour.chart-deltae2000.v1",
+      "version": 1,
+      "kind": "colour",
+      "unit": "deltaE2000",
+      "domain": "chart_reflectance_D65",
+      "samplingProcedure": "Retain every patch error, chart identity, illuminant, instrument and calibration trace. Unknown illuminant or instrument keeps the result exploratory.",
+      "statisticalScope": "All measured patches; no removal of visually inconvenient patches or replacement by mean-only reporting.",
+      "uncertaintySources": [
+        "illuminant spectrum",
+        "instrument calibration",
+        "chart ageing",
+        "flare",
+        "exposure",
+        "patch selection",
+        "working-space conversion"
+      ],
+      "thresholds": {
+        "meanDeltaE2000": {
+          "value": 3.0,
+          "unit": "deltaE2000",
+          "domain": "chart_reflectance_D65",
+          "operator": "le",
+          "provisional": true
+        },
+        "maximumDeltaE2000": {
+          "value": 6.0,
+          "unit": "deltaE2000",
+          "domain": "chart_reflectance_D65",
+          "operator": "le",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": true,
+        "inputs": [
+          "known illuminant",
+          "traceable instrument",
+          "chart identity",
+          "calibration trace"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "memory.peak-resident.v1",
+      "version": 1,
+      "kind": "memory",
+      "unit": "bytes",
+      "domain": "process_resident_memory",
+      "samplingProcedure": "Sample resident memory with a named operating-system counter over the full tested operation, preserving the peak and sampling interval.",
+      "statisticalScope": "Full operation including warm-up and finalization; no unit conversion without explicit declaration.",
+      "uncertaintySources": [
+        "sampling interval",
+        "shared-page accounting",
+        "allocator caches",
+        "background processes"
+      ],
+      "thresholds": {
+        "peakBytes": {
+          "value": 536870912,
+          "unit": "bytes",
+          "domain": "process_resident_memory",
+          "operator": "le",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": false,
+        "inputs": [
+          "counter identity",
+          "sampling interval"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "latency.render.v1",
+      "version": 1,
+      "kind": "latency",
+      "unit": "ms",
+      "domain": "monotonic_elapsed_time",
+      "samplingProcedure": "Measure each render interval with a monotonic clock and retain the full sample distribution.",
+      "statisticalScope": "Warm-up and steady-state samples reported separately; no outlier deletion.",
+      "uncertaintySources": [
+        "clock resolution",
+        "scheduler preemption",
+        "thermal state",
+        "GPU queueing"
+      ],
+      "thresholds": {
+        "p95Latency": {
+          "value": 41.667,
+          "unit": "ms",
+          "domain": "monotonic_elapsed_time",
+          "operator": "le",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": false,
+        "inputs": [
+          "clock identity",
+          "sample count",
+          "thermal state"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "geometry.blur-radius.v1",
+      "version": 1,
+      "kind": "geometry",
+      "unit": "pixels",
+      "domain": "output_image_plane",
+      "samplingProcedure": "Measure blur radius in output-image pixels at a declared resolution and edge/PSF protocol.",
+      "statisticalScope": "Per-location measurements retained; source-plane and output-plane values are not interchangeable.",
+      "uncertaintySources": [
+        "edge orientation",
+        "sampling",
+        "resampling kernel",
+        "display scaling"
+      ],
+      "thresholds": {
+        "maximumAbsoluteError": {
+          "value": 1.0,
+          "unit": "pixels",
+          "domain": "output_image_plane",
+          "operator": "le",
+          "provisional": true
+        }
+      },
+      "calibration": {
+        "required": true,
+        "inputs": [
+          "output dimensions",
+          "measurement edge or PSF",
+          "resampling state"
+        ]
+      },
+      "supersedes": null,
+      "review": null,
+      "history": [
+        {
+          "version": 1,
+          "reason": "Initial P005 provisional measurement policy",
+          "reviewer": "P005 implementation owner",
+          "validationEvidence": [
+            "TC-P005-01",
+            "TC-P005-04",
+            "TC-P005-05",
+            "TC-P005-06"
+          ]
+        }
+      ]
+    }
+  ]
+}

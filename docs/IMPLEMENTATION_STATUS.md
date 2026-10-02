@@ -171,3 +171,25 @@ and preserves new failures independently. See [P004 operation and limits](P004_B
 New P004 tests are not part of the historical 249-test baseline. Physical S23,
 calibration, high-resolution/endurance and byte-identical APK reproduction remain
 unclaimed. P005 follows inspection of actual clean reproduction outcomes.
+
+## P005 — measurement uncertainty and per-frame integrity
+
+The [versioned metric registry](MEASUREMENT_REGISTRY.json) and
+[uncertainty-budget template](MEASUREMENT_BUDGET_TEMPLATE.json) now bind units,
+domains, sampling procedures, uncertainty sources, calibration inputs,
+provisional thresholds and immutable revision history. The standard-library
+`measurements.py` assessor preserves every cadence interval and chart patch,
+rejects mean-only frame-integrity claims, and keeps codec precision, sensor
+precision, exploratory colour and calibrated colour as separate conclusions.
+
+A P003 ordinary-recording adapter preserves useful aggregate cadence while marking
+per-frame content integrity inconclusive when the complete sequence is absent.
+No Android source, capture path, build pin or existing numerical image-processing
+threshold changed. See [P005 operation and limits](P005_MEASUREMENT_UNCERTAINTY.md).
+The focused host suite covers TC-P005-01 through TC-P005-08; physical S23,
+calibrated colour, effective sensor precision and changing-content device cadence
+remain unqualified until their documented protocols are executed.
+
+After exact-commit acceptance, P006 decision/risk gates are the next foundation
+phase. This work adds measurement discipline, not a new recording mode or a
+physical-camera performance claim.

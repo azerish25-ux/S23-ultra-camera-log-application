@@ -1,0 +1,71 @@
+name: P005 measurement uncertainty acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/measurements.py
+      - scripts/tests/test_measurements.py
+      - docs/MEASUREMENT_REGISTRY.json
+      - docs/MEASUREMENT_BUDGET_TEMPLATE.json
+      - docs/P005_MEASUREMENT_UNCERTAINTY.md
+      - docs/evidence/P005-*
+      - docs/IMPLEMENTATION_STATUS.md
+      - .github/workflows/measurement-verify.yml
+      - .github/workflows/master-directive.yml
+  pull_request:
+    paths:
+      - scripts/measurements.py
+      - scripts/tests/test_measurements.py
+      - docs/MEASUREMENT_REGISTRY.json
+      - docs/MEASUREMENT_BUDGET_TEMPLATE.json
+      - docs/P005_MEASUREMENT_UNCERTAINTY.md
+      - docs/evidence/P005-*
+      - .github/workflows/measurement-verify.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Validate versioned metric registry and uncertainty template
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/p005
+          python3 scripts/measurements.py validate-registry --expected-head "$GITHUB_SHA" \
+            | tee evidence/p005/registry.json
+      - name: Execute TC-P005-01 through TC-P005-08
+        env:
+          S23_P005_EVIDENCE_DIR: ${{ github.workspace }}/evidence/p005/cases
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -p test_measurements.py -v \
+            2>&1 | tee evidence/p005/acceptance-tests.log
+      - name: Run adjacent host regressions
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -v \
+            2>&1 | tee evidence/p005/host-regressions.log
+          python3 scripts/verify_master_directive.py \
+            | tee evidence/p005/directive-integrity.json
+          python3 scripts/verify_research_contract.py --expected-head "$GITHUB_SHA" \
+            | tee evidence/p005/research-contract.json
+          python3 scripts/verify_repository_continuity.py --expected-head "$GITHUB_SHA" \
+            | tee evidence/p005/source-continuity.json
+          python3 -m unittest discover -s docs/master-directive/reference -p test_reference.py -v \
+            2>&1 | tee evidence/p005/reference-tests.log
+      - name: Retain exact-commit P005 evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P005-measurement-verification
+          path: evidence/p005/
+          if-no-files-found: error
