@@ -155,6 +155,16 @@ checks and now also executes the live and cross-adapter consumers. Missing repor
 controls or adapter families fail the integration gate. All actual outcomes and
 unavailable routes must be retained in the final evidence, not filtered into green.
 
+## Retained local execution record
+
+[Local host verification](evidence/P003-live-host-verification.json) names the
+source commit, actual results, prior failed CI/replay and separate native gates.
+Its checksummed archive retains the original failed-publication assertion,
+consumer mutants, individual authored receipt cases, green logs and compile-only
+signature inputs. The current host suite executed **249 tests**, including the
+47 live/cross-adapter tests and the positive-corpus regression; all passed.
+These counts do not include the unexecuted new Android/JUnit tests.
+
 ## Remaining acceptance
 
 This implements the selected live/reporting changes and cross-adapter checks.

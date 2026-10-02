@@ -529,6 +529,257 @@
           "sha256": "041ba18c3dd3aae8d3f1647f9ad957abc3023e37bde81280528d37908d080999"
         }
       ]
+    },
+    {
+      "id": "INSPECTION-P003-LIVE",
+      "revision": "0bec817a2508b2b49f0e8f5c0781061b517418c0",
+      "scope": "Bounded prior source review plus new live attempt, publication, consumer, cross-adapter and negative-control integration code. Only recorded line ranges are semantically reviewed; whole-file hashes bind byte identity, not a complete repository audit. New Android tests and native execution remain unverified.",
+      "files": [
+        {
+          "path": ".github/scripts/emulator-test.sh",
+          "sha256": "ceef90e3dfcd528890196c520d20525d168c1dc6a1cbd255b7d8dc7514a132f3"
+        },
+        {
+          "path": "app/build.gradle.kts",
+          "sha256": "50b81f59f399483cdc2421aea62fc5363a5a9718c663d8b08044257d33d0fe1e"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/CameraSmokeTest.kt",
+          "sha256": "e14c66c308d2aac4d0dca754304c405bfd527bf309c7d5c766cbe3316a0c8e8a"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+          "sha256": "67088cd429fa006e8ce699819d01a54cd856ac78bd68f43001202082238a9533"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
+          "sha256": "b8583ad93324a54274410a55dda42a45c555a665e6e532bd7240b95cefbb38ed"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/RawDevelopmentAndroidTest.kt",
+          "sha256": "8fd4dbe6d4ae0934102b7ef7d7eb2d0ffc12e8f6750b4851b20826bb1cfde50e"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/RecordingEvidenceAndroidTest.kt",
+          "sha256": "e9aa440e4c1b9b556d80a56fdd5a82d919dc5bc5928370be05c8d9e1c0c110b8"
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
+          "sha256": "fc156270dcb71f23271a507cccdbdb79888610c6dbbc85995a675f35d7111e17"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/CameraCapabilityProbe.kt",
+          "sha256": "05f53b57f51747302b251b40e0ed2d2f359d1c93b06d1e2c4d088f15b333e6bc"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
+          "sha256": "d3b92fafebcca001e0be83c8932e43d7864a3d617470334af6d793d82909018f"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/MainActivity.kt",
+          "sha256": "83cdb2009381ddc9aceb6bbf0af3c7a66116c76c9752ed625790cfd1b2aa9432"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/RawDevelopActivity.kt",
+          "sha256": "51af1abe7358e356ab8f911255511a7d6f6ecfe812c0b668a51702924e9b84f5"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/S23Application.kt",
+          "sha256": "3d9716a9840aff29fa06ef34ba8deea6fe8a1516d018c066634d44cf2935bfc4"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/camera/CameraController.kt",
+          "sha256": "5c2dd4ac0e04cc647e102aaa642f98c49e0ec3464a078183b1dcabe3ea58e772"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/camera/RawSequenceCapture.kt",
+          "sha256": "29388f8055b4d35f756cfe167c4a8380fc782284b5ba61248073dfc17c1fd2b3"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/camera/SurfaceRecorder.kt",
+          "sha256": "49b528a918082a9fa7a8874d705b5ea3f74f9e9c5ab3f38b18d6e8dff626d720"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/DevelopmentEvidence.kt",
+          "sha256": "68183e89893150af2f4f90fa6331a9ab2a2e3d239e76aa8db235db4ac67dc709"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/LiveEvidence.kt",
+          "sha256": "310661186c0c9168ba56ee9fd808a28e821d787dc28fa05b4e05437c3b4616b9"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/LivePublication.kt",
+          "sha256": "22fdc1687b8f732b1fa71dc17c3bdb5186bd9b406b0c818f40d1a51935cd7946"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/RawColourProfile.kt",
+          "sha256": "4aed2282a9fa6f234dafeccfbc488f293ef917cd85f45305d4e7a9516d62344b"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/RawDevelopMath.kt",
+          "sha256": "b254aafec95a04a612d7dba21dfa1690970131ed406b4db8345bed9219692831"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/RawDevelopmentSource.kt",
+          "sha256": "164950ff4d47f2d3e9726b0bba05d3e7e106e87c07c6e400b0cf588085fef2e9"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/RawSequence.kt",
+          "sha256": "1a79cfa738c7c2cebd597435183382f9b51c4b0cbaac3b37fc4c965af6ef6459"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/RecordingEvidence.kt",
+          "sha256": "1e8343cb31bf32f59216b618eec4b22eb63aae32d208ffc0222db8c06cf6010f"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/core/VideoFinalizer.kt",
+          "sha256": "170428b51060dfbb6904a3d48ad963e0ca5d1beb76340c17f4e09aff014f1c04"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/DevelopmentAttempt.kt",
+          "sha256": "912a874fffb1ca257ffe80e540dc344da0027deb9fbb533f2de3177d5b9884ea"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/LogP010Codec.kt",
+          "sha256": "fb02202a08e1c237ecaa9b24c1a108934b6e2886bd7f08f96402cbb5ccf9206e"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/develop/RawDevelopmentStore.kt",
+          "sha256": "0378a4d2d9d9abd38f990bb09e85f20473f2c8f97d3b32fd6bc40ce3c8f6656b"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/diagnostics/ModeEvidence.kt",
+          "sha256": "5ae10403a17a29d693b18e8020ac998f06d2bd31d1cfc567159e4dff52b244db"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+          "sha256": "f3fa4a2be40774181bcf4669c26370505db4fe62bc9f849c63b28af62940f367"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/diagnostics/RecordingAttempt.kt",
+          "sha256": "3c28d56f1a313e9d7e000ba96f30f3e1fc00c8d0b778261c08863bdeb2b5af36"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/live/LiveAttempt.kt",
+          "sha256": "1a6ee09bc57212fda9e55d925017cd1343d265d6989ccedbfde3caa04ab12b98"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+          "sha256": "1bc564ec9edd65f99c668a64b889ed7608aa23ad95248412acccfa1cf3f993c5"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/storage/PendingMedia.kt",
+          "sha256": "f7661ed49865c8a9c37d6a1c518c61b730013bd37cf6bc4373894dbf4def0d1f"
+        },
+        {
+          "path": "app/src/main/res/layout/activity_main.xml",
+          "sha256": "d540e16b96a6038af427dbcae280a16663122042feff04477650a27740b44e77"
+        },
+        {
+          "path": "app/src/main/res/values/strings.xml",
+          "sha256": "3fdc014bfcd54aff983da4dd478613381c2878e047431422e402798928fd5c02"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/DevelopmentAttemptTest.kt",
+          "sha256": "5e7609181db50d04e2ba42ec6b153ac93ea194593659857227125699374f94ca"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+          "sha256": "c5abf17afe3ed3aebe2e79298ef8f4c9f35643e3642ef67f7809bec49e0a5e6d"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveLogPolicyTest.kt",
+          "sha256": "6a2b31353c7843493a5bcd3dbf22ad4424845e589fd302a695e1817413df64ab"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/ModePlanningTest.kt",
+          "sha256": "a943b27e8a7be5ff875eb8fc9e8fca5bc820718e38cbf303a3095577c24a44f3"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/ProbeReportTest.kt",
+          "sha256": "38342a73af99f10b416ffad81c57bd791edf2615f64f092414d899429074bcff"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawDevelopmentTest.kt",
+          "sha256": "acdd5218fe46453bb994ae68747d3bfb02750209bba6a06cd3750157504a039c"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RawSequenceTest.kt",
+          "sha256": "e829f3bee61f98482c0c33032a0361dd31d94d0f034460873051487fd998bc2e"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/RecordingAttemptTest.kt",
+          "sha256": "f81907ecb4cdcccbedf335e73776e3eff045370226bf17aa7b08fef56ee0d354"
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/VideoFinalizerTest.kt",
+          "sha256": "ea80a955fd22f550c8bad2d72b4edf23681c3e0c0fb33fde1dcc6d21fb2c4c02"
+        },
+        {
+          "path": "app/src/test/resources/live-attempt-authored-contract.json",
+          "sha256": "52ed693d82dd1258df91604ec71b5b67d5e5a4ca45b8a5636ef6dce7be15aed0"
+        },
+        {
+          "path": "build.gradle.kts",
+          "sha256": "786a6aef9d41e1075240be92fad07fb11f25717c0253245646957542649034f3"
+        },
+        {
+          "path": "gradle/wrapper/gradle-wrapper.properties",
+          "sha256": "c629b14195c2b627ef184fba4416f5dfce6f69c8b088230965bf3f77b8a1a7b4"
+        },
+        {
+          "path": "scripts/check_development_evidence.py",
+          "sha256": "7b00c7cddcd438a0a344e0e8d97b527c58378301c89a1b125c905d1db6733c3e"
+        },
+        {
+          "path": "scripts/check_live_evidence.py",
+          "sha256": "cd8fbb01d78fbcb672f3512d6102386493bee965c14223b6d83d91ab027a631e"
+        },
+        {
+          "path": "scripts/check_p003_evidence.py",
+          "sha256": "9db1e639ff2c301a4d388a3fb11c5833ee4f98e6e72c9ce90161620958267b6c"
+        },
+        {
+          "path": "scripts/check_recording_evidence.py",
+          "sha256": "7887d9ec30e2244e6dd068f8ab15f89e68d530eb3dad24ae456341604203d57d"
+        },
+        {
+          "path": "scripts/development_evidence_smoke.kt",
+          "sha256": "f0bd77024caf67168998aea174c2f5c92c20724f596a934872390c0b5a1c5278"
+        },
+        {
+          "path": "scripts/live_evidence_smoke.kt",
+          "sha256": "5572fdf17ef41d2da7a11addd158288510e514e8ec26ae8424af420602baa729"
+        },
+        {
+          "path": "scripts/live_publication_smoke.kt",
+          "sha256": "3873de0155d5f095606070c9c7e0f5a0f76d8c1a5f862b9c8aa7b1c39fda875e"
+        },
+        {
+          "path": "scripts/recording_evidence_smoke.kt",
+          "sha256": "2262a38dbd970026d5d47258c5081cdd0b50da4d938697e21b44af543f079b3d"
+        },
+        {
+          "path": "scripts/tests/test_check_evidence.py",
+          "sha256": "5979974df5e24ff35a1a9ab9dcbe8b2e408c50856433847a01ecbb06534af9c2"
+        },
+        {
+          "path": "scripts/tests/test_development_evidence.py",
+          "sha256": "97351356ba51af579c402f62bf3b7cab2da0f24a1922f0726fd08eec17884006"
+        },
+        {
+          "path": "scripts/tests/test_live_evidence.py",
+          "sha256": "7493b744986be7a8746bbee581e1ebb85fa3d7609770eb5256a835db5cfd5422"
+        },
+        {
+          "path": "scripts/tests/test_recording_evidence.py",
+          "sha256": "a8fbcad83d9ed6e31a93e212e063060a39ed37c1bb406d4b57b801a5c6d6391b"
+        },
+        {
+          "path": "settings.gradle.kts",
+          "sha256": "041ba18c3dd3aae8d3f1647f9ad957abc3023e37bde81280528d37908d080999"
+        }
+      ]
     }
   ],
   "fixtures": [
@@ -783,6 +1034,6 @@
     }
   ],
   "current_inspections": [
-    "INSPECTION-P003-RECORDING"
+    "INSPECTION-P003-LIVE"
   ]
 }
