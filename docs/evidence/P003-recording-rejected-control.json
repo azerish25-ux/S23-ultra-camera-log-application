@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 3,
+  "kind": "recording-validation",
+  "attemptId": "25b05ec3-f304-4e20-b057-5fc13ba8e003",
+  "attemptReport": "recording-attempt-25b05ec3-f304-4e20-b057-5fc13ba8e003.json",
+  "device": {
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "device": "emu64xa",
+    "fingerprint": "google\/sdk_gphone64_x86_64\/emu64xa:16\/BE2A.250530.026.F3\/13894323:userdebug\/dev-keys",
+    "sdk": 36,
+    "appVersion": "0.9.0-live-logc3-lab",
+    "appCommit": "826ad1ed5de00efd36393aefa5ecee7b470edc00"
+  },
+  "selectedMode": {
+    "key": "1280:720:30:SDR:c2.android.avc.encoder:video\/avc:AE_FIXED",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "dynamicRange": "SDR",
+    "mime": "video\/avc",
+    "encoder": "c2.android.avc.encoder",
+    "bitrate": 5529600,
+    "baseBitrate": 5529600,
+    "bitratePreset": "STANDARD",
+    "encoderBitrateRange": {
+      "minimum": 1,
+      "maximum": 12000000
+    },
+    "bitratePresetLimited": false,
+    "rateControl": "AE_FIXED",
+    "aeRange": [
+      30,
+      30
+    ],
+    "requiresManualExposure": false,
+    "timingAdvertised": true,
+    "previewDuringRecording": true,
+    "evidence": "advertised_candidate",
+    "customLog": false,
+    "colourPipeline": {
+      "schemaVersion": 1,
+      "inputProfile": "SDR",
+      "workingSpace": "camera_direct",
+      "recordingTransfer": "SDR_VIDEO",
+      "recordingPrimaries": "BT709",
+      "recordingBitDepth": 8,
+      "processingPath": "DIRECT",
+      "customLog": false,
+      "sensorRaw": false,
+      "precisionCertifiedOnCamera": false
+    }
+  },
+  "requested": {
+    "testKind": "P003-no-camera-no-frames-control"
+  },
+  "mode": "1280×720 \/ 30 \/ AVC \/ SDR \/ fixed AE · c2.android.avc.encoder",
+  "encoder": "c2.android.avc.encoder",
+  "orientation": 0,
+  "latestApplied": {},
+  "controlHistory": {
+    "schemaVersion": 1,
+    "sampleIntervalNs": 1000000000,
+    "sampleCapacity": 1024,
+    "requestCapacity": 256,
+    "requests": [],
+    "latestRequest": null,
+    "appliedSamples": [],
+    "latestApplied": null,
+    "samplesDropped": 0,
+    "requestsDropped": 0,
+    "invalidClockObservations": 0,
+    "scope": "Accepted repeating-request changes and sampled capture-result metadata; not every frame or proof of physical control accuracy",
+    "clock": "observedMonotonicNs is callback-reception time; sensorTimestampNs keeps the camera clock without an assumed offset"
+  },
+  "videoOnly": true,
+  "customLog": false,
+  "colourPipeline": {
+    "schemaVersion": 1,
+    "inputProfile": "SDR",
+    "workingSpace": "camera_direct",
+    "recordingTransfer": "SDR_VIDEO",
+    "recordingPrimaries": "BT709",
+    "recordingBitDepth": 8,
+    "processingPath": "DIRECT",
+    "customLog": false,
+    "sensorRaw": false,
+    "precisionCertifiedOnCamera": false
+  },
+  "processing": null,
+  "processingError": null,
+  "audioMode": "OFF",
+  "audio": null,
+  "resourceSafety": {
+    "availableBytes": 9045606400,
+    "stagedBytes": 0,
+    "publicationCopyBudgeted": true,
+    "thermalStatus": 0,
+    "thermalStatusAvailable": true,
+    "requiredFreeBytes": 87844864,
+    "remainingSecondsEstimate": 6479,
+    "stopReason": null,
+    "estimateIsGuarantee": false,
+    "physicalThermalCertification": false
+  },
+  "resourceStopReason": null,
+  "minimumObservedFreeBytes": 9045606400,
+  "previewAids": {
+    "initial": [],
+    "changes": [],
+    "changesDropped": 0,
+    "scope": "Display-layer framing\/RGB8 analysis, separate from encoded colour and sensor exposure"
+  },
+  "timingQuality": {
+    "schemaVersion": 1,
+    "status": "video_only",
+    "warnings": [],
+    "physicalLipSyncVerified": false
+  },
+  "audioError": null,
+  "audioEncodedSamples": 0,
+  "commonEpochUs": null,
+  "videoClock": "explicit_monotonic_output",
+  "physicalLipSyncVerified": false,
+  "partialTrackRecovery": false,
+  "encodedSamples": 0,
+  "encodedFrameGaps": 0,
+  "stages": [
+    "advertised"
+  ],
+  "disposition": "empty",
+  "verification": null,
+  "status": "rejected",
+  "error": "IllegalStateException: Deliberate stop before a camera session or first frame; No encoded samples arrived"
+}

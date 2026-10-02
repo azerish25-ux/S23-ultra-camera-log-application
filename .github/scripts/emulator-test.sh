@@ -96,3 +96,6 @@ python3 scripts/check_live_log.py evidence/emulator/app-evidence.tar > evidence/
 python3 scripts/check_development_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" > evidence/emulator/development-attempts-summary.json
 
 python3 scripts/check_recording_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" --require-integration > evidence/emulator/recording-attempts-summary.json
+
+python3 scripts/check_live_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" --require-integration > evidence/emulator/live-attempts-summary.json
+python3 scripts/check_p003_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" > evidence/emulator/p003-cross-adapter-summary.json
