@@ -1,0 +1,135 @@
+name: P004 frozen application reproduction
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/baseline-reproduce.yml]
+permissions:
+  contents: read
+  actions: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  original:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Retain original evidence and job records
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: azerish25-ux/S23-ultra-camera-log-application
+        run: |
+          set -euo pipefail
+          mkdir -p original
+          gh api "repos/$REPO/actions/artifacts/11235233287/zip" > original/verification.zip
+          gh api "repos/$REPO/actions/artifacts/11235033489/zip" > original/apk.zip
+          echo 'f4977660d1880b78eec74eba3882675d64a58d6a91a939166296d80a2559f62d  original/verification.zip' | sha256sum -c -
+          echo 'f0dff35d7586ac78f3eed2ba3fda0426e2780c5fab9647690034feff83a742bb  original/apk.zip' | sha256sum -c -
+          gh api "repos/$REPO/actions/jobs/110895707817" > original/job.json
+          gh api "repos/$REPO/actions/jobs/110895707817/logs" > original/job.log
+          gh api "repos/$REPO/actions/runs/37024421010/attempts/1" > original/run.json
+          gh api "repos/$REPO/actions/runs/37024421010/artifacts" > original/artifacts.json
+          sha256sum original/* > original/SHA256SUMS.txt
+      - name: Preserve original bytes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P004-original-baseline
+          path: original/
+          if-no-files-found: error
+  reproduce:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      GITHUB_SHA: d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Verify frozen source and wrapper
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git rev-parse HEAD^{tree})" = 99b83b61ca40b25fe2e0a0dadeb47b004d8a672c
+          echo '497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+          mkdir -p evidence/reproduction
+          printf '%s\n' '${{ github.sha }}' > evidence/reproduction/workflow-revision.txt
+      - name: Install original host prerequisites
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/raw-venv"
+          "$RUNNER_TEMP/raw-venv/bin/pip" install -r scripts/requirements-raw.txt
+          echo "$RUNNER_TEMP/raw-venv/bin" >> "$GITHUB_PATH"
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Original host tests and reference contracts
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -v 2>&1 | tee evidence/reproduction/host.log
+          python3 -m unittest discover -s docs/master-directive/reference -p test_reference.py -v 2>&1 | tee evidence/reproduction/reference.log
+          python3 scripts/verify_master_directive.py > evidence/reproduction/integrity.json
+      - name: Original synthetic RAW experiments
+        run: |
+          set -euo pipefail
+          python3 scripts/raw_fixture.py evidence/raw-logc3
+          python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --output evidence/raw-logc3/synthetic-logc3.mkv
+          python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --codec hevc10 --output evidence/raw-logc3/synthetic-logc3.mp4
+      - name: Install original Android packages
+        env:
+          ANDROID_HOME: ${{ runner.temp }}/s23log-android-sdk
+        run: bash .github/scripts/install-android.sh emulator
+      - name: Record resolved tools and dependencies
+        run: |
+          set -euo pipefail
+          { python3 --version; python3 -m pip freeze; java -version; git --version; ffmpeg -version; ./gradlew --version; } > evidence/reproduction/tools.txt 2>&1
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --list_installed > evidence/reproduction/sdk-packages.txt
+          ./gradlew --no-daemon :app:dependencies > evidence/reproduction/gradle-dependencies.txt
+      - name: Original unit tests lint and builds
+        id: build
+        run: |
+          set -euo pipefail
+          ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest 2>&1 | tee evidence/reproduction/build.log
+      - name: Original signing safeguards
+        run: |
+          set -euo pipefail
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk > evidence/reproduction/signature.txt
+          bash scripts/check_release_signing_config.sh > evidence/reproduction/release-signing.txt 2>&1
+      - name: Original emulator and independent consumers
+        run: |
+          set -euo pipefail
+          bash .github/scripts/emulator-test.sh 2>&1 | tee evidence/reproduction/emulator-command.log
+      - name: Preserve exact source and results even on failure
+        if: always()
+        run: |
+          mkdir -p evidence
+          git rev-parse HEAD > evidence/commit.txt
+          git archive --format=zip --output=evidence/S23Log-source.zip HEAD
+          git ls-tree -r HEAD > evidence/git-tree.txt
+          git diff --exit-code
+      - name: Retain reproduced APK
+        if: always() && steps.build.outcome == 'success'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P004-reproduced-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+      - name: Retain fresh execution independently of original
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P004-reproduced-evidence
+          path: |
+            app/build/reports/
+            app/build/test-results/
+            app/build/outputs/androidTest-results/
+            evidence/
+          if-no-files-found: error
