@@ -75,6 +75,7 @@ class LiveLogActivity:Activity(),SurfaceHolder.Callback {
         status=text(store.state.message)
         probe=button("Test Log recording backend") {store.testBackend(selectedFps())}
         button("Share latest backend / recording report") {store.state.report?.takeIf{it.isFile}?.let{share(listOf(it))}}
+        button("Live attempt reports") {attemptReports()}
         profileLabel=text("No profile selected. Create a profile through Retained RAW sequences → Develop as LogC3, or import a matching profile.")
         saved=button("Choose saved live colour profile") {chooseProfile()}
         imported=button("Import live colour profile") {startActivityForResult(Intent(Intent.ACTION_OPEN_DOCUMENT).apply{addCategory(Intent.CATEGORY_OPENABLE);type="*/*";putExtra(Intent.EXTRA_MIME_TYPES,arrayOf("application/json","text/plain","application/octet-stream"))},201)}
@@ -116,7 +117,7 @@ class LiveLogActivity:Activity(),SurfaceHolder.Callback {
     }
     private fun render(s:LiveLogSession.State){
         if(!::record.isInitialized)return
-        status.text=s.message
+        status.text=s.message+(s.evidenceError?.let { "\nAttempt report save failed: $it. Footage is unchanged." } ?: "")
         prepare.isEnabled=!s.busy && !importBusy && surfaceReady && choices.isNotEmpty()
         probe.isEnabled=!s.busy && !importBusy;saved.isEnabled=!s.busy && !importBusy;imported.isEnabled=!s.busy && !importBusy
         listOf(fps,outputs,focus,provisional,clipping).forEach{it.isEnabled=!s.busy && !importBusy}
@@ -165,6 +166,22 @@ class LiveLogActivity:Activity(),SurfaceHolder.Callback {
             val orientation=windowManager.defaultDisplay.rotation*90
             store.prepare(json,option,selectedFps(),focus.text.toString().toFloat(),provisional.isChecked,clipping.isChecked,surface.holder.surface,orientation)
         }.onFailure{status.text=it.message}
+    }
+    private fun attemptReports(){
+        io.execute {
+            val result=runCatching {
+                store.evidenceDirectory.listFiles().orEmpty().filter { it.isFile && it.name.matches(Regex("live-attempt-[0-9a-f-]+\\.json")) && it.length() in 1..4_194_304 }
+                    .sortedByDescending { it.lastModified() }.take(64).map { file ->
+                        val r=JSONObject(file.readText());val verdict=r.getJSONObject("classification")
+                        file to "${r.getString("attemptKind")} · ${if(!r.getBoolean("closed"))"incomplete" else if(verdict.getBoolean("publishedOutput"))"published" else if(verdict.getBoolean("previewOnly"))"preview only" else "not published"}\n${file.name}"
+                    }
+            }
+            runOnUiThread { if(!isDestroyed)result.onSuccess { rows ->
+                AlertDialog.Builder(this).setTitle("Live attempt reports; no physical certification")
+                    .setItems(rows.map { it.second }.toTypedArray()){_,i->share(listOf(rows[i].first))}
+                    .setNegativeButton("Close",null).show()
+            }.onFailure { status.text="Attempt reports unavailable: ${it.message}" } }
+        }
     }
     private fun retained(){
         if(store.state.busy){status.text="Stop live work before sharing retained files.";return}

@@ -98,7 +98,7 @@ class LiveLogAndroidTest {
     @Test fun liveScreenNeverStartsCameraOrRecordingImplicitly(){
         fun button(root:View,text:String):Button? {if(root is Button && root.text.toString()==text)return root;if(root is ViewGroup)for(i in 0 until root.childCount)button(root.getChildAt(i),text)?.let{return it};return null}
         ActivityScenario.launch<LiveLogActivity>(Intent(context,LiveLogActivity::class.java)).use{scenario->
-            scenario.onActivity{a->assertNotNull(button(a.window.decorView,"Test Log recording backend"));assertFalse(requireNotNull(button(a.window.decorView,"Record LogC3")).isEnabled)}
+            scenario.onActivity{a->assertNotNull(button(a.window.decorView,"Test Log recording backend"));assertNotNull(button(a.window.decorView,"Live attempt reports"));assertFalse(requireNotNull(button(a.window.decorView,"Record LogC3")).isEnabled)}
             scenario.recreate();instrumentation.waitForIdleSync()
             scenario.onActivity{a->assertFalse(requireNotNull(button(a.window.decorView,"Record LogC3")).isEnabled)}
             val image=instrumentation.uiAutomation.takeScreenshot();assertNotNull(image)

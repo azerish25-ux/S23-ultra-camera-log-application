@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 import java.io.File
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 /** Actual SurfaceRecorder creation/cleanup, not injected JSON. No camera session is opened in these controls. */
 @RunWith(AndroidJUnit4::class)
@@ -56,12 +57,26 @@ class RecordingEvidenceAndroidTest {
     }
     @Test fun cancelledPreparedEncoderWithoutCameraFramesIsNotARecording() {
         val candidate = mode(); val before = existing(); val ended = CountDownLatch(1)
-        val recorder = SurfaceRecorder.prepare(context, candidate, 0, mapOf("testKind" to "P003-no-camera-no-frames-control")) { ended.countDown() }
+        val outcome = AtomicReference<SurfaceRecorder.Outcome>()
+        val recorder = SurfaceRecorder.prepare(context, candidate, 0, mapOf("testKind" to "P003-no-camera-no-frames-control")) { outcome.set(it); ended.countDown() }
         recorder.cancel("Deliberate stop before a camera session or first frame")
         assertTrue("Real recorder cleanup must complete", ended.await(15, TimeUnit.SECONDS))
         val report = awaitReport(before)
         assertEquals("passed", stage(report, "preparation")); assertEquals("not_run", stage(report, "configured"))
         assertEquals("blocked", stage(report, "encoded_output")); assertFalse(report.getJSONObject("classification").getBoolean("publishedOutput"))
         assertFalse(report.getJSONObject("classification").getBoolean("physicalCameraCertified"))
+        // Keep this deliberate rejection, but do not put it in the successful-video corpus.
+        // The independent recording consumer still inspects this exact sidecar and attempt.
+        val legacy = requireNotNull(outcome.get().report)
+        val raw = legacy.readBytes()
+        val rejected = JSONObject(String(raw, Charsets.UTF_8))
+        assertEquals("rejected", rejected.getString("status"))
+        assertEquals(report.getString("attemptId"), rejected.getString("attemptId"))
+        assertEquals(0, rejected.getInt("encodedSamples"))
+        val controls = File(context.filesDir, "exports/recording-controls").apply { check(isDirectory || mkdirs()) }
+        val retained = File(controls, legacy.name)
+        check(!retained.exists() && legacy.renameTo(retained))
+        assertArrayEquals(raw, retained.readBytes())
+
     }
 }

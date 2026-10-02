@@ -17,6 +17,8 @@ import java.util.concurrent.Executors
 /** Capability evidence is separate from actual recordings, and never promotes a mode to certified. */
 object ModeEvidence {
     private val worker = Executors.newSingleThreadExecutor()
+    /** Shared serial diagnostics writer; capture callbacks never write evidence files directly. */
+    fun queueEvidence(task: () -> Unit) { worker.execute { task() } }
     fun device(): Map<String, Any> = mapOf("manufacturer" to Build.MANUFACTURER, "model" to Build.MODEL,
         "device" to Build.DEVICE, "fingerprint" to Build.FINGERPRINT, "sdk" to Build.VERSION.SDK_INT,
         "appVersion" to BuildConfig.VERSION_NAME, "appCommit" to BuildConfig.SOURCE_REVISION)

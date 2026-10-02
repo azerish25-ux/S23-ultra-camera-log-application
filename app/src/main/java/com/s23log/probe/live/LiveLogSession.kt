@@ -34,6 +34,7 @@ import java.nio.ByteOrder
 import java.util.UUID
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.CancellationException
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -41,10 +42,16 @@ import java.util.concurrent.atomic.AtomicReference
 
 /** Foreground camera session. A single worker owns GL/encoder input; camera and display have independent owners. */
 @TargetApi(33)
-class LiveLogSession(context:Context) {
+class LiveLogSession(context:Context,
+    private val gpuProbe: ((() -> Unit) -> JSONObject) = { RawLogGpuProbe.run(it) },
+    private val backendProbe: (File,Int,Int,Int,()->Unit,(String)->Unit)->LiveBackendProbe.Result =
+        { cache,w,h,fps,check,progress -> LiveBackendProbe.run(cache,w,h,fps,check,progress) },
+    private val evidenceWrite: (File,String)->Unit = ::atomicWrite
+) {
     data class State(val busy:Boolean=false,val preview:Boolean=false,val recording:Boolean=false,
         val message:String="Experimental live RAW-derived LogC3. Qualify the backend before camera testing.",
-        val report:File?=null,val media:File?=null,val error:String?=null,val outputWidth:Int=1920,val outputHeight:Int=1080)
+        val report:File?=null,val media:File?=null,val error:String?=null,val outputWidth:Int=1920,val outputHeight:Int=1080,
+        val attemptReport:File?=null,val evidenceError:String?=null)
     private val app=context.applicationContext
     private val main=Handler(Looper.getMainLooper())
     private val worker=Executors.newSingleThreadExecutor()
@@ -59,12 +66,49 @@ class LiveLogSession(context:Context) {
     @Volatile private var desiredLogView=false
     @Volatile private var stopCamera:(()->Unit)?=null
     val directory=File(app.filesDir,"exports/live-log")
+    val evidenceDirectory=File(app.filesDir,"exports/live-evidence")
+    @Volatile private var activeAttempt:LiveAttempt?=null
+    private fun attempt(kind:LiveAttemptKind,requested:JSONObject,profile:JSONObject?=null):LiveAttempt {
+        val payload=profile?.toString()
+        val context=JSONObject().put("device",jsonValue(ModeEvidence.device())).put("requested",requested)
+            .put("profilePayload",payload ?: JSONObject.NULL)
+            .put("profileSha256",payload?.let(com.s23log.probe.develop.DevelopmentAttempt::hash) ?: JSONObject.NULL)
+        val attemptSerial=serial
+        return LiveAttempt(evidenceDirectory,BuildConfig.SOURCE_REVISION,kind,context,evidenceWrite,ModeEvidence::queueEvidence,
+            onPersistenceFailure={message -> main.post { if(attemptSerial==serial)publish(state.copy(evidenceError=message)) }})
+            .also { activeAttempt=it;it.start() }
+    }
+    private fun observeBackend(attempt:LiveAttempt,result:LiveBackendProbe.Result) {
+        val outcome=when(result.report.optString("status")) {
+            "qualified" -> DevelopmentOutcome.PASSED
+            "unavailable" -> DevelopmentOutcome.UNAVAILABLE
+            "query_failed" -> DevelopmentOutcome.INCONCLUSIVE
+            else -> DevelopmentOutcome.FAILED
+        }
+        attempt.safe {
+            result.selected?.let { attempt.bind("selectedBackend",JSONObject().put("codec",it.codec).put("input",it.input.name)) }
+            attempt.observe(LiveStage.BACKEND,outcome,"Actual encoder/decoder route-probe result",JSONObject().put("report",result.report))
+        }
+    }
+    private fun checkRunning() {
+        if(stop.get()) {
+            val failure=reason.get()
+            if(failure==null)throw CancellationException("Live work cancelled before completion")
+            else throw IllegalStateException(failure)
+        }
+        safety()
+    }
     fun observe(observer:(State)->Unit){check(Looper.myLooper()==Looper.getMainLooper());observers+=observer;observer(state)}
     fun remove(observer:(State)->Unit){observers-=observer}
     private fun publish(value:State){state=value;observers.toList().forEach{it(value)}}
-    private fun update(id:Long,value:State){main.post{if(id==serial)publish(value)}}
+    private fun update(id:Long,value:State){
+        val evidence=activeAttempt
+        main.post{if(id==serial)publish(value.copy(attemptReport=evidence?.file,evidenceError=evidence?.persistenceError))}
+    }
     fun stop(){if(state.busy){stop.set(true);stopCamera?.invoke()}}
-    fun record(){if(state.preview && !recording.get())startRecord.set(true)}
+    fun record(){if(state.preview && !recording.get()){
+        activeAttempt?.safe { activeAttempt?.requestRecording() };startRecord.set(true)
+    }}
     fun viewing(log:Boolean){desiredLogView=log;monitor?.logView=log}
     private fun fail(message:String){reason.compareAndSet(null,message);stop.set(true);stopCamera?.invoke()}
     private fun safety(){
@@ -73,31 +117,42 @@ class LiveLogSession(context:Context) {
     }
     private fun begin(label:String):Long {
         check(Looper.myLooper()==Looper.getMainLooper());check(!state.busy)
-        val id=++serial;stop.set(false);recording.set(false);startRecord.set(false);reason.set(null)
+        val id=++serial;activeAttempt=null;stop.set(false);recording.set(false);startRecord.set(false);reason.set(null)
         publish(State(busy=true,message=label));return id
     }
     fun testBackend(fps:Int) {
         if(state.busy)return
         val id=begin("Testing GPU arithmetic and independent ten-bit encoder/decoder routes…")
+        val evidence=attempt(LiveAttemptKind.BACKEND,JSONObject().put("width",1920).put("height",1080).put("fps",fps))
         worker.execute {
             var file:File?=null
+            var error:String?=null
+            var message="Backend test did not complete"
             try {
-                val check={require(!stop.get()){"Backend test cancelled"};safety()}
-                val gpu=RawLogGpuProbe.run(check)
-                val result=LiveBackendProbe.run(app.cacheDir,1920,1080,fps,check){update(id,State(busy=true,message=it))}
+                val check={checkRunning()}
+                val gpu=evidence.step(LiveStage.GPU) { f -> gpuProbe(check).also { f.put("report",it) } }
+                evidence.safe { evidence.begin(LiveStage.BACKEND) }
+                val result=backendProbe(app.cacheDir,1920,1080,fps,check){update(id,State(busy=true,message=it))}
+                observeBackend(evidence,result)
                 val report=result.report.put("gpuReference",gpu).put("device",jsonValue(ModeEvidence.device()))
-                directory.mkdirs();file=File(directory,"backend-${UUID.randomUUID()}.json");atomicWrite(file,report.toString(2))
-                update(id,State(message=if(result.selected!=null)"Qualified ${result.selected.label} for synthetic 1920×1080/$fps. Physical RAW throughput is unverified."
-                    else "No route qualified. The report distinguishes encoder, decoder and precision failures; no SDR fallback was used.",report=file))
+                    .put("attemptId",evidence.id).put("attemptReport",evidence.file.name)
+                runCatching { directory.mkdirs();file=File(directory,"backend-${evidence.id}.json");atomicWrite(requireNotNull(file),report.toString(2)) }
+                    .onFailure { evidence.noteReportError("Backend sidecar: ${it.message}") }
+                message=if(result.selected!=null)"Qualified ${result.selected.label} for synthetic 1920×1080/$fps. Physical RAW throughput is unverified."
+                    else "No route qualified. The report distinguishes encoder, decoder and precision failures; no SDR fallback was used."
             } catch(e:Exception){
+                evidence.safe { evidence.failedActive(e) };error=e.message ?: e.javaClass.simpleName;message=requireNotNull(error)
                 runCatching {
-                    directory.mkdirs();file=File(directory,"backend-${UUID.randomUUID()}.json")
+                    directory.mkdirs();file=File(directory,"backend-${evidence.id}.json")
                     atomicWrite(requireNotNull(file),JSONObject().put("schemaVersion",1).put("kind","live-log-backend-test")
                         .put("appCommit",BuildConfig.SOURCE_REVISION).put("device",jsonValue(ModeEvidence.device()))
-                        .put("status","failed").put("reason",e.message ?: e.javaClass.simpleName)
+                        .put("attemptId",evidence.id).put("attemptReport",evidence.file.name)
+                        .put("status",if(e is CancellationException)"blocked" else "failed").put("reason",error)
                         .put("sensorPrecisionMeasured",false).put("physicalCameraCertified",false).toString(2))
-                }
-                update(id,State(message=e.message ?: "Backend test failed",report=file,error=e.message))
+                }.onFailure { evidence.noteReportError("Backend sidecar: ${it.message}") }
+            } finally {
+                evidence.safe { evidence.close(listOfNotNull(error)) }
+                update(id,State(message=message,report=file,error=error))
             }
         }
     }
@@ -145,11 +200,15 @@ class LiveLogSession(context:Context) {
         if(state.busy)return
         val id=begin("Checking source profile, GPU arithmetic and recording route…")
         val immutableProfile=JSONObject(profileJson.toString())
-        worker.execute {runSession(id,immutableProfile,output,fps,focus,allowProvisional,allowClipping,view,orientation)}
+        val request=JSONObject().put("width",output.width).put("height",output.height).put("fps",fps)
+            .put("sourceCrop",JSONArray(output.crop().toList())).put("divisor",output.divisor).put("focusDiopters",focus)
+            .put("allowProvisional",allowProvisional).put("allowClipping",allowClipping).put("displayRotationDegrees",orientation)
+        val evidence=attempt(LiveAttemptKind.CAMERA,request,immutableProfile)
+        worker.execute {runSession(id,immutableProfile,output,fps,focus,allowProvisional,allowClipping,view,orientation,evidence)}
     }
     private data class Packet(val pixels:ByteBuffer?,val timestamp:Long)
     @SuppressLint("MissingPermission")
-    private fun runSession(id:Long,json:JSONObject,output:LiveLogOutput,fps:Int,focus:Float,allowProvisional:Boolean,allowClipping:Boolean,view:Surface,orientation:Int) {
+    private fun runSession(id:Long,json:JSONObject,output:LiveLogOutput,fps:Int,focus:Float,allowProvisional:Boolean,allowClipping:Boolean,view:Surface,orientation:Int,evidence:LiveAttempt) {
         val cameraThread=HandlerThread("S23Log-live-camera").apply{start()};val camera=Handler(cameraThread.looper)
         val cameraClosed=CountDownLatch(1)
         val frames=ArrayBlockingQueue<Pair<Packet,JSONObject>>(3);val free=ArrayBlockingQueue<ByteBuffer>(3)
@@ -161,8 +220,11 @@ class LiveLogSession(context:Context) {
         var env:GlEnvironment?=null;var gpu:RawLogGpu?=null;var display:LiveLogMonitor?=null;var encoder:LiveLogEncoder?=null
         var partial:File?=null;var media:File?=null;var reportFile:File?=null
         var config:Configuration?=null;var qualification:JSONObject?=null;var gpuProof:JSONObject?=null
+        var auxiliaryError:String?=null
         val clock=LiveLogClock(fps);var submitMax=0L;var previewFrames=0L;var droppedAtStop=0L
-        val take=UUID.randomUUID().toString();var proof:JSONObject?=null;var encoding:JSONObject?=null
+        val take=evidence.id;var proof:JSONObject?=null;var encoding:JSONObject?=null
+        var processedFrames=0L;var decodedIdentity:JSONObject?=null
+        var encoderCloseReturned=true;var cameraRequested=false
         fun recycle(p:Packet){p.pixels?.let{check(free.offer(it)){"RAW buffer recycled twice"}}}
         fun closeCamera() {
             if(cameraClosing)return
@@ -174,10 +236,19 @@ class LiveLogSession(context:Context) {
         }
         stopCamera={camera.post{closeCamera()};Unit}
         try {
-            safety();val cfg=configure(json,output,fps,focus,allowProvisional);config=cfg
-            val check={require(!stop.get()){reason.get() ?: "Live preparation stopped"};safety()}
-            gpuProof=RawLogGpuProbe.run(check)
-            val chosen=LiveBackendProbe.run(app.cacheDir,output.width,output.height,fps,check){update(id,State(busy=true,message=it))}
+            val cfg=evidence.step(LiveStage.PROFILE) { f ->
+                checkRunning()
+                configure(json,output,fps,focus,allowProvisional).also { c ->
+                    evidence.safe { evidence.bind("sourceBinding",c.index.binding()) }
+                    f.put("sourceBinding",c.index.binding()).put("routeAndLayoutMatched",true)
+                        .put("requestedControlsApplicable",true).put("calibrationIndependentlyVerified",false)
+                }
+            };config=cfg
+            val check={checkRunning()}
+            gpuProof=evidence.step(LiveStage.GPU) { f -> gpuProbe(check).also { f.put("report",it) } }
+            evidence.safe { evidence.begin(LiveStage.BACKEND) }
+            val chosen=backendProbe(app.cacheDir,output.width,output.height,fps,check){update(id,State(busy=true,message=it))}
+            observeBackend(evidence,chosen)
             qualification=chosen.report;val route=requireNotNull(chosen.selected){"No ten-bit route qualified. Use Test Log recording backend and share its report."}
             env=GlEnvironment.create(rgb10=route.input==LiveLogEncoder.Input.RGB10_SURFACE)
             gpu=RawLogGpu(env,cfg.index.width,cfg.index.height,output.width,output.height)
@@ -190,6 +261,7 @@ class LiveLogSession(context:Context) {
                 else if(p.pixels==null){previewDropped++;if(recording.get())fail("Live RAW copy pool exhausted")}
                 else if(!frames.offer(p to m)){recycle(p);previewDropped++;if(recording.get())fail("Live processing cannot sustain acquisition; frame queue full")}
             }
+            cameraRequested=true;evidence.safe { evidence.begin(LiveStage.CONFIGURED) }
             camera.post {
                 try {
                     if(stop.get()){closeCamera();return@post}
@@ -257,6 +329,10 @@ class LiveLogSession(context:Context) {
                                                 }
                                                 override fun onCaptureFailed(s:CameraCaptureSession,q:CaptureRequest,f:CaptureFailure){fail("Live RAW request failed: ${f.reason}")}
                                             },camera);opened.set(true);lastImage.set(SystemClock.elapsedRealtime())
+                                            evidence.safe { evidence.observe(LiveStage.CONFIGURED,DevelopmentOutcome.PASSED,
+                                                "Camera onConfigured callback and repeating request returned",
+                                                JSONObject().put("cameraSessionCallback",true).put("repeatingRequestSubmitted",true)
+                                                    .put("sourceBinding",cfg.index.binding())) }
                                         } catch(e:Exception){fail("Live request failed: ${e.message}")}
                                     }
                                     override fun onConfigureFailed(s:CameraCaptureSession){s.close();fail("Live RAW session configuration rejected")}
@@ -275,6 +351,7 @@ class LiveLogSession(context:Context) {
                 if(opened.get() && SystemClock.elapsedRealtime()-lastImage.get()>5_000)error("Live RAW stream stalled for five seconds")
                 if(startRecord.getAndSet(false) && isReady && !recording.get()) {
                     while(true){val old=frames.poll() ?: break;recycle(old.first)}
+                    evidence.safe { evidence.begin(LiveStage.ENCODED) }
                     directory.mkdirs();partial=File(directory,"live-$take.partial.mp4")
                     encoder=LiveLogEncoder(partial,route,output.width,output.height,fps);recording.set(true)
                     update(id,State(busy=true,preview=true,recording=true,message="Starting RAW-derived LogC3; waiting for encoded frames…",outputWidth=output.width,outputHeight=output.height))
@@ -287,6 +364,7 @@ class LiveLogSession(context:Context) {
                     }
                     val p=cfg.profile.parameters(cfg.index,RawFrameRef(packet.second,0,cfg.index.width*cfg.index.height*2),1).copy(crop=output.crop(),divisor=output.divisor)
                     gpu.render(requireNotNull(packet.first.pixels).duplicate().order(ByteOrder.LITTLE_ENDIAN),p,allowClipping)
+                    processedFrames++
                     if(recording.get()) {
                         val pts=clock.submit(packet.first.timestamp);val started=System.nanoTime()
                         requireNotNull(encoder).submit(gpu,pts,{safety()});submitMax=maxOf(submitMax,System.nanoTime()-started)
@@ -298,32 +376,69 @@ class LiveLogSession(context:Context) {
                         message="LogC3: ${encoder?.encodedFrames ?: 0} encoded / ${clock.count} submitted; ${clock.largeGaps} sensor gaps. ${display.error?.let{"Preview unavailable: $it"} ?: "Independent preview"}",outputWidth=output.width,outputHeight=output.height))}
                 } finally{recycle(packet.first)}
             }
-        } catch(e:Exception){reason.compareAndSet(null,e.message ?: e.javaClass.simpleName);stop.set(true)}
+        } catch(e:Exception){evidence.safe { evidence.failedActive(e) };reason.compareAndSet(null,e.message ?: e.javaClass.simpleName);stop.set(true)}
         finally {
-            stop.set(true);camera.post{closeCamera()};cameraClosed.await(3,TimeUnit.SECONDS)
+            stop.set(true);camera.post{closeCamera()}
+            val cameraCloseAcknowledged=runCatching { cameraClosed.await(3,TimeUnit.SECONDS) }.getOrDefault(false)
+            if(!cameraCloseAcknowledged)reason.compareAndSet(null,"Camera close acknowledgment timed out")
+            evidence.safe {
+                if(cameraRequested && !evidence.has(LiveStage.CONFIGURED)) evidence.observe(LiveStage.CONFIGURED,
+                    if(reason.get()==null)DevelopmentOutcome.BLOCKED else DevelopmentOutcome.FAILED,
+                    reason.get() ?: "Stopped before camera configured")
+                if(opened.get()) evidence.observe(LiveStage.RAW,
+                    if(!cameraCloseAcknowledged)DevelopmentOutcome.INCONCLUSIVE else if(processedFrames>0)DevelopmentOutcome.PASSED
+                    else if(reason.get()==null)DevelopmentOutcome.BLOCKED else DevelopmentOutcome.FAILED,
+                    if(processedFrames>0)"Matched RAW frames processed; not sustained-rate qualification" else "No valid RAW frames processed",
+                    JSONObject().put("processedFrames",processedFrames).put("matchedFrames",pairs).put("imagesReceived",images)
+                        .put("exactSensorTimestampPairing",true).put("profileExposureAndFocusChecked",true).put("sourcePixelsStored",false))
+            }
             while(true){val p=frames.poll() ?: break;recycle(p.first);droppedAtStop++}
             recording.set(false);monitor=null
             update(id,State(busy=true,message="Finalizing retained video and verifying its actual timestamps…"))
             if(encoder!=null) {
                 try {
-                    encoding=encoder.finish();encoder.close();encoder=null
+                    encoding=evidence.step(LiveStage.ENCODED) { f -> requireNotNull(encoder).finish().also {
+                        f.put("encoding",it).put("framesSubmitted",clock.count)
+                    } }
+                    requireNotNull(encoder).close();encoder=null
                     val times=clock.presentationTimes()
-                    proof=LogP010Codec.verify(requireNotNull(partial),output.width,output.height,fps,times.size,{safety()},times){_,_->Unit}
-                    proof.put("pixelSourceComparison",false).put("physicalCameraCertified",false)
-                    media=File(directory,"live-$take.mp4")
-                    require(!media.exists() && partial!!.renameTo(media)){"Checked video retained under partial name; final rename failed"}
+                    proof=evidence.step(LiveStage.DECODED) { f ->
+                        val source=requireNotNull(partial)
+                        LogP010Codec.verify(source,output.width,output.height,fps,times.size,{safety()},times){_,_->Unit}.also { verified ->
+                            verified.put("pixelSourceComparison",false).put("physicalCameraCertified",false)
+                            decodedIdentity=JSONObject().put("algorithm","SHA-256").put("sha256",RawJson.hash(source)).put("byteCount",source.length())
+                            f.put("verification",verified).put("sensorPresentationTimesUs",JSONArray(times))
+                                .put("timestampSpanUs",times.last()).put("durationUnit","us").put("durationDomain","relative_sensor_presentation_timestamps")
+                                .put("partialName",source.name).put("mediaIdentity",decodedIdentity)
+                        }
+                    }
+                    val publication=LivePublication.publish(requireNotNull(partial),File(directory,"live-$take.mp4"))
+                    media=publication.published // Never bind the destination before the move actually succeeds.
+                    evidence.safe { evidence.observe(LiveStage.PUBLICATION,
+                        if(media!=null)DevelopmentOutcome.PASSED else DevelopmentOutcome.FAILED,
+                        publication.error ?: "Checked movie published to its final filename",
+                        JSONObject().put("renameSucceeded",media!=null).put("publishedName",media?.name ?: JSONObject.NULL)
+                            .put("retainedName",publication.retained?.name ?: JSONObject.NULL).put("mediaIdentity",decodedIdentity)) }
+                    publication.error?.let { reason.set(listOfNotNull(reason.get(),it).joinToString("; ")) }
                 } catch(e:Exception){reason.set(listOfNotNull(reason.get(),"Finalization: ${e.message}").joinToString("; "))}
             }
-            encoder?.close()
-            runCatching{display?.close()}
-            runCatching{gpu?.close()}
-            if(display==null || display.cleanupConfirmed)runCatching{env?.close()}
-            else reason.compareAndSet(null,"Preview cleanup unconfirmed; shared EGL display retained")
+            runCatching{encoder?.close()}.onFailure{encoderCloseReturned=false;reason.compareAndSet(null,"Encoder cleanup: ${it.message}")}
+            val displayClosed=runCatching{display?.close()}.isSuccess && (display?.cleanupConfirmed ?: true)
+            val gpuClosed=runCatching{gpu?.close()}.isSuccess
+            val eglClosed=if(displayClosed)runCatching{env?.close()}.isSuccess else false
+            if(!displayClosed || !gpuClosed || !eglClosed)reason.compareAndSet(null,"Live resource cleanup unconfirmed; shared display may remain retained")
+            evidence.safe { evidence.observe(LiveStage.CLEANUP,
+                if(cameraCloseAcknowledged && displayClosed && gpuClosed && eglClosed && encoderCloseReturned)DevelopmentOutcome.PASSED else DevelopmentOutcome.INCONCLUSIVE,
+                "Application owner close acknowledgments; not a universal driver or power-loss guarantee",
+                JSONObject().put("scope","application_owner_close_acknowledgments").put("cameraCloseAcknowledged",cameraCloseAcknowledged)
+                    .put("previewCleanupConfirmed",displayClosed).put("gpuCloseReturned",gpuClosed).put("eglCloseReturned",eglClosed)
+                    .put("encoderCloseReturned",encoderCloseReturned)) }
             cameraThread.quitSafely();stopCamera=null;free.clear()
             try {
                 directory.mkdirs();val cfg=config
                 val report=JSONObject().put("schemaVersion",1).put("kind","live-raw-logc3").put("device",jsonValue(ModeEvidence.device()))
                     .put("status",if(media!=null)"container_checked" else "not_completed").put("reason",reason.get() ?: JSONObject.NULL)
+                    .put("attemptId",evidence.id).put("attemptReport",evidence.file.name)
                     .put("profile",json).put("profileHashOfCanonicalJson",cfg?.profileHash ?: JSONObject.NULL)
                     .put("source",cfg?.index?.header ?: JSONObject.NULL).put("sourcePixelsStored",false)
                     .put("calibrationStatus",cfg?.profile?.status ?: "unknown").put("developmentAppCommit",BuildConfig.SOURCE_REVISION)
@@ -355,9 +470,11 @@ class LiveLogSession(context:Context) {
                     val validation=File(app.filesDir,"exports/validation/recording-$take.json");validation.parentFile!!.mkdirs();atomicWrite(validation,report.toString(2))
                     CaptureHistory.save(app,listOf(FileProvider.getUriForFile(app,"${app.packageName}.files",it)),validation,"Live RAW-derived LogC3/AWG3 · ${cfg?.profile?.status} profile · video only · experimental")
                 }
-            }catch(e:Exception){reason.compareAndSet(null,"Video retained; report/library failed: ${e.message}")}
-            update(id,State(message=if(media!=null)"Saved live LogC3/AWG3: ${clock.count} frames; cadence ${if(clock.withinTolerance)"within tolerance" else "unqualified"}. ${reason.get().orEmpty()}"
-                else reason.get() ?: "Live preview stopped; no video recorded.",media=media,report=reportFile,error=reason.get()))
+            }catch(e:Exception){auxiliaryError="Video retained; report/library failed: ${e.message}";evidence.noteReportError(requireNotNull(auxiliaryError))}
+            evidence.safe { evidence.close(listOfNotNull(reason.get())) }
+            val messageError=listOfNotNull(reason.get(),auxiliaryError).takeIf{it.isNotEmpty()}?.joinToString("; ")
+            update(id,State(message=if(media!=null)"Saved live LogC3/AWG3: ${clock.count} frames; cadence ${if(clock.withinTolerance)"within tolerance" else "unqualified"}. ${messageError.orEmpty()}"
+                else messageError ?: "Live preview stopped; no video recorded.",media=media,report=reportFile,error=messageError))
         }
     }
 }

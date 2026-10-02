@@ -135,3 +135,21 @@ thresholds, finalization and recovery remain intact. See
 Actual Android/JVM and emulator results remain separate exact-commit CI evidence.
 The remaining P003 work is the live-laboratory adapter and cross-adapter acceptance;
 P004 and physical S23 qualification are not closed by this change.
+
+## P003 — live adapter and cross-adapter checks
+
+The live path now creates separate backend-test and camera-session attempt
+records, observes its existing operations, and exports them from **Live attempt
+reports**. Full structural/timestamp decode remains distinct from original-RAW
+pixel comparison and physical qualification. Failed final renames no longer
+leave a false published-media reference; partial footage and auxiliary report
+failures remain independent.
+
+The prior zero-frame recording control is retained outside the successful-video
+corpus and still independently required. The original video acceptance checker,
+existing image policies, build pins and preserved directive are unchanged.
+
+See [P003 live evidence](P003_LIVE_EVIDENCE.md) for operation, negative controls and
+reproduction. This source change does not claim new Android runtime execution or
+physical S23 qualification. Exact-commit Android/JVM/emulator and actual exported
+report acceptance remain required before P003 closure; P004 is subsequent work.

@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "phase": "P002",
-  "inspection_id": "INSPECTION-P003-RECORDING",
-  "source_revision": "dd15ec7419736681a61cba3bc77723ed4ea00701",
-  "source_tree": "badc96200cfc0766a4836b7a834def667a81d641",
-  "scope": "Selected-line continuity review including P003 capability and ordinary-recording attempt reporting. New authored sources and changed integration hunks are reviewed; unrelated files and unselected lines are not a complete audit.",
+  "inspection_id": "INSPECTION-P003-LIVE",
+  "source_revision": "0bec817a2508b2b49f0e8f5c0781061b517418c0",
+  "source_tree": "3bc5e55cd32334b8a450b9aa55a1e3530a635da6",
+  "scope": "Bounded prior source review plus new live attempt, publication, consumer, cross-adapter and negative-control integration code. Only recorded line ranges are semantically reviewed; whole-file hashes bind byte identity, not a complete repository audit. New Android tests and native execution remain unverified.",
   "files": [
     {
       "path": ".github/scripts/emulator-test.sh",
-      "blob_sha": "73c797182b44acb77fdb4b391067dda504b1cdbb",
-      "sha256": "f4ff4c73dfbeee0093ca27b4f3414138ec66973440708dce44ba5e42eaccb608",
-      "role": "evidence",
+      "blob_sha": "9c90506f92f5ca0c2e6fe2be9804aea0254c0a92",
+      "sha256": "ceef90e3dfcd528890196c520d20525d168c1dc6a1cbd255b7d8dc7514a132f3",
+      "role": "test",
       "reviewed_lines": [
         [
           1,
-          98
+          101
         ]
       ]
     },
@@ -47,14 +47,26 @@
       "blob_sha": "e6a94f26e942309933af65358d6f5ef7f2276ab9"
     },
     {
-      "path": "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
-      "blob_sha": "ee53a54b67ae5853d7e43a77c169972fa3017597",
-      "sha256": "c4bbd7d672f29b149c10312137df312aae4a5649e2195b1785d1ad0f1100080c",
+      "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+      "blob_sha": "91f96ba0f5815da353d47269546fc8d033dbaf16",
+      "sha256": "67088cd429fa006e8ce699819d01a54cd856ac78bd68f43001202082238a9533",
       "role": "test",
       "reviewed_lines": [
         [
-          84,
-          99
+          1,
+          113
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/LiveLogAndroidTest.kt",
+      "blob_sha": "d28c4bcb21eb0747d1b8b2da2f84b0b0818b7eae",
+      "sha256": "b8583ad93324a54274410a55dda42a45c555a665e6e532bd7240b95cefbb38ed",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          109
         ]
       ]
     },
@@ -72,15 +84,15 @@
     },
     {
       "path": "app/src/androidTest/java/com/s23log/probe/RecordingEvidenceAndroidTest.kt",
+      "blob_sha": "17dba9d4e1a6824f8fa53785cf660ae51571b61a",
+      "sha256": "e9aa440e4c1b9b556d80a56fdd5a82d919dc5bc5928370be05c8d9e1c0c110b8",
       "role": "test",
       "reviewed_lines": [
         [
           1,
-          67
+          82
         ]
-      ],
-      "sha256": "7af4ba4d48c5d360c75550f2a15314785aa85842d6b7872badaa3d0208b7ccce",
-      "blob_sha": "a51021319f017a598d6bb433f5d25ece39bf0c19"
+      ]
     },
     {
       "path": "app/src/androidTest/java/com/s23log/probe/StorageIntegrityTest.kt",
@@ -108,13 +120,13 @@
     },
     {
       "path": "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
-      "blob_sha": "092e30d617fafbe31f6e6cf2ec48e9afd77e615e",
-      "sha256": "bccecfbb38c601d7810ff2fb77b0966fcb4bf115a920bab0cc6236d3a8332f97",
+      "blob_sha": "10081225d8e283266cad3f3f48c7b1a68a4a519d",
+      "sha256": "d3b92fafebcca001e0be83c8932e43d7864a3d617470334af6d793d82909018f",
       "role": "production",
       "reviewed_lines": [
         [
-          163,
-          178
+          1,
+          201
         ]
       ]
     },
@@ -283,6 +295,30 @@
       ]
     },
     {
+      "path": "app/src/main/java/com/s23log/probe/core/LiveEvidence.kt",
+      "blob_sha": "1b041b92503d079c416fb8318b2f16a998d026ad",
+      "sha256": "310661186c0c9168ba56ee9fd808a28e821d787dc28fa05b4e05437c3b4616b9",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          60
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/core/LivePublication.kt",
+      "blob_sha": "95b77b716ddd36d0d4f644bc17f632d57b473375",
+      "sha256": "22fdc1687b8f732b1fa71dc17c3bdb5186bd9b406b0c818f40d1a51935cd7946",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          24
+        ]
+      ]
+    },
+    {
       "path": "app/src/main/java/com/s23log/probe/core/RawColourProfile.kt",
       "blob_sha": "985917c7a3f05acd100fee4a08e64a2a6447cdcd",
       "sha256": "4aed2282a9fa6f234dafeccfbc488f293ef917cd85f45305d4e7a9516d62344b",
@@ -392,19 +428,15 @@
     },
     {
       "path": "app/src/main/java/com/s23log/probe/diagnostics/ModeEvidence.kt",
+      "blob_sha": "0695229e969cc1e2f593d3d054ad2d3774091878",
+      "sha256": "5ae10403a17a29d693b18e8020ac998f06d2bd31d1cfc567159e4dff52b244db",
       "role": "production",
       "reviewed_lines": [
         [
-          4,
-          13
-        ],
-        [
-          21,
-          51
+          1,
+          63
         ]
-      ],
-      "sha256": "e0b713e45bdf98274f1cbbded62e606eb9a4d8b40984a0c199b4ede36f7d7251",
-      "blob_sha": "d96d22ddb81f4fb6d2f1e63af06cf10e92795712"
+      ]
     },
     {
       "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
@@ -431,14 +463,26 @@
       "blob_sha": "125c017a99d73e383ded07af2809e129efd37d5e"
     },
     {
-      "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
-      "blob_sha": "48f98ef0bdd9a4cdf70a7d366fafdc218df2193f",
-      "sha256": "dcce377a12b628f8652a87ad743aaa5a68ecd700d3e1163f3721cce27b695ff7",
+      "path": "app/src/main/java/com/s23log/probe/live/LiveAttempt.kt",
+      "blob_sha": "dcce64850b3e297f15ba6e49758c7fffd9c4b47f",
+      "sha256": "1a6ee09bc57212fda9e55d925017cd1343d265d6989ccedbfde3caa04ab12b98",
       "role": "production",
       "reviewed_lines": [
         [
-          141,
-          156
+          1,
+          247
+        ]
+      ]
+    },
+    {
+      "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+      "blob_sha": "67f72e4b13d609f917b2ef74c180c918e3de6551",
+      "sha256": "1bc564ec9edd65f99c668a64b889ed7608aa23ad95248412acccfa1cf3f993c5",
+      "role": "production",
+      "reviewed_lines": [
+        [
+          1,
+          480
         ]
       ]
     },
@@ -491,6 +535,18 @@
         [
           1,
           128
+        ]
+      ]
+    },
+    {
+      "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+      "blob_sha": "7d74b535479a14b5a5943844c38785362ca92a32",
+      "sha256": "c5abf17afe3ed3aebe2e79298ef8f4c9f35643e3642ef67f7809bec49e0a5e6d",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          141
         ]
       ]
     },
@@ -595,6 +651,18 @@
       ]
     },
     {
+      "path": "app/src/test/resources/live-attempt-authored-contract.json",
+      "blob_sha": "fade812ee6ea653d0d1f19bffd894cf4f9d1686f",
+      "sha256": "52ed693d82dd1258df91604ec71b5b67d5e5a4ca45b8a5636ef6dce7be15aed0",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          249
+        ]
+      ]
+    },
+    {
       "path": "build.gradle.kts",
       "blob_sha": "f928a84390b953ebfda7816eae78d728b7d5a6fe",
       "sha256": "786a6aef9d41e1075240be92fad07fb11f25717c0253245646957542649034f3",
@@ -631,16 +699,40 @@
       ]
     },
     {
-      "path": "scripts/check_recording_evidence.py",
-      "role": "production",
+      "path": "scripts/check_live_evidence.py",
+      "blob_sha": "879232508d0587fee0fb1af0012b55ff39e8971e",
+      "sha256": "cd8fbb01d78fbcb672f3512d6102386493bee965c14223b6d83d91ab027a631e",
+      "role": "evidence",
       "reviewed_lines": [
         [
           1,
-          240
+          308
         ]
-      ],
-      "sha256": "5f09bd77a5f6cc7bae8bf58f413718855a791c1e502f8c789a2177770aa93ef0",
-      "blob_sha": "f6600e74b25c24e0144ad600a710ea68d29878a9"
+      ]
+    },
+    {
+      "path": "scripts/check_p003_evidence.py",
+      "blob_sha": "5c2c48206f66646f6035bd391281b7ffddec1b9e",
+      "sha256": "9db1e639ff2c301a4d388a3fb11c5833ee4f98e6e72c9ce90161620958267b6c",
+      "role": "evidence",
+      "reviewed_lines": [
+        [
+          1,
+          54
+        ]
+      ]
+    },
+    {
+      "path": "scripts/check_recording_evidence.py",
+      "blob_sha": "58df46f8fd24fc34513215881aaca79e5de35f31",
+      "sha256": "7887d9ec30e2244e6dd068f8ab15f89e68d530eb3dad24ae456341604203d57d",
+      "role": "evidence",
+      "reviewed_lines": [
+        [
+          1,
+          250
+        ]
+      ]
     },
     {
       "path": "scripts/development_evidence_smoke.kt",
@@ -651,6 +743,30 @@
         [
           1,
           40
+        ]
+      ]
+    },
+    {
+      "path": "scripts/live_evidence_smoke.kt",
+      "blob_sha": "c4bc0024ce9050019d640eeae0807b1487baae5a",
+      "sha256": "5572fdf17ef41d2da7a11addd158288510e514e8ec26ae8424af420602baa729",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          46
+        ]
+      ]
+    },
+    {
+      "path": "scripts/live_publication_smoke.kt",
+      "blob_sha": "97ad3ae278c0f9d48ad88969653df514ce2ae6d7",
+      "sha256": "3873de0155d5f095606070c9c7e0f5a0f76d8c1a5f862b9c8aa7b1c39fda875e",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          29
         ]
       ]
     },
@@ -667,6 +783,18 @@
       "blob_sha": "2a77517cf5dc5f0a10411cacd355465151cf99a1"
     },
     {
+      "path": "scripts/tests/test_check_evidence.py",
+      "blob_sha": "66a2a821edb3d9ce2e407908d307efb16127a207",
+      "sha256": "5979974df5e24ff35a1a9ab9dcbe8b2e408c50856433847a01ecbb06534af9c2",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          137
+        ]
+      ]
+    },
+    {
       "path": "scripts/tests/test_development_evidence.py",
       "blob_sha": "e07244fc29d3c704a06217e8c6820eab00d5c73f",
       "sha256": "97351356ba51af579c402f62bf3b7cab2da0f24a1922f0726fd08eec17884006",
@@ -675,6 +803,18 @@
         [
           1,
           192
+        ]
+      ]
+    },
+    {
+      "path": "scripts/tests/test_live_evidence.py",
+      "blob_sha": "e6bed1c2843d240bf6b17fb71ae7944ca8433c58",
+      "sha256": "7493b744986be7a8746bbee581e1ebb85fa3d7609770eb5256a835db5cfd5422",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          301
         ]
       ]
     },
@@ -757,7 +897,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -767,7 +907,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -799,7 +939,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -809,7 +949,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -842,7 +982,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -852,7 +992,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -885,7 +1025,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -895,7 +1035,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -929,7 +1069,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -939,7 +1079,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -949,7 +1089,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -981,7 +1121,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -991,7 +1131,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1023,7 +1163,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1055,7 +1195,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1065,7 +1205,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1097,7 +1237,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1107,7 +1247,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1140,7 +1280,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1172,7 +1312,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1182,7 +1322,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1214,7 +1354,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1224,7 +1364,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1256,7 +1396,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1266,7 +1406,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1299,7 +1439,7 @@
           "evidence_class": "host_unit_test",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         },
         {
@@ -1309,7 +1449,7 @@
           "evidence_class": "emulator_instrumentation",
           "execution": {
             "outcome": "not_run",
-            "reason": "Static source mapping at dd15ec7419736681a61cba3bc77723ed4ea00701; execution is independently retained in the exact-commit CI artifact, not inherited from old tests."
+            "reason": "Static reference at 0bec817a2508b2b49f0e8f5c0781061b517418c0; no pinned Android/JUnit/emulator run was available for this local source. Earlier execution remains in historical evidence, not relabelled current."
           }
         }
       ],
@@ -1318,6 +1458,139 @@
       "limits": [
         "All packet timestamps and sample decoding are not full-file decoding.",
         "Physical qualification, sensor-derived Log and live-session adapters are not granted by this path."
+      ]
+    },
+    {
+      "id": "live_evidence",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/live/LiveAttempt.kt",
+        "anchor": "class LiveAttempt(",
+        "purpose": "Observe existing live operations without opening a camera or altering footage"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+          "anchor": "return LiveAttempt(",
+          "purpose": "Real backend/prepare work creates independent attempts"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/LiveLogActivity.kt",
+          "anchor": "private fun attemptReports()",
+          "purpose": "Existing live screen lists and shares reports"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+          "anchor": "fun completeAuthoredObservationChainIsNotPhysicalQualification(",
+          "purpose": "Producer classifies exact observations while withholding physical qualification",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+          "anchor": "fun queuedWriteFailureNotifiesTheObserverWithoutChangingMediaState(",
+          "purpose": "Late persistence errors notify UI without revoking published media",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+          "anchor": "fun actualDefaultBackendProducesIndependentAttemptWithoutCamera(",
+          "purpose": "Actual default worker and GPU/backend probes with explicit unavailable outcome",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+          "anchor": "fun actualWorkerSeparatesCancellationFromUnexpectedFault(",
+          "purpose": "Actual worker with separately identified injected faults",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+          "anchor": "fun actualPrepareRejectsSyntheticAndStaleProfilesWithoutOpeningCamera(",
+          "purpose": "Profile rejection before camera activation",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        }
+      ],
+      "inputs": "Actual profile, GPU/backend results, camera callbacks, paired RAW/encoded frames, full structural/PTS decode and publication outcomes",
+      "outputs": "Revision-bound live-attempt records with independently hashed stage observations and explicit scope",
+      "limits": [
+        "Neither backend-only tests nor decoded output establish physical S23 qualification.",
+        "Live source pixels are not retained; full structural decode is not an original-RAW pixel comparison.",
+        "Persistence and cleanup acknowledgments are bounded best effort, not universal power-loss or driver-cleanup proof.",
+        "Exact-commit native integration and exported-report execution remain pending publication and CI."
+      ]
+    },
+    {
+      "id": "live_publication",
+      "owner": {
+        "path": "app/src/main/java/com/s23log/probe/core/LivePublication.kt",
+        "anchor": "fun publish(partial: File",
+        "purpose": "Publish only after successful same-directory no-overwrite move"
+      },
+      "callers": [
+        {
+          "path": "app/src/main/java/com/s23log/probe/live/LiveLogSession.kt",
+          "anchor": "val publication=LivePublication.publish(",
+          "purpose": "Bind published-media state only from the operation result"
+        }
+      ],
+      "tests": [
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+          "anchor": "fun failedRenameRetainsSourceAndDoesNotCreatePublishedReference(",
+          "purpose": "Forced failure retains useful source and rejects false saved result",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/test/java/com/s23log/probe/LiveAttemptTest.kt",
+          "anchor": "fun existingDestinationNeverBecomesThisAttemptsPublishedMovie(",
+          "purpose": "Earlier export cannot be adopted or overwritten",
+          "evidence_class": "host_unit_test",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        },
+        {
+          "path": "app/src/androidTest/java/com/s23log/probe/LiveEvidenceAndroidTest.kt",
+          "anchor": "fun actualPrivateFilesSurviveRenameFailureAndExistingDestination(",
+          "purpose": "Actual Android private-file control, not a valid-video test",
+          "evidence_class": "emulator_instrumentation",
+          "execution": {
+            "outcome": "not_run",
+            "reason": "Authored native test awaiting an actual pinned Android/JUnit/emulator run; compile-only checks are not execution."
+          }
+        }
+      ],
+      "inputs": "Verified nonempty partial file and UUID-derived destination in its private directory",
+      "outputs": "Distinct published reference or retained partial/error; never a speculative destination",
+      "limits": [
+        "Single-owner private-directory no-overwrite guard, not a cross-process transactional rename guarantee.",
+        "A file-operation regression test is not imaging or physical-camera evidence."
       ]
     }
   ],
@@ -1512,7 +1785,8 @@
       "implementation": "partial",
       "seam_ids": [
         "verification",
-        "recovery"
+        "recovery",
+        "live_publication"
       ],
       "summary": "Reuse the existing journal/finalizer; extend tests only for demonstrated gaps.",
       "gaps": [
@@ -1529,17 +1803,19 @@
         "evidence",
         "verification",
         "development_evidence",
-        "recording_evidence"
+        "recording_evidence",
+        "live_evidence",
+        "live_publication"
       ],
-      "summary": "Saved-RAW and ordinary-recording attempt adapters plus advertised-only capability identity are integrated; live-laboratory stage integration and independent physical qualification remain open.",
+      "summary": "Production diagnostics, ordinary recording, saved-RAW and live attempt observers are integrated in source. Independent live/cross-adapter host checks passed; new native and exported-report execution remain unverified.",
       "gaps": [
         {
           "phase": "P003",
-          "reason": "Complete the live-laboratory adapter and inspect all actual runtime outcomes before closing P003; do not convert sample decode into a full-file or physical pass."
+          "reason": "Publish the current source and inspect actual pinned Android/JUnit/emulator and exported reports. Current local static/host results do not substitute for native integration or physical evidence."
         },
         {
           "phase": "P004",
-          "reason": "Record application baseline execution and its unavailable hardware separately from this source-map validation."
+          "reason": "Record formal reproducible application baseline only after all required P003 runtime gates are accepted."
         }
       ]
     },
@@ -1684,6 +1960,13 @@
       "action": "extend_existing",
       "phase": "P003",
       "reason": "Observe the existing pipeline without replacing capture/codec engines; preserve physical non-certification and prior unavailable evidence."
+    },
+    {
+      "component": "live evidence and export publication",
+      "seam_id": "live_evidence",
+      "action": "extend_existing",
+      "phase": "P003",
+      "reason": "Reuse LiveLogSession, existing GPU/codec probes and full PTS decoder. Fix speculative published-media state; keep source-pixel and physical qualification separate. No alternate camera engine or module."
     }
   ],
   "prior_ci": null

@@ -44,6 +44,10 @@ jobs:
         env:
           S23_RECORDING_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P003-recording-cases
         run: python3 -m unittest discover -s scripts/tests -p 'test_recording_evidence.py' -v 2>&1 | tee evidence/master-directive/recording-evidence-tests.log
+      - name: Execute P003 live and cross-adapter consumer tests
+        env:
+          S23_LIVE_EVIDENCE_DIR: ${{ github.workspace }}/evidence/master-directive/P003-live-cases
+        run: python3 -m unittest discover -s scripts/tests -p 'test_live_evidence.py' -v 2>&1 | tee evidence/master-directive/live-evidence-tests.log
       - name: Execute preserved Python reference contracts
         run: python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v 2>&1 | tee evidence/master-directive/reference-tests.log
       - name: Retain exact-commit directive verification

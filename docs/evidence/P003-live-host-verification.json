@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "phase": "P003",
+  "case_ids": [
+    "TC-P003-01",
+    "TC-P003-02",
+    "TC-P003-03",
+    "TC-P003-04",
+    "TC-P003-05",
+    "TC-P003-06",
+    "TC-P003-07",
+    "TC-P003-08"
+  ],
+  "source_revision": "0bec817a2508b2b49f0e8f5c0781061b517418c0",
+  "source_tree": "3bc5e55cd32334b8a450b9aa55a1e3530a635da6",
+  "remote_base_revision": "826ad1ed5de00efd36393aefa5ecee7b470edc00",
+  "scope": "Live backend/camera attempt observation, failed-publication correction, independent report consumers, cross-adapter checks and separate negative-control retention.",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "git": "git version 2.47.3",
+    "java": "OpenJDK 21.0.11",
+    "kotlin": "kotlinc-jvm 1.9.0",
+    "connected_physical_phone": false,
+    "new_android_runtime_executed": false
+  },
+  "observed_checks": {
+    "baseline_host": {
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 201,
+      "outcome": "passed",
+      "revision": "826ad1ed5de00efd36393aefa5ecee7b470edc00",
+      "log": "execution/baseline-host.log"
+    },
+    "new_host": {
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 249,
+      "failures": 0,
+      "errors": 0,
+      "outcome": "passed",
+      "log": "execution/host-green-final-source.log"
+    },
+    "focused_live_cross_adapter": {
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_live_evidence.py' -v",
+      "tests": 47,
+      "outcome": "passed",
+      "log": "execution/consumer-green.log"
+    },
+    "pure_live_classifier": {
+      "command": "kotlinc <DevelopmentEvidence.kt> <LiveEvidence.kt> scripts/live_evidence_smoke.kt -include-runtime -d <jar>; java -jar <jar>",
+      "assertions": 61,
+      "outcome": "passed",
+      "log": "execution/live-model-green.log"
+    },
+    "publication_regression": {
+      "command": "kotlinc <LivePublication.kt> scripts/live_publication_smoke.kt -include-runtime -d <jar>; java -jar <jar>",
+      "assertions": 8,
+      "outcome": "passed",
+      "log": "execution/publication-green.log",
+      "original_bug_red": {
+        "outcome": "rejected_by_assertion",
+        "log": "execution/publication-red.log",
+        "scope": "Extracted original boundary with forced failed rename; not a camera or valid-video test"
+      }
+    },
+    "preserved_references": {
+      "command": "python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v",
+      "tests": 53,
+      "outcome": "passed",
+      "log": "execution/reference-green-final-source.log"
+    },
+    "original_directive_integrity": {
+      "command": "python3 scripts/verify_master_directive.py",
+      "files": 20,
+      "outcome": "passed",
+      "log": "execution/integrity-final-source.json"
+    },
+    "research_contract": {
+      "command": "python3 scripts/verify_research_contract.py --expected-head <source_revision>",
+      "outcome": "passed",
+      "log": "execution/live-source-contract.json"
+    },
+    "source_continuity": {
+      "command": "python3 scripts/verify_repository_continuity.py --expected-head <source_revision>",
+      "outcome": "passed",
+      "log": "execution/live-source-continuity.json"
+    },
+    "compile_only": {
+      "outcome": "passed",
+      "exit_code": 0,
+      "log": "execution/final-typecheck.log",
+      "command": "execution/typecheck-final-command.txt",
+      "scope": "All main Kotlin sources and new LiveAttemptTest type-checked against genuine API37 plus generated AndroidX/BuildConfig/R/JUnit signatures. This is not the pinned API36 Gradle build, executed JUnit or an installable APK.",
+      "input_hashes": "execution/final-typecheck-inputs.json"
+    }
+  },
+  "mutations": {
+    "original_sha256": "cd8fbb01d78fbcb672f3512d6102386493bee965c14223b6d83d91ab027a631e",
+    "restored": true,
+    "experiments": [
+      {
+        "mutation": "ignore-ramp-measurements",
+        "exit_code": 1,
+        "test": "LiveEvidenceTests.test_tc_p003_04_actual_negative_measurements_required",
+        "result": "detected_by_assertion",
+        "sha256": "c7b51276acbd4864cfe1a5610f0735797d66605afa0482fc4754a16f046da47b"
+      },
+      {
+        "mutation": "ignore-publication-identity",
+        "exit_code": 1,
+        "test": "LiveEvidenceTests.test_tc_p003_07_publication_identity_must_match",
+        "result": "detected_by_assertion",
+        "sha256": "5acb239684efdde54699fb6dad875db4f654df5bbd806fe303f85d618c8c0dd0"
+      },
+      {
+        "mutation": "allow-sensor-claim",
+        "exit_code": 1,
+        "test": "LiveEvidenceTests.test_tc_p003_01_physical_claim_is_not_decoded_ramp",
+        "result": "detected_by_assertion",
+        "sha256": "ef7db7660535d1005e1cb51ceb28f4d997882cb7d028adae8e0615b58e968020"
+      }
+    ]
+  },
+  "prior_ci": {
+    "revision": "826ad1ed5de00efd36393aefa5ecee7b470edc00",
+    "run_id": 37009381292,
+    "job_id": 110845658342,
+    "overall_outcome": "failed",
+    "instrumentation_cases_passed": 58,
+    "artifact_id": 11228515211,
+    "artifact_sha256": "c7f47634365884faa16180fdc9011af2217fbbe179c51512147089414a1da909",
+    "failure": "A deliberate zero-frame rejected sidecar was stored in the positive recording corpus; original check_evidence.py rejected it.",
+    "retained_control_path": "docs/evidence/P003-recording-rejected-control.json",
+    "retained_control_sha256": "88d20d55b6da3af3eaf05f8a7e2da94f6de5a7bf7b0129255ee9f1e0e2a0a0f5",
+    "replay": {
+      "scope": "Original report bytes with only the rejected control member relocated; not a new Android run.",
+      "positive_recordings": 25,
+      "attempt_reports": 28,
+      "outcome": "passed",
+      "log": "execution/previous-corpus-replay.json"
+    },
+    "strict_legacy_checker_changed": false
+  },
+  "authored_not_executed": {
+    "new_junit_methods": 17,
+    "new_instrumentation_methods": 4,
+    "new_native_ui_checks": "Live attempt reports button and exported-report production integration",
+    "runtime_acceptance": "pending actual pinned Android build/JVM/emulator and exported reports"
+  },
+  "source_review": {
+    "inspection_id": "INSPECTION-P003-LIVE",
+    "selected_files": 61,
+    "reviewed_lines": 6675,
+    "seams": 17,
+    "limits": "Unlisted files and unselected lines remain outside the claimed review. Historical records are unchanged."
+  },
+  "archive": {
+    "path": "docs/evidence/P003-live-host-evidence.tar.xz",
+    "sha256": "83cdbe86e7a53a1ac0311ebe716461d3b5799e68acc60bcd915aff45bb44a4fb",
+    "bytes": 39564,
+    "members": 88
+  },
+  "publication": {
+    "status": "local_source_only_at_recording_time",
+    "limitation": "Current connection exposes repository reads, not write actions; no authenticated container transport. Actual publish attempt and final local head are reported separately to avoid a self-referential commit record."
+  },
+  "remaining_gates": [
+    "Publish source without overwriting concurrent work.",
+    "Inspect actual pinned native build, JUnit, emulator and exported reports before accepting P003.",
+    "Run independent physical S23 RAW/profile/precision/dynamic-range/endurance qualification separately.",
+    "P004 formal application baseline is not completed by this implementation."
+  ]
+}

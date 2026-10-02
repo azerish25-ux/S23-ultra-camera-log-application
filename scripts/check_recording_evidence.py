@@ -184,7 +184,7 @@ def validate(value, expected_revision):
 
 
 def archive_reports(path: Path, expected_revision: str, require_integration=False):
-    reports, probes, legacy = [], [], []
+    reports, probes, legacy, controls = [], [], [], []
     with tarfile.open(path) as archive:
         members = archive.getmembers()
         require(len({m.name for m in members}) == len(members), 'Duplicate archive member')
@@ -201,6 +201,8 @@ def archive_reports(path: Path, expected_revision: str, require_integration=Fals
                 reports.append(validate(value, expected_revision))
             elif value.get('kind') == 'recording-validation':
                 legacy.append(value)
+                if member.name.startswith('files/exports/recording-controls/'):
+                    controls.append(value)
             elif value.get('schemaVersion') == 2 and value.get('evidence') == 'advertised_only':
                 probes.append(probe(value, expected_revision))
     require(reports, 'No ordinary recording attempts were exported')
@@ -210,6 +212,14 @@ def archive_reports(path: Path, expected_revision: str, require_integration=Fals
         require(probes and legacy and any(r['recordingSucceeded'] for r in reports), 'Missing real probe/recording integration evidence')
         require(any(r['outcomes']['preparation'] == 'failed' for r in reports), 'Missing early-setup failure experiment')
         require(any(r['outcomes']['encoded_output'] == 'blocked' for r in reports), 'Missing no-frame cancellation experiment')
+        require(len(controls) == 1, 'Missing retained no-frame control sidecar')
+        control = controls[0]
+        require(control.get('status') == 'rejected' and type(control.get('encodedSamples')) is int and control['encodedSamples'] == 0,
+                'Deliberate no-frame control was relabelled successful')
+        require(control.get('requested', {}).get('testKind') == 'P003-no-camera-no-frames-control', 'Unknown recording control')
+        controlled = by_id.get(control.get('attemptId'), {})
+        require(controlled.get('outcomes', {}).get('encoded_output') == 'blocked' and controlled.get('recordingSucceeded') is False,
+                'Control sidecar does not match its failed production attempt')
         for old in legacy:
             require(old.get('attemptId') in by_id and old.get('attemptReport') == 'recording-attempt-' + old['attemptId'] + '.json', 'Recording sidecar is not bound to an attempt')
             r = by_id[old['attemptId']]

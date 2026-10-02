@@ -1,0 +1,249 @@
+{
+  "schemaVersion": 1,
+  "kind": "live-attempt-evidence",
+  "attemptKind": "camera_session",
+  "attemptId": "12345678-1234-1234-1234-123456789abc",
+  "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "startedAt": "2026-10-02T00:00:00Z",
+  "endedAt": "2026-10-02T00:00:01Z",
+  "closed": true,
+  "activeStage": null,
+  "recordingRequested": true,
+  "context": {
+    "device": {
+      "appCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "fingerprint": "authored-host-fixture"
+    },
+    "requested": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "sourceCrop": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "divisor": 1,
+      "focusDiopters": 0.0,
+      "allowProvisional": true,
+      "allowClipping": false,
+      "displayRotationDegrees": 0
+    },
+    "profilePayload": "{\"kind\": \"raw-colour-profile\", \"schemaVersion\": 1, \"source\": {\"fingerprint\": \"authored-host-fixture\", \"logicalCamera\": \"0\", \"physicalCamera\": null, \"width\": 1920, \"height\": 1080, \"cfa\": 0}, \"calibration\": {\"status\": \"provisional\", \"evidence\": \"Authored declared profile provenance; no chart measured\", \"illuminant\": \"Authored D65 fixture\"}}",
+    "profileSha256": "285c48b16fc4985d4b1af48f1257e4a3a7fc9238496105a2a4a9384731669bee",
+    "selectedBackend": {
+      "codec": "authored-codec",
+      "input": "P010_IMAGE"
+    },
+    "sourceBinding": {
+      "fingerprint": "authored-host-fixture",
+      "logicalCamera": "0",
+      "physicalCamera": null,
+      "width": 1920,
+      "height": 1080,
+      "cfa": 0
+    }
+  },
+  "policy": {
+    "id": "live-existing-0.9-v1",
+    "gpuLogErrorLimit": 0.001,
+    "gpuP010ErrorLimit": 2,
+    "gpuLogDomain": "LogC3_RGB",
+    "meanCodeErrorLimit": 0.75,
+    "peakCodeErrorLimit": 2,
+    "minimumRampLevels": 600,
+    "colourPatchErrorLimit": 12,
+    "codeUnit": "code_value",
+    "codeDomain": "decoded_P010",
+    "durationUnit": "us",
+    "durationDomain": "relative_sensor_presentation_timestamps",
+    "timestampToleranceUs": 2,
+    "maximumFrames": 18000,
+    "cadenceToleranceFraction": 0.03,
+    "cadenceMinimumSpanNs": 2000000000
+  },
+  "errors": [],
+  "reportErrors": [],
+  "persistenceError": null,
+  "sourcePixelsStored": false,
+  "pixelSourceComparison": false,
+  "physicalCameraCertified": false,
+  "stages": [
+    {
+      "stage": "profile_validation",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "profile_validation-observation",
+      "evidenceSha256": "769efbc7ddb2168f9071cf350fa7c8c304c88caabb5154c63b5f69534d904b1b",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "gpu_reference",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "gpu_reference-observation",
+      "evidenceSha256": "83d3483a260deccc9739fa7c4e8dd3b2c23099d241b69d58129d39d6b2e5c9e4",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "codec_qualification",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "codec_qualification-observation",
+      "evidenceSha256": "c75394341e8d97f4707a71bfce55cbbe5a4f6d38da51e6d191c57954f018cd1a",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "configured",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "configured-observation",
+      "evidenceSha256": "c2a16554ed8734e5a08458be7d098afa4be69abbaed20f09aad393bdcd6a4ea9",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "matched_raw_frames",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "matched_raw_frames-observation",
+      "evidenceSha256": "7cc98edbe82a41c0913fe609958a6508282e73082da9f1a581c8ae0228480dff",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "encoded_output",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "encoded_output-observation",
+      "evidenceSha256": "b600db91c0bf17552ac3f7e8f5fe778ccd7001f3482fcc9129d74277c1411956",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "full_decode",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "full_decode-observation",
+      "evidenceSha256": "99035f80458e3536a791d9d44ac307b15a226533ce9d73503275e0adb90be2d2",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "publication",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "publication-observation",
+      "evidenceSha256": "e84be57a132c8f8a63f7eed85236be010f7173be96322d01787ee7e489e87a21",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "resource_cleanup",
+      "outcome": "passed",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": "resource_cleanup-observation",
+      "evidenceSha256": "0cafb16971667f7a983f6e2b55560de68c65d9a81d630ae0d9443e9720ca234e",
+      "checks": [
+        {
+          "id": "observation",
+          "outcome": "passed",
+          "reason": "Authored fixture"
+        }
+      ]
+    },
+    {
+      "stage": "source_pixel_comparison",
+      "outcome": "not_run",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": null,
+      "evidenceSha256": null,
+      "checks": []
+    },
+    {
+      "stage": "physical_qualification",
+      "outcome": "not_run",
+      "reason": "Authored fixture for contract tests",
+      "sourceRevision": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "evidenceRef": null,
+      "evidenceSha256": null,
+      "checks": []
+    }
+  ],
+  "observations": {
+    "gpu_reference-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"gpu_reference\", \"facts\": {\"report\": {\"status\": \"passed\", \"synthetic\": true, \"sensorPrecisionMeasured\": false, \"bayerReductionCases\": 12, \"maximumLogRgbError\": 0.0001, \"maximumP010CodeError\": 1}}}",
+    "codec_qualification-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"codec_qualification\", \"facts\": {\"report\": {\"kind\": \"live-log-backend-probe\", \"width\": 1920, \"height\": 1080, \"fps\": 30, \"syntheticInputs\": true, \"sensorPrecisionMeasured\": false, \"hlgTransferRequested\": false, \"status\": \"qualified\", \"selectedCodec\": \"authored-codec\", \"selectedInput\": \"P010_IMAGE\", \"routes\": [{\"status\": \"qualified\", \"codec\": \"authored-codec\", \"input\": \"P010_IMAGE\", \"positive\": {\"fullDecodeVerified\": true, \"decoder\": \"authored-decoder\", \"mime\": \"video/hevc\", \"width\": 1024, \"height\": 128, \"decodedFrames\": 4, \"lumaBitDepth\": 10, \"chromaBitDepth\": 10, \"colorPrimariesCode\": 2, \"transferCharacteristicsCode\": 2, \"matrixCoefficientsCode\": 1, \"colorRange\": 2, \"colorTransfer\": 0, \"timestampContract\": \"CFR\", \"measuredFps\": 30.0, \"meanCodeError\": 0.1, \"maximumCodeError\": 1.0, \"distinctRampLevels\": 800, \"colourPatchPeakCodeError\": 1, \"passed\": true, \"deliberatelyDegraded\": false}, \"eightBitNegative\": {\"fullDecodeVerified\": true, \"decoder\": \"authored-decoder\", \"mime\": \"video/hevc\", \"width\": 1024, \"height\": 128, \"decodedFrames\": 4, \"lumaBitDepth\": 10, \"chromaBitDepth\": 10, \"colorPrimariesCode\": 2, \"transferCharacteristicsCode\": 2, \"matrixCoefficientsCode\": 1, \"colorRange\": 2, \"colorTransfer\": 0, \"timestampContract\": \"CFR\", \"measuredFps\": 30.0, \"meanCodeError\": 1.0, \"maximumCodeError\": 2.0, \"distinctRampLevels\": 220, \"colourPatchPeakCodeError\": 1, \"passed\": false, \"deliberatelyDegraded\": true}, \"selectedSize\": {\"fullDecodeVerified\": true, \"decoder\": \"authored-decoder\", \"mime\": \"video/hevc\", \"width\": 1920, \"height\": 1080, \"decodedFrames\": 2, \"lumaBitDepth\": 10, \"chromaBitDepth\": 10, \"colorPrimariesCode\": 2, \"transferCharacteristicsCode\": 2, \"matrixCoefficientsCode\": 1, \"colorRange\": 2, \"colorTransfer\": 0, \"timestampContract\": \"CFR\", \"measuredFps\": 30.0, \"meanCodeError\": 0.1, \"maximumCodeError\": 1.0, \"distinctRampLevels\": 800, \"colourPatchPeakCodeError\": 1, \"passed\": true, \"deliberatelyDegraded\": false}}]}}}",
+    "profile_validation-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"profile_validation\", \"facts\": {\"sourceBinding\": {\"fingerprint\": \"authored-host-fixture\", \"logicalCamera\": \"0\", \"physicalCamera\": null, \"width\": 1920, \"height\": 1080, \"cfa\": 0}, \"routeAndLayoutMatched\": true, \"requestedControlsApplicable\": true, \"calibrationIndependentlyVerified\": false}}",
+    "configured-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"configured\", \"facts\": {\"cameraSessionCallback\": true, \"repeatingRequestSubmitted\": true, \"sourceBinding\": {\"fingerprint\": \"authored-host-fixture\", \"logicalCamera\": \"0\", \"physicalCamera\": null, \"width\": 1920, \"height\": 1080, \"cfa\": 0}}}",
+    "matched_raw_frames-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"matched_raw_frames\", \"facts\": {\"processedFrames\": 31, \"matchedFrames\": 31, \"imagesReceived\": 31, \"exactSensorTimestampPairing\": true, \"profileExposureAndFocusChecked\": true, \"sourcePixelsStored\": false}}",
+    "encoded_output-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"encoded_output\", \"facts\": {\"encoding\": {\"codec\": \"authored-codec\", \"input\": \"P010_IMAGE\", \"encodedFrames\": 31, \"hlgTransferUsed\": false, \"pictureNalsUnchangedByMetadataRewrite\": true, \"timestampMapping\": \"sensor_delta_ns_divided_by_1000\", \"audio\": \"none\"}, \"framesSubmitted\": 31}}",
+    "full_decode-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"full_decode\", \"facts\": {\"verification\": {\"fullDecodeVerified\": true, \"decoder\": \"authored-decoder\", \"mime\": \"video/hevc\", \"width\": 1920, \"height\": 1080, \"decodedFrames\": 31, \"lumaBitDepth\": 10, \"chromaBitDepth\": 10, \"colorPrimariesCode\": 2, \"transferCharacteristicsCode\": 2, \"matrixCoefficientsCode\": 1, \"colorRange\": 2, \"colorTransfer\": 0, \"timestampContract\": \"relative_sensor_timestamps\", \"measuredFps\": 30.0, \"pixelSourceComparison\": false, \"physicalCameraCertified\": false}, \"sensorPresentationTimesUs\": [0, 33333, 66666, 100000, 133333, 166666, 200000, 233333, 266666, 300000, 333333, 366666, 400000, 433333, 466666, 500000, 533333, 566666, 600000, 633333, 666666, 700000, 733333, 766666, 800000, 833333, 866666, 900000, 933333, 966666, 1000000], \"timestampSpanUs\": 1000000, \"durationUnit\": \"us\", \"durationDomain\": \"relative_sensor_presentation_timestamps\", \"partialName\": \"live-12345678-1234-1234-1234-123456789abc.partial.mp4\", \"mediaIdentity\": {\"algorithm\": \"SHA-256\", \"sha256\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"byteCount\": 1234}}}",
+    "publication-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"publication\", \"facts\": {\"renameSucceeded\": true, \"publishedName\": \"live-12345678-1234-1234-1234-123456789abc.mp4\", \"mediaIdentity\": {\"algorithm\": \"SHA-256\", \"sha256\": \"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\", \"byteCount\": 1234}}}",
+    "resource_cleanup-observation": "{\"attemptId\": \"12345678-1234-1234-1234-123456789abc\", \"sourceRevision\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\", \"stage\": \"resource_cleanup\", \"facts\": {\"scope\": \"application_owner_close_acknowledgments\", \"cameraCloseAcknowledged\": true, \"previewCleanupConfirmed\": true, \"gpuCloseReturned\": true, \"eglCloseReturned\": true, \"encoderCloseReturned\": true}}"
+  },
+  "classification": {
+    "backendQualified": true,
+    "cameraFramesObserved": true,
+    "outputDecoded": true,
+    "publishedOutput": true,
+    "recordingSucceeded": true,
+    "previewOnly": false,
+    "pixelSourceComparison": false,
+    "physicalCameraCertified": false,
+    "issues": []
+  }
+}

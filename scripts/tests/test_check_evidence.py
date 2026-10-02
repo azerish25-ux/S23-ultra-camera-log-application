@@ -74,6 +74,19 @@ class EvidenceChecks(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.check()
 
+    def test_deliberate_no_frame_control_is_separate_not_discarded(self):
+        raw = (Path(__file__).resolve().parents[2] / "docs/evidence/P003-recording-rejected-control.json").read_text()
+        value = json.loads(raw)
+        self.assertEqual("rejected", value["status"])
+        self.assertEqual(0, value["encodedSamples"])
+        name = "files/exports/validation/recording-deliberate-control.json"
+        self.files[name] = raw
+        with self.assertRaisesRegex(ValueError, "rejected"):
+            self.check()
+        self.files["files/exports/recording-controls/recording-deliberate-control.json"] = self.files.pop(name)
+        self.assertEqual(12, self.check()["recordingReports"])
+        self.assertEqual(raw, self.files["files/exports/recording-controls/recording-deliberate-control.json"])
+
 
 class AudioEvidenceChecks(unittest.TestCase):
     check = EvidenceChecks.check
