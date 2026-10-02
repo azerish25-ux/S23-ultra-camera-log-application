@@ -1,0 +1,96 @@
+name: Publish verified P005 commits
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-p005.yml]
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Retrieve and verify saved Git bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, urllib.request
+          object_sha = "28d8716493ce3e08deea193e27cbe5ace1f83ee0"
+          request = urllib.request.Request(
+              "https://api.github.com/repos/azerish25-ux/S23-ultra-camera-log-application/git/blobs/" + object_sha,
+              headers={"Authorization": "Bearer " + os.environ["GH_TOKEN"], "Accept": "application/vnd.github+json"},
+          )
+          with urllib.request.urlopen(request, timeout=60) as response:
+              data = base64.b64decode(json.load(response)["content"])
+          actual_object = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+          assert actual_object == object_sha, (actual_object, object_sha)
+          assert hashlib.sha256(data).hexdigest() == "45b352e0a7b1672deebf6e9f343797c690f3ace536f485cd774ce59fc71c5d4d"
+          pathlib.Path(os.environ["RUNNER_TEMP"], "p005.bundle").write_bytes(data)
+          PY
+          git bundle verify "$RUNNER_TEMP/p005.bundle"
+
+      - name: Import exact commits and execute their gates
+        run: |
+          set -euo pipefail
+          trigger="$(git rev-parse HEAD)"
+          test "$(git rev-parse HEAD^)" = c1386a4b9376403ac70dd35c6609dbe5a2bd5116
+          git fetch "$RUNNER_TEMP/p005.bundle" refs/heads/main:refs/remotes/saved/p005
+          test "$(git rev-parse refs/remotes/saved/p005)" = e028e98ed11714beb497afa1353e356848eb0198
+          test "$(git rev-parse e028e98ed11714beb497afa1353e356848eb0198^)" = 9ea528cde9149891ed4f54ef93080da19c7be0a7
+          test "$(git rev-parse 9ea528cde9149891ed4f54ef93080da19c7be0a7^)" = c1386a4b9376403ac70dd35c6609dbe5a2bd5116
+          test "$(git rev-parse 9ea528cde9149891ed4f54ef93080da19c7be0a7^{tree})" = cc89fec54afaaf26a9804b761fda31ecc790d254
+          test "$(git rev-parse e028e98ed11714beb497afa1353e356848eb0198^{tree})" = 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee
+          test -z "$(git ls-tree 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee .github/workflows/publish-p005.yml)"
+
+          git checkout --detach e028e98ed11714beb497afa1353e356848eb0198
+          python3 scripts/measurements.py validate-registry --expected-head e028e98ed11714beb497afa1353e356848eb0198
+          python3 -m unittest discover -s scripts/tests -p 'test_measurements.py' -v
+          python3 -m unittest discover -s scripts/tests -v
+          python3 scripts/verify_master_directive.py
+          python3 scripts/verify_research_contract.py --expected-head e028e98ed11714beb497afa1353e356848eb0198
+          python3 scripts/verify_repository_continuity.py --expected-head e028e98ed11714beb497afa1353e356848eb0198
+          python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v
+          git diff --exit-code
+
+          git config user.name "azerish25-ux"
+          git config user.email "azerish25@gmail.com"
+          message="$RUNNER_TEMP/merge-message.txt"
+          cat > "$message" <<'EOF'
+          Publish verified P005 measurement uncertainty implementation
+
+          Merge the exact saved P005 implementation and evidence commits into main while preserving their original identities. The final tree is the tested e028e98 snapshot and removes the temporary publisher.
+
+          The publication runner independently verified the registry, 28 focused P005 cases, 310 host regressions, 53 preserved reference tests, directive integrity, research contract, source continuity, and retained mutation evidence. No Android source, capture path, build pin, numerical imaging threshold, or preserved directive file changed.
+
+          This establishes host-side measurement semantics only. Physical S23 cadence/content integrity, calibrated colour, effective sensor precision, and dynamic-range claims remain unqualified. P006 is the next dependency-ready phase.
+          EOF
+          merge="$(git commit-tree 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee -p "$trigger" -p e028e98ed11714beb497afa1353e356848eb0198 < "$message")"
+          test "$(git rev-parse "$merge^{tree}")" = 7933f7cf3252475afab7a5d4d397bc51e2d1e4ee
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$trigger"
+          git push origin "$merge:refs/heads/main"
+          mkdir -p publication
+          printf '%s\n' "$trigger" > publication/trigger-commit.txt
+          printf '%s\n' "$merge" > publication/final-commit.txt
+          printf '%s\n' e028e98ed11714beb497afa1353e356848eb0198 > publication/saved-head.txt
+          git show --no-patch --format=fuller "$merge" > publication/final-commit.txt.full
+
+      - name: Retain publication proof
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P005-publication-proof
+          path: publication/
+          if-no-files-found: warn
