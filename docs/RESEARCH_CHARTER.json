@@ -1,0 +1,334 @@
+{
+  "schema_version": 1,
+  "charter_version": 1,
+  "active_phase": "P001",
+  "adoption_revision": "c90625ce302b69dd1c193226aeeb492fe04b334b",
+  "directive_sha256": "6c8b91612767e7f9c733ff4bc908eed2d385cc0250f3239d7cc0b8a4346dfefc",
+  "constraints": {
+    "continue_existing_app": true,
+    "retain_source": true,
+    "separate_controls": true,
+    "offline_core": true,
+    "no_scene_replacement": true,
+    "firmware_fresh_authorization": true
+  },
+  "virtual_formats": [
+    "super_8",
+    "super_16",
+    "standard_35mm",
+    "super_35",
+    "65mm_5perf",
+    "65mm_15perf_horizontal"
+  ],
+  "requirements": [
+    {
+      "id": "REQ-RAW-LOG",
+      "category": "required_outcome",
+      "phase": "P057",
+      "dependencies": [
+        "P016",
+        "P049",
+        "P056"
+      ],
+      "owner": "capture engineer",
+      "measurement_class": "physical_capture",
+      "statement": "Capture genuine RAW-derived LogC3/AWG3 with the greatest usable measured source dynamic range.",
+      "required_evidence": [
+        "codec_encode_decode",
+        "physical_phone_functional",
+        "controlled_color_optics"
+      ]
+    },
+    {
+      "id": "REQ-NATIVE-HIRES",
+      "category": "conditional_research",
+      "phase": "P014",
+      "dependencies": [
+        "P013"
+      ],
+      "owner": "capture engineer",
+      "measurement_class": "physical_capture",
+      "statement": "Investigate maximum achievable native S23 resolutions, including exposed 4K and 8K candidates without hidden upscaling or cadence repair.",
+      "required_evidence": [
+        "codec_encode_decode",
+        "sustained_physical_recording"
+      ]
+    },
+    {
+      "id": "REQ-LOGC3-MATH",
+      "category": "required_outcome",
+      "phase": "P057",
+      "dependencies": [
+        "P016",
+        "P049",
+        "P056"
+      ],
+      "owner": "color engineer",
+      "measurement_class": "numerical",
+      "statement": "Validate the declared LogC3 EI800 arithmetic separately from sensor, gamut and camera-equivalence claims.",
+      "required_evidence": [
+        "host_unit_test",
+        "cpu_reference_comparison"
+      ]
+    },
+    {
+      "id": "REQ-SOURCE-RETENTION",
+      "category": "required_outcome",
+      "phase": "P039",
+      "dependencies": [
+        "P038"
+      ],
+      "owner": "storage engineer",
+      "measurement_class": "functional",
+      "statement": "Retain immutable original sources and a clean master before irreversible creative operations.",
+      "required_evidence": [
+        "host_unit_test",
+        "emulator_instrumentation"
+      ]
+    },
+    {
+      "id": "REQ-SIX-FORMATS",
+      "category": "required_outcome",
+      "phase": "P089",
+      "dependencies": [
+        "P003",
+        "P049",
+        "P056"
+      ],
+      "owner": "optics engineer",
+      "measurement_class": "numerical",
+      "statement": "Represent all six virtual formats with explicit gate, crop, aspect and grain-scale policies.",
+      "required_evidence": [
+        "host_unit_test",
+        "cpu_reference_comparison"
+      ]
+    },
+    {
+      "id": "REQ-FILM-LAB",
+      "category": "required_outcome",
+      "phase": "P088",
+      "dependencies": [
+        "P087"
+      ],
+      "owner": "film rendering engineer",
+      "measurement_class": "perceptual",
+      "statement": "Develop declared stock, grain, halation, print and scan interpretations non-destructively; separate visual preference from numerical correctness.",
+      "required_evidence": [
+        "cpu_reference_comparison",
+        "reviewed_perceptual_study"
+      ]
+    },
+    {
+      "id": "REQ-VIRTUAL-OPTICS",
+      "category": "required_outcome",
+      "phase": "P112",
+      "dependencies": [
+        "P111"
+      ],
+      "owner": "computational optics engineer",
+      "measurement_class": "perceptual",
+      "statement": "Offer optional confidence-aware virtual depth of field with temporal and difficult-boundary validation.",
+      "required_evidence": [
+        "cpu_reference_comparison",
+        "reviewed_perceptual_study"
+      ]
+    },
+    {
+      "id": "REQ-OFFLINE",
+      "category": "required_outcome",
+      "phase": "P148",
+      "dependencies": [
+        "P147"
+      ],
+      "owner": "privacy reviewer",
+      "measurement_class": "functional",
+      "statement": "Operate capture, local development, installed models, recipe search and export without required network services.",
+      "required_evidence": [
+        "host_unit_test",
+        "physical_phone_functional"
+      ]
+    },
+    {
+      "id": "REQ-CONTROL-SEPARATION",
+      "category": "required_outcome",
+      "phase": "P130",
+      "dependencies": [
+        "P129"
+      ],
+      "owner": "interaction engineer",
+      "measurement_class": "functional",
+      "statement": "Separate physical acquisition controls from revisable virtual format, focus and development controls.",
+      "required_evidence": [
+        "emulator_instrumentation",
+        "physical_phone_functional"
+      ]
+    },
+    {
+      "id": "REQ-MOVIE-CATALOGUE",
+      "category": "required_outcome",
+      "phase": "P144",
+      "dependencies": [
+        "P143"
+      ],
+      "owner": "catalogue researcher",
+      "measurement_class": "perceptual",
+      "statement": "Provide a locally searchable, provenance-backed movie catalogue distinguishing production facts, unknowns and creative reconstructions.",
+      "required_evidence": [
+        "host_unit_test",
+        "reviewed_perceptual_study"
+      ]
+    },
+    {
+      "id": "REQ-DEFERRED-JOBS",
+      "category": "required_outcome",
+      "phase": "P128",
+      "dependencies": [
+        "P127"
+      ],
+      "owner": "media jobs engineer",
+      "measurement_class": "functional",
+      "statement": "Support versioned recipes, source/result comparison, cancellation and restart-safe or qualified resumable development.",
+      "required_evidence": [
+        "host_unit_test",
+        "emulator_instrumentation"
+      ]
+    },
+    {
+      "id": "REQ-RECOVERY",
+      "category": "required_outcome",
+      "phase": "P031",
+      "dependencies": [
+        "P030"
+      ],
+      "owner": "storage engineer",
+      "measurement_class": "functional",
+      "statement": "Preserve useful sources and partial footage across interrupted capture and failed publication; never claim incomplete takes are verified.",
+      "required_evidence": [
+        "host_unit_test",
+        "emulator_instrumentation",
+        "physical_phone_functional"
+      ]
+    },
+    {
+      "id": "REQ-EVIDENCE",
+      "category": "required_outcome",
+      "phase": "P003",
+      "dependencies": [
+        "P002"
+      ],
+      "owner": "research evidence reviewer",
+      "measurement_class": "functional",
+      "statement": "Keep advertised, received, decoded, software-tested and physically qualified evidence distinct and revision-bound.",
+      "required_evidence": [
+        "host_unit_test"
+      ]
+    },
+    {
+      "id": "REQ-FIRMWARE",
+      "category": "conditional_research",
+      "phase": "P156",
+      "dependencies": [
+        "P155"
+      ],
+      "owner": "device research reviewer",
+      "measurement_class": "inspection",
+      "statement": "Investigate HAL or firmware only after identifying a measured blocked capability and obtaining fresh device-specific authorization for any modification.",
+      "required_evidence": [
+        "static_inspection"
+      ]
+    },
+    {
+      "id": "CLAIM-SDR-ADDS-DR",
+      "category": "prohibited_claim",
+      "phase": "P064",
+      "dependencies": [
+        "P063"
+      ],
+      "owner": "research evidence reviewer",
+      "measurement_class": "physical_capture",
+      "statement": "An SDR flattening filter increases the captured sensor dynamic range.",
+      "required_evidence": []
+    },
+    {
+      "id": "CLAIM-LOG-IS-ARRI",
+      "category": "prohibited_claim",
+      "phase": "P064",
+      "dependencies": [
+        "P063"
+      ],
+      "owner": "research evidence reviewer",
+      "measurement_class": "physical_capture",
+      "statement": "LogC3 encoding makes the phone physically equivalent to an ARRI camera.",
+      "required_evidence": []
+    },
+    {
+      "id": "CLAIM-VIRTUAL-SENSOR",
+      "category": "prohibited_claim",
+      "phase": "P089",
+      "dependencies": [
+        "P003",
+        "P049",
+        "P056"
+      ],
+      "owner": "research evidence reviewer",
+      "measurement_class": "physical_capture",
+      "statement": "A virtual film format enlarges the physical phone sensor.",
+      "required_evidence": []
+    },
+    {
+      "id": "CLAIM-UPSCALED-NATIVE",
+      "category": "prohibited_claim",
+      "phase": "P014",
+      "dependencies": [
+        "P013"
+      ],
+      "owner": "research evidence reviewer",
+      "measurement_class": "physical_capture",
+      "statement": "Upscaled output dimensions prove native acquisition at those dimensions.",
+      "required_evidence": []
+    },
+    {
+      "id": "EXCLUDED-CLOUD-GENERATION",
+      "category": "excluded_scope",
+      "phase": "P148",
+      "dependencies": [
+        "P147"
+      ],
+      "owner": "privacy reviewer",
+      "measurement_class": "functional",
+      "statement": "Required cloud video generation or silent replacement of the recorded scene.",
+      "required_evidence": []
+    },
+    {
+      "id": "EXCLUDED-PLATFORM",
+      "category": "excluded_scope",
+      "phase": "P128",
+      "dependencies": [
+        "P127"
+      ],
+      "owner": "product owner",
+      "measurement_class": "functional",
+      "statement": "A general nonlinear editor, social network, accounts, subscriptions or cloud collaboration platform.",
+      "required_evidence": []
+    }
+  ],
+  "research_questions": [
+    {
+      "id": "QUESTION-SDR-DR",
+      "requirement_id": "CLAIM-SDR-ADDS-DR",
+      "question": "Does an appearance change alter independently measured retained source range? The SDR-filter sensor-gain proposition is prohibited as an accepted finding; preserve the question and its falsification evidence."
+    },
+    {
+      "id": "QUESTION-S23-MAXIMUM",
+      "requirement_id": "REQ-NATIVE-HIRES",
+      "question": "Which exact native route, cadence, precision and duration can this phone and firmware sustain?"
+    },
+    {
+      "id": "QUESTION-HAL",
+      "requirement_id": "REQ-FIRMWARE",
+      "question": "Which measured blocked stream, if any, justifies a reversible lower-level experiment?"
+    }
+  ],
+  "policies": [],
+  "amendments": []
+}

@@ -43,3 +43,27 @@ An advertised capability, a configured session, received encoded frames, a check
 ## Live lab 0.9
 
 Standalone backend qualification, GPU RAW development, relative-sensor-timestamp streaming and independent live preview are implemented in a separate experimental path. See [LIVE_LOGC3.md](LIVE_LOGC3.md). Physical camera operation, actual end-to-end precision/throughput, audio synchronization, high resolutions and long-duration image quality remain unqualified. Surface capability advertisements are not accepted in place of decoded-pixel proof.
+
+## P001 — research contract (host scope)
+
+The [structured charter](RESEARCH_CHARTER.json) records twenty stable obligations:
+required outcomes, conditional research, prohibited claims and excluded scope.
+The [requirement-to-evidence index](REQUIREMENT_EVIDENCE.json) preserves a bounded
+source inspection and leaves all product claims open, conditional, prohibited or
+excluded. The six format identifiers declare required scope; they are not six
+implemented film profiles.
+
+The read-only `scripts/verify_research_contract.py` checks receipt bytes, provenance,
+inspection revisions, independent evidence classes, raw outcomes, units/domains,
+immutable prior records, reviewed policy changes and the planned checkout SHA.
+The separate P001 suite exercises TC-P001-01 through TC-P001-08 with twenty-one test
+methods and repeated adversarial fixtures. CI retains the exact-commit result and
+baseline/perturbed case inputs. See [P001 operation and limits](P001_RESEARCH_CONTRACT.md)
+and [local TDD record](evidence/P001-tdd-record.json).
+
+This is host-verified research-record enforcement, not completion of P002-P004,
+physical S23 qualification, a production evidence adapter, a film renderer or a
+new capture mode. Existing Android code and pinned build configuration are
+unchanged. The next dependency-ready work package is P002: reconcile the current
+production interfaces/tests with the directive without duplicating the camera
+engine. P003 and P004 remain subsequent gated work.

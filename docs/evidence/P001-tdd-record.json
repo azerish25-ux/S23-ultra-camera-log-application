@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "phase": "P001",
+  "cases": [
+    "TC-P001-01",
+    "TC-P001-02",
+    "TC-P001-03",
+    "TC-P001-04",
+    "TC-P001-05",
+    "TC-P001-06",
+    "TC-P001-07",
+    "TC-P001-08"
+  ],
+  "status": "host_verified",
+  "base_revision": "c90625ce302b69dd1c193226aeeb492fe04b334b",
+  "recorded_utc": "2026-10-01T23:50:44.247614+00:00",
+  "environment": {
+    "python": "3.13.5",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "git": "2.47.3"
+  },
+  "implementation_identity": {
+    "method": "SHA-256 of changed source; final commit bound by exact-commit CI",
+    "files": {
+      "scripts/verify_research_contract.py": "7aa5265e612c4c85c4ad855adad6a3af602e6815609b3771a911d25731245ae5",
+      "scripts/tests/test_research_contract.py": "0801be901d78bdd4e4a48199c330358dcdcf8f8971b4479754ea786ab8903bf7",
+      "docs/RESEARCH_CHARTER.json": "63c0fa1a3d88f7e7915ee8c2f145bc694cbd715961c10e0470fec3460bd792ec",
+      "docs/REQUIREMENT_EVIDENCE.json": "a96c9ef834137f64695a14ab68e7ff0ed1e66cb888f9df6bd9b4b1f3f9cc226e",
+      "docs/P001_RESEARCH_CONTRACT.md": "ab3385975da19a74bce723cee7e6ac736ca9061d8849f74c4c06e8788cd5530a",
+      ".github/workflows/master-directive.yml": "910a78b00f68e78cb63f03a1d41c0c7365a7f9c4339f03623bf43ae617ed4d78"
+    }
+  },
+  "evidence_archive": {
+    "path": "docs/evidence/P001-tdd-evidence.tar.xz",
+    "sha256": "e4fe25b15d462b9dd8f20db42951bc78c5e4de7d5aa4a6fdfeda8031d6d511cd",
+    "bytes": 31220,
+    "files": 79
+  },
+  "runs": [
+    {
+      "id": "baseline",
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 115,
+      "outcome": "passed",
+      "log": "baseline-host.log"
+    },
+    {
+      "id": "initial-red",
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v",
+      "tests": 8,
+      "outcome": "failed",
+      "failures": 26,
+      "errors": 13,
+      "log": "P001-red.log",
+      "scope": "Permissive interface stub, including not-yet-implemented CLI/report fields; not every error was a behavioral mutation."
+    },
+    {
+      "id": "hardening-red",
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v",
+      "tests": 20,
+      "outcome": "failed",
+      "failures": 5,
+      "errors": 0,
+      "log": "P001-hardening-red.log"
+    },
+    {
+      "id": "history-selector-red",
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v",
+      "tests": 21,
+      "outcome": "failed",
+      "failures": 1,
+      "errors": 0,
+      "log": "P001-history-red.log",
+      "scope": "Previously unsupported explicit current-inspection selector and Git-bound historical fixture boundary."
+    },
+    {
+      "id": "p001-green",
+      "command": "python3 -m unittest discover -s scripts/tests -p 'test_research_contract.py' -v",
+      "tests": 21,
+      "outcome": "passed",
+      "log": "P001-green.log"
+    },
+    {
+      "id": "host-regressions",
+      "command": "python3 -m unittest discover -s scripts/tests -v",
+      "tests": 136,
+      "outcome": "passed",
+      "log": "final-host.log"
+    },
+    {
+      "id": "companion-reference",
+      "command": "python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v",
+      "tests": 53,
+      "outcome": "passed",
+      "log": "final-reference.log"
+    },
+    {
+      "id": "master-integrity",
+      "command": "python3 scripts/verify_master_directive.py",
+      "original_files_verified": 20,
+      "outcome": "passed",
+      "log": "final-integrity.json"
+    }
+  ],
+  "mutation_evidence": {
+    "record": "P001-mutations.json",
+    "attempted": 4,
+    "detected": 4,
+    "production_restored": true
+  },
+  "case_artifacts": {
+    "directory": "final-cases",
+    "count": 63,
+    "case_groups": 8,
+    "scope": "Synthetic baseline and adversarial contract inputs, not device footage."
+  },
+  "not_run": {
+    "local_android_build": "No Android code/build pins changed; inspect the independent workflow for the published commit.",
+    "physical_s23": "No connected phone; no capture, precision, colour or endurance certification.",
+    "kotlin_companion": "Unchanged; Python reference rerun is not a Kotlin execution claim."
+  },
+  "next_phase": "P002",
+  "remaining": "Full production/test continuity mapping, P003 adapters and P004 baseline acceptance remain open."
+}

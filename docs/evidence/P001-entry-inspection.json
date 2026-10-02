@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "id": "EVIDENCE-P001-ENTRY",
+  "inspection_id": "INSPECTION-P001-ENTRY",
+  "source_revision": "c90625ce302b69dd1c193226aeeb492fe04b334b",
+  "requirement_ids": [
+    "REQ-EVIDENCE"
+  ],
+  "evidence_class": "static_inspection",
+  "origin": "static_source",
+  "environment": {
+    "kind": "host",
+    "detail": "Exact-source archive checked against all 249 Git blob identities; Python 3.13.5."
+  },
+  "fixture_ids": [
+    "FIXTURE-PROBE-SOURCE"
+  ],
+  "source_paths": [
+    "MASTER_DIRECTIVE.md",
+    "AGENTS.md",
+    "docs/master-directive/directive_manifest.json",
+    "docs/master-directive/S23_Cinema_Master_Directive_200000_Words.md",
+    "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+    "scripts/check_evidence.py",
+    "scripts/verify_master_directive.py"
+  ],
+  "scope": {},
+  "command": "Compare source archive blobs with the exact-commit Git tree, then inspect the named files.",
+  "outcome": "passed",
+  "checks": [
+    {
+      "id": "probe-source-identity",
+      "outcome": "passed",
+      "reason": "SHA-256 and Git blob identity match the inspected revision; this is source inspection, not execution of camera behaviour."
+    }
+  ],
+  "measurements": [],
+  "run_id": "STATIC-ENTRY-c90625c"
+}

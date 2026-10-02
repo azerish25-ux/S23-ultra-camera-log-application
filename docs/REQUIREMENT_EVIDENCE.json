@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "charter_version": 1,
+  "inspections": [
+    {
+      "id": "INSPECTION-P001-ENTRY",
+      "revision": "c90625ce302b69dd1c193226aeeb492fe04b334b",
+      "scope": "Governing sections, P001 acceptance cases, entry-point integrity and two evidence-reporting seams only; not a complete P002 source audit.",
+      "files": [
+        {
+          "path": "MASTER_DIRECTIVE.md",
+          "sha256": "7b23a26ebe393aaebe41f0115f02efab38d321ed84d9dc2ffd98c4c8fb3eedbb"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "a94cf85d1027b5fd19ae8c35f94692c449aea875d471a7f907640f7c4a07e1ed"
+        },
+        {
+          "path": "docs/master-directive/directive_manifest.json",
+          "sha256": "de0f4c8b55387678e2b9c1111f3b2acd9eb72b77a60ed92df9c2e20295a77a1e"
+        },
+        {
+          "path": "docs/master-directive/S23_Cinema_Master_Directive_200000_Words.md",
+          "sha256": "6c8b91612767e7f9c733ff4bc908eed2d385cc0250f3239d7cc0b8a4346dfefc"
+        },
+        {
+          "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+          "sha256": "335b4755932ea05c70befb6295a38fd35c2ede01e3b87ef2224849cf10d67b99"
+        },
+        {
+          "path": "scripts/check_evidence.py",
+          "sha256": "42de06221eae5918bf118fa8f1fe6992c152e600ce958951927c2bff787ec936"
+        },
+        {
+          "path": "scripts/verify_master_directive.py",
+          "sha256": "5e600ec6c2a254ba4172579ea94d744bd6dd7cc871fbb3e443cc72b5745f764b"
+        }
+      ]
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "FIXTURE-PROBE-SOURCE",
+      "path": "app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+      "sha256": "335b4755932ea05c70befb6295a38fd35c2ede01e3b87ef2224849cf10d67b99",
+      "kind": "source_text",
+      "provenance": {
+        "origin": "git:c90625ce302b69dd1c193226aeeb492fe04b334b:app/src/main/java/com/s23log/probe/diagnostics/ProbeReport.kt",
+        "owner": "repository owner",
+        "acquired_at": "2026-10-01",
+        "permitted_use": "Private repository inspection; no new third-party redistribution grant."
+      },
+      "git_revision": "c90625ce302b69dd1c193226aeeb492fe04b334b"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "EVIDENCE-P001-ENTRY",
+      "artifact": {
+        "path": "docs/evidence/P001-entry-inspection.json",
+        "sha256": "c50724cb4af06724bc3f894affa7fe7cfa674365511cbfdc09dcf331dd72eb4c"
+      },
+      "reported_outcome": "passed"
+    }
+  ],
+  "findings": [
+    {
+      "id": "FINDING-REQ-RAW-LOG",
+      "requirement_id": "REQ-RAW-LOG",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-NATIVE-HIRES",
+      "requirement_id": "REQ-NATIVE-HIRES",
+      "status": "conditional",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-LOGC3-MATH",
+      "requirement_id": "REQ-LOGC3-MATH",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-SOURCE-RETENTION",
+      "requirement_id": "REQ-SOURCE-RETENTION",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-SIX-FORMATS",
+      "requirement_id": "REQ-SIX-FORMATS",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-FILM-LAB",
+      "requirement_id": "REQ-FILM-LAB",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-VIRTUAL-OPTICS",
+      "requirement_id": "REQ-VIRTUAL-OPTICS",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-OFFLINE",
+      "requirement_id": "REQ-OFFLINE",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-CONTROL-SEPARATION",
+      "requirement_id": "REQ-CONTROL-SEPARATION",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-MOVIE-CATALOGUE",
+      "requirement_id": "REQ-MOVIE-CATALOGUE",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-DEFERRED-JOBS",
+      "requirement_id": "REQ-DEFERRED-JOBS",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-RECOVERY",
+      "requirement_id": "REQ-RECOVERY",
+      "status": "open",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-EVIDENCE",
+      "requirement_id": "REQ-EVIDENCE",
+      "status": "open",
+      "evidence_ids": [
+        "EVIDENCE-P001-ENTRY"
+      ],
+      "scope": {},
+      "limits": [
+        "P001 records this obligation, not feature completion. Existing implementation and acceptance coverage must be reconciled in P002-P004."
+      ]
+    },
+    {
+      "id": "FINDING-REQ-FIRMWARE",
+      "requirement_id": "REQ-FIRMWARE",
+      "status": "conditional",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-CLAIM-SDR-ADDS-DR",
+      "requirement_id": "CLAIM-SDR-ADDS-DR",
+      "status": "prohibited",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-CLAIM-LOG-IS-ARRI",
+      "requirement_id": "CLAIM-LOG-IS-ARRI",
+      "status": "prohibited",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-CLAIM-VIRTUAL-SENSOR",
+      "requirement_id": "CLAIM-VIRTUAL-SENSOR",
+      "status": "prohibited",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-CLAIM-UPSCALED-NATIVE",
+      "requirement_id": "CLAIM-UPSCALED-NATIVE",
+      "status": "prohibited",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-EXCLUDED-CLOUD-GENERATION",
+      "requirement_id": "EXCLUDED-CLOUD-GENERATION",
+      "status": "excluded",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    },
+    {
+      "id": "FINDING-EXCLUDED-PLATFORM",
+      "requirement_id": "EXCLUDED-PLATFORM",
+      "status": "excluded",
+      "evidence_ids": [],
+      "scope": {},
+      "limits": [
+        "No unmeasured capability or excluded/prohibited scope is accepted."
+      ]
+    }
+  ],
+  "current_inspections": [
+    "INSPECTION-P001-ENTRY"
+  ]
+}
