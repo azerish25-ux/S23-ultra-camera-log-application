@@ -39,8 +39,17 @@ jobs:
           with urllib.request.urlopen(req, timeout=60) as response:
               data = base64.b64decode(json.load(response)['content'])
           assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+          code = data.decode()
+          before = "git('read-tree', BASE_TREE)"
+          after = "git('read-tree', '--reset', '-u', BASE_TREE)"
+          assert code.count(before) == 1
+          code = code.replace(before, after)
+          before = "git('bundle', 'create', str(OUT / 'restored-history.bundle'), 'refs/heads/main')"
+          after = "git('bundle', 'create', str(OUT / 'restored-history.bundle'), '--all')"
+          assert code.count(before) == 1
+          code = code.replace(before, after)
           path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'import-saved-p003.py'
-          path.write_bytes(data)
+          path.write_text(code)
           subprocess.run([sys.executable, str(path)], check=True)
           PY
       - name: Retain exact-source import and test evidence
