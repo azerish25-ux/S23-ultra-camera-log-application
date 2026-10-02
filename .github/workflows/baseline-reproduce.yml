@@ -27,7 +27,7 @@ jobs:
           echo 'f4977660d1880b78eec74eba3882675d64a58d6a91a939166296d80a2559f62d  original/verification.zip' | sha256sum -c -
           echo 'f0dff35d7586ac78f3eed2ba3fda0426e2780c5fab9647690034feff83a742bb  original/apk.zip' | sha256sum -c -
           gh api "repos/$REPO/actions/jobs/110895707817" > original/job.json
-          gh api "repos/$REPO/actions/jobs/110895707817/logs" > original/job.log
+          gh api --allow-escape-sequences "repos/$REPO/actions/jobs/110895707817/logs" > original/job.log
           gh api "repos/$REPO/actions/runs/37024421010/attempts/1" > original/run.json
           gh api "repos/$REPO/actions/runs/37024421010/artifacts" > original/artifacts.json
           sha256sum original/* > original/SHA256SUMS.txt
@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
-      GITHUB_SHA: d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df
+      BASELINE_REVISION: d3a6adaadcbe9349f3f9b017c5da92b0b4c1b9df
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
@@ -56,7 +56,9 @@ jobs:
       - name: Verify frozen source and wrapper
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          export GITHUB_SHA="$BASELINE_REVISION"
+          git log -1 --format='%H %T'
+          test "$(git rev-parse HEAD)" = "$BASELINE_REVISION"
           test "$(git rev-parse HEAD^{tree})" = 99b83b61ca40b25fe2e0a0dadeb47b004d8a672c
           echo '497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7  gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
           mkdir -p evidence/reproduction
@@ -74,12 +76,14 @@ jobs:
       - name: Original host tests and reference contracts
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           python3 -m unittest discover -s scripts/tests -v 2>&1 | tee evidence/reproduction/host.log
           python3 -m unittest discover -s docs/master-directive/reference -p test_reference.py -v 2>&1 | tee evidence/reproduction/reference.log
           python3 scripts/verify_master_directive.py > evidence/reproduction/integrity.json
       - name: Original synthetic RAW experiments
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           python3 scripts/raw_fixture.py evidence/raw-logc3
           python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --output evidence/raw-logc3/synthetic-logc3.mkv
           python3 scripts/raw_to_logc3.py evidence/raw-logc3/synthetic.s23raw --profile evidence/raw-logc3/synthetic-profile.json --codec hevc10 --output evidence/raw-logc3/synthetic-logc3.mp4
@@ -90,6 +94,7 @@ jobs:
       - name: Record resolved tools and dependencies
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           { python3 --version; python3 -m pip freeze; java -version; git --version; ffmpeg -version; ./gradlew --version; } > evidence/reproduction/tools.txt 2>&1
           "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --list_installed > evidence/reproduction/sdk-packages.txt
           ./gradlew --no-daemon :app:dependencies > evidence/reproduction/gradle-dependencies.txt
@@ -97,15 +102,18 @@ jobs:
         id: build
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           ./gradlew --no-daemon :app:testDebugUnitTest :app:lintDebug :app:lintRelease :app:assembleDebug :app:assembleRelease :app:assembleDebugAndroidTest 2>&1 | tee evidence/reproduction/build.log
       - name: Original signing safeguards
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose app/build/outputs/apk/debug/app-debug.apk > evidence/reproduction/signature.txt
           bash scripts/check_release_signing_config.sh > evidence/reproduction/release-signing.txt 2>&1
       - name: Original emulator and independent consumers
         run: |
           set -euo pipefail
+          export GITHUB_SHA="$BASELINE_REVISION"
           bash .github/scripts/emulator-test.sh 2>&1 | tee evidence/reproduction/emulator-command.log
       - name: Preserve exact source and results even on failure
         if: always()
