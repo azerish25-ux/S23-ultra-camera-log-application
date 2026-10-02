@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "phase": "P003",
+  "scope": "Capability and ordinary-recording candidate host verification; not Android runtime",
+  "source_revision": "dd15ec7419736681a61cba3bc77723ed4ea00701",
+  "source_tree": "badc96200cfc0766a4836b7a834def667a81d641",
+  "bootstrap_revision": "a4f0dda65a65133ac21f753914460d25c14ca620",
+  "workflow_run": 37009119822,
+  "checks": {
+    "integrity": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "scripts/verify_master_directive.py"
+      ],
+      "exit_code": 0,
+      "log_sha256": "deada1ff244edb36f86d14dbc5ded5246153030df9efc4868c81446f79a4d9e8"
+    },
+    "research": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "scripts/verify_research_contract.py",
+        "--expected-head",
+        "dd15ec7419736681a61cba3bc77723ed4ea00701"
+      ],
+      "exit_code": 0,
+      "log_sha256": "7fbf6a8bed66fac10d4b7b715e12f698eb3863fc3d54131b564fd5f7ab850ca4"
+    },
+    "continuity": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "scripts/verify_repository_continuity.py",
+        "--expected-head",
+        "dd15ec7419736681a61cba3bc77723ed4ea00701"
+      ],
+      "exit_code": 0,
+      "log_sha256": "6a996710be99fe1c7bd01711737cfae481ae14d8a7c122161881597f16b47b89"
+    },
+    "recording": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-p",
+        "test_recording_evidence.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log_sha256": "c5374ca508f84ae93338c90a2104790cc5e2ed21378ed2ee744de44834401700",
+      "tests": 25
+    },
+    "host": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts/tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log_sha256": "6608c4e3978e5c6f2a77bae9b1b15a53d3bb4a98525836b6cff10c57853adee4",
+      "tests": 201
+    },
+    "reference": {
+      "command": [
+        "/home/runner/work/_temp/p003-recording-venv/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "docs/master-directive/reference",
+        "-p",
+        "test_reference.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log_sha256": "dedfc211e8fde9307061d1f620e1696affd5421d39f6ce662c9da7a82b898dcd",
+      "tests": 53
+    }
+  },
+  "physical_qualification": "not_run",
+  "android_execution": "pending exact published-commit workflow",
+  "original_local_evidence": "docs/evidence/P003-recording-host-verification.json; local raw logs remain in the conversation handoff"
+}
