@@ -5,6 +5,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import com.s23log.probe.BuildConfig
+import com.s23log.probe.core.AudioMode
+import com.s23log.probe.core.RecordingMode
 import com.s23log.probe.camera.CameraTarget
 import com.s23log.probe.camera.ModePlan
 import org.json.JSONObject
@@ -20,8 +22,29 @@ object ModeEvidence {
         "appVersion" to BuildConfig.VERSION_NAME, "appCommit" to BuildConfig.SOURCE_REVISION)
     fun report(target: CameraTarget, plan: ModePlan): JSONObject = JSONObject()
         .put("schemaVersion", 1).put("kind", "recording-mode-plan").put("device", jsonValue(device()))
+        .put("reportId", UUID.randomUUID().toString()).put("generatedAt", java.time.Instant.now().toString())
+        .put("evidence", "advertised_only").put("physicalCameraCertified", false)
         .put("logicalCamera", target.logicalId).put("physicalCamera", target.physicalId ?: JSONObject.NULL)
         .put("plan", jsonValue(plan.describe()))
+    /** Preserve only the actual selected planner candidate, not an invented capability assertion. */
+    fun recordingSnapshot(target: CameraTarget, plan: ModePlan?, mode: RecordingMode): JSONObject? =
+        plan?.takeIf { mode in it.modes }?.let {
+            report(target, ModePlan(listOf(mode), it.notes)).put("scope", "Selected planner subset; not full capability audit")
+        }
+
+    fun recordingAttempt(context: Context, mode: RecordingMode, audioMode: AudioMode,
+                         requested: Map<String, Any?>): RecordingAttempt {
+        val app = context.applicationContext
+        val bound = JSONObject().put("device", jsonValue(device())).put("selectedMode", jsonValue(mode.describe()))
+            .put("audioMode", audioMode.name).put("audioChannels", audioMode.channels)
+            .put("requested", jsonValue(requested.filterKeys { it != "capabilitySnapshot" }))
+        return RecordingAttempt(File(app.filesDir, "exports/recording-evidence"), BuildConfig.SOURCE_REVISION, bound,
+            ::atomicWrite, schedule = { task -> worker.execute { task() } }, onPersistenceFailure = { message ->
+                Handler(Looper.getMainLooper()).post {
+                    android.widget.Toast.makeText(app, "Recording report save failed; footage is unchanged: $message", android.widget.Toast.LENGTH_LONG).show()
+                }
+            }).also { it.start(); it.advertised(requested["capabilitySnapshot"] as? JSONObject) }
+    }
     fun export(context: Context, target: CameraTarget, plan: ModePlan, completed: (Result<File>) -> Unit) {
         val app = context.applicationContext
         worker.execute {

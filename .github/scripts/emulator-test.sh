@@ -94,3 +94,5 @@ cat evidence/emulator/summary.json
 python3 scripts/check_live_log.py evidence/emulator/app-evidence.tar > evidence/emulator/live-log-summary.json
 
 python3 scripts/check_development_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" > evidence/emulator/development-attempts-summary.json
+
+python3 scripts/check_recording_evidence.py evidence/emulator/app-evidence.tar --expected-revision "$GITHUB_SHA" --require-integration > evidence/emulator/recording-attempts-summary.json

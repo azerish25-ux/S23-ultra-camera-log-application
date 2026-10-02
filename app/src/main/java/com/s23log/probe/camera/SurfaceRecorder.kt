@@ -24,6 +24,9 @@ import com.s23log.probe.core.VideoFinalizer
 import com.s23log.probe.core.VideoDisposition
 import com.s23log.probe.core.FrameStatistics
 import com.s23log.probe.core.RecordingMode
+import com.s23log.probe.core.RecordingStage
+import com.s23log.probe.core.DevelopmentOutcome
+import com.s23log.probe.diagnostics.RecordingAttempt
 import com.s23log.probe.diagnostics.ModeEvidence
 import com.s23log.probe.diagnostics.atomicWrite
 import com.s23log.probe.diagnostics.jsonValue
@@ -47,7 +50,8 @@ class SurfaceRecorder private constructor(
     private val onAudioFault: (String) -> Unit,
     private val onResources: (RecordingResources.Snapshot) -> Unit,
     private val onSafetyStop: (String) -> Unit,
-    private val completed: (Outcome) -> Unit
+    private val completed: (Outcome) -> Unit,
+    private val attemptEvidence: RecordingAttempt
 ) {
     data class Outcome(val uri: Uri?, val report: File?, val message: String, val audioError: String? = null)
     private val thread = HandlerThread("S23Log-encoder").apply { start() }
@@ -113,6 +117,7 @@ class SurfaceRecorder private constructor(
     private var lastVideoAt = 0L
     private var lastAudioAt = 0L
     private val frameStats = FrameStatistics(mode.fps)
+    private var videoReceived = 0L
     private var audioSamples = 0L
     private var audioFailure: String? = null
     private var lastResources: RecordingResources.Snapshot? = null
@@ -197,6 +202,7 @@ class SurfaceRecorder private constructor(
                     try {
                         if (info.size > 0 && info.flags and MediaCodec.BUFFER_FLAG_CODEC_CONFIG == 0) {
                             val buffer = requireNotNull(codec.getOutputBuffer(index)).apply { position(info.offset); limit(info.offset + info.size) }
+                            videoReceived++
                             coordinator.sample(Track.VIDEO, buffer, info.presentationTimeUs, info.flags)
                         }
                     } catch (e: Exception) { error = e }
@@ -209,7 +215,11 @@ class SurfaceRecorder private constructor(
             codec.configure(CameraCatalog.videoFormat(mode), null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             surface = codec.createInputSurface()
             codec.start()
+            attemptEvidence.safely { attemptEvidence.observe(RecordingStage.PREPARATION, DevelopmentOutcome.PASSED, "Encoder and input surface prepared",
+                JSONObject().put("encoder", mode.encoder).put("surfaceInputCreated", true).put("encoderStarted", true).put("audioChannels", audioMode.channels)) }
         } catch (e: Exception) {
+            attemptEvidence.safely { attemptEvidence.observe(RecordingStage.PREPARATION, DevelopmentOutcome.FAILED, "${e.javaClass.simpleName}: ${e.message}") }
+            attemptEvidence.close(listOf("Preparation failed: ${e.message}"))
             finished = true
             handler.removeCallbacksAndMessages(null)
             val failedAudio = audio
@@ -232,10 +242,15 @@ class SurfaceRecorder private constructor(
         return snapshot
     }
 
+    fun configurationFailed(reason: String) {
+        attemptEvidence.safely { attemptEvidence.observe(RecordingStage.CONFIGURED, DevelopmentOutcome.FAILED, reason) }
+    }
     fun sessionStarted() {
         sessionConfigured = true
         handler.post {
             if (finished || stopping) return@post
+            attemptEvidence.safely { attemptEvidence.observe(RecordingStage.CONFIGURED, DevelopmentOutcome.PASSED, "Camera configuration callback and repeating request observed",
+                JSONObject().put("cameraSessionCallback", true).put("repeatingRequestSubmitted", true)) }
             beganAt = SystemClock.elapsedRealtime()
             try { audio?.start(); handler.post(watchdog) } catch (e: Exception) { failAudio(e) }
         }
@@ -301,6 +316,15 @@ class SurfaceRecorder private constructor(
         val audioEvidence = audio?.describe()
         var reportFile: File? = null
         val stats = frameStats.summary()
+        attemptEvidence.safely { attemptEvidence.observe(RecordingStage.ENCODED, if (stats.frames > 0) DevelopmentOutcome.PASSED else DevelopmentOutcome.BLOCKED,
+            if (stats.frames > 0) "Encoded video samples written to this attempt" else "Stopped without written video samples",
+            JSONObject().put("receivedSamples", videoReceived).put("writtenSamples", stats.frames).put("sampleSpanUs", stats.durationUs)
+                .put("durationUnit", "us").put("durationDomain", "muxed_video_presentation_timestamp_span")) }
+        if (audioMode.enabled) attemptEvidence.safely { attemptEvidence.observe(RecordingStage.AUDIO,
+            if (audioSamples > 0) DevelopmentOutcome.PASSED else DevelopmentOutcome.FAILED,
+            if (audioSamples > 0) "Requested AAC samples were written" else "Requested audio produced no written samples",
+            JSONObject().put("writtenSamples", audioSamples).put("channels", audioMode.channels).put("sampleRate", AudioMode.SAMPLE_RATE)) }
+        var verified: JSONObject? = null
         val stages = JSONArray().put("advertised")
         if (sessionConfigured) stages.put("session_configured")
         if (stats.frames > 0) stages.put("encoded_frames_received").put("first_sample_written")
@@ -309,16 +333,45 @@ class SurfaceRecorder private constructor(
         val outcome = VideoFinalizer.finish(
             samples = stats.frames, initialError = failure,
             verify = {
+                try {
                 if (mode.processing == ProcessingPath.GPU_HLG10) {
                     require(processingSnapshot?.get("cleanupConfirmed") == true && processingSnapshot?.get("error") == null) { "GPU recording/cleanup was not confirmed" }
                     require((processingSnapshot?.get("submittedFrames") as? Long ?: 0) >= 2) { "GPU supplied too few recorded frames" }
                     stages.put("gpu_hlg_pipeline_exercised")
                 }
-                RecordingVerifier.verify(context, output.uri, mode, audioMode).also { stages.put("container_and_output_checked") }
+                RecordingVerifier.verify(context, output.uri, mode, audioMode).also { result ->
+                    verified = result
+                    stages.put("container_and_output_checked")
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.OUTPUT, DevelopmentOutcome.PASSED, "Existing packet and sample-decode checks completed",
+                        JSONObject().put("verification", result).put("durationUnit", "us")
+                            .put("durationDomain", "muxed_video_presentation_timestamp_span")
+                            .put("decodeScope", "all_packets_and_sample_decode_not_full_decode")) }
+                }
+                } catch (error: Exception) {
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.OUTPUT, DevelopmentOutcome.FAILED, "${error.javaClass.simpleName}: ${error.message}") }
+                    throw error
+                }
             },
-            publish = { output.publish() }, retain = { reason -> output.retain(reason) }, discardEmpty = { output.abort() },
+            publish = {
+                try { output.publish().also { uri ->
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.PUBLICATION, DevelopmentOutcome.PASSED, "Existing media publication returned successfully",
+                        JSONObject().put("uri", uri.toString()).put("mediaIdentity", requireNotNull(verified).getJSONObject("mediaIdentity"))) }
+                } } catch (error: Exception) {
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.PUBLICATION, DevelopmentOutcome.FAILED, "${error.javaClass.simpleName}: ${error.message}") }
+                    throw error
+                }
+            }, retain = { reason ->
+                try { output.retain(reason).also { uri ->
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.RETENTION, DevelopmentOutcome.PASSED, reason,
+                        JSONObject().put("uri", uri.toString()).put("byteCount", output.stagedByteCount())) }
+                } } catch (error: Exception) {
+                    attemptEvidence.safely { attemptEvidence.observe(RecordingStage.RETENTION, DevelopmentOutcome.FAILED, "${error.javaClass.simpleName}: ${error.message}") }
+                    throw error
+                }
+            }, discardEmpty = { output.abort() },
             saveReport = { result ->
                 val report = JSONObject().put("schemaVersion", 3).put("kind", "recording-validation")
+                    .put("attemptId", attemptEvidence.id).put("attemptReport", attemptEvidence.file.name)
                     .put("device", jsonValue(ModeEvidence.device())).put("selectedMode", jsonValue(mode.describe()))
                     .put("requested", jsonValue(request)).put("mode", mode.label).put("encoder", mode.encoder)
                     .put("orientation", orientation).put("latestApplied", jsonValue(applied))
@@ -360,7 +413,10 @@ class SurfaceRecorder private constructor(
             VideoDisposition.RETENTION_FAILED -> "Recording needs recovery; no further deletion attempted: ${outcome.errors.joinToString("; ")}. Check Recover captures after reopening."
         } + (resourceStopReason?.let { " " + context.getString(com.s23log.probe.R.string.resource_stopped, RecordingResources.stopMessage(context, it)) } ?: "") +
             (outcome.reportError?.let { " Validation report unavailable: $it. Media was not deleted." } ?: "")
+        outcome.reportError?.let(attemptEvidence::noteReportError)
         runCatching { CaptureHistory.save(context, listOfNotNull(outcome.uri), reportFile, message) }
+            .onFailure { attemptEvidence.noteReportError("Capture library: ${it.message}") }
+        attemptEvidence.close(outcome.errors)
         try { completed(Outcome(outcome.uri, reportFile, message, audioFailure)) } finally { thread.quitSafely() }
     }
     private fun timingQuality(audioEvidence: Map<String, Any?>?, verification: JSONObject?): JSONObject {
@@ -380,10 +436,11 @@ class SurfaceRecorder private constructor(
     }
     companion object {
         fun prepare(context: Context, mode: RecordingMode, orientation: Int, request: Map<String, Any?>,
-                    audioMode: AudioMode = AudioMode.OFF, onFirstSample: () -> Unit = {},
+                    audioMode: AudioMode = AudioMode.OFF, attemptEvidence: RecordingAttempt? = null, onFirstSample: () -> Unit = {},
                     onAudioMeter: (AudioCapture.Meter) -> Unit = {}, onAudioFault: (String) -> Unit = {},
                     onResources: (RecordingResources.Snapshot) -> Unit = {}, onSafetyStop: (String) -> Unit = {},
                     completed: (Outcome) -> Unit): SurfaceRecorder =
-            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, onAudioFault, onResources, onSafetyStop, completed).apply { prepare() }
+            SurfaceRecorder(context.applicationContext, mode, orientation, request, audioMode, onFirstSample, onAudioMeter, onAudioFault, onResources, onSafetyStop, completed,
+                attemptEvidence ?: ModeEvidence.recordingAttempt(context, mode, audioMode, request)).apply { prepare() }
     }
 }

@@ -24,10 +24,17 @@ class ProbeSection(val kind: String, val id: String) {
         JSONObject().also { obj -> fields.forEach { (key, value) -> obj.put(key, value.json()) } })
 }
 
-class ProbeReport(val generatedAt: String, val sections: List<ProbeSection>) {
+class ProbeReport(val generatedAt: String, val sections: List<ProbeSection>,
+    val sourceRevision: String? = null, val deviceBuild: String? = null) {
+    private val reportId = java.util.UUID.randomUUID().toString()
     val errorCount: Int get() = sections.sumOf { s -> s.fields.values.sumOf { (if (it.status == "query_failed") 1 else 0) + nestedQueryErrors(it.value) } }
     fun json(): String = JSONObject().put("schemaVersion", 2).put("generatedAt", generatedAt)
         .put("evidence", "advertised_only").put("queryErrors", errorCount)
+        .put("reportId", reportId).put("sourceRevision", sourceRevision ?: JSONObject.NULL).put("deviceBuild", deviceBuild ?: JSONObject.NULL)
+        .put("stageEvidence", JSONObject().put("schemaVersion", 1).put("stage", "advertised")
+            .put("outcome", if (errorCount == 0 && sourceRevision?.matches(Regex("[0-9a-f]{40}")) == true && !deviceBuild.isNullOrBlank()) "passed" else "inconclusive")
+            .put("scope", "API query results only; individual unsupported and missing values remain distinct")
+            .put("recordingVerified", false).put("physicalCameraCertified", false))
         .put("sections", JSONArray().also { array -> sections.forEach { array.put(it.json()) } }).toString(2)
     fun text(): String = buildString {
         appendLine("S23LOG CAPABILITY REPORT / schema 2")

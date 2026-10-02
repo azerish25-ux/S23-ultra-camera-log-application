@@ -128,6 +128,7 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
         button(R.id.clipsTab).setOnClickListener { openClips() }
         button(R.id.diagnosticsTab).setOnClickListener { pages.displayedChild = 1; requestedKey = null; controller.close() }
         button(R.id.enableCamera).setOnClickListener { withCameraPermission { requestedKey = null; controller.discover() } }
+        button(R.id.recordingAttempts).setOnClickListener { showRecordingAttempts() }
         button(R.id.runProbe).setOnClickListener { withCameraPermission { reports.start() } }
         button(R.id.shareReport).setOnClickListener {
             reports.export { result ->
@@ -756,6 +757,34 @@ class MainActivity : Activity(), CameraController.Listener, TextureView.SurfaceT
     private fun wbName(mode: Int): String = when (mode) {
         1 -> "Auto"; 2 -> "Incandescent"; 3 -> "Fluorescent"; 4 -> "Warm fluorescent"; 5 -> "Daylight"; 6 -> "Cloudy daylight"; 7 -> "Twilight"; 8 -> "Shade"; else -> "Preset $mode"
     }
+    private fun showRecordingAttempts() {
+        val directory = File(filesDir, "exports/recording-evidence")
+        val files = directory.listFiles().orEmpty().filter { it.isFile && it.name.matches(Regex("recording-attempt-[0-9a-f-]{36}\\.json")) }
+            .sortedByDescending { it.lastModified() }.take(64)
+        if (files.isEmpty()) {
+            AlertDialog.Builder(this).setTitle(R.string.recording_attempts)
+                .setMessage("No retained attempts yet. Failed and interrupted recording attempts appear here too.")
+                .setPositiveButton(R.string.close, null).show()
+            return
+        }
+        val labels = files.map { java.text.DateFormat.getDateTimeInstance().format(java.util.Date(it.lastModified())) + " · " + it.name.removePrefix("recording-attempt-").take(8) }
+        AlertDialog.Builder(this).setTitle("Recording attempts · latest ${files.size}")
+            .setItems(labels.toTypedArray()) { _, index ->
+                val file = files[index]
+                val summary = runCatching {
+                    require(file.length() in 1..2_000_000)
+                    val report = org.json.JSONObject(file.readText())
+                    val stages = report.getJSONArray("stages")
+                    (if (report.getBoolean("closed")) "Completed attempt" else "Incomplete checkpoint — not a completed recording") + "\n\n" +
+                        (0 until stages.length()).joinToString("\n") { i -> val row = stages.getJSONObject(i); "${row.getString("stage")}: ${row.getString("outcome")}" } +
+                        "\n\nFull-file decoding and physical S23 qualification are separate checks."
+                }.getOrElse { "Report could not be read: ${it.message}" }
+                AlertDialog.Builder(this).setTitle(R.string.recording_attempts).setMessage(summary)
+                    .setPositiveButton("Share report") { _, _ -> shareFiles(listOf(file), "application/json") }
+                    .setNegativeButton(R.string.close, null).show()
+            }.setNegativeButton(R.string.close, null).show()
+    }
+
     private fun shareFiles(files: List<File>, mime: String) {
         try { shareUris(files.map { FileProvider.getUriForFile(this, "$packageName.files", it) }, mime) }
         catch (e: Exception) { Toast.makeText(this, "Could not export files: ${e.message}", Toast.LENGTH_LONG).show() }

@@ -78,7 +78,7 @@ class CameraCapabilityProbe(context: Context) {
         summary.query("camerasAdvertisingManualSensor") { cameras.filter { it.fields["manualSensor"]?.value == true }.map { it.id } }
         summary.query("camerasAdvertisingHLG10") { cameras.filter { it.fields["hlg10"]?.value == true }.map { it.id } }
         summary.query("recordingPathVerified") { false }
-        return ProbeReport(Instant.now().toString(), sections)
+        return ProbeReport(Instant.now().toString(), sections, BuildConfig.SOURCE_REVISION, Build.FINGERPRINT)
     }
 
     private fun inspectCamera(s: ProbeSection, c: C) {

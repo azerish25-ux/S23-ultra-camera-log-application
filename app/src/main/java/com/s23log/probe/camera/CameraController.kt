@@ -1,6 +1,9 @@
 package com.s23log.probe.camera
 
 import com.s23log.probe.S23Application
+import com.s23log.probe.diagnostics.ModeEvidence
+import com.s23log.probe.core.RecordingStage
+import com.s23log.probe.core.DevelopmentOutcome
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -84,6 +87,7 @@ class CameraController(context: Context, listener: Listener) {
     private var recorder: SurfaceRecorder? = null
     private var raw: RawCaptureJob? = null
     private var modes: List<RecordingMode> = emptyList()
+    private var modePlan: ModePlan? = null
     private var bitratePreset = CameraSettings.bitratePreset(app)
     private var lastAppliedAt = 0L
     private var previewHasFrames = false
@@ -107,7 +111,7 @@ class CameraController(context: Context, listener: Listener) {
                     "This preset is unavailable for the selected format; no format fallback was performed"
                 }
                 val size = CameraCatalog.previewSize(request.target, candidate)
-                bitratePreset = preset; modes = plan.modes; selectedMode = candidate; committed = true
+                bitratePreset = preset; modes = plan.modes; modePlan = plan; selectedMode = candidate; committed = true
                 wanted = request.copy(modeKey = candidate.key)
                 CameraSettings.saveBitratePreset(app, preset)
                 emit { it.onReady(request.target, size, plan, candidate) }
@@ -318,11 +322,16 @@ class CameraController(context: Context, listener: Listener) {
                 return@post
             }
             if (testSeconds != null && testSeconds != 5) return@post
+            val attemptEvidence = ModeEvidence.recordingAttempt(app, mode, audioMode, mapOf(
+                "logicalCamera" to request.target.logicalId, "physicalCamera" to request.target.physicalId,
+                "selectedMode" to mode.describe(), "audioMode" to audioMode.name,
+                "testKind" to (if (testSeconds != null) "user_initiated_short_recording" else "normal_recording"),
+                "requestedTestSeconds" to testSeconds,
+                "capabilitySnapshot" to ModeEvidence.recordingSnapshot(request.target, modePlan, mode)
+            ))
             try {
-                state(EngineState.STARTING, "Configuring ${mode.label} · ${if (audioMode.enabled) "microphone ${audioMode.name.lowercase()}" else "video only"} · not custom Log")
-                val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0, request.displayDegrees, request.target.front)
-                var current: SurfaceRecorder? = null
-                current = SurfaceRecorder.prepare(app, mode, orientation, mapOf(
+                val requestedEvidence = mapOf(
+                    "capabilitySnapshot" to ModeEvidence.recordingSnapshot(request.target, modePlan, mode),
                     "logicalCamera" to request.target.logicalId, "physicalCamera" to request.target.physicalId,
                     "controls" to intentControls.describe(), "effectiveControls" to controls.effective(request.target, mode.fps).describe(),
                     "selectedMode" to mode.describe(), "nominalFps" to mode.fps, "bitrate" to mode.bitRate,
@@ -332,7 +341,11 @@ class CameraController(context: Context, listener: Listener) {
                     "sensorTimestampSource" to request.target.characteristics[C.SENSOR_INFO_TIMESTAMP_SOURCE],
                     "exposureCompensationRange" to request.target.exposureCompensation?.describe(),
                     "cameraTimingAdvertised" to mode.timingAdvertised, "previewDuringRecording" to mode.previewDuringRecording
-                ), audioMode = audioMode, onResources = { snapshot -> handler.post {
+                )
+                state(EngineState.STARTING, "Configuring ${mode.label} · ${if (audioMode.enabled) "microphone ${audioMode.name.lowercase()}" else "video only"} · not custom Log")
+                val orientation = CapturePolicy.orientation(request.target.characteristics[C.SENSOR_ORIENTATION] ?: 0, request.displayDegrees, request.target.front)
+                var current: SurfaceRecorder? = null
+                current = SurfaceRecorder.prepare(app, mode, orientation, requestedEvidence, audioMode = audioMode, attemptEvidence = attemptEvidence, onResources = { snapshot -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) emit { it.onResources(snapshot) }
                 } }, onSafetyStop = { reason -> handler.post {
                     if (recorder === current && state in setOf(EngineState.STARTING, EngineState.RECORDING)) {
@@ -376,7 +389,7 @@ class CameraController(context: Context, listener: Listener) {
                         repeat(controls)
                         prepared.sessionStarted()
                         state(EngineState.STARTING, "Camera configured; waiting for ${if (audioMode.enabled) "video and audio samples" else "encoded footage"}…")
-                    }, { message -> prepared.cancel(message) })
+                    }, { message -> prepared.configurationFailed(message); prepared.cancel(message) })
                 }
                 if (mode.processing == ProcessingPath.DIRECT) createRecordingSession(prepared.surface)
                 else afterPreviewClosed(prepared) {
@@ -393,6 +406,9 @@ class CameraController(context: Context, listener: Listener) {
                 val active = recorder
                 if (active != null) active.cancel("Recording configuration failed: ${e.message}")
                 else {
+                    attemptEvidence.observe(RecordingStage.PREPARATION, DevelopmentOutcome.FAILED,
+                        "Recording setup failed: ${e.javaClass.simpleName}: ${e.message}")
+                    attemptEvidence.close(listOf("Recording setup failed: ${e.message}"))
                     emit {
                         it.onState(EngineState.PREVIEW, "Recording unavailable: ${e.message}")
                         if (e is RecordingResources.PreflightRejected) it.onResources(e.snapshot)
@@ -507,7 +523,7 @@ class CameraController(context: Context, listener: Listener) {
         device = null
         previewSurface?.release()
         previewSurface = null
-        modes = emptyList()
+        modes = emptyList(); modePlan = null
         selectedMode = null
         afterFirstPreview = null
         raw?.cancel("Camera closed; unfinished RAW capture cancelled")
@@ -537,7 +553,7 @@ class CameraController(context: Context, listener: Listener) {
         }
         try {
             val plan = runCatching { CameraCatalog.plan(request.target, bitratePreset) }.getOrElse { ModePlan(emptyList(), listOf("Recording-mode query failed: ${it.message}")) }
-            modes = plan.modes
+            modes = plan.modes; modePlan = plan
             selectedMode = ModePlanning.restore(modes, request.modeKey)
             val size = CameraCatalog.previewSize(request.target, selectedMode)
             request.texture.setDefaultBufferSize(size.width, size.height)

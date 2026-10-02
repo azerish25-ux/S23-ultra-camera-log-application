@@ -1,0 +1,84 @@
+{
+  "phase": "P003",
+  "slice": "Capability diagnostics and ordinary recording",
+  "cases": [
+    "TC-P003-01",
+    "TC-P003-02",
+    "TC-P003-03",
+    "TC-P003-04",
+    "TC-P003-05",
+    "TC-P003-06",
+    "TC-P003-07",
+    "TC-P003-08"
+  ],
+  "base_revision": "83df5892570321ce348a063c4495e777d2992050",
+  "local_environment": {
+    "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41"
+  },
+  "executed": {
+    "classifier_assertions": 39,
+    "python_consumer_tests": 25,
+    "preserved_reference_tests": 53,
+    "original_directive_files_verified": 20,
+    "mutations": [
+      {
+        "mutation": "ignore-publication-identity",
+        "exit_code": 1,
+        "detected_by": "assertion failure, no test infrastructure error",
+        "original_sha256": "4767b691ed9fa5ffa93cc88ee9b509553ffd640891c25066e88cd1b1fe4903fe",
+        "mutated_sha256": "53090096c452f00d282bcf552d842cdff3b7d966098ac0a9e6fc40edd8fc2625"
+      },
+      {
+        "mutation": "ignore-raw-check-outcomes",
+        "exit_code": 1,
+        "detected_by": "assertion failure, no test infrastructure error",
+        "original_sha256": "4767b691ed9fa5ffa93cc88ee9b509553ffd640891c25066e88cd1b1fe4903fe",
+        "mutated_sha256": "65a5b500173fabbcafed84b9b67b9814dc625b32effcb7996625542994499417"
+      },
+      {
+        "mutation": "ignore-numeric-policy",
+        "exit_code": 1,
+        "detected_by": "assertion failure, no test infrastructure error",
+        "original_sha256": "4767b691ed9fa5ffa93cc88ee9b509553ffd640891c25066e88cd1b1fe4903fe",
+        "mutated_sha256": "ff64d426407b9bc3c053fb65d71a21e637c1c045bf4d8d3d643368b24ea1c1e3"
+      }
+    ]
+  },
+  "authored_not_yet_run_locally": {
+    "JVM_producer_methods": 16,
+    "added_instrumentation_methods": 2
+  },
+  "compile_scope": "All production Kotlin type-checked against API 37 with compile-only AndroidX/generated stubs; no local Gradle build or Android execution claimed. Project API/build pins remain unchanged.",
+  "retained_failures": [
+    "Initial classifier red assertion",
+    "Default Kotlin heap exhausted; retry used 2 GiB",
+    "Nullable reference compilation error fixed",
+    "Consumer missing-file diagnostic regression fixed",
+    "Three mutation assertion failures, then restored"
+  ],
+  "logs": {
+    "python-focused-hardened.log": "2753d55170f8c8457f851ff967d0b77217594b2a6a5f159062bf2c8c592faa85",
+    "compile-only-final.log": "38b19b7b852995ec4c447362fb4afc5fc2d762a2b62565ad8f718cfac80f12eb",
+    "core-green.log": "3bfca894d1ad4d03b3e6e11a0d6326e0ebeef32e83a4dee172008b1f8cc76c5d",
+    "core-green-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "python-focused.log": "17fa5e8966ecd658095c1f1fe582eae0ae846d66b631faf8e45a6e7db56306c4",
+    "compile-only.log": "a8136802fcfb70348b2b9120047a934557c61476e57eaba325127ef088afb6a1",
+    "core-red.log": "7d5eaeefaac3e86506768bf46b1a7fac3d3a6412dc9855396346c4533dc15fb7",
+    "ignore-numeric-policy.log": "de7dd5aa95f15021142273d7dd2464642163cc272014e5f52e2d835724981cae",
+    "ignore-publication-identity.log": "d3c704ea5d1c26f43946fce193b69243a6ec7643f29586f87cac074849cbd837",
+    "ignore-raw-check-outcomes.log": "833c66c2ff5a03f288e9a72b75e96903ba4bdf1f4fc61493f0f765fb3e6aeffd",
+    "core-red-compile.log": "ab760e4239b50c8b476b355395ad08e2f4f795b6fb6d30a53dec9877eddf2435",
+    "python-green.log": "2fcd007ecac1a515f316a91bd0963dbff46b9501c6a0b90dd8165937b977a337",
+    "baseline-host.log": "6d5d7e4d208f5083aba316d5c34cacea305da8c2ddda2cfcad397801e2b9513a",
+    "compile-default-heap-failure.log": "56f940cfefb9d247b41fc9d63d05ebcc517c04c78b77c013595c693f3d8243a7",
+    "reference-green.log": "b18eb4d802221810238f5522382b68e947a0312fee71ae93ffb78cb6d398bb94"
+  },
+  "archive_location": "Original local logs, source inputs and mutation patches are retained in the conversation handoff bundle; exact-commit CI independently reruns the published source.",
+  "limits": [
+    "Probe success is advertised-only",
+    "On-device sample decoding is not full-file decoding",
+    "No physical S23 camera or sustained performance qualification",
+    "Live adapter and P004 remain open"
+  ]
+}

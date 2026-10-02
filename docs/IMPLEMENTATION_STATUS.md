@@ -118,3 +118,20 @@ This is not completion of all P003 adapters. Capability diagnostics, ordinary
 recording and live-session stage integration remain the next P003 work; P004
 baseline acceptance follows afterward. Existing capture modes, codec precision
 thresholds, Android build pins and original directive files remain unchanged.
+
+## P003 — capability and ordinary-recording adapter
+
+The existing capability reports now carry revision/build identity and an explicit
+advertised stage. Accepted recording starts retain independent attempt records
+before preparation, with configuration, written samples, sample-decode validation,
+publication/recovery and report-writing failures kept separate. Diagnostics exposes
+**Recording attempt reports** for viewing and sharing, including failed attempts.
+
+This adapter does not invent RAW/profile gates or promote the existing sample
+decoder into full-file decoding. Existing capture/audio/HLG policies, numerical
+thresholds, finalization and recovery remain intact. See
+[P003 recording evidence](P003_RECORDING_EVIDENCE.md) for the tested boundaries and
+[local host verification](evidence/P003-recording-host-verification.json).
+Actual Android/JVM and emulator results remain separate exact-commit CI evidence.
+The remaining P003 work is the live-laboratory adapter and cross-adapter acceptance;
+P004 and physical S23 qualification are not closed by this change.

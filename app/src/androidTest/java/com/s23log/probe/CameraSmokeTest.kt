@@ -72,6 +72,14 @@ class CameraSmokeTest {
                     assertNotNull(input)
                     assertTrue(input!!.read(ByteArray(16)) > 0)
                 }
+                val attempt = File(context.filesDir, "exports/recording-evidence/${json.getString("attemptReport")}")
+                val report = runCatching { JSONObject(attempt.readText()) }.getOrNull()
+                if (report?.optBoolean("closed") != true) { Thread.sleep(50); continue }
+                assertEquals(json.getString("attemptId"), report.getString("attemptId"))
+                assertEquals(BuildConfig.SOURCE_REVISION, report.getString("sourceRevision"))
+                assertTrue(report.toString(), report.getJSONObject("classification").getBoolean("recordingSucceeded"))
+                assertFalse(report.getJSONObject("classification").getBoolean("fullDecodeVerified"))
+                assertFalse(report.getJSONObject("classification").getBoolean("physicalCameraCertified"))
                 return
             }
             if (entry.report?.name != previous && entry.message.contains("rejected")) fail(entry.message)
@@ -100,7 +108,12 @@ class CameraSmokeTest {
             assertTrue(latch.await(10, TimeUnit.SECONDS))
             val files = result.get().getOrThrow()
             assertEquals(2, files.size)
-            assertEquals(2, JSONObject(files.first { it.extension == "json" }.readText()).getInt("schemaVersion"))
+            val exported = JSONObject(files.first { it.extension == "json" }.readText())
+            assertEquals(2, exported.getInt("schemaVersion"))
+            assertEquals(BuildConfig.SOURCE_REVISION, exported.getString("sourceRevision"))
+            assertFalse(exported.getJSONObject("stageEvidence").getBoolean("recordingVerified"))
+            assertFalse(exported.getJSONObject("stageEvidence").getBoolean("physicalCameraCertified"))
+            scenario.onActivity { assertNotNull(it.findViewById<Button>(R.id.recordingAttempts)) }
             files.forEach { file ->
                 val uri = FileProvider.getUriForFile(context, "${context.packageName}.files", file)
                 context.contentResolver.openInputStream(uri).use { assertTrue(it!!.read() >= 0) }

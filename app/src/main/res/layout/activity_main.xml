@@ -19,6 +19,7 @@
                 <Button android:id="@+id/runProbe" android:layout_width="0dp" android:layout_weight="1" android:layout_height="56dp" android:text="@string/run_probe" />
                 <Button android:id="@+id/shareReport" android:layout_width="0dp" android:layout_weight="1" android:layout_height="56dp" android:text="@string/share_report" android:enabled="false" />
             </LinearLayout>
+            <Button android:id="@+id/recordingAttempts" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:text="@string/recording_attempts" />
             <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
                 <TextView android:id="@+id/report" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:textSize="12sp" android:textIsSelectable="true" android:text="@string/report_empty" />
             </ScrollView>
