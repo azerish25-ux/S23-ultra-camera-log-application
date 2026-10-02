@@ -1,0 +1,53 @@
+name: Prepare P003 recording candidate
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/p003-recording-package.yml]
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install existing host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/p003-recording-venv"
+          "$RUNNER_TEMP/p003-recording-venv/bin/pip" install -r scripts/requirements-raw.txt
+          echo "$RUNNER_TEMP/p003-recording-venv/bin" >> "$GITHUB_PATH"
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Reconstruct and verify pinned candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess, sys, urllib.request
+          sha = '8fd012455f851b2f5518e3762e102eeb0af2da4b'
+          req = urllib.request.Request('https://api.github.com/repos/azerish25-ux/S23-ultra-camera-log-application/git/blobs/' + sha,
+              headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          with urllib.request.urlopen(req, timeout=60) as response:
+              data = base64.b64decode(json.load(response)['content'])
+          assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+          path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'p003-recording-package.py'
+          path.write_bytes(data)
+          subprocess.run([sys.executable, str(path)], check=True)
+          PY
+      - name: Retain candidate and verification results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P003-recording-verified-package
+          path: evidence/p003-recording-package/
+          include-hidden-files: true
+          if-no-files-found: error
