@@ -1,0 +1,54 @@
+name: P002 evidence packaging
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/p002-evidence-package.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install existing host prerequisites
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m venv "$RUNNER_TEMP/p002-venv"
+          "$RUNNER_TEMP/p002-venv/bin/pip" install -r scripts/requirements-raw.txt
+          echo "$RUNNER_TEMP/p002-venv/bin" >> "$GITHUB_PATH"
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+      - name: Reproduce tests and prepare verified Git blobs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, json, os, pathlib, subprocess, sys, urllib.request
+          sha = '857dc752dc46d1b5b185ee15feebe25af0b1448b'
+          url = 'https://api.github.com/repos/azerish25-ux/S23-ultra-camera-log-application/git/blobs/' + sha
+          req = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'], 'Accept': 'application/vnd.github+json'})
+          with urllib.request.urlopen(req, timeout=60) as response:
+              data = base64.b64decode(json.load(response)['content'])
+          assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+          path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'p002-package.py'
+          path.write_bytes(data)
+          subprocess.run([sys.executable, str(path)], check=True)
+          PY
+      - name: Retain tested candidate and reproduction evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: P002-verified-package
+          path: p002-package/
+          include-hidden-files: true
+          if-no-files-found: error
