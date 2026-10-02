@@ -39,8 +39,32 @@ jobs:
           with urllib.request.urlopen(req, timeout=60) as response:
               data = base64.b64decode(json.load(response)['content'])
           assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == sha
+          s = data.decode()
+          a = "    tree = api('/git/trees', {'base_tree': parent_tree, 'tree': entries})"
+          b = """    if expected_tree:
+                  # The connected user account already wrote workflow changes in this tree.
+                  # CI writes only non-workflow entries against that exact existing tree.
+                  parent_tree = 'db20c49208f5a1ec22e20f60f2d1861ab91e6bdd'
+                  entries = [entry for entry in entries if not entry['path'].startswith('.github/workflows/')]
+              tree = api('/git/trees', {'base_tree': parent_tree, 'tree': entries})"""
+          assert s.count(a) == 1
+          s = s.replace(a, b)
+          a = "paths = git('diff', '--cached', '--name-only', '-z').decode().strip('\\0').split('\\0')"
+          b = """fix_sha = '409047607bc38d84588a1994c799b66f4d76acab'
+          fix = base64.b64decode(api('/git/blobs/' + fix_sha)['content'])
+          assert object_id('blob', fix) == fix_sha
+          fix_path = OUT / 'legacy-query.patch'
+          fix_path.write_bytes(fix)
+          git('apply', '--check', str(fix_path))
+          git('apply', '--index', str(fix_path))
+          SOURCE_TREE = 'badc96200cfc0766a4836b7a834def667a81d641'
+          assert git('write-tree').decode().strip() == SOURCE_TREE
+          """ + a
+          assert s.count(a) == 1
+          s = s.replace(a, b)
+          assert hashlib.sha256(s.encode()).hexdigest() == '697547d09d80e7a4a84842474968d932862b2d7725a566576035912bca1ccd62'
           path = pathlib.Path(os.environ['RUNNER_TEMP']) / 'p003-recording-package.py'
-          path.write_bytes(data)
+          path.write_text(s)
           subprocess.run([sys.executable, str(path)], check=True)
           PY
       - name: Retain candidate and verification results
