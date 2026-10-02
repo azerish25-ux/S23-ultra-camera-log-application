@@ -96,3 +96,25 @@ The next dependency-ready work is **P003 production evidence adapters and stage
 classification**; P004 baseline acceptance remains subsequent work. This is a
 bounded continuity implementation, not a complete audit of every application
 file or a new capture/film-rendering feature.
+
+## P003 — saved-RAW evidence integration (first production slice)
+
+The saved-RAW development worker now produces a distinct stage report for each
+attempt, including unavailable, cancelled and failed attempts. The shared model
+and independent consumer retain source/profile identity, existing codec controls,
+actual encoding/decoded-pixel results, source preservation and publication as
+separate observations. Reports are shareable from the existing development screen.
+A verified movie remains distinct from physical S23 qualification, and neither a
+report write failure nor an unavailable codec deletes the original source.
+
+The new source inspection supersedes the active P002 snapshot without rewriting
+its historical records. See [P003 operation and limits](P003_SAVED_RAW_EVIDENCE.md)
+and [local host evidence](evidence/P003-host-verification.json). The saved-RAW slice
+has 27 pure-model assertions, 18 Python consumer tests, 15 JVM/JUnit test methods
+and three added Android worker integration tests. Authored tests are not counted
+as executed Android evidence until the exact-commit workflow is inspected.
+
+This is not completion of all P003 adapters. Capability diagnostics, ordinary
+recording and live-session stage integration remain the next P003 work; P004
+baseline acceptance follows afterward. Existing capture modes, codec precision
+thresholds, Android build pins and original directive files remain unchanged.

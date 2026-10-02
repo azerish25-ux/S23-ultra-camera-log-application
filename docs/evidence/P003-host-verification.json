@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "phase": "P003",
+  "slice": "saved-RAW development observer and independent consumer",
+  "source_revision": "fef44554e0caa7e2e30ab2d82e98ecb8dfdb10f6",
+  "cases": [
+    "TC-P003-01",
+    "TC-P003-02",
+    "TC-P003-03",
+    "TC-P003-04",
+    "TC-P003-05",
+    "TC-P003-06",
+    "TC-P003-07",
+    "TC-P003-08"
+  ],
+  "local_results": {
+    "baseline_host_tests": 158,
+    "host_tests_after_integration_and_new_inspection": 176,
+    "focused_python_tests": 18,
+    "pure_kotlin_model_assertions": 27,
+    "preserved_python_reference_tests": 53,
+    "original_directive_files_unchanged": 20,
+    "kotlin_api_typecheck": "Passed against API 37 plus compile-only integration stubs; not AGP or runtime evidence",
+    "android_build": "not_run_locally",
+    "jvm_junit_methods_added": 15,
+    "android_instrumentation_methods_added": 3,
+    "physical_device": "unavailable"
+  },
+  "retained_failure": "The existing continuity gate correctly rejected changed source against its old snapshot (two host test failures). A new exact-revision inspection was appended; thresholds and checks were not weakened.",
+  "mutations": [
+    {
+      "name": "mutation-advertised-or-decoded",
+      "path": "app/src/main/java/com/s23log/probe/core/DevelopmentEvidence.kt",
+      "replaced": "return DevelopmentClassification(verified, published, false, outcomes.toMap(), issues.toList())",
+      "with": "return DevelopmentClassification(verified, published, stages.any { it.stage == DevelopmentStage.ADVERTISED || it.stage == DevelopmentStage.DECODED }, outcomes.toMap(), issues.toList())",
+      "exit_code": 1,
+      "detected": true,
+      "original_sha256": "68183e89893150af2f4f90fa6331a9ab2a2e3d239e76aa8db235db4ac67dc709",
+      "mutant_sha256": "71e934144160ed859abe7a52eb5fcdde52a4ddc96c8636ebd8285e4881e753c7",
+      "log": "mutation-advertised-or-decoded.log"
+    },
+    {
+      "name": "mutation-ignore-policy",
+      "path": "scripts/check_development_evidence.py",
+      "replaced": "require(report.get('policy') == POLICY, 'Changed policy or measurement units/domain')",
+      "with": "require(True, 'Changed policy or measurement units/domain')",
+      "exit_code": 1,
+      "detected": true,
+      "original_sha256": "7b00c7cddcd438a0a344e0e8d97b527c58378301c89a1b125c905d1db6733c3e",
+      "mutant_sha256": "27a7a817efc204f833f865592fe9ab558fad24ff34905e253a640cf00159baf5",
+      "log": "mutation-ignore-policy.log"
+    },
+    {
+      "name": "mutation-trust-green",
+      "path": "scripts/check_development_evidence.py",
+      "replaced": "require(actual == claimed, 'Aggregate contradicts individual checks')",
+      "with": "require(True, 'Aggregate contradicts individual checks'); actual = claimed",
+      "exit_code": 1,
+      "detected": true,
+      "original_sha256": "7b00c7cddcd438a0a344e0e8d97b527c58378301c89a1b125c905d1db6733c3e",
+      "mutant_sha256": "68e9d291f3e16a07bb8fadbbfd05b78064639d3cb80171bfa47d317b608558d0",
+      "log": "mutation-trust-green.log"
+    }
+  ],
+  "log_identities": {
+    "core-red.log": {
+      "sha256": "ba8175e5afdb81e7746e79e8a9b823d2db5ae6ef699a7aa4d3f8b4d7dc5a3c41",
+      "bytes": 307
+    },
+    "core-green.log": {
+      "sha256": "4e34769b02b9f5408fae38a246c465cc4c9532d5284010d31d1c3eee70794500",
+      "bytes": 84
+    },
+    "host-focused-hardened.log": {
+      "sha256": "3c03f7917ee0bc2b3cd27777c459767653f43719b5f8fff27cbc5fdeffc1a23a",
+      "bytes": 3057
+    },
+    "host-green.log": {
+      "sha256": "672f17f76014a2ad4bad8aa1af491ade900f9c6b54cd1707aa56a7f9e3ae8d83",
+      "bytes": 25015
+    },
+    "reference-green.log": {
+      "sha256": "1f1377ceb15cba03a3d2b86e3c3a8f492f46100352bd863ae954d93e37c23f85",
+      "bytes": 6886
+    },
+    "develop-typecheck.log": {
+      "sha256": "aedcc3cbb745f5b734be841028c03701578d5d6773d20f6b866ee62a1e810330",
+      "bytes": 3307
+    },
+    "host-before-inspection.log": {
+      "sha256": "5a66241e16ff0167e3f8a349e330a24479041a7d719021b6a09a3f3280d8264b",
+      "bytes": 45332
+    },
+    "mutation-results.json": {
+      "sha256": "c5fcfb216d0278fe5138d47d4a6e7828aaf691c9a4794dc8b477958cae4c51d6",
+      "bytes": 1800
+    },
+    "mutation-advertised-or-decoded.log": {
+      "sha256": "5885164a8d01a7d67dedc0933ceb6c17d5c1c08d46b507e28d076af03ba99c02",
+      "bytes": 307
+    },
+    "mutation-ignore-policy.log": {
+      "sha256": "4bd84fcb975c14c5a2b1c8744ab51aab6f0dbcc2a0339d3ef1951cf9ef837d15",
+      "bytes": 3976
+    },
+    "mutation-trust-green.log": {
+      "sha256": "aa94f9df40ab8a76bf715bb1daf390fd9ed4d3faecf9d65607c7e5dfea78dead",
+      "bytes": 3982
+    }
+  },
+  "log_location": "Full original logs and case fixtures are retained in the conversation implementation/evidence bundle. CI independently retains new exact-commit results.",
+  "limits": [
+    "Success-schema fixtures and pure model assertions do not execute a camera or codec.",
+    "Actual Android runtime results require inspection of the new published workflow.",
+    "This is the first P003 production adapter, not closure of all P003 cases or P004."
+  ]
+}
