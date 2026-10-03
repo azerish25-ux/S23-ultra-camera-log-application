@@ -1,0 +1,50 @@
+{
+  "phase": "P043",
+  "caseIds": [
+    "TC-P043-01",
+    "TC-P043-02",
+    "TC-P043-03",
+    "TC-P043-04",
+    "TC-P043-05",
+    "TC-P043-06",
+    "TC-P043-07",
+    "TC-P043-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p043_measure_flat_field_and_lens_shading.py",
+    "scripts/gates/p043_tc01.py",
+    "scripts/gates/p043_tc02.py",
+    "scripts/gates/p043_tc03.py",
+    "scripts/gates/p043_tc04.py",
+    "scripts/gates/p043_tc05.py",
+    "scripts/gates/p043_tc06.py",
+    "scripts/gates/p043_tc07.py",
+    "scripts/gates/p043_tc08.py",
+    "scripts/tests/test_p043_measure_flat_field_and_lens_shading.py",
+    "scripts/tests/test_p043_tc01.py",
+    "scripts/tests/test_p043_tc02.py",
+    "scripts/tests/test_p043_tc03.py",
+    "scripts/tests/test_p043_tc04.py",
+    "scripts/tests/test_p043_tc05.py",
+    "scripts/tests/test_p043_tc06.py",
+    "scripts/tests/test_p043_tc07.py",
+    "scripts/tests/test_p043_tc08.py",
+    "docs/P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.md",
+    "docs/P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.json",
+    "docs/evidence/P043-handoff.json"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p043*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "universal lens-shading correction",
+    "device flat-field measurement"
+  ],
+  "nextPhase": "P044"
+}

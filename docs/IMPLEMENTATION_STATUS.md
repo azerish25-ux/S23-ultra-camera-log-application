@@ -388,3 +388,7 @@ Host gate for the directive deliverable "Black-level model and dark-frame analys
 ## P041 — Define the calibrated profile contract (host scope)
 
 Host gate for the directive deliverable "Profile schema and provenance-aware importer". See [P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.md](P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P043 — Measure flat-field and lens shading (host scope)
+
+Host gate for the directive deliverable "Flat-field acquisition protocol and shading-map validator". See [P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.md](P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

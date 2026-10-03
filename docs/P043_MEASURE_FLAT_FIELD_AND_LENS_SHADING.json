@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "phase": "P043",
+  "mapId": "s23-flat-field-shading-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Capture diffuse uniform fields, reject gradients caused by the light source, align calibration to the actual crop and CFA, and bound correction gains. Record lens, focus, aperture metadata where applicable, exposure, and firmware. Validate on a separate flat capture.",
+  "fixture": "A flat field with a deliberate illumination gradient and a mismatched crop origin.",
+  "oracle": "The pipeline does not absorb the lighting gradient into a supposedly universal lens-shading correction and detects coordinate mismatch.",
+  "mutant": "Apply a shading map in display coordinates after rotation.",
+  "protocol": {
+    "illumination": "diffuse-uniform",
+    "coordinateFrame": "sensor-crop",
+    "validation": "separate-flat"
+  },
+  "gainBounds": {
+    "min": "0.5",
+    "max": "2"
+  },
+  "session": {
+    "lens": "s23-wide",
+    "focus": "infinity",
+    "aperture": "f1.8",
+    "exposureNs": "10000000",
+    "firmware": "host-fixture-1"
+  },
+  "capture": {
+    "cfa": "RGGB",
+    "sourceWidth": "4000",
+    "sourceHeight": "3000",
+    "crop": "3998x2998+1+0"
+  },
+  "field": {
+    "kind": "illumination-gradient",
+    "samples": ["0.8", "0.9", "1.1", "1.2"]
+  },
+  "shadingMap": {
+    "frame": "sensor-crop",
+    "orientation": "native",
+    "crop": "3998x2998+0+0",
+    "cfa": "RGGB",
+    "gains": ["1.04", "1.01", "1.01", "1.04"],
+    "appliedAfterRotation": false
+  },
+  "validation": {
+    "id": "holdout-flat",
+    "separate": true,
+    "samples": ["1", "1", "1", "1"]
+  }
+}
