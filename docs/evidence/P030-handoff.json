@@ -1,0 +1,50 @@
+{
+  "phase": "P030",
+  "caseIds": [
+    "TC-P030-01",
+    "TC-P030-02",
+    "TC-P030-03",
+    "TC-P030-04",
+    "TC-P030-05",
+    "TC-P030-06",
+    "TC-P030-07",
+    "TC-P030-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p030_publish_media_transactionally.py",
+    "scripts/tests/test_p030_publish_media_transactionally.py",
+    "docs/P030_PUBLISH_MEDIA_TRANSACTIONALLY.md",
+    "docs/P030_PUBLISH_MEDIA_TRANSACTIONALLY.json",
+    "docs/evidence/P030-handoff.json",
+    "scripts/gates/p030_tc01.py",
+    "scripts/gates/p030_tc02.py",
+    "scripts/gates/p030_tc03.py",
+    "scripts/gates/p030_tc04.py",
+    "scripts/gates/p030_tc05.py",
+    "scripts/gates/p030_tc06.py",
+    "scripts/gates/p030_tc07.py",
+    "scripts/gates/p030_tc08.py",
+    "scripts/tests/test_p030_tc01.py",
+    "scripts/tests/test_p030_tc02.py",
+    "scripts/tests/test_p030_tc03.py",
+    "scripts/tests/test_p030_tc04.py",
+    "scripts/tests/test_p030_tc05.py",
+    "scripts/tests/test_p030_tc06.py",
+    "scripts/tests/test_p030_tc07.py",
+    "scripts/tests/test_p030_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p030*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "durable gallery publication on a device",
+    "physical storage-provider semantics"
+  ],
+  "nextPhase": "P031"
+}

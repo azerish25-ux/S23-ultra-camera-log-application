@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "phase": "P030",
+  "mapId": "s23-publish-media-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Write into private staging, inspect output, copy or move according to the actual storage provider semantics, commit publication, and only then remove redundant staging. Budget temporary duplication. Failed report export must leave media intact and discoverable.",
+  "fixture": "A full gallery destination after private recording succeeds, followed by a report serialization exception.",
+  "oracle": "The source remains in recovery storage, no empty gallery success is shown, and the error identifies the failed publication step.",
+  "mutant": "Delete private staging before the public copy is durably accepted.",
+  "recording": {
+    "privateRecordingSucceeded": true,
+    "sourceId": "take-030",
+    "bytes": 4096,
+    "nonempty": true
+  },
+  "destination": {
+    "kind": "gallery",
+    "space": "full",
+    "grant": "present"
+  },
+  "provider": {
+    "semantics": "copy",
+    "publicCopyDurablyAccepted": false
+  },
+  "steps": [
+    {"name": "private_staging", "outcome": "succeeded", "reason": null},
+    {"name": "inspect", "outcome": "succeeded", "reason": null},
+    {"name": "copy_or_move", "outcome": "failed", "reason": "destination-full"},
+    {"name": "commit", "outcome": "not_reached", "reason": null},
+    {"name": "report_export", "outcome": "failed", "reason": "report-serialization-exception"},
+    {"name": "redundant_staging_cleanup", "outcome": "not_reached", "reason": null}
+  ],
+  "staging": {
+    "present": true,
+    "location": "recovery",
+    "deletedBeforeDurableAccept": false
+  },
+  "gallery": {
+    "emptySuccessShown": false,
+    "entries": []
+  },
+  "error": {
+    "step": "report_export",
+    "code": "report-serialization-exception"
+  },
+  "inventory": [
+    "source:take-030",
+    "recovery:take-030",
+    "bytes:4096"
+  ]
+}
