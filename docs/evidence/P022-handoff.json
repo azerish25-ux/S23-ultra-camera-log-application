@@ -1,0 +1,51 @@
+{
+  "phase": "P022",
+  "caseIds": [
+    "TC-P022-01",
+    "TC-P022-02",
+    "TC-P022-03",
+    "TC-P022-04",
+    "TC-P022-05",
+    "TC-P022-06",
+    "TC-P022-07",
+    "TC-P022-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p022_protect_preview_independence.py",
+    "scripts/tests/test_p022_protect_preview_independence.py",
+    "docs/P022_PROTECT_PREVIEW_INDEPENDENCE.md",
+    "docs/P022_PROTECT_PREVIEW_INDEPENDENCE.json",
+    "docs/evidence/P022-handoff.json",
+    "scripts/gates/p022_tc01.py",
+    "scripts/gates/p022_tc02.py",
+    "scripts/gates/p022_tc03.py",
+    "scripts/gates/p022_tc04.py",
+    "scripts/gates/p022_tc05.py",
+    "scripts/gates/p022_tc06.py",
+    "scripts/gates/p022_tc07.py",
+    "scripts/gates/p022_tc08.py",
+    "scripts/tests/test_p022_tc01.py",
+    "scripts/tests/test_p022_tc02.py",
+    "scripts/tests/test_p022_tc03.py",
+    "scripts/tests/test_p022_tc04.py",
+    "scripts/tests/test_p022_tc05.py",
+    "scripts/tests/test_p022_tc06.py",
+    "scripts/tests/test_p022_tc07.py",
+    "scripts/tests/test_p022_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p022*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device preview independence"
+  ],
+  "nextPhase": "P023"
+}

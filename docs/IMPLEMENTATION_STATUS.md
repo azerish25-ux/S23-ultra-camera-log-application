@@ -248,3 +248,6 @@ P006 through P010 are host-verified software gates. They do not certify physical
 S23 capture, sustained 4K/8K, endurance, or cinema-camera equivalence. The next
 dependency-ready phase is P011, rational capture timing.
 
+## P022 — Protect preview independence (host scope)
+
+Host gate for the directive deliverable "Monitoring branch contract and clean-master invariance test". See [P022_PROTECT_PREVIEW_INDEPENDENCE.md](P022_PROTECT_PREVIEW_INDEPENDENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

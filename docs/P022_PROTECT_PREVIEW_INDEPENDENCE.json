@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "phase": "P022",
+  "contractId": "s23-preview-independence-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "normalizationPoint": "source-normalization",
+  "method": "Branch monitoring after the declared source normalization point. Give the preview its own downsample, display transform, overlays, and freshness metadata. Tests must compare the recorded pixels or source hashes with preview aids enabled and disabled.",
+  "fixture": "A false-color overlay, histogram update, and virtual-film preview changed repeatedly during the same synthetic capture sequence.",
+  "oracle": "The clean master remains identical within its deterministic capture contract and overlays appear only in monitoring.",
+  "mutant": "Reuse the composited preview framebuffer as the supposedly untouched recording source.",
+  "sequenceId": "synthetic-capture-p022",
+  "deterministicContract": "clean-master-hash-identical-with-aids-enabled-or-disabled",
+  "cleanMasterHash": "1111111111111111111111111111111111111111",
+  "monitoring": {
+    "downsample": "160x90",
+    "displayTransform": "display-preview",
+    "overlaySet": ["false-color", "histogram", "virtual-film"],
+    "freshnessMaxMs": 750
+  },
+  "samples": [
+    {
+      "index": 0,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "2222222222222222222222222222222222222222",
+      "aidsEnabled": false,
+      "overlays": [],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 10
+    },
+    {
+      "index": 1,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "3333333333333333333333333333333333333333",
+      "aidsEnabled": true,
+      "overlays": ["false-color"],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 40
+    },
+    {
+      "index": 2,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "4444444444444444444444444444444444444444",
+      "aidsEnabled": true,
+      "overlays": ["histogram"],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 80
+    },
+    {
+      "index": 3,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "5555555555555555555555555555555555555555",
+      "aidsEnabled": true,
+      "overlays": ["virtual-film"],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 120
+    },
+    {
+      "index": 4,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "6666666666666666666666666666666666666666",
+      "aidsEnabled": true,
+      "overlays": ["false-color", "histogram", "virtual-film"],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 160
+    },
+    {
+      "index": 5,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "7777777777777777777777777777777777777777",
+      "aidsEnabled": false,
+      "overlays": [],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 200
+    },
+    {
+      "index": 6,
+      "sourceHash": "1111111111111111111111111111111111111111",
+      "recordedHash": "1111111111111111111111111111111111111111",
+      "previewFramebufferHash": "8888888888888888888888888888888888888888",
+      "aidsEnabled": true,
+      "overlays": ["false-color"],
+      "recordedFrom": "clean-master",
+      "freshnessMs": 240
+    }
+  ]
+}
