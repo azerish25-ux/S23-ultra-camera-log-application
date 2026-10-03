@@ -612,3 +612,7 @@ Host gate for the directive deliverable "Model selection record and licence mani
 ## P099 — Verify image preprocessing (host scope)
 
 Host gate for the directive deliverable "Preprocessing reference and host-device tensor comparisons". See [P099_VERIFY_IMAGE_PREPROCESSING.md](P099_VERIFY_IMAGE_PREPROCESSING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P100 — Export and validate model numerics (host scope)
+
+Host gate for the directive deliverable "Model conversion report and numerical regression suite". See [P100_EXPORT_AND_VALIDATE_MODEL_NUMERICS.md](P100_EXPORT_AND_VALIDATE_MODEL_NUMERICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
