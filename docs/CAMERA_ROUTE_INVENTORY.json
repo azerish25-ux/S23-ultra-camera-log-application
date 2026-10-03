@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "phase": "P009",
+  "inventoryId": "s23-route-inventory-fixture",
+  "implementationBaseRevision": "fffd5c9a63cb732e103052acae29ae0c251585cc",
+  "publicCameraIds": ["0", "1"],
+  "routes": [
+    {
+      "logicalId": "0",
+      "physicalId": null,
+      "role": "logical_rear",
+      "focalMm": 6.7,
+      "orientation": 90,
+      "queryErrors": {},
+      "openMode": "logical_owner",
+      "advertised": true
+    },
+    {
+      "logicalId": "0",
+      "physicalId": "2",
+      "role": "physical_member",
+      "focalMm": null,
+      "orientation": null,
+      "queryErrors": {},
+      "openMode": "logical_owner",
+      "advertised": true
+    },
+    {
+      "logicalId": "1",
+      "physicalId": null,
+      "role": "logical_front",
+      "focalMm": null,
+      "orientation": null,
+      "queryErrors": {"focal": "missing"},
+      "openMode": "logical_owner",
+      "advertised": true
+    }
+  ]
+}
