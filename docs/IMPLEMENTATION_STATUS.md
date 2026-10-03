@@ -372,3 +372,7 @@ Host gate for the directive deliverable "Packing adapters and exact golden array
 ## P039 — Retain sources across cancelled development (host scope)
 
 Host gate for the directive deliverable "Non-destructive development contract and cancellation tests". See [P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.md](P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P040 — Qualify saved RAW on the physical S23 (host scope)
+
+Host gate for the directive deliverable "Physical RAW qualification matrix and retained source fixtures". See [P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.md](P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

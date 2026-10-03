@@ -1,0 +1,50 @@
+{
+  "phase": "P040",
+  "caseIds": [
+    "TC-P040-01",
+    "TC-P040-02",
+    "TC-P040-03",
+    "TC-P040-04",
+    "TC-P040-05",
+    "TC-P040-06",
+    "TC-P040-07",
+    "TC-P040-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p040_qualify_saved_raw_on_the_physical_s23.py",
+    "scripts/tests/test_p040_qualify_saved_raw_on_the_physical_s23.py",
+    "docs/P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.md",
+    "docs/P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.json",
+    "docs/evidence/P040-handoff.json",
+    "scripts/gates/p040_tc01.py",
+    "scripts/gates/p040_tc02.py",
+    "scripts/gates/p040_tc03.py",
+    "scripts/gates/p040_tc04.py",
+    "scripts/gates/p040_tc05.py",
+    "scripts/gates/p040_tc06.py",
+    "scripts/gates/p040_tc07.py",
+    "scripts/gates/p040_tc08.py",
+    "scripts/tests/test_p040_tc01.py",
+    "scripts/tests/test_p040_tc02.py",
+    "scripts/tests/test_p040_tc03.py",
+    "scripts/tests/test_p040_tc04.py",
+    "scripts/tests/test_p040_tc05.py",
+    "scripts/tests/test_p040_tc06.py",
+    "scripts/tests/test_p040_tc07.py",
+    "scripts/tests/test_p040_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p040*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "sustained RAW video from a five-frame still sequence",
+    "endurance extrapolated past a thermal stop"
+  ],
+  "nextPhase": "P041"
+}

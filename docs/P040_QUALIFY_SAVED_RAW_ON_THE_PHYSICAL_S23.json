@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "phase": "P040",
+  "mapId": "s23-saved-raw-qualification-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Run successively longer conservative experiments only after acquisition and writer gates pass. Measure sample integrity, source completeness, metadata availability, storage bandwidth, thermal state, and lens behaviour. Keep maximum-resolution experiments conditional on lower-cost results.",
+  "fixture": "A five-second successful RAW sequence followed by a sixty-second run that stops under severe thermal pressure.",
+  "oracle": "The app reports the measured duration boundaries and retains the longer partial take rather than extrapolating endurance.",
+  "mutant": "Treat a five-frame still sequence as proof of sustained RAW video.",
+  "gates": {
+    "acquisitionPassed": true,
+    "writerPassed": true
+  },
+  "shortTake": {
+    "id": "raw-five-second",
+    "kind": "raw_sequence",
+    "requestedDurationMs": "5000",
+    "measuredDurationMs": "5000",
+    "frameCount": "150",
+    "complete": true,
+    "stoppedReason": "requested_bound",
+    "sampleIntegrity": "intact",
+    "sourceComplete": true,
+    "metadataAvailable": true,
+    "storageBandwidth": "sufficient",
+    "thermalState": "nominal",
+    "lensBehaviour": "stable",
+    "retained": true
+  },
+  "longTake": {
+    "id": "raw-sixty-second",
+    "kind": "raw_sequence",
+    "requestedDurationMs": "60000",
+    "measuredDurationMs": "17250",
+    "frameCount": "410",
+    "complete": false,
+    "stoppedReason": "severe_thermal",
+    "sampleIntegrity": "intact",
+    "sourceComplete": false,
+    "metadataAvailable": true,
+    "storageBandwidth": "sufficient",
+    "thermalState": "severe",
+    "lensBehaviour": "stable",
+    "retained": true
+  },
+  "maximumResolution": {
+    "attempted": false,
+    "conditionalOnLowerCost": true
+  },
+  "stillSequence": {
+    "frameCount": "5",
+    "kind": "still_sequence"
+  }
+}
