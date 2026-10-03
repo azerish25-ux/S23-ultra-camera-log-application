@@ -271,3 +271,7 @@ Host gate for the directive deliverable "Profile-combination planner and explici
 ## P021 — Implement focus intent and observed lens state (host scope)
 
 Host gate for the directive deliverable "Dual focus model and focus provenance tests". See [P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.md](P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P014 — Plan native high-resolution experiments (host scope)
+
+Host gate for the directive deliverable "High-resolution experiment matrix and source-geometry evidence". See [P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.md](P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

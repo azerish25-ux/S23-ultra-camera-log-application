@@ -1,0 +1,54 @@
+{
+  "phase": "P014",
+  "caseIds": [
+    "TC-P014-01",
+    "TC-P014-02",
+    "TC-P014-03",
+    "TC-P014-04",
+    "TC-P014-05",
+    "TC-P014-06",
+    "TC-P014-07",
+    "TC-P014-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p014_plan_native_high_resolution_experiments.py",
+    "scripts/tests/test_p014_plan_native_high_resolution_experiments.py",
+    "docs/P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.md",
+    "docs/P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.json",
+    "docs/evidence/P014-handoff.json",
+    "scripts/gates/p014_tc01.py",
+    "scripts/gates/p014_tc02.py",
+    "scripts/gates/p014_tc03.py",
+    "scripts/gates/p014_tc04.py",
+    "scripts/gates/p014_tc05.py",
+    "scripts/gates/p014_tc06.py",
+    "scripts/gates/p014_tc07.py",
+    "scripts/gates/p014_tc08.py",
+    "scripts/tests/test_p014_tc01.py",
+    "scripts/tests/test_p014_tc02.py",
+    "scripts/tests/test_p014_tc03.py",
+    "scripts/tests/test_p014_tc04.py",
+    "scripts/tests/test_p014_tc05.py",
+    "scripts/tests/test_p014_tc06.py",
+    "scripts/tests/test_p014_tc07.py",
+    "scripts/tests/test_p014_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p014*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 qualification",
+    "native 8K acceptance",
+    "unmeasured sensor throughput",
+    "unmeasured processing throughput",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "integrating commit is not assigned by this host gate"
+  ],
+  "nextPhase": "blocked"
+}
