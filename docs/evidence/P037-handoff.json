@@ -1,0 +1,49 @@
+{
+  "phase": "P037",
+  "caseIds": [
+    "TC-P037-01",
+    "TC-P037-02",
+    "TC-P037-03",
+    "TC-P037-04",
+    "TC-P037-05",
+    "TC-P037-06",
+    "TC-P037-07",
+    "TC-P037-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p037_build_the_bounded_saved_source_writer.py",
+    "scripts/tests/test_p037_build_the_bounded_saved_source_writer.py",
+    "docs/P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.md",
+    "docs/P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.json",
+    "docs/evidence/P037-handoff.json",
+    "scripts/gates/p037_tc01.py",
+    "scripts/gates/p037_tc02.py",
+    "scripts/gates/p037_tc03.py",
+    "scripts/gates/p037_tc04.py",
+    "scripts/gates/p037_tc05.py",
+    "scripts/gates/p037_tc06.py",
+    "scripts/gates/p037_tc07.py",
+    "scripts/gates/p037_tc08.py",
+    "scripts/tests/test_p037_tc01.py",
+    "scripts/tests/test_p037_tc02.py",
+    "scripts/tests/test_p037_tc03.py",
+    "scripts/tests/test_p037_tc04.py",
+    "scripts/tests/test_p037_tc05.py",
+    "scripts/tests/test_p037_tc06.py",
+    "scripts/tests/test_p037_tc07.py",
+    "scripts/tests/test_p037_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p037*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device RAW recording and pool bounds"
+  ],
+  "nextPhase": "P038"
+}

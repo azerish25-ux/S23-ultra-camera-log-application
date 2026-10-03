@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "phase": "P037",
+  "writerId": "s23-bounded-raw-writer-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Transfer owned copies through a fixed-capacity pool to an independent writer. Record short writes, flush policy, source count, and overflow. A full pool stops acquisition explicitly; it must not silently overwrite an older frame or invent replacement timestamps.",
+  "fixture": "A source writer paused until the copy pool fills, then resumed after the capture controller has stopped.",
+  "oracle": "All retained records remain ordered and intact, overflow is visible, and late completion cannot resume the failed take.",
+  "mutant": "Overwrite the oldest queued source frame to keep a green recording indicator.",
+  "poolCapacity": 3,
+  "flushPolicy": "flush_on_stop",
+  "shortWriteBytes": 128,
+  "policy": "stop_on_full_pool",
+  "records": [
+    {
+      "id": "r0",
+      "timestampNs": "1000000000",
+      "bytes": 4096,
+      "digest": "aa00"
+    },
+    {
+      "id": "r1",
+      "timestampNs": "1333333333",
+      "bytes": 4096,
+      "digest": "aa01"
+    },
+    {
+      "id": "r2",
+      "timestampNs": "1666666666",
+      "bytes": 4096,
+      "digest": "aa02"
+    },
+    {
+      "id": "r3",
+      "timestampNs": "2000000000",
+      "bytes": 4096,
+      "digest": "aa03"
+    },
+    {
+      "id": "r4",
+      "timestampNs": "2333333333",
+      "bytes": 4096,
+      "digest": "aa04"
+    }
+  ],
+  "script": [
+    {
+      "op": "pause_writer"
+    },
+    {
+      "op": "offer",
+      "recordId": "r0"
+    },
+    {
+      "op": "offer",
+      "recordId": "r1"
+    },
+    {
+      "op": "offer",
+      "recordId": "r2"
+    },
+    {
+      "op": "offer",
+      "recordId": "r3"
+    },
+    {
+      "op": "stop_controller"
+    },
+    {
+      "op": "resume_writer"
+    },
+    {
+      "op": "late_offer",
+      "recordId": "r4"
+    }
+  ]
+}

@@ -348,3 +348,7 @@ Host gate for the directive deliverable "Publication state machine and storage-p
 ## P036 — Build the acquisition-only throughput probe (host scope)
 
 Host gate for the directive deliverable "Acquisition probe and stage-separated throughput report". See [P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.md](P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P037 — Build the bounded saved-source writer (host scope)
+
+Host gate for the directive deliverable "Bounded RAW writer and deterministic overflow harness". See [P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.md](P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
