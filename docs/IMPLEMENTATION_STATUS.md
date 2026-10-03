@@ -456,3 +456,7 @@ Host gate for the directive deliverable "Render graph schema and static compatib
 ## P063 — Validate editor interoperability (host scope)
 
 Host gate for the directive deliverable "Editor round-trip report and import guidance". See [P063_VALIDATE_EDITOR_INTEROPERABILITY.md](P063_VALIDATE_EDITOR_INTEROPERABILITY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P061 — Separate HLG-derived development from RAW development (host scope)
+
+Host gate for the directive deliverable "Source normalization router and lineage assertions". See [P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.md](P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

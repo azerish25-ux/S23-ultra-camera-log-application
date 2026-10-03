@@ -1,0 +1,51 @@
+{
+  "phase": "P061",
+  "caseIds": [
+    "TC-P061-01",
+    "TC-P061-02",
+    "TC-P061-03",
+    "TC-P061-04",
+    "TC-P061-05",
+    "TC-P061-06",
+    "TC-P061-07",
+    "TC-P061-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p061_separate_hlg_derived_development_from_raw_develo.py",
+    "scripts/tests/test_p061_separate_hlg_derived_development_from_raw_develo.py",
+    "docs/P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.md",
+    "docs/P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.json",
+    "docs/evidence/P061-handoff.json",
+    "scripts/gates/p061_tc01.py",
+    "scripts/gates/p061_tc02.py",
+    "scripts/gates/p061_tc03.py",
+    "scripts/gates/p061_tc04.py",
+    "scripts/gates/p061_tc05.py",
+    "scripts/gates/p061_tc06.py",
+    "scripts/gates/p061_tc07.py",
+    "scripts/gates/p061_tc08.py",
+    "scripts/tests/test_p061_tc01.py",
+    "scripts/tests/test_p061_tc02.py",
+    "scripts/tests/test_p061_tc03.py",
+    "scripts/tests/test_p061_tc04.py",
+    "scripts/tests/test_p061_tc05.py",
+    "scripts/tests/test_p061_tc06.py",
+    "scripts/tests/test_p061_tc07.py",
+    "scripts/tests/test_p061_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p061*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "ISP invertibility",
+    "RAW-derived Log from HLG or SDR",
+    "consumer interoperability of a media file"
+  ],
+  "nextPhase": "P062"
+}

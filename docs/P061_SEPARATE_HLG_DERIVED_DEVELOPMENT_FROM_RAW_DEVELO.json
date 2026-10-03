@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "phase": "P061",
+  "mapId": "s23-source-normalization-router-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Inspect source tags, decode the actual transfer and color representation, and preserve the fact that upstream ISP processing may not be invertible. Keep source lineage in every recipe and output. Do not invent missing scene values from flattened SDR.",
+  "fixture": "The same visible frame supplied as declared HLG, SDR, and an untagged imported video.",
+  "oracle": "Each path receives its correct or explicitly unresolved interpretation; none is silently promoted to RAW-derived Log.",
+  "mutant": "Apply one inverse curve to every source regardless of metadata.",
+  "frameId": "same-visible-frame",
+  "inverseCurve": "display-to-scene-guess",
+  "forbiddenPromotion": "RAW-derived-Log",
+  "sources": [
+    {
+      "id": "declared-hlg",
+      "declaredTag": "HLG",
+      "transfer": "HLG",
+      "primaries": "Rec.2020",
+      "range": "video",
+      "acquisition": "isp-processed-hlg",
+      "ispInvertible": false,
+      "visibleCode": "0.5"
+    },
+    {
+      "id": "declared-sdr",
+      "declaredTag": "SDR",
+      "transfer": "Rec.709",
+      "primaries": "Rec.709",
+      "range": "video",
+      "acquisition": "isp-processed-sdr",
+      "ispInvertible": false,
+      "visibleCode": "0.5"
+    },
+    {
+      "id": "untagged-import",
+      "declaredTag": "untagged",
+      "transfer": "unknown",
+      "primaries": "unknown",
+      "range": "unknown",
+      "acquisition": "imported-video",
+      "ispInvertible": false,
+      "visibleCode": "0.5"
+    }
+  ]
+}
