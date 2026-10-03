@@ -1,0 +1,79 @@
+name: Apply P016 continuity inspection
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact bootstrap commit
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          fetch-depth: 0
+
+      - name: Materialize reviewed one-shot helper
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .github/p016-continuity/part00 .github/p016-continuity/part01 \
+              .github/p016-continuity/part02 .github/p016-continuity/part03 \
+            | base64 --decode | gzip --decompress > /tmp/p016-continuity.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('/tmp/p016-continuity.py')
+          text = path.read_text()
+          bootstrap = (
+              'WORKFLOW_PATH, ".github/p016-continuity/part00", '
+              '".github/p016-continuity/part01", ".github/p016-continuity/part02", '
+              '".github/p016-continuity/part03"'
+          )
+          old_loop = 'for path in (WORKFLOW_PATH,):'
+          old_receipt = '"deleted_bootstrap_paths": [WORKFLOW_PATH],'
+          assert text.count(old_loop) == 1 and text.count(old_receipt) == 1
+          text = text.replace(old_loop, f'for path in ({bootstrap},):')
+          text = text.replace(old_receipt, f'"deleted_bootstrap_paths": [{bootstrap}],')
+          path.write_text(text)
+          PY
+          python3 -m py_compile /tmp/p016-continuity.py
+
+      - name: Guard one-shot parent and apply inspection
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD^)" = "856489acd178408dbb7fa44e565b146a48fe93bc"
+          python3 /tmp/p016-continuity.py apply | tee p016-continuity-apply.json
+
+      - name: Verify directive, research contract, continuity, and regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_master_directive.py
+          python3 scripts/verify_research_contract.py
+          python3 scripts/verify_repository_continuity.py
+          python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v
+          python3 -m unittest discover -s scripts/tests -v
+
+      - name: Create detached final commit
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 /tmp/p016-continuity.py publish | tee final-commit.txt
+
+      - name: Retain publication receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p016-continuity-publication
+          path: |
+            p016-continuity-apply.json
+            final-commit.txt
+          if-no-files-found: warn
