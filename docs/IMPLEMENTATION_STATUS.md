@@ -560,3 +560,7 @@ Host gate for the directive deliverable "Optical diffusion module and energy-res
 ## P086 — Model print and scan finishing (host scope)
 
 Host gate for the directive deliverable "Print-scan graph and domain-boundary tests". See [P086_MODEL_PRINT_AND_SCAN_FINISHING.md](P086_MODEL_PRINT_AND_SCAN_FINISHING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P087 — Add aging and mechanical imperfections as optional layers (host scope)
+
+Host gate for the directive deliverable "Optional aging module and clean-default tests". See [P087_ADD_AGING_AND_MECHANICAL_IMPERFECTIONS_AS_OPTION.md](P087_ADD_AGING_AND_MECHANICAL_IMPERFECTIONS_AS_OPTION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
