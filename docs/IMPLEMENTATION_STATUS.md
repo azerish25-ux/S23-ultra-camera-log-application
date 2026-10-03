@@ -464,3 +464,7 @@ Host gate for the directive deliverable "Source normalization router and lineage
 ## P052 — Add quality demosaic as a measured upgrade (host scope)
 
 Host gate for the directive deliverable "Quality demosaic benchmark and algorithm selection decision". See [P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.md](P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P060 — Implement P010 packing and stride handling (host scope)
+
+Host gate for the directive deliverable "P010 writer, reader, and guarded-buffer tests". See [P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.md](P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

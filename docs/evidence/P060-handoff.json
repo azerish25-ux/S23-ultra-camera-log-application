@@ -1,0 +1,50 @@
+{
+  "phase": "P060",
+  "caseIds": [
+    "TC-P060-01",
+    "TC-P060-02",
+    "TC-P060-03",
+    "TC-P060-04",
+    "TC-P060-05",
+    "TC-P060-06",
+    "TC-P060-07",
+    "TC-P060-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p060_implement_p010_packing_and_stride_handling.py",
+    "scripts/tests/test_p060_implement_p010_packing_and_stride_handling.py",
+    "docs/P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.md",
+    "docs/P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.json",
+    "docs/evidence/P060-handoff.json",
+    "scripts/gates/p060_tc01.py",
+    "scripts/gates/p060_tc02.py",
+    "scripts/gates/p060_tc03.py",
+    "scripts/gates/p060_tc04.py",
+    "scripts/gates/p060_tc05.py",
+    "scripts/gates/p060_tc06.py",
+    "scripts/gates/p060_tc07.py",
+    "scripts/gates/p060_tc08.py",
+    "scripts/tests/test_p060_tc01.py",
+    "scripts/tests/test_p060_tc02.py",
+    "scripts/tests/test_p060_tc03.py",
+    "scripts/tests/test_p060_tc04.py",
+    "scripts/tests/test_p060_tc05.py",
+    "scripts/tests/test_p060_tc06.py",
+    "scripts/tests/test_p060_tc07.py",
+    "scripts/tests/test_p060_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p060*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "Main10 bitstream qualification",
+    "measured camera quantizer"
+  ],
+  "nextPhase": "P061"
+}

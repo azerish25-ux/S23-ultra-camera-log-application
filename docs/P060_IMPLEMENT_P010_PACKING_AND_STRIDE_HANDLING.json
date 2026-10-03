@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "phase": "P060",
+  "mapId": "s23-p010-packing-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Handle supported row strides, pixel strides, crop rectangles, and chroma layout explicitly. Validate alignment and bounds. Keep limited-range luma and chroma quantization formulas distinct. Unknown plane configurations are rejected, not guessed.",
+  "fixture": "Padded luma and chroma rows with known endpoint codes and a nonzero crop rectangle.",
+  "oracle": "An independent unpacker reconstructs exact intended codes while guard bytes and padding remain untouched.",
+  "mutant": "Store ten-bit codes in the low bits of each sixteen-bit word.",
+  "planes": {
+    "chromaLayout": "420-interleaved",
+    "range": "limited",
+    "store": "msb",
+    "bufferWidth": "8",
+    "bufferHeight": "4",
+    "cropLeft": "2",
+    "cropTop": "2",
+    "cropRight": "6",
+    "cropBottom": "4",
+    "yRowStride": "20",
+    "yPixelStride": "2",
+    "uvRowStride": "20",
+    "uvPixelStride": "4",
+    "guard": "165"
+  },
+  "endpoints": {
+    "lumaBlack": "64",
+    "lumaWhite": "940",
+    "chromaLow": "64",
+    "chromaNeutral": "512",
+    "chromaHigh": "960"
+  },
+  "lumaSamples": ["64", "940", "64", "940", "940", "64", "940", "64"],
+  "chromaSamples": ["64", "512", "960", "512"]
+}
