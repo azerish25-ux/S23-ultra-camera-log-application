@@ -472,3 +472,7 @@ Host gate for the directive deliverable "P010 writer, reader, and guarded-buffer
 ## P064 — Audit all product labels (host scope)
 
 Host gate for the directive deliverable "Claim linter and source-aware product wording". See [P064_AUDIT_ALL_PRODUCT_LABELS.md](P064_AUDIT_ALL_PRODUCT_LABELS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P062 — Implement display and Log export branches (host scope)
+
+Host gate for the directive deliverable "Output graph policies and branch-independence tests". See [P062_IMPLEMENT_DISPLAY_AND_LOG_EXPORT_BRANCHES.md](P062_IMPLEMENT_DISPLAY_AND_LOG_EXPORT_BRANCHES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

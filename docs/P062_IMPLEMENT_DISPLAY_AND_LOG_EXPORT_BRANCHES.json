@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "phase": "P062",
+  "mapId": "s23-display-and-log-export-branches-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Branch from a declared working image. The clean Log export excludes film grain, halation, virtual-lens rendering, and display tone mapping unless an explicitly named processed master is selected. The rendered delivery has its own output transform and reproducible recipe.",
+  "fixture": "A take exported once as a clean Log master and again with strong grain, halation, and virtual defocus.",
+  "oracle": "The clean master remains unaffected while the rendered result records all processing stages.",
+  "mutant": "Apply the display transform before both branches and call one output clean Log.",
+  "workingImage": {
+    "id": "take-working",
+    "rgb": ["0.2", "1.2", "0.4"]
+  },
+  "cleanLog": {
+    "name": "clean-log",
+    "encoding": "declared-log-fixture",
+    "excluded": ["film-grain", "halation", "virtual-lens", "display-tone-map"]
+  },
+  "rendered": {
+    "name": "rendered-delivery",
+    "outputTransform": "display-film-transform",
+    "recipe": "strong-grain+halation+virtual-defocus",
+    "stages": ["film-grain", "halation", "virtual-defocus", "output-transform"]
+  }
+}

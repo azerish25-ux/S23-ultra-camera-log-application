@@ -1,0 +1,51 @@
+{
+  "phase": "P062",
+  "caseIds": [
+    "TC-P062-01",
+    "TC-P062-02",
+    "TC-P062-03",
+    "TC-P062-04",
+    "TC-P062-05",
+    "TC-P062-06",
+    "TC-P062-07",
+    "TC-P062-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p062_implement_display_and_log_export_branches.py",
+    "scripts/tests/test_p062_implement_display_and_log_export_branches.py",
+    "docs/P062_IMPLEMENT_DISPLAY_AND_LOG_EXPORT_BRANCHES.md",
+    "docs/P062_IMPLEMENT_DISPLAY_AND_LOG_EXPORT_BRANCHES.json",
+    "docs/evidence/P062-handoff.json",
+    "scripts/gates/p062_tc01.py",
+    "scripts/gates/p062_tc02.py",
+    "scripts/gates/p062_tc03.py",
+    "scripts/gates/p062_tc04.py",
+    "scripts/gates/p062_tc05.py",
+    "scripts/gates/p062_tc06.py",
+    "scripts/gates/p062_tc07.py",
+    "scripts/gates/p062_tc08.py",
+    "scripts/tests/test_p062_tc01.py",
+    "scripts/tests/test_p062_tc02.py",
+    "scripts/tests/test_p062_tc03.py",
+    "scripts/tests/test_p062_tc04.py",
+    "scripts/tests/test_p062_tc05.py",
+    "scripts/tests/test_p062_tc06.py",
+    "scripts/tests/test_p062_tc07.py",
+    "scripts/tests/test_p062_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p062*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "display transform applied before both export branches",
+    "ARRI LogC3 coefficients",
+    "measured editor interoperability"
+  ],
+  "nextPhase": "P063"
+}
