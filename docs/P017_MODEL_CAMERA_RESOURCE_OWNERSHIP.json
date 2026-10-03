@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "phase": "P017",
+  "mapId": "s23-resource-lifetime-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Draw the ownership graph and implement closeable leases with generation identity. Separate application-owned capture work from Activity attachment. Propagate failure through typed events and close resources in a defined reverse dependency order.",
+  "fixture": "A session callback arriving after its Activity has been recreated and its previous surface released.",
+  "oracle": "The callback cannot attach to the new generation or double-close a resource; the active preview remains valid.",
+  "mutant": "Reuse a surface solely because its previous object reference is non-null.",
+  "closeOrder": ["image", "surface", "session", "camera_device"],
+  "activityGeneration": 2,
+  "reuseSurfaceBecauseNonNull": false,
+  "callback": {
+    "kind": "session",
+    "generation": 1,
+    "surfaceRef": "Surface#prev",
+    "success": true
+  },
+  "leases": [
+    {
+      "id": "camera-1",
+      "kind": "camera_device",
+      "owner": "application",
+      "generation": 1,
+      "state": "open",
+      "objectRef": "CameraDevice#1",
+      "dependsOn": null
+    },
+    {
+      "id": "session-stale",
+      "kind": "session",
+      "owner": "application",
+      "generation": 1,
+      "state": "open",
+      "objectRef": "Session#1",
+      "dependsOn": "camera-1"
+    },
+    {
+      "id": "session-active",
+      "kind": "session",
+      "owner": "application",
+      "generation": 2,
+      "state": "open",
+      "objectRef": "Session#2",
+      "dependsOn": "camera-1"
+    },
+    {
+      "id": "surface-prev",
+      "kind": "surface",
+      "owner": "activity",
+      "generation": 1,
+      "state": "released",
+      "objectRef": "Surface#prev",
+      "dependsOn": "session-stale"
+    },
+    {
+      "id": "surface-active",
+      "kind": "surface",
+      "owner": "activity",
+      "generation": 2,
+      "state": "open",
+      "objectRef": "Surface#active",
+      "dependsOn": "session-active"
+    },
+    {
+      "id": "image-stale",
+      "kind": "image",
+      "owner": "application",
+      "generation": 1,
+      "state": "open",
+      "objectRef": "Image#1",
+      "dependsOn": "session-stale"
+    },
+    {
+      "id": "image-active",
+      "kind": "image",
+      "owner": "application",
+      "generation": 2,
+      "state": "open",
+      "objectRef": "Image#2",
+      "dependsOn": "session-active"
+    }
+  ]
+}

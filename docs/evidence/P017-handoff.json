@@ -1,0 +1,51 @@
+{
+  "phase": "P017",
+  "caseIds": [
+    "TC-P017-01",
+    "TC-P017-02",
+    "TC-P017-03",
+    "TC-P017-04",
+    "TC-P017-05",
+    "TC-P017-06",
+    "TC-P017-07",
+    "TC-P017-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p017_model_camera_resource_ownership.py",
+    "scripts/tests/test_p017_model_camera_resource_ownership.py",
+    "docs/P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.md",
+    "docs/P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.json",
+    "docs/evidence/P017-handoff.json",
+    "scripts/gates/p017_tc01.py",
+    "scripts/gates/p017_tc02.py",
+    "scripts/gates/p017_tc03.py",
+    "scripts/gates/p017_tc04.py",
+    "scripts/gates/p017_tc05.py",
+    "scripts/gates/p017_tc06.py",
+    "scripts/gates/p017_tc07.py",
+    "scripts/gates/p017_tc08.py",
+    "scripts/tests/test_p017_tc01.py",
+    "scripts/tests/test_p017_tc02.py",
+    "scripts/tests/test_p017_tc03.py",
+    "scripts/tests/test_p017_tc04.py",
+    "scripts/tests/test_p017_tc05.py",
+    "scripts/tests/test_p017_tc06.py",
+    "scripts/tests/test_p017_tc07.py",
+    "scripts/tests/test_p017_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p017*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 camera ownership",
+    "on-device session callback after Activity recreation",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "blocked"
+}

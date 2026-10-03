@@ -251,3 +251,7 @@ dependency-ready phase is P011, rational capture timing.
 ## P022 — Protect preview independence (host scope)
 
 Host gate for the directive deliverable "Monitoring branch contract and clean-master invariance test". See [P022_PROTECT_PREVIEW_INDEPENDENCE.md](P022_PROTECT_PREVIEW_INDEPENDENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P017 — Model camera resource ownership (host scope)
+
+Host gate for the directive deliverable "Resource-lifetime map and deterministic owner tests". See [P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.md](P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
