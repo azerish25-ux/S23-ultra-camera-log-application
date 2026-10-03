@@ -428,3 +428,7 @@ Host gate for the directive deliverable "Denoise module and detail-versus-noise 
 ## P051 — Build the row-streamed reference demosaic (host scope)
 
 Host gate for the directive deliverable "CPU reference demosaic and exact synthetic goldens". See [P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.md](P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P053 — Correct defects without erasing real detail (host scope)
+
+Host gate for the directive deliverable "Defect correction policy and highlight-preservation tests". See [P053_CORRECT_DEFECTS_WITHOUT_ERASING_REAL_DETAIL.md](P053_CORRECT_DEFECTS_WITHOUT_ERASING_REAL_DETAIL.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

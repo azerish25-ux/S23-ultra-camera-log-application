@@ -1,0 +1,50 @@
+{
+  "phase": "P053",
+  "caseIds": [
+    "TC-P053-01",
+    "TC-P053-02",
+    "TC-P053-03",
+    "TC-P053-04",
+    "TC-P053-05",
+    "TC-P053-06",
+    "TC-P053-07",
+    "TC-P053-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p053_correct_defects_without_erasing_real_detail.py",
+    "scripts/tests/test_p053_correct_defects_without_erasing_real_detail.py",
+    "docs/P053_CORRECT_DEFECTS_WITHOUT_ERASING_REAL_DETAIL.md",
+    "docs/P053_CORRECT_DEFECTS_WITHOUT_ERASING_REAL_DETAIL.json",
+    "docs/evidence/P053-handoff.json",
+    "scripts/gates/p053_tc01.py",
+    "scripts/gates/p053_tc02.py",
+    "scripts/gates/p053_tc03.py",
+    "scripts/gates/p053_tc04.py",
+    "scripts/gates/p053_tc05.py",
+    "scripts/gates/p053_tc06.py",
+    "scripts/gates/p053_tc07.py",
+    "scripts/gates/p053_tc08.py",
+    "scripts/tests/test_p053_tc01.py",
+    "scripts/tests/test_p053_tc02.py",
+    "scripts/tests/test_p053_tc03.py",
+    "scripts/tests/test_p053_tc04.py",
+    "scripts/tests/test_p053_tc05.py",
+    "scripts/tests/test_p053_tc06.py",
+    "scripts/tests/test_p053_tc07.py",
+    "scripts/tests/test_p053_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p053*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured sensor defect map",
+    "one-threshold isolated-bright removal"
+  ],
+  "nextPhase": "P054"
+}

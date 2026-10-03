@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "phase": "P053",
+  "mapId": "s23-defect-correction-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Combine measured defect maps with conservative local tests. Store confidence and correction masks. Do not replace every isolated bright pixel, because real highlights may be sparse. Apply corrections in a declared source domain and retain the unmodified original.",
+  "fixture": "A measured hot pixel adjacent to a real small moving specular highlight.",
+  "oracle": "The persistent defect is corrected while the moving highlight is preserved and corrections remain inspectable.",
+  "mutant": "Remove every isolated bright pixel using one intensity threshold.",
+  "sourceDomain": "scene-linear",
+  "intensityThreshold": "800",
+  "sensorSaturation": "1023",
+  "retainOriginal": true,
+  "neighborhoodRadius": 1,
+  "minPersistence": 2,
+  "minConfidence": "4/5",
+  "minDarkSupport": 3,
+  "background": "100",
+  "width": 8,
+  "height": 8,
+  "defectMap": [
+    {
+      "id": "hot-2-2",
+      "x": 2,
+      "y": 2,
+      "kind": "hot",
+      "confidence": "9/10"
+    }
+  ],
+  "frames": [
+    {
+      "id": "0",
+      "samples": [
+        {"x": 2, "y": 2, "value": "900", "role": "defect"},
+        {"x": 3, "y": 2, "value": "880", "role": "highlight"}
+      ]
+    },
+    {
+      "id": "1",
+      "samples": [
+        {"x": 2, "y": 2, "value": "910", "role": "defect"},
+        {"x": 4, "y": 4, "value": "860", "role": "highlight"}
+      ]
+    },
+    {
+      "id": "2",
+      "samples": [
+        {"x": 2, "y": 2, "value": "895", "role": "defect"},
+        {"x": 7, "y": 1, "value": "1023", "role": "highlight"}
+      ]
+    }
+  ]
+}
