@@ -580,3 +580,7 @@ Host gate for the directive deliverable "Field-of-view mapping and framing guida
 ## P091 — Implement signed thin-lens defocus (host scope)
 
 Host gate for the directive deliverable "Thin-lens reference code and dimensional tests". See [P091_IMPLEMENT_SIGNED_THIN_LENS_DEFOCUS.md](P091_IMPLEMENT_SIGNED_THIN_LENS_DEFOCUS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P092 — Separate metric and relative focus controls (host scope)
+
+Host gate for the directive deliverable "Depth-unit contract and honest focus UI". See [P092_SEPARATE_METRIC_AND_RELATIVE_FOCUS_CONTROLS.md](P092_SEPARATE_METRIC_AND_RELATIVE_FOCUS_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
