@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "phase": "P019",
+  "fixtureId": "s23-applied-manual-exposure-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Validate units and sensor limits, clamp only through a visible effective target, wait for the required lock transition, and compare actual result values against defined tolerances. Preserve the difference between missing metadata and a measured mismatch.",
+  "fixture": "A requested shutter longer than the frame period and an ISO result that remains at the previous automatic value.",
+  "oracle": "The user sees the effective target and mismatch; recording cannot claim confirmed manual control.",
+  "mutant": "Show requested ISO as if it were an observed sensor value.",
+  "tolerances": {
+    "isoFraction": 0.05,
+    "exposureFraction": 0.05,
+    "frameDurationFraction": 0.03
+  },
+  "sensorLimits": {
+    "isoMin": 50,
+    "isoMax": 3200,
+    "shutterMinNs": 10000,
+    "shutterMaxNs": 1000000000
+  },
+  "request": {
+    "iso": 800,
+    "shutterNs": 50000000,
+    "framePeriodNs": 33333333,
+    "aeMode": "off"
+  },
+  "lock": {
+    "required": "manual_exposure_locked",
+    "observed": "manual_exposure_locked"
+  },
+  "result": {
+    "iso": 100,
+    "shutterNs": 33333333,
+    "frameDurationNs": 33333333,
+    "previousAutomaticIso": 100,
+    "metadata": {
+      "iso": "present",
+      "shutter": "present",
+      "frameDuration": "present"
+    }
+  },
+  "presentation": "observed"
+}

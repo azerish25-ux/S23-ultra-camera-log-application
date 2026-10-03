@@ -300,3 +300,7 @@ Host gate for the directive deliverable "Rational timing policy and manual-readi
 ## P018 — Implement the capture state reducer (host scope)
 
 Host gate for the directive deliverable "Pure reducer, event log format, and race replay tests". See [P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.md](P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P019 — Implement applied manual exposure (host scope)
+
+Host gate for the directive deliverable "Manual exposure controller and result-matching tests". See [P019_IMPLEMENT_APPLIED_MANUAL_EXPOSURE.md](P019_IMPLEMENT_APPLIED_MANUAL_EXPOSURE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

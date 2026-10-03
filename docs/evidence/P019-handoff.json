@@ -1,0 +1,53 @@
+{
+  "phase": "P019",
+  "caseIds": [
+    "TC-P019-01",
+    "TC-P019-02",
+    "TC-P019-03",
+    "TC-P019-04",
+    "TC-P019-05",
+    "TC-P019-06",
+    "TC-P019-07",
+    "TC-P019-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p019_implement_applied_manual_exposure.py",
+    "scripts/tests/test_p019_implement_applied_manual_exposure.py",
+    "docs/P019_IMPLEMENT_APPLIED_MANUAL_EXPOSURE.md",
+    "docs/P019_IMPLEMENT_APPLIED_MANUAL_EXPOSURE.json",
+    "docs/evidence/P019-handoff.json",
+    "scripts/gates/p019_tc01.py",
+    "scripts/gates/p019_tc02.py",
+    "scripts/gates/p019_tc03.py",
+    "scripts/gates/p019_tc04.py",
+    "scripts/gates/p019_tc05.py",
+    "scripts/gates/p019_tc06.py",
+    "scripts/gates/p019_tc07.py",
+    "scripts/gates/p019_tc08.py",
+    "scripts/tests/test_p019_tc01.py",
+    "scripts/tests/test_p019_tc02.py",
+    "scripts/tests/test_p019_tc03.py",
+    "scripts/tests/test_p019_tc04.py",
+    "scripts/tests/test_p019_tc05.py",
+    "scripts/tests/test_p019_tc06.py",
+    "scripts/tests/test_p019_tc07.py",
+    "scripts/tests/test_p019_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p019*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 qualification",
+    "measured sensor ISO and shutter on a device",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "P018 was not re-run by this host writer",
+    "publication commit is not assigned; next dependency is P020"
+  ],
+  "nextPhase": "blocked"
+}
