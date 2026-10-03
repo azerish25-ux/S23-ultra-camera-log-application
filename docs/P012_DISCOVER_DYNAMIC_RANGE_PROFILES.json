@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "phase": "P012",
+  "plannerId": "s23-dynamic-range-profile-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Query ten-bit capability and supported dynamic-range profiles. Evaluate pairwise or set constraints for preview and recording outputs. Record additional latency information where exposed. Keep HLG, HDR10, SDR, and RAW-derived Log as separate source and encoding categories.",
+  "fixture": "An HLG-capable route that rejects an SDR preview in the same capture request.",
+  "oracle": "The planner rejects the mixed combination or explicitly chooses an independently qualified monitoring route.",
+  "mutant": "Assume HLG support implies arbitrary SDR and HDR surface coexistence.",
+  "tenBitCapable": true,
+  "failedProperties": ["optionalCodecQuery"],
+  "routes": [
+    {
+      "routeId": "hlg-record",
+      "role": "recording",
+      "profile": "HLG",
+      "category": "HLG",
+      "tenBit": true,
+      "supported": true,
+      "width": 3840,
+      "height": 2160,
+      "format": "YUV_420_888",
+      "queryError": null,
+      "additionalLatencyNs": 8000000
+    },
+    {
+      "routeId": "sdr-preview",
+      "role": "preview",
+      "profile": "SDR",
+      "category": "SDR",
+      "tenBit": false,
+      "supported": true,
+      "width": 1920,
+      "height": 1080,
+      "format": "YUV_420_888",
+      "queryError": null,
+      "additionalLatencyNs": null
+    },
+    {
+      "routeId": "hdr10-surface",
+      "role": "recording",
+      "profile": "HDR10",
+      "category": "HDR10",
+      "tenBit": true,
+      "supported": true,
+      "width": 3840,
+      "height": 2160,
+      "format": "YUV_420_888",
+      "queryError": null,
+      "additionalLatencyNs": 12000000
+    },
+    {
+      "routeId": "raw-log",
+      "role": "recording",
+      "profile": "RAW_LOG",
+      "category": "RAW_LOG",
+      "tenBit": true,
+      "supported": true,
+      "width": 4000,
+      "height": 3000,
+      "format": "RAW_SENSOR",
+      "queryError": null,
+      "additionalLatencyNs": null
+    },
+    {
+      "routeId": "sdr-monitor",
+      "role": "monitoring",
+      "profile": "SDR",
+      "category": "SDR",
+      "tenBit": false,
+      "supported": true,
+      "width": 1280,
+      "height": 720,
+      "format": "YUV_420_888",
+      "queryError": null,
+      "additionalLatencyNs": null
+    },
+    {
+      "routeId": "hlg-preview-unreadable",
+      "role": "preview",
+      "profile": "HLG",
+      "category": "HLG",
+      "tenBit": true,
+      "supported": true,
+      "width": 1920,
+      "height": 1080,
+      "format": "YUV_420_888",
+      "queryError": "dynamicRangeProfiles",
+      "additionalLatencyNs": null
+    }
+  ],
+  "constraints": [
+    {
+      "constraintId": "hlg-rejects-sdr-preview",
+      "kind": "same_request_rejected",
+      "members": ["hlg-record", "sdr-preview"],
+      "reason": "HLG-capable route rejects an SDR preview in the same capture request"
+    }
+  ]
+}

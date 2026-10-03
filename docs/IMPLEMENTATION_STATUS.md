@@ -263,3 +263,7 @@ Host gate for the directive deliverable "Interruption policy and permission faul
 ## P013 — Discover codec input routes (host scope)
 
 Host gate for the directive deliverable "Codec-route database and interface-specific qualification plan". See [P013_DISCOVER_CODEC_INPUT_ROUTES.md](P013_DISCOVER_CODEC_INPUT_ROUTES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P012 — Discover dynamic-range profiles (host scope)
+
+Host gate for the directive deliverable "Profile-combination planner and explicit rejection reasons". See [P012_DISCOVER_DYNAMIC_RANGE_PROFILES.md](P012_DISCOVER_DYNAMIC_RANGE_PROFILES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

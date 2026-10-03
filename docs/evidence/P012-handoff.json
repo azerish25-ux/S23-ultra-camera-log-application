@@ -1,0 +1,51 @@
+{
+  "phase": "P012",
+  "caseIds": [
+    "TC-P012-01",
+    "TC-P012-02",
+    "TC-P012-03",
+    "TC-P012-04",
+    "TC-P012-05",
+    "TC-P012-06",
+    "TC-P012-07",
+    "TC-P012-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p012_discover_dynamic_range_profiles.py",
+    "scripts/gates/p012_tc01.py",
+    "scripts/gates/p012_tc02.py",
+    "scripts/gates/p012_tc03.py",
+    "scripts/gates/p012_tc04.py",
+    "scripts/gates/p012_tc05.py",
+    "scripts/gates/p012_tc06.py",
+    "scripts/gates/p012_tc07.py",
+    "scripts/gates/p012_tc08.py",
+    "scripts/tests/test_p012_discover_dynamic_range_profiles.py",
+    "scripts/tests/test_p012_tc01.py",
+    "scripts/tests/test_p012_tc02.py",
+    "scripts/tests/test_p012_tc03.py",
+    "scripts/tests/test_p012_tc04.py",
+    "scripts/tests/test_p012_tc05.py",
+    "scripts/tests/test_p012_tc06.py",
+    "scripts/tests/test_p012_tc07.py",
+    "scripts/tests/test_p012_tc08.py",
+    "docs/P012_DISCOVER_DYNAMIC_RANGE_PROFILES.md",
+    "docs/P012_DISCOVER_DYNAMIC_RANGE_PROFILES.json",
+    "docs/evidence/P012-handoff.json"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p012*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 qualification",
+    "on-device dynamic-range profile discovery",
+    "ten-bit fidelity",
+    "sensor-derived Log",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "fixed cadence without measured evidence",
+    "HLG support implying SDR and HDR surface coexistence",
+    "endurance or unlimited recording"
+  ],
+  "nextPhase": "P013"
+}
