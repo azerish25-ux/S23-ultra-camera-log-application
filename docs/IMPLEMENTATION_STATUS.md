@@ -512,3 +512,7 @@ Host gate for the directive deliverable "Tile planner and boundary equivalence t
 ## P074 — Implement an abstract sensitometric reference (host scope)
 
 Host gate for the directive deliverable "Abstract density reference and response-curve tests". See [P074_IMPLEMENT_AN_ABSTRACT_SENSITOMETRIC_REFERENCE.md](P074_IMPLEMENT_AN_ABSTRACT_SENSITOMETRIC_REFERENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P075 — Build data ingestion for sensitometry (host scope)
+
+Host gate for the directive deliverable "Sensitometry importer and unit-consistency checks". See [P075_BUILD_DATA_INGESTION_FOR_SENSITOMETRY.md](P075_BUILD_DATA_INGESTION_FOR_SENSITOMETRY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
