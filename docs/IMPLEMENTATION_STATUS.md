@@ -588,3 +588,7 @@ Host gate for the directive deliverable "Depth-unit contract and honest focus UI
 ## P093 — Implement aperture and bokeh shape models (host scope)
 
 Host gate for the directive deliverable "Aperture kernel library and point-light tests". See [P093_IMPLEMENT_APERTURE_AND_BOKEH_SHAPE_MODELS.md](P093_IMPLEMENT_APERTURE_AND_BOKEH_SHAPE_MODELS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P094 — Add field-dependent lens characteristics (host scope)
+
+Host gate for the directive deliverable "Lens-character profile schema and continuity tests". See [P094_ADD_FIELD_DEPENDENT_LENS_CHARACTERISTICS.md](P094_ADD_FIELD_DEPENDENT_LENS_CHARACTERISTICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
