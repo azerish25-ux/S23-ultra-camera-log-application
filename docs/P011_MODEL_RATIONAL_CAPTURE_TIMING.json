@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "phase": "P011",
+  "policyId": "s23-rational-timing-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "mechanism": "variable_ae",
+  "aeRange": {
+    "minFps": {"numerator": 15, "denominator": 1},
+    "maxFps": {"numerator": 30, "denominator": 1}
+  },
+  "requestedOutput": {"numerator": 24, "denominator": 1},
+  "manualTiming": {"confirmed": false, "frameRate": null},
+  "containerTimestamps": {
+    "assigned": true,
+    "rate": {"numerator": 24, "denominator": 1}
+  },
+  "exposureNs": 20000000,
+  "captureResult": null
+}

@@ -1,0 +1,51 @@
+{
+  "phase": "P011",
+  "caseIds": [
+    "TC-P011-01",
+    "TC-P011-02",
+    "TC-P011-03",
+    "TC-P011-04",
+    "TC-P011-05",
+    "TC-P011-06",
+    "TC-P011-07",
+    "TC-P011-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p011_model_rational_capture_timing.py",
+    "scripts/gates/p011_tc01.py",
+    "scripts/gates/p011_tc02.py",
+    "scripts/gates/p011_tc03.py",
+    "scripts/gates/p011_tc04.py",
+    "scripts/gates/p011_tc05.py",
+    "scripts/gates/p011_tc06.py",
+    "scripts/gates/p011_tc07.py",
+    "scripts/gates/p011_tc08.py",
+    "scripts/tests/test_p011_model_rational_capture_timing.py",
+    "scripts/tests/test_p011_tc01.py",
+    "scripts/tests/test_p011_tc02.py",
+    "scripts/tests/test_p011_tc03.py",
+    "scripts/tests/test_p011_tc04.py",
+    "scripts/tests/test_p011_tc05.py",
+    "scripts/tests/test_p011_tc06.py",
+    "scripts/tests/test_p011_tc07.py",
+    "scripts/tests/test_p011_tc08.py",
+    "docs/P011_MODEL_RATIONAL_CAPTURE_TIMING.md",
+    "docs/P011_MODEL_RATIONAL_CAPTURE_TIMING.json",
+    "docs/evidence/P011-handoff.json"
+  ],
+  "commit": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p011*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical Galaxy S23 capture",
+    "native fixed 24 fps cadence without a measured capture result",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "endurance beyond the supplied host slice"
+  ],
+  "nextPhase": "P012"
+}

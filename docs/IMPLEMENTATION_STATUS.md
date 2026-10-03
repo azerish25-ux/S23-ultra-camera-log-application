@@ -292,3 +292,7 @@ Host gate for the directive deliverable "Capability cache invalidation and histo
 ## P016 — Run the first physical qualification slice (host scope)
 
 Host gate for the directive deliverable "Physical qualification report for one exact configuration". See [P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md](P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P011 — Model rational capture timing (host scope)
+
+Host gate for the directive deliverable "Rational timing policy and manual-readiness gate". See [P011_MODEL_RATIONAL_CAPTURE_TIMING.md](P011_MODEL_RATIONAL_CAPTURE_TIMING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
