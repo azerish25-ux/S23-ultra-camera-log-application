@@ -1,0 +1,53 @@
+{
+  "phase": "P064",
+  "caseIds": [
+    "TC-P064-01",
+    "TC-P064-02",
+    "TC-P064-03",
+    "TC-P064-04",
+    "TC-P064-05",
+    "TC-P064-06",
+    "TC-P064-07",
+    "TC-P064-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p064_audit_all_product_labels.py",
+    "scripts/tests/test_p064_audit_all_product_labels.py",
+    "docs/P064_AUDIT_ALL_PRODUCT_LABELS.md",
+    "docs/P064_AUDIT_ALL_PRODUCT_LABELS.json",
+    "docs/evidence/P064-handoff.json",
+    "scripts/gates/p064_tc01.py",
+    "scripts/gates/p064_tc02.py",
+    "scripts/gates/p064_tc03.py",
+    "scripts/gates/p064_tc04.py",
+    "scripts/gates/p064_tc05.py",
+    "scripts/gates/p064_tc06.py",
+    "scripts/gates/p064_tc07.py",
+    "scripts/gates/p064_tc08.py",
+    "scripts/tests/test_p064_tc01.py",
+    "scripts/tests/test_p064_tc02.py",
+    "scripts/tests/test_p064_tc03.py",
+    "scripts/tests/test_p064_tc04.py",
+    "scripts/tests/test_p064_tc05.py",
+    "scripts/tests/test_p064_tc06.py",
+    "scripts/tests/test_p064_tc07.py",
+    "scripts/tests/test_p064_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p064*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "sensor enlargement",
+    "guaranteed ARRI equivalence",
+    "recovered clipped detail",
+    "native large-format capture from an SDR import",
+    "preset-only export labels"
+  ],
+  "nextPhase": "P065"
+}

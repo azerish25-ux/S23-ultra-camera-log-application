@@ -468,3 +468,7 @@ Host gate for the directive deliverable "Quality demosaic benchmark and algorith
 ## P060 — Implement P010 packing and stride handling (host scope)
 
 Host gate for the directive deliverable "P010 writer, reader, and guarded-buffer tests". See [P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.md](P060_IMPLEMENT_P010_PACKING_AND_STRIDE_HANDLING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P064 — Audit all product labels (host scope)
+
+Host gate for the directive deliverable "Claim linter and source-aware product wording". See [P064_AUDIT_ALL_PRODUCT_LABELS.md](P064_AUDIT_ALL_PRODUCT_LABELS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

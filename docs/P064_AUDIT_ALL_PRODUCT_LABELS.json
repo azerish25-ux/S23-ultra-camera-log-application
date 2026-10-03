@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "phase": "P064",
+  "mapId": "s23-product-label-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Centralize wording for RAW-derived, HLG-derived, SDR-derived, provisional calibration, virtual format, and processed look. Test UI labels against machine-readable evidence. Marketing text must not imply sensor enlargement, guaranteed ARRI equivalence, or recovered clipped detail.",
+  "fixture": "A rendered SDR import exported with a large-format recipe and a ten-bit codec.",
+  "oracle": "The interface identifies a simulated look from an SDR source rather than native large-format or sensor-derived Log capture.",
+  "mutant": "Build export labels only from the selected film preset name.",
+  "source": {
+    "acquisition": "SDR-derived",
+    "origin": "rendered-sdr-import",
+    "transfer": "Rec.709"
+  },
+  "export": {
+    "recipe": "large-format",
+    "presetName": "Large Format Log",
+    "codec": "Main10",
+    "containerBitDepth": 10,
+    "visuallyFlat": true
+  },
+  "wording": {
+    "surfaces": ["select", "export", "share"],
+    "category": "SDR-derived",
+    "calibration": "provisional-calibration",
+    "formatKind": "virtual-format",
+    "look": "processed-look",
+    "text": "SDR-derived simulated look; not native large-format or sensor-derived Log"
+  },
+  "marketing": {
+    "sensorEnlargement": false,
+    "guaranteedArriEquivalence": false,
+    "recoveredClippedDetail": false
+  },
+  "evidence": {
+    "machineReadable": true,
+    "uiMatchesEvidence": true
+  }
+}
