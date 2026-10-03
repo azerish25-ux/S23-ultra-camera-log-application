@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - name: Check out exact bootstrap commit
+      - name: Check out exact repair commit
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
           fetch-depth: 0
@@ -36,19 +36,29 @@ jobs:
           )
           old_loop = 'for path in (WORKFLOW_PATH,):'
           old_receipt = '"deleted_bootstrap_paths": [WORKFLOW_PATH],'
-          assert text.count(old_loop) == 1 and text.count(old_receipt) == 1
+          old_parent = 'if git("rev-parse", "HEAD^") != REVISION:'
+          new_parent = (
+              'if subprocess.call(["git", "merge-base", "--is-ancestor", REVISION, "HEAD"], '
+              'cwd=ROOT) != 0:'
+          )
+          assert text.count(old_loop) == 1
+          assert text.count(old_receipt) == 1
+          assert text.count(old_parent) == 2
           text = text.replace(old_loop, f'for path in ({bootstrap},):')
           text = text.replace(old_receipt, f'"deleted_bootstrap_paths": [{bootstrap}],')
+          text = text.replace(old_parent, new_parent)
           path.write_text(text)
           PY
           python3 -m py_compile /tmp/p016-continuity.py
 
-      - name: Guard one-shot parent and apply inspection
+      - name: Guard reviewed ancestry and apply inspection
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "856489acd178408dbb7fa44e565b146a48fe93bc"
-          python3 /tmp/p016-continuity.py apply | tee p016-continuity-apply.json
+          git merge-base --is-ancestor 856489acd178408dbb7fa44e565b146a48fe93bc HEAD
+          test "$(git rev-parse 856489acd178408dbb7fa44e565b146a48fe93bc^{tree})" = \
+            "c6517e64f70bb5fe7d72f8711ef5c24f256d6348"
+          python3 /tmp/p016-continuity.py apply | tee /tmp/p016-continuity-apply.json
 
       - name: Verify directive, research contract, continuity, and regressions
         shell: bash
@@ -66,7 +76,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          python3 /tmp/p016-continuity.py publish | tee final-commit.txt
+          python3 /tmp/p016-continuity.py publish | tee /tmp/final-commit.txt
 
       - name: Retain publication receipt
         if: always()
@@ -74,6 +84,6 @@ jobs:
         with:
           name: p016-continuity-publication
           path: |
-            p016-continuity-apply.json
-            final-commit.txt
+            /tmp/p016-continuity-apply.json
+            /tmp/final-commit.txt
           if-no-files-found: warn
