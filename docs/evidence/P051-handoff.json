@@ -1,0 +1,50 @@
+{
+  "phase": "P051",
+  "caseIds": [
+    "TC-P051-01",
+    "TC-P051-02",
+    "TC-P051-03",
+    "TC-P051-04",
+    "TC-P051-05",
+    "TC-P051-06",
+    "TC-P051-07",
+    "TC-P051-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p051_build_the_row_streamed_reference_demosaic.py",
+    "scripts/tests/test_p051_build_the_row_streamed_reference_demosaic.py",
+    "docs/P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.md",
+    "docs/P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.json",
+    "docs/evidence/P051-handoff.json",
+    "scripts/gates/p051_tc01.py",
+    "scripts/gates/p051_tc02.py",
+    "scripts/gates/p051_tc03.py",
+    "scripts/gates/p051_tc04.py",
+    "scripts/gates/p051_tc05.py",
+    "scripts/gates/p051_tc06.py",
+    "scripts/gates/p051_tc07.py",
+    "scripts/gates/p051_tc08.py",
+    "scripts/tests/test_p051_tc01.py",
+    "scripts/tests/test_p051_tc02.py",
+    "scripts/tests/test_p051_tc03.py",
+    "scripts/tests/test_p051_tc04.py",
+    "scripts/tests/test_p051_tc05.py",
+    "scripts/tests/test_p051_tc06.py",
+    "scripts/tests/test_p051_tc07.py",
+    "scripts/tests/test_p051_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p051*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "native or GPU demosaic kernel",
+    "measured camera white balance"
+  ],
+  "nextPhase": "P052"
+}

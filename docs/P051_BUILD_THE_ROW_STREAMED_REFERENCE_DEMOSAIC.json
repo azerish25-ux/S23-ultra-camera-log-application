@@ -1,0 +1,839 @@
+{
+  "schemaVersion": 1,
+  "phase": "P051",
+  "mapId": "s23-row-streamed-bilinear-demosaic-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Implement an explicitly documented bilinear reference with deterministic border treatment and row ownership. Separate white balance placement from interpolation decisions. Test constant fields, impulses, edges, checkerboards, and crop boundaries.",
+  "fixture": "A small Bayer impulse near each edge and a uniform color field with padded source rows.",
+  "oracle": "The output matches hand-derived border values and never reads outside retained source rows.",
+  "mutant": "Read a missing neighboring row from a stale buffer slot.",
+  "borderPolicy": "Bilinear support is the in-bounds same-channel neighbors at Chebyshev distance 1. A known site is copied, not averaged with other sites of the same channel. Missing rows and columns are omitted from the average. There is no replication, mirroring, zero-fill, or stale-slot substitution. Samples at or beyond the owned width are padding and are not samples.",
+  "whiteBalance": "Interpolation does not take white-balance gains. Gains are a separate per-channel linear stage. Before-interpolation and after-interpolation placement agree because each output channel mixes only that channel. Scaling a neighbor by the center site's gain is not the reference.",
+  "rowWindow": "Three owned row slots. Output row y may read only source rows in [max(0, y-1), min(height-1, y+1)]. A released slot is stale and must not be read. Each retained row is an owned copy of the samples inside the width; later edits to the source row do not change the slot.",
+  "scenes": [
+    {
+      "id": "uniform-padded",
+      "kind": "uniform",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 6,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          4,
+          6,
+          4,
+          6,
+          999,
+          999
+        ],
+        [
+          6,
+          10,
+          6,
+          10,
+          999,
+          999
+        ],
+        [
+          4,
+          6,
+          4,
+          6,
+          999,
+          999
+        ],
+        [
+          6,
+          10,
+          6,
+          10,
+          999,
+          999
+        ]
+      ],
+      "golden": [
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ]
+      ]
+    },
+    {
+      "id": "uniform-grbg",
+      "kind": "uniform",
+      "cfa": "GRBG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          6,
+          4,
+          6,
+          4
+        ],
+        [
+          10,
+          6,
+          10,
+          6
+        ],
+        [
+          6,
+          4,
+          6,
+          4
+        ],
+        [
+          10,
+          6,
+          10,
+          6
+        ]
+      ],
+      "golden": [
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ]
+      ]
+    },
+    {
+      "id": "uniform-gbrg",
+      "kind": "uniform",
+      "cfa": "GBRG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          6,
+          10,
+          6,
+          10
+        ],
+        [
+          4,
+          6,
+          4,
+          6
+        ],
+        [
+          6,
+          10,
+          6,
+          10
+        ],
+        [
+          4,
+          6,
+          4,
+          6
+        ]
+      ],
+      "golden": [
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ]
+      ]
+    },
+    {
+      "id": "uniform-bggr",
+      "kind": "uniform",
+      "cfa": "BGGR",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          10,
+          6,
+          10,
+          6
+        ],
+        [
+          6,
+          4,
+          6,
+          4
+        ],
+        [
+          10,
+          6,
+          10,
+          6
+        ],
+        [
+          6,
+          4,
+          6,
+          4
+        ]
+      ],
+      "golden": [
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ],
+        [
+          "4,6,10",
+          "4,6,10",
+          "4,6,10",
+          "4,6,10"
+        ]
+      ]
+    },
+    {
+      "id": "signed-uniform",
+      "kind": "uniform",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          -2,
+          0,
+          -2,
+          0
+        ],
+        [
+          0,
+          5000,
+          0,
+          5000
+        ],
+        [
+          -2,
+          0,
+          -2,
+          0
+        ],
+        [
+          0,
+          5000,
+          0,
+          5000
+        ]
+      ],
+      "golden": [
+        [
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000"
+        ],
+        [
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000"
+        ],
+        [
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000"
+        ],
+        [
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000",
+          "-2,0,5000"
+        ]
+      ]
+    },
+    {
+      "id": "impulse-top",
+      "kind": "impulse",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          0,
+          12,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "0,6,0",
+          "0,12,0",
+          "0,4,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,3,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "impulse-bottom",
+      "kind": "impulse",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,4,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,12,0",
+          "0,4,0",
+          "0,0,0",
+          "0,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "impulse-left",
+      "kind": "impulse",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "0,6,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,12,0",
+          "0,3,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,4,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "impulse-right",
+      "kind": "impulse",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          0,
+          0,
+          0,
+          12
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,4,0",
+          "0,12,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,4,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "stale-contrast",
+      "kind": "impulse",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          9,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "0,0,9",
+          "0,0,9",
+          "0,0,9/2",
+          "0,0,0"
+        ],
+        [
+          "0,0,9",
+          "0,0,9",
+          "0,0,9/2",
+          "0,0,0"
+        ],
+        [
+          "0,0,9/2",
+          "0,0,9/2",
+          "0,0,9/4",
+          "0,0,0"
+        ],
+        [
+          "0,0,0",
+          "0,0,0",
+          "0,0,0",
+          "0,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "edge-vertical",
+      "kind": "edge",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          1,
+          2,
+          9,
+          8
+        ],
+        [
+          2,
+          3,
+          8,
+          7
+        ],
+        [
+          1,
+          2,
+          9,
+          8
+        ],
+        [
+          2,
+          3,
+          8,
+          7
+        ]
+      ],
+      "golden": [
+        [
+          "1,2,3",
+          "5,2,3",
+          "9,6,5",
+          "9,8,7"
+        ],
+        [
+          "1,2,3",
+          "5,7/2,3",
+          "9,8,5",
+          "9,8,7"
+        ],
+        [
+          "1,2,3",
+          "5,2,3",
+          "9,13/2,5",
+          "9,8,7"
+        ],
+        [
+          "1,2,3",
+          "5,4,3",
+          "9,8,5",
+          "9,8,7"
+        ]
+      ]
+    },
+    {
+      "id": "checker-red",
+      "kind": "checkerboard",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 0,
+      "cropTop": 0,
+      "cropWidth": 4,
+      "cropHeight": 4,
+      "rows": [
+        [
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "100,0,0",
+          "50,0,0",
+          "0,0,0",
+          "0,0,0"
+        ],
+        [
+          "50,0,0",
+          "50,0,0",
+          "50,0,0",
+          "50,0,0"
+        ],
+        [
+          "0,0,0",
+          "50,0,0",
+          "100,0,0",
+          "100,0,0"
+        ],
+        [
+          "0,0,0",
+          "50,0,0",
+          "100,0,0",
+          "100,0,0"
+        ]
+      ]
+    },
+    {
+      "id": "crop-odd",
+      "kind": "crop",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 4,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "rows": [
+        [
+          100,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          100,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "golden": [
+        [
+          "50,0,0",
+          "50,0,0"
+        ],
+        [
+          "50,0,0",
+          "100,0,0"
+        ]
+      ]
+    }
+  ]
+}

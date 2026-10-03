@@ -424,3 +424,7 @@ Host gate for the directive deliverable "Working-image descriptor and color conv
 ## P054 — Implement denoising as an optional processing stage (host scope)
 
 Host gate for the directive deliverable "Denoise module and detail-versus-noise evaluation protocol". See [P054_IMPLEMENT_DENOISING_AS_AN_OPTIONAL_PROCESSING_ST.md](P054_IMPLEMENT_DENOISING_AS_AN_OPTIONAL_PROCESSING_ST.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P051 — Build the row-streamed reference demosaic (host scope)
+
+Host gate for the directive deliverable "CPU reference demosaic and exact synthetic goldens". See [P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.md](P051_BUILD_THE_ROW_STREAMED_REFERENCE_DEMOSAIC.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
