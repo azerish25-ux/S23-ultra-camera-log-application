@@ -1,0 +1,51 @@
+{
+  "phase": "P050",
+  "caseIds": [
+    "TC-P050-01",
+    "TC-P050-02",
+    "TC-P050-03",
+    "TC-P050-04",
+    "TC-P050-05",
+    "TC-P050-06",
+    "TC-P050-07",
+    "TC-P050-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p050_implement_all_cfa_parity_cases.py",
+    "scripts/tests/test_p050_implement_all_cfa_parity_cases.py",
+    "docs/P050_IMPLEMENT_ALL_CFA_PARITY_CASES.md",
+    "docs/P050_IMPLEMENT_ALL_CFA_PARITY_CASES.json",
+    "docs/evidence/P050-handoff.json",
+    "scripts/gates/p050_tc01.py",
+    "scripts/gates/p050_tc02.py",
+    "scripts/gates/p050_tc03.py",
+    "scripts/gates/p050_tc04.py",
+    "scripts/gates/p050_tc05.py",
+    "scripts/gates/p050_tc06.py",
+    "scripts/gates/p050_tc07.py",
+    "scripts/gates/p050_tc08.py",
+    "scripts/tests/test_p050_tc01.py",
+    "scripts/tests/test_p050_tc02.py",
+    "scripts/tests/test_p050_tc03.py",
+    "scripts/tests/test_p050_tc04.py",
+    "scripts/tests/test_p050_tc05.py",
+    "scripts/tests/test_p050_tc06.py",
+    "scripts/tests/test_p050_tc07.py",
+    "scripts/tests/test_p050_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p050*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "CFA origin reset after crop",
+    "red-blue swap as channel identity",
+    "green checkerboard as recovered detail"
+  ],
+  "nextPhase": "P051"
+}

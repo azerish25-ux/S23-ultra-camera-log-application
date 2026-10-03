@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "phase": "P050",
+  "mapId": "s23-cfa-parity-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Carry the original CFA origin through cropping and demosaic. Test RGGB, BGGR, GRBG, and GBRG using synthetic planes with distinct constant values. Rotate developed RGB only after the source mosaic interpretation is established unless a separately verified mosaic transform is used.",
+  "fixture": "An odd-offset crop of each CFA with red, green, and blue codes deliberately far apart.",
+  "oracle": "The resulting channel identity matches the independent fixture without red-blue swaps or green checkerboards.",
+  "mutant": "Reset CFA origin to the top-left of every cropped buffer.",
+  "codes": {
+    "R": 17,
+    "G": 400,
+    "B": 901
+  },
+  "planes": [
+    {
+      "id": "rggb-odd",
+      "cfa": "RGGB",
+      "cropLeft": 1,
+      "cropTop": 1,
+      "width": 2,
+      "height": 2,
+      "rowPadding": 2,
+      "paddingCode": 7,
+      "samples": [
+        [
+          901,
+          400
+        ],
+        [
+          400,
+          17
+        ]
+      ],
+      "expectedChannels": [
+        [
+          "B",
+          "G"
+        ],
+        [
+          "G",
+          "R"
+        ]
+      ],
+      "developedRotation": 0,
+      "rotationOrder": "developed-after-interpret"
+    },
+    {
+      "id": "bggr-odd",
+      "cfa": "BGGR",
+      "cropLeft": 1,
+      "cropTop": 1,
+      "width": 2,
+      "height": 2,
+      "rowPadding": 2,
+      "paddingCode": 7,
+      "samples": [
+        [
+          17,
+          400
+        ],
+        [
+          400,
+          901
+        ]
+      ],
+      "expectedChannels": [
+        [
+          "R",
+          "G"
+        ],
+        [
+          "G",
+          "B"
+        ]
+      ],
+      "developedRotation": 0,
+      "rotationOrder": "developed-after-interpret"
+    },
+    {
+      "id": "grbg-odd",
+      "cfa": "GRBG",
+      "cropLeft": 1,
+      "cropTop": 1,
+      "width": 2,
+      "height": 2,
+      "rowPadding": 2,
+      "paddingCode": 7,
+      "samples": [
+        [
+          400,
+          901
+        ],
+        [
+          17,
+          400
+        ]
+      ],
+      "expectedChannels": [
+        [
+          "G",
+          "B"
+        ],
+        [
+          "R",
+          "G"
+        ]
+      ],
+      "developedRotation": 0,
+      "rotationOrder": "developed-after-interpret"
+    },
+    {
+      "id": "gbrg-odd",
+      "cfa": "GBRG",
+      "cropLeft": 1,
+      "cropTop": 1,
+      "width": 2,
+      "height": 2,
+      "rowPadding": 2,
+      "paddingCode": 7,
+      "samples": [
+        [
+          400,
+          17
+        ],
+        [
+          901,
+          400
+        ]
+      ],
+      "expectedChannels": [
+        [
+          "G",
+          "R"
+        ],
+        [
+          "B",
+          "G"
+        ]
+      ],
+      "developedRotation": 0,
+      "rotationOrder": "developed-after-interpret"
+    },
+    {
+      "id": "rggb-odd-left",
+      "cfa": "RGGB",
+      "cropLeft": 1,
+      "cropTop": 0,
+      "width": 2,
+      "height": 2,
+      "rowPadding": 2,
+      "paddingCode": 7,
+      "samples": [
+        [
+          400,
+          17
+        ],
+        [
+          901,
+          400
+        ]
+      ],
+      "expectedChannels": [
+        [
+          "G",
+          "R"
+        ],
+        [
+          "B",
+          "G"
+        ]
+      ],
+      "developedRotation": 90,
+      "rotationOrder": "developed-after-interpret"
+    }
+  ]
+}

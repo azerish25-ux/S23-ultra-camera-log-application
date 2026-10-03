@@ -412,3 +412,7 @@ Host gate for the directive deliverable "Independent profile acceptance suite an
 ## P049 — Normalize RAW without destroying evidence (host scope)
 
 Host gate for the directive deliverable "Signed normalization kernel and reference vectors". See [P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.md](P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P050 — Implement all CFA parity cases (host scope)
+
+Host gate for the directive deliverable "CFA coordinate utility and exhaustive parity tests". See [P050_IMPLEMENT_ALL_CFA_PARITY_CASES.md](P050_IMPLEMENT_ALL_CFA_PARITY_CASES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
