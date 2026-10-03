@@ -604,3 +604,7 @@ Host gate for the directive deliverable "Optical validation laboratory and error
 ## P097 — Define the depth-provider interface (host scope)
 
 Host gate for the directive deliverable "Depth provider contract and stale-result tests". See [P097_DEFINE_THE_DEPTH_PROVIDER_INTERFACE.md](P097_DEFINE_THE_DEPTH_PROVIDER_INTERFACE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P098 — Select a licensable baseline model (host scope)
+
+Host gate for the directive deliverable "Model selection record and licence manifest". See [P098_SELECT_A_LICENSABLE_BASELINE_MODEL.md](P098_SELECT_A_LICENSABLE_BASELINE_MODEL.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

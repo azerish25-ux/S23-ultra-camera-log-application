@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "phase": "P098",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "evidenceId": "p098-wedge",
+  "samples": [
+    0.1,
+    0.4,
+    0.9
+  ],
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false
+}
