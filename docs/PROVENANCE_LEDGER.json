@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "phase": "P007",
+  "ledgerId": "s23-provenance-ledger",
+  "implementationBaseRevision": "fffd5c9a63cb732e103052acae29ae0c251585cc",
+  "identityPolicy": "sha256",
+  "records": [
+    {
+      "localId": "prov-awg3-stock-v1",
+      "kind": "stock_profile",
+      "displayName": "AWG3-stock",
+      "sha256": "b114625ba7c31814243564f50d563257cc9ca3220fb6146a5f16ce799b647e2d",
+      "rights": "permitted",
+      "origin": "authored:P007/awg3-stock/v1",
+      "owner": "s23 host fixture author",
+      "acquiredAt": "2026-10-02",
+      "permittedUse": "host tests, private comparison, and redistribution of this authored fixture",
+      "transformations": [],
+      "publicBundle": true
+    },
+    {
+      "localId": "prov-awg3-stock-v2",
+      "kind": "stock_profile",
+      "displayName": "AWG3-stock",
+      "sha256": "7a62e24763aabbf999a568166189b16885ba0815a0a1dacaa6c16c16b5f1a06e",
+      "rights": "permitted",
+      "origin": "authored:P007/awg3-stock/v2",
+      "owner": "s23 host fixture author",
+      "acquiredAt": "2026-10-02",
+      "permittedUse": "host tests, private comparison, and redistribution of this authored fixture",
+      "transformations": [
+        {
+          "operation": "distinct-revision",
+          "priorSha256": "b114625ba7c31814243564f50d563257cc9ca3220fb6146a5f16ce799b647e2d",
+          "note": "Second authored byte sequence of the same display name. Identity is this record sha256, not the display name."
+        }
+      ],
+      "publicBundle": true
+    },
+    {
+      "localId": "prov-image-unknown-rights",
+      "kind": "image",
+      "displayName": "reference-frame-unreviewed",
+      "sha256": "4559ad24512028c7faa6e9f2ac038eecbc37a8eaea76a0963aed8e33aba25850",
+      "rights": "unknown",
+      "origin": "authored:P007/unreviewed-reference-image",
+      "owner": "unreviewed reference placeholder",
+      "acquiredAt": "2026-10-02",
+      "permittedUse": "private comparison only until a rights review records redistribution permission",
+      "transformations": [],
+      "publicBundle": false
+    }
+  ]
+}
