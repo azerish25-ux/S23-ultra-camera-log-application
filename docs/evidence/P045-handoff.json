@@ -1,0 +1,50 @@
+{
+  "phase": "P045",
+  "caseIds": [
+    "TC-P045-01",
+    "TC-P045-02",
+    "TC-P045-03",
+    "TC-P045-04",
+    "TC-P045-05",
+    "TC-P045-06",
+    "TC-P045-07",
+    "TC-P045-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p045_fit_color_transforms_with_held_out_validation.py",
+    "scripts/tests/test_p045_fit_color_transforms_with_held_out_validation.py",
+    "docs/P045_FIT_COLOR_TRANSFORMS_WITH_HELD_OUT_VALIDATION.md",
+    "docs/P045_FIT_COLOR_TRANSFORMS_WITH_HELD_OUT_VALIDATION.json",
+    "docs/evidence/P045-handoff.json",
+    "scripts/gates/p045_tc01.py",
+    "scripts/gates/p045_tc02.py",
+    "scripts/gates/p045_tc03.py",
+    "scripts/gates/p045_tc04.py",
+    "scripts/gates/p045_tc05.py",
+    "scripts/gates/p045_tc06.py",
+    "scripts/gates/p045_tc07.py",
+    "scripts/gates/p045_tc08.py",
+    "scripts/tests/test_p045_tc01.py",
+    "scripts/tests/test_p045_tc02.py",
+    "scripts/tests/test_p045_tc03.py",
+    "scripts/tests/test_p045_tc04.py",
+    "scripts/tests/test_p045_tc05.py",
+    "scripts/tests/test_p045_tc06.py",
+    "scripts/tests/test_p045_tc07.py",
+    "scripts/tests/test_p045_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p045*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured camera-to-working color profile",
+    "training-only color validation"
+  ],
+  "nextPhase": "P046"
+}

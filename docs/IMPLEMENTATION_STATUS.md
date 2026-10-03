@@ -392,3 +392,7 @@ Host gate for the directive deliverable "Profile schema and provenance-aware imp
 ## P043 — Measure flat-field and lens shading (host scope)
 
 Host gate for the directive deliverable "Flat-field acquisition protocol and shading-map validator". See [P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.md](P043_MEASURE_FLAT_FIELD_AND_LENS_SHADING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P045 — Fit color transforms with held-out validation (host scope)
+
+Host gate for the directive deliverable "Color fitting tool and independent evaluation report". See [P045_FIT_COLOR_TRANSFORMS_WITH_HELD_OUT_VALIDATION.md](P045_FIT_COLOR_TRANSFORMS_WITH_HELD_OUT_VALIDATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

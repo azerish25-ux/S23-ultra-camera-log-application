@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "phase": "P045",
+  "mapId": "s23-held-out-color-fit-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use linearized source measurements and independently specified target data. Fit with documented weighting and conditioning checks. Separate training patches, held-out patches, and natural scenes. Report neutral preservation and error distributions under the specified illuminant.",
+  "fixture": "A chart fit with low training error but large held-out saturated-blue error under a second light source.",
+  "oracle": "The profile remains limited to its validated conditions and the report exposes the held-out failure.",
+  "mutant": "Validate a fit only against the same patches used to estimate it.",
+  "weighting": "inverse-variance",
+  "conditioning": {
+    "metric": "frobenius",
+    "threshold": "1000"
+  },
+  "illuminant": "D65",
+  "neutralPatchId": "N18",
+  "training": [
+    {
+      "id": "N18",
+      "source": ["0.18", "0.18", "0.18"],
+      "target": ["0.18", "0.18", "0.18"],
+      "weight": "4"
+    },
+    {
+      "id": "red",
+      "source": ["0.4", "0.08", "0.05"],
+      "target": ["0.4", "0.08", "0.05"],
+      "weight": "1"
+    },
+    {
+      "id": "green",
+      "source": ["0.1", "0.35", "0.08"],
+      "target": ["0.1", "0.35", "0.08"],
+      "weight": "1"
+    },
+    {
+      "id": "blue-mild",
+      "source": ["0.08", "0.12", "0.3"],
+      "target": ["0.08", "0.12", "0.3"],
+      "weight": "1"
+    },
+    {
+      "id": "grey",
+      "source": ["0.5", "0.5", "0.5"],
+      "target": ["0.5", "0.5", "0.5"],
+      "weight": "2"
+    }
+  ],
+  "heldOut": [
+    {
+      "id": "saturated-blue",
+      "illuminant": "A",
+      "source": ["0.05", "0.1", "0.7"],
+      "target": ["0.35", "0.5", "0.7"],
+      "role": "saturated-blue"
+    }
+  ],
+  "naturalScenes": [
+    {"id": "scene-skin", "illuminant": "D65", "role": "skin"},
+    {"id": "scene-fabric", "illuminant": "D65", "role": "saturated-fabric"},
+    {"id": "scene-foliage", "illuminant": "D65", "role": "foliage"},
+    {"id": "scene-narrow", "illuminant": "narrow-band", "role": "narrow-band"}
+  ],
+  "matrix": ["1", "0", "0", "0", "1", "0", "0", "0", "1"]
+}
