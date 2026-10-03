@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "phase": "P054",
+  "mapId": "s23-optional-denoise-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Start with a conservative spatial reference, then evaluate temporal candidates with motion confidence. Keep noise characterization distinct from artistic grain. Export the processing strength and algorithm version; allow disabling the stage and inspecting residuals.",
+  "fixture": "Low-light hair, moving fabric, a static wall, and a slowly moving colored point light.",
+  "oracle": "Noise reduction cannot pass by smearing all texture or leaving motion trails beyond the declared quality gate.",
+  "mutant": "Use frame averaging without motion or occlusion handling.",
+  "algorithmVersion": "spatial-ref-1",
+  "strength": "0.25",
+  "stageEnabled": true,
+  "residualInspectable": true,
+  "cleanSourceUntouched": true,
+  "noiseCharacterization": "sensor-read-noise",
+  "artisticGrain": "not-applied",
+  "spatialReference": "conservative-box-3",
+  "qualityGate": {
+    "maxMotionTrail": "0.02",
+    "minTextureRetention": "0.85"
+  },
+  "scenes": [
+    {
+      "id": "low-light-hair",
+      "textureRetention": "0.92",
+      "motionTrail": "0",
+      "motionConfidence": "1",
+      "occlusion": false,
+      "noiseBefore": "0.08",
+      "noiseAfter": "0.05",
+      "residual": "0.03",
+      "frameAverageTexture": "0.62",
+      "frameAverageTrail": "0.04",
+      "frameAverageNoise": "0.01"
+    },
+    {
+      "id": "moving-fabric",
+      "textureRetention": "0.9",
+      "motionTrail": "0.01",
+      "motionConfidence": "0.35",
+      "occlusion": false,
+      "noiseBefore": "0.04",
+      "noiseAfter": "0.03",
+      "residual": "0.01",
+      "frameAverageTexture": "0.4",
+      "frameAverageTrail": "0.22",
+      "frameAverageNoise": "0.008"
+    },
+    {
+      "id": "static-wall",
+      "textureRetention": "0.97",
+      "motionTrail": "0",
+      "motionConfidence": "1",
+      "occlusion": false,
+      "noiseBefore": "0.03",
+      "noiseAfter": "0.012",
+      "residual": "0.018",
+      "frameAverageTexture": "0.96",
+      "frameAverageTrail": "0",
+      "frameAverageNoise": "0.005"
+    },
+    {
+      "id": "point-light",
+      "textureRetention": "0.94",
+      "motionTrail": "0.012",
+      "motionConfidence": "0.62",
+      "occlusion": false,
+      "noiseBefore": "0.02",
+      "noiseAfter": "0.015",
+      "residual": "0.005",
+      "frameAverageTexture": "0.5",
+      "frameAverageTrail": "0.18",
+      "frameAverageNoise": "0.004"
+    }
+  ]
+}

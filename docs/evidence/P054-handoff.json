@@ -1,0 +1,51 @@
+{
+  "phase": "P054",
+  "caseIds": [
+    "TC-P054-01",
+    "TC-P054-02",
+    "TC-P054-03",
+    "TC-P054-04",
+    "TC-P054-05",
+    "TC-P054-06",
+    "TC-P054-07",
+    "TC-P054-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p054_implement_denoising_as_an_optional_processing_st.py",
+    "scripts/tests/test_p054_implement_denoising_as_an_optional_processing_st.py",
+    "docs/P054_IMPLEMENT_DENOISING_AS_AN_OPTIONAL_PROCESSING_ST.md",
+    "docs/P054_IMPLEMENT_DENOISING_AS_AN_OPTIONAL_PROCESSING_ST.json",
+    "docs/evidence/P054-handoff.json",
+    "scripts/gates/p054_tc01.py",
+    "scripts/gates/p054_tc02.py",
+    "scripts/gates/p054_tc03.py",
+    "scripts/gates/p054_tc04.py",
+    "scripts/gates/p054_tc05.py",
+    "scripts/gates/p054_tc06.py",
+    "scripts/gates/p054_tc07.py",
+    "scripts/gates/p054_tc08.py",
+    "scripts/tests/test_p054_tc01.py",
+    "scripts/tests/test_p054_tc02.py",
+    "scripts/tests/test_p054_tc03.py",
+    "scripts/tests/test_p054_tc04.py",
+    "scripts/tests/test_p054_tc05.py",
+    "scripts/tests/test_p054_tc06.py",
+    "scripts/tests/test_p054_tc07.py",
+    "scripts/tests/test_p054_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p054*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured sensor denoise on a device",
+    "frame averaging without motion or occlusion handling",
+    "artistic grain as noise characterization"
+  ],
+  "nextPhase": "P055"
+}
