@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "phase": "P033",
+  "contractId": "s23-raw-sequence-container-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Include file magic, schema version, route identity, source geometry, CFA, packing, calibration snapshot, and per-frame metadata. Frame records need lengths, timestamps, integrity checks, and explicit end state. Readers must reject impossible lengths before allocation.",
+  "fixture": "A valid three-frame source followed by an oversized length field and a truncated final record.",
+  "oracle": "The reader reports the complete prefix and corruption separately under an explicit recovery mode without rewriting the original.",
+  "mutant": "Allocate an arbitrary declared payload length before checking bounds.",
+  "container": {
+    "magic": "S23RAW01",
+    "schemaVersion": 1,
+    "routeIdentity": "logical-0/RAW_SENSOR",
+    "width": 64,
+    "height": 48,
+    "cfa": "RGGB",
+    "packing": "uint16le-tight",
+    "calibrationSnapshotId": "cal-unmeasured-1",
+    "maxPayloadBytes": 65536,
+    "maxDimension": 8192,
+    "endState": "interrupted"
+  },
+  "frames": [
+    {
+      "index": 0,
+      "declaredPayloadLength": 6144,
+      "timestampNs": "1000000000",
+      "integrity": "crc32-ok",
+      "endState": "complete",
+      "bytesPresent": 6144
+    },
+    {
+      "index": 1,
+      "declaredPayloadLength": 6144,
+      "timestampNs": "2000000000",
+      "integrity": "crc32-ok",
+      "endState": "complete",
+      "bytesPresent": 6144
+    },
+    {
+      "index": 2,
+      "declaredPayloadLength": 6144,
+      "timestampNs": "3000000000",
+      "integrity": "crc32-ok",
+      "endState": "complete",
+      "bytesPresent": 6144
+    },
+    {
+      "index": 3,
+      "declaredPayloadLength": 2147483648,
+      "timestampNs": "4000000000",
+      "integrity": "absent",
+      "endState": "truncated",
+      "bytesPresent": 128
+    }
+  ],
+  "recoveryMode": "explicit-complete-prefix",
+  "originalRewritten": false
+}

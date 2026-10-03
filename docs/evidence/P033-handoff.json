@@ -1,0 +1,52 @@
+{
+  "phase": "P033",
+  "caseIds": [
+    "TC-P033-01",
+    "TC-P033-02",
+    "TC-P033-03",
+    "TC-P033-04",
+    "TC-P033-05",
+    "TC-P033-06",
+    "TC-P033-07",
+    "TC-P033-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p033_specify_the_raw_sequence_container.py",
+    "scripts/gates/p033_tc01.py",
+    "scripts/gates/p033_tc02.py",
+    "scripts/gates/p033_tc03.py",
+    "scripts/gates/p033_tc04.py",
+    "scripts/gates/p033_tc05.py",
+    "scripts/gates/p033_tc06.py",
+    "scripts/gates/p033_tc07.py",
+    "scripts/gates/p033_tc08.py",
+    "scripts/tests/test_p033_specify_the_raw_sequence_container.py",
+    "scripts/tests/test_p033_tc01.py",
+    "scripts/tests/test_p033_tc02.py",
+    "scripts/tests/test_p033_tc03.py",
+    "scripts/tests/test_p033_tc04.py",
+    "scripts/tests/test_p033_tc05.py",
+    "scripts/tests/test_p033_tc06.py",
+    "scripts/tests/test_p033_tc07.py",
+    "scripts/tests/test_p033_tc08.py",
+    "docs/P033_SPECIFY_THE_RAW_SEQUENCE_CONTAINER.md",
+    "docs/P033_SPECIFY_THE_RAW_SEQUENCE_CONTAINER.json",
+    "docs/evidence/P033-handoff.json"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p033*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device RAW writer",
+    "physical colour calibration"
+  ],
+  "nextPhase": "P034"
+}
