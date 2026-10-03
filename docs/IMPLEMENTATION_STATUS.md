@@ -364,3 +364,7 @@ Host gate for the directive deliverable "Exact pairing service and reorder-timeo
 ## P033 — Specify the RAW sequence container (host scope)
 
 Host gate for the directive deliverable "RAW source specification and hostile-input reader tests". See [P033_SPECIFY_THE_RAW_SEQUENCE_CONTAINER.md](P033_SPECIFY_THE_RAW_SEQUENCE_CONTAINER.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P035 — Implement packed RAW decoding fixtures (host scope)
+
+Host gate for the directive deliverable "Packing adapters and exact golden arrays". See [P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.md](P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

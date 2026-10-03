@@ -1,0 +1,732 @@
+{
+  "schemaVersion": 1,
+  "phase": "P035",
+  "mapId": "s23-packed-raw-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Construct tiny synthetic mosaics for supported RAW formats with known code values, row padding, crop offsets, and all CFA parities. Use independent bit-level references. Do not assume RAW_SENSOR, RAW10, and RAW12 have interchangeable memory layouts.",
+  "fixture": "Alternating minimum and maximum sample codes in padded rows with a crop beginning on an odd coordinate.",
+  "oracle": "Decoded codes and CFA coordinates match the independent fixture exactly, with padding untouched.",
+  "mutant": "Read every source as contiguous sixteen-bit native-endian samples.",
+  "mosaics": [
+    {
+      "id": "raw-sensor-rggb",
+      "format": "RAW_SENSOR",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 12,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "0000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a50000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a5",
+      "paddingHex": "a5a5a5a5",
+      "codes": [
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ],
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          65535
+        ],
+        [
+          65535,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "B",
+          "G"
+        ],
+        [
+          "G",
+          "R"
+        ]
+      ]
+    },
+    {
+      "id": "raw-sensor-grbg",
+      "format": "RAW_SENSOR",
+      "cfa": "GRBG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 12,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "0000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a50000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a5",
+      "paddingHex": "a5a5a5a5",
+      "codes": [
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ],
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          65535
+        ],
+        [
+          65535,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "B"
+        ],
+        [
+          "R",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw-sensor-gbrg",
+      "format": "RAW_SENSOR",
+      "cfa": "GBRG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 12,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "0000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a50000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a5",
+      "paddingHex": "a5a5a5a5",
+      "codes": [
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ],
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          65535
+        ],
+        [
+          65535,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "R"
+        ],
+        [
+          "B",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw-sensor-bggr",
+      "format": "RAW_SENSOR",
+      "cfa": "BGGR",
+      "width": 4,
+      "height": 4,
+      "rowStride": 12,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "0000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a50000ffff0000ffffa5a5a5a5ffff0000ffff0000a5a5a5a5",
+      "paddingHex": "a5a5a5a5",
+      "codes": [
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ],
+        [
+          0,
+          65535,
+          0,
+          65535
+        ],
+        [
+          65535,
+          0,
+          65535,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          65535
+        ],
+        [
+          65535,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "R",
+          "G"
+        ],
+        [
+          "G",
+          "B"
+        ]
+      ]
+    },
+    {
+      "id": "raw10-rggb",
+      "format": "RAW10",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00ff00ffcc5a5a5aff00ff00335a5a5a00ff00ffcc5a5a5aff00ff00335a5a5a",
+      "paddingHex": "5a5a5a",
+      "codes": [
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ],
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          1023
+        ],
+        [
+          1023,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "B",
+          "G"
+        ],
+        [
+          "G",
+          "R"
+        ]
+      ]
+    },
+    {
+      "id": "raw10-grbg",
+      "format": "RAW10",
+      "cfa": "GRBG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00ff00ffcc5a5a5aff00ff00335a5a5a00ff00ffcc5a5a5aff00ff00335a5a5a",
+      "paddingHex": "5a5a5a",
+      "codes": [
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ],
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          1023
+        ],
+        [
+          1023,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "B"
+        ],
+        [
+          "R",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw10-gbrg",
+      "format": "RAW10",
+      "cfa": "GBRG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00ff00ffcc5a5a5aff00ff00335a5a5a00ff00ffcc5a5a5aff00ff00335a5a5a",
+      "paddingHex": "5a5a5a",
+      "codes": [
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ],
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          1023
+        ],
+        [
+          1023,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "R"
+        ],
+        [
+          "B",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw10-bggr",
+      "format": "RAW10",
+      "cfa": "BGGR",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00ff00ffcc5a5a5aff00ff00335a5a5a00ff00ffcc5a5a5aff00ff00335a5a5a",
+      "paddingHex": "5a5a5a",
+      "codes": [
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ],
+        [
+          0,
+          1023,
+          0,
+          1023
+        ],
+        [
+          1023,
+          0,
+          1023,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          1023
+        ],
+        [
+          1023,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "R",
+          "G"
+        ],
+        [
+          "G",
+          "B"
+        ]
+      ]
+    },
+    {
+      "id": "raw12-rggb",
+      "format": "RAW12",
+      "cfa": "RGGB",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00fff000fff0b6b6ff000fff000fb6b600fff000fff0b6b6ff000fff000fb6b6",
+      "paddingHex": "b6b6",
+      "codes": [
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ],
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          4095
+        ],
+        [
+          4095,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "B",
+          "G"
+        ],
+        [
+          "G",
+          "R"
+        ]
+      ]
+    },
+    {
+      "id": "raw12-grbg",
+      "format": "RAW12",
+      "cfa": "GRBG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00fff000fff0b6b6ff000fff000fb6b600fff000fff0b6b6ff000fff000fb6b6",
+      "paddingHex": "b6b6",
+      "codes": [
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ],
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          4095
+        ],
+        [
+          4095,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "B"
+        ],
+        [
+          "R",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw12-gbrg",
+      "format": "RAW12",
+      "cfa": "GBRG",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00fff000fff0b6b6ff000fff000fb6b600fff000fff0b6b6ff000fff000fb6b6",
+      "paddingHex": "b6b6",
+      "codes": [
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ],
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          4095
+        ],
+        [
+          4095,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "G",
+          "R"
+        ],
+        [
+          "B",
+          "G"
+        ]
+      ]
+    },
+    {
+      "id": "raw12-bggr",
+      "format": "RAW12",
+      "cfa": "BGGR",
+      "width": 4,
+      "height": 4,
+      "rowStride": 8,
+      "cropLeft": 1,
+      "cropTop": 1,
+      "cropWidth": 2,
+      "cropHeight": 2,
+      "packedHex": "00fff000fff0b6b6ff000fff000fb6b600fff000fff0b6b6ff000fff000fb6b6",
+      "paddingHex": "b6b6",
+      "codes": [
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ],
+        [
+          0,
+          4095,
+          0,
+          4095
+        ],
+        [
+          4095,
+          0,
+          4095,
+          0
+        ]
+      ],
+      "cropCodes": [
+        [
+          0,
+          4095
+        ],
+        [
+          4095,
+          0
+        ]
+      ],
+      "cropChannels": [
+        [
+          "R",
+          "G"
+        ],
+        [
+          "G",
+          "B"
+        ]
+      ]
+    }
+  ]
+}

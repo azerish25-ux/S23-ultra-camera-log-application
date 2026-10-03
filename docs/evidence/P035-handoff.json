@@ -1,0 +1,50 @@
+{
+  "phase": "P035",
+  "caseIds": [
+    "TC-P035-01",
+    "TC-P035-02",
+    "TC-P035-03",
+    "TC-P035-04",
+    "TC-P035-05",
+    "TC-P035-06",
+    "TC-P035-07",
+    "TC-P035-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p035_implement_packed_raw_decoding_fixtures.py",
+    "scripts/tests/test_p035_implement_packed_raw_decoding_fixtures.py",
+    "docs/P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.md",
+    "docs/P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.json",
+    "docs/evidence/P035-handoff.json",
+    "scripts/gates/p035_tc01.py",
+    "scripts/gates/p035_tc02.py",
+    "scripts/gates/p035_tc03.py",
+    "scripts/gates/p035_tc04.py",
+    "scripts/gates/p035_tc05.py",
+    "scripts/gates/p035_tc06.py",
+    "scripts/gates/p035_tc07.py",
+    "scripts/gates/p035_tc08.py",
+    "scripts/tests/test_p035_tc01.py",
+    "scripts/tests/test_p035_tc02.py",
+    "scripts/tests/test_p035_tc03.py",
+    "scripts/tests/test_p035_tc04.py",
+    "scripts/tests/test_p035_tc05.py",
+    "scripts/tests/test_p035_tc06.py",
+    "scripts/tests/test_p035_tc07.py",
+    "scripts/tests/test_p035_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p035*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "interchangeable RAW_SENSOR, RAW10, and RAW12 memory layouts",
+    "contiguous sixteen-bit native-endian decoding of packed RAW"
+  ],
+  "nextPhase": "P036"
+}
