@@ -548,3 +548,7 @@ Host gate for the directive deliverable "Grain-statistics model and exposure-ser
 ## P083 — Scale grain by virtual gate and delivery geometry (host scope)
 
 Host gate for the directive deliverable "Format-aware grain mapping and resolution consistency tests". See [P083_SCALE_GRAIN_BY_VIRTUAL_GATE_AND_DELIVERY_GEOMETR.md](P083_SCALE_GRAIN_BY_VIRTUAL_GATE_AND_DELIVERY_GEOMETR.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P084 — Implement emulsion halation separately from bloom (host scope)
+
+Host gate for the directive deliverable "Halation model, kernel tests, and controlled-light benchmark". See [P084_IMPLEMENT_EMULSION_HALATION_SEPARATELY_FROM_BLOO.md](P084_IMPLEMENT_EMULSION_HALATION_SEPARATELY_FROM_BLOO.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
