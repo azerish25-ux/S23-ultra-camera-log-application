@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "phase": "P044",
+  "mapId": "s23-neutral-exposure-scale-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Inspect a user-confirmed patch for clipping, texture, signal level, and color neutrality. Retain ROI coordinates and source frame identity. Apply exposure scale separately from chromatic fitting, and reject invalid patches rather than silently guessing from the whole frame.",
+  "fixture": "A bright white object misidentified as eighteen-percent grey and a grey patch partly clipped by a specular reflection.",
+  "oracle": "The calibration workflow requests valid evidence and records uncertainty instead of producing a confidently measured scale.",
+  "mutant": "Assume the mean image luminance always corresponds to middle grey.",
+  "sourceFrameId": "frame-neutral-044",
+  "wholeFrameMeanLuminance": "7200",
+  "middleGreyCode": "1800",
+  "clipCeiling": "10000",
+  "patches": [
+    {
+      "id": "white-object",
+      "roi": "120,40,80,80",
+      "userConfirmed": true,
+      "identifiedAs": "eighteen-percent-grey",
+      "signalLevel": "9100",
+      "texture": "low",
+      "clippedFraction": "0",
+      "specular": false,
+      "neutralDelta": "40",
+      "actualClass": "bright-white"
+    },
+    {
+      "id": "grey-specular",
+      "roi": "400,220,60,60",
+      "userConfirmed": true,
+      "identifiedAs": "eighteen-percent-grey",
+      "signalLevel": "4200",
+      "texture": "high",
+      "clippedFraction": "18",
+      "specular": true,
+      "neutralDelta": "120",
+      "actualClass": "partial-clip"
+    }
+  ]
+}

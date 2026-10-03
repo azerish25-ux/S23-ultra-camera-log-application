@@ -376,3 +376,7 @@ Host gate for the directive deliverable "Non-destructive development contract an
 ## P040 — Qualify saved RAW on the physical S23 (host scope)
 
 Host gate for the directive deliverable "Physical RAW qualification matrix and retained source fixtures". See [P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.md](P040_QUALIFY_SAVED_RAW_ON_THE_PHYSICAL_S23.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P044 — Establish neutral exposure scale (host scope)
+
+Host gate for the directive deliverable "Neutral-reference measurement and guarded scale estimator". See [P044_ESTABLISH_NEUTRAL_EXPOSURE_SCALE.md](P044_ESTABLISH_NEUTRAL_EXPOSURE_SCALE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

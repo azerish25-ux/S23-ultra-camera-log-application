@@ -1,0 +1,50 @@
+{
+  "phase": "P044",
+  "caseIds": [
+    "TC-P044-01",
+    "TC-P044-02",
+    "TC-P044-03",
+    "TC-P044-04",
+    "TC-P044-05",
+    "TC-P044-06",
+    "TC-P044-07",
+    "TC-P044-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p044_establish_neutral_exposure_scale.py",
+    "scripts/tests/test_p044_establish_neutral_exposure_scale.py",
+    "docs/P044_ESTABLISH_NEUTRAL_EXPOSURE_SCALE.md",
+    "docs/P044_ESTABLISH_NEUTRAL_EXPOSURE_SCALE.json",
+    "docs/evidence/P044-handoff.json",
+    "scripts/gates/p044_tc01.py",
+    "scripts/gates/p044_tc02.py",
+    "scripts/gates/p044_tc03.py",
+    "scripts/gates/p044_tc04.py",
+    "scripts/gates/p044_tc05.py",
+    "scripts/gates/p044_tc06.py",
+    "scripts/gates/p044_tc07.py",
+    "scripts/gates/p044_tc08.py",
+    "scripts/tests/test_p044_tc01.py",
+    "scripts/tests/test_p044_tc02.py",
+    "scripts/tests/test_p044_tc03.py",
+    "scripts/tests/test_p044_tc04.py",
+    "scripts/tests/test_p044_tc05.py",
+    "scripts/tests/test_p044_tc06.py",
+    "scripts/tests/test_p044_tc07.py",
+    "scripts/tests/test_p044_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p044*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "mean luminance as middle grey",
+    "confidently measured exposure scale"
+  ],
+  "nextPhase": "P045"
+}
