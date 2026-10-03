@@ -1,0 +1,50 @@
+{
+  "phase": "P047",
+  "caseIds": [
+    "TC-P047-01",
+    "TC-P047-02",
+    "TC-P047-03",
+    "TC-P047-04",
+    "TC-P047-05",
+    "TC-P047-06",
+    "TC-P047-07",
+    "TC-P047-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p047_validate_profiles_against_independent_scenes.py",
+    "scripts/tests/test_p047_validate_profiles_against_independent_scenes.py",
+    "docs/P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.md",
+    "docs/P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.json",
+    "docs/evidence/P047-handoff.json",
+    "scripts/gates/p047_tc01.py",
+    "scripts/gates/p047_tc02.py",
+    "scripts/gates/p047_tc03.py",
+    "scripts/gates/p047_tc04.py",
+    "scripts/gates/p047_tc05.py",
+    "scripts/gates/p047_tc06.py",
+    "scripts/gates/p047_tc07.py",
+    "scripts/gates/p047_tc08.py",
+    "scripts/tests/test_p047_tc01.py",
+    "scripts/tests/test_p047_tc02.py",
+    "scripts/tests/test_p047_tc03.py",
+    "scripts/tests/test_p047_tc04.py",
+    "scripts/tests/test_p047_tc05.py",
+    "scripts/tests/test_p047_tc06.py",
+    "scripts/tests/test_p047_tc07.py",
+    "scripts/tests/test_p047_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p047*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "colorimetric accuracy from cinematic preference",
+    "phone default profile"
+  ],
+  "nextPhase": "P048"
+}

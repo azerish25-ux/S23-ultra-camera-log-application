@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "phase": "P047",
+  "mapId": "s23-independent-profile-acceptance-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use skin, foliage, fabrics, neutral steps, colored lights, and high-contrast scenes not used for fitting. Capture repeat conditions and assess color, exposure, noise, and highlight behaviour separately. Keep artistic preference scores out of calibration error calculations.",
+  "fixture": "A profile that makes one skin sample attractive while moving neutral greys and saturated fabric beyond the declared tolerance.",
+  "oracle": "The neutral and color gates fail independently of subjective preference.",
+  "mutant": "Use a preferred cinematic appearance as proof of camera colorimetric accuracy.",
+  "limitation": "Host acceptance is not a phone default, not colorimetric accuracy, and not physical S23 qualification. Neutral and color failures stay independent of artistic preference.",
+  "tolerance": {
+    "colorDelta": "0.04",
+    "exposureDelta": "0.05",
+    "noiseDelta": "0.08",
+    "highlightDelta": "0.03",
+    "neutralDelta": "0.02"
+  },
+  "profile": {
+    "id": "profile-skin-attractive",
+    "appearance": "preferred-cinematic",
+    "preferenceScore": "0.92"
+  },
+  "training": {
+    "error": "0.006",
+    "patchIds": [
+      "train-neutral-1",
+      "train-skin-1"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "skin-a",
+      "sceneClass": "skin",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.012",
+      "exposureDelta": "0.011",
+      "noiseDelta": "0.021",
+      "highlightDelta": "0.013",
+      "neutralDelta": null,
+      "preferenceScore": "0.95"
+    },
+    {
+      "id": "skin-b",
+      "sceneClass": "skin",
+      "repeatId": "r2",
+      "usedForFitting": false,
+      "colorDelta": "0.014",
+      "exposureDelta": "0.012",
+      "noiseDelta": "0.022",
+      "highlightDelta": "0.011",
+      "neutralDelta": null,
+      "preferenceScore": "0.93"
+    },
+    {
+      "id": "foliage-a",
+      "sceneClass": "foliage",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.02",
+      "exposureDelta": "0.018",
+      "noiseDelta": "0.03",
+      "highlightDelta": "0.015",
+      "neutralDelta": null,
+      "preferenceScore": "0.4"
+    },
+    {
+      "id": "fabric-sat",
+      "sceneClass": "fabrics",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.11",
+      "exposureDelta": "0.02",
+      "noiseDelta": "0.03",
+      "highlightDelta": "0.016",
+      "neutralDelta": null,
+      "preferenceScore": "0.15"
+    },
+    {
+      "id": "neutral-grey",
+      "sceneClass": "neutral",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.015",
+      "exposureDelta": "0.013",
+      "noiseDelta": "0.025",
+      "highlightDelta": "0.012",
+      "neutralDelta": "0.08",
+      "preferenceScore": "0.2"
+    },
+    {
+      "id": "colored-light-a",
+      "sceneClass": "colored-light",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.03",
+      "exposureDelta": "0.02",
+      "noiseDelta": "0.04",
+      "highlightDelta": "0.02",
+      "neutralDelta": null,
+      "preferenceScore": "0.5"
+    },
+    {
+      "id": "high-contrast-a",
+      "sceneClass": "high-contrast",
+      "repeatId": "r1",
+      "usedForFitting": false,
+      "colorDelta": "0.025",
+      "exposureDelta": "0.03",
+      "noiseDelta": "0.05",
+      "highlightDelta": "0.02",
+      "neutralDelta": null,
+      "preferenceScore": "0.55"
+    }
+  ]
+}

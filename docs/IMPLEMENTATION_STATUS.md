@@ -404,3 +404,7 @@ Host gate for the directive deliverable "Illuminant handling decision and adapta
 ## P048 — Version and retire calibration profiles (host scope)
 
 Host gate for the directive deliverable "Profile lifecycle manager and reproducibility tests". See [P048_VERSION_AND_RETIRE_CALIBRATION_PROFILES.md](P048_VERSION_AND_RETIRE_CALIBRATION_PROFILES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P047 — Validate profiles against independent scenes (host scope)
+
+Host gate for the directive deliverable "Independent profile acceptance suite and limitation statement". See [P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.md](P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
