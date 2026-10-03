@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "phase": "P059",
+  "mapId": "s23-ten-bit-sample-fidelity-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Encode and decode a high-resolution code ramp, compare numeric values, and run a deliberately eight-bit-degraded negative control through the same route. Inspect SPS and decoded sample layout. Qualification binds the codec, configuration, and software build.",
+  "fixture": "A Main10 stream carrying an eight-bit-quantized ramp expanded into ten-bit sample containers.",
+  "oracle": "The negative control fails precision criteria even though its bitstream advertises ten-bit storage.",
+  "mutant": "Accept ten-bit fidelity from SPS bit depth alone.",
+  "codec": "hevc",
+  "profile": "Main10",
+  "configuration": "main10-high-tier-level51",
+  "softwareBuild": "host-fixture-p059",
+  "quantization": "eight-bit-expanded",
+  "sps": {
+    "bitDepthLumaMinus8": "2",
+    "bitDepthChromaMinus8": "2",
+    "chromaFormatIdc": "1"
+  },
+  "layout": {
+    "container": "P010",
+    "alignment": "msb",
+    "rowStride": "3840",
+    "width": "3840",
+    "height": "8"
+  },
+  "referenceRamp": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "255",
+    "256",
+    "257",
+    "512",
+    "1023"
+  ],
+  "decoded": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "4",
+    "4",
+    "252",
+    "256",
+    "256",
+    "512",
+    "1020"
+  ],
+  "packedWords": [
+    "0",
+    "0",
+    "0",
+    "0",
+    "256",
+    "256",
+    "16128",
+    "16384",
+    "16384",
+    "32768",
+    "65280"
+  ]
+}

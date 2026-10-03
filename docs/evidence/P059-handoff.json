@@ -1,0 +1,50 @@
+{
+  "phase": "P059",
+  "caseIds": [
+    "TC-P059-01",
+    "TC-P059-02",
+    "TC-P059-03",
+    "TC-P059-04",
+    "TC-P059-05",
+    "TC-P059-06",
+    "TC-P059-07",
+    "TC-P059-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p059_qualify_ten_bit_sample_fidelity.py",
+    "scripts/tests/test_p059_qualify_ten_bit_sample_fidelity.py",
+    "docs/P059_QUALIFY_TEN_BIT_SAMPLE_FIDELITY.md",
+    "docs/P059_QUALIFY_TEN_BIT_SAMPLE_FIDELITY.json",
+    "docs/evidence/P059-handoff.json",
+    "scripts/gates/p059_tc01.py",
+    "scripts/gates/p059_tc02.py",
+    "scripts/gates/p059_tc03.py",
+    "scripts/gates/p059_tc04.py",
+    "scripts/gates/p059_tc05.py",
+    "scripts/gates/p059_tc06.py",
+    "scripts/gates/p059_tc07.py",
+    "scripts/gates/p059_tc08.py",
+    "scripts/tests/test_p059_tc01.py",
+    "scripts/tests/test_p059_tc02.py",
+    "scripts/tests/test_p059_tc03.py",
+    "scripts/tests/test_p059_tc04.py",
+    "scripts/tests/test_p059_tc05.py",
+    "scripts/tests/test_p059_tc06.py",
+    "scripts/tests/test_p059_tc07.py",
+    "scripts/tests/test_p059_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p059*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "SPS bit depth as sample fidelity",
+    "Main10 container as useful precision"
+  ],
+  "nextPhase": "P060"
+}
