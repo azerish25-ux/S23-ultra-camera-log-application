@@ -1,0 +1,52 @@
+{
+  "phase": "P013",
+  "caseIds": [
+    "TC-P013-01",
+    "TC-P013-02",
+    "TC-P013-03",
+    "TC-P013-04",
+    "TC-P013-05",
+    "TC-P013-06",
+    "TC-P013-07",
+    "TC-P013-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p013_discover_codec_input_routes.py",
+    "scripts/gates/p013_tc01.py",
+    "scripts/gates/p013_tc02.py",
+    "scripts/gates/p013_tc03.py",
+    "scripts/gates/p013_tc04.py",
+    "scripts/gates/p013_tc05.py",
+    "scripts/gates/p013_tc06.py",
+    "scripts/gates/p013_tc07.py",
+    "scripts/gates/p013_tc08.py",
+    "scripts/tests/test_p013_discover_codec_input_routes.py",
+    "scripts/tests/test_p013_tc01.py",
+    "scripts/tests/test_p013_tc02.py",
+    "scripts/tests/test_p013_tc03.py",
+    "scripts/tests/test_p013_tc04.py",
+    "scripts/tests/test_p013_tc05.py",
+    "scripts/tests/test_p013_tc06.py",
+    "scripts/tests/test_p013_tc07.py",
+    "scripts/tests/test_p013_tc08.py",
+    "docs/P013_DISCOVER_CODEC_INPUT_ROUTES.md",
+    "docs/P013_DISCOVER_CODEC_INPUT_ROUTES.json",
+    "docs/evidence/P013-handoff.json"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p013*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device codec probe",
+    "next dependency-ready phase is P014; this host gate does not publish a commit"
+  ],
+  "nextPhase": "blocked"
+}

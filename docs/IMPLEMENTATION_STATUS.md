@@ -259,3 +259,7 @@ Host gate for the directive deliverable "Resource-lifetime map and deterministic
 ## P023 — Handle interruption and permission changes (host scope)
 
 Host gate for the directive deliverable "Interruption policy and permission fault tests". See [P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.md](P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P013 — Discover codec input routes (host scope)
+
+Host gate for the directive deliverable "Codec-route database and interface-specific qualification plan". See [P013_DISCOVER_CODEC_INPUT_ROUTES.md](P013_DISCOVER_CODEC_INPUT_ROUTES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
