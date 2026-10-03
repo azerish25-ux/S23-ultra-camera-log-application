@@ -1,0 +1,51 @@
+{
+  "phase": "P063",
+  "caseIds": [
+    "TC-P063-01",
+    "TC-P063-02",
+    "TC-P063-03",
+    "TC-P063-04",
+    "TC-P063-05",
+    "TC-P063-06",
+    "TC-P063-07",
+    "TC-P063-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p063_validate_editor_interoperability.py",
+    "scripts/tests/test_p063_validate_editor_interoperability.py",
+    "docs/P063_VALIDATE_EDITOR_INTEROPERABILITY.md",
+    "docs/P063_VALIDATE_EDITOR_INTEROPERABILITY.json",
+    "docs/evidence/P063-handoff.json",
+    "scripts/gates/p063_tc01.py",
+    "scripts/gates/p063_tc02.py",
+    "scripts/gates/p063_tc03.py",
+    "scripts/gates/p063_tc04.py",
+    "scripts/gates/p063_tc05.py",
+    "scripts/gates/p063_tc06.py",
+    "scripts/gates/p063_tc07.py",
+    "scripts/gates/p063_tc08.py",
+    "scripts/tests/test_p063_tc01.py",
+    "scripts/tests/test_p063_tc02.py",
+    "scripts/tests/test_p063_tc03.py",
+    "scripts/tests/test_p063_tc04.py",
+    "scripts/tests/test_p063_tc05.py",
+    "scripts/tests/test_p063_tc06.py",
+    "scripts/tests/test_p063_tc07.py",
+    "scripts/tests/test_p063_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p063*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "automatic editor recognition",
+    "generic player opening as interoperability",
+    "thumbnail color interpretation"
+  ],
+  "nextPhase": "P064"
+}

@@ -452,3 +452,7 @@ Host gate for the directive deliverable "Resampling module and geometry provenan
 ## P065 — Define a typed render graph (host scope)
 
 Host gate for the directive deliverable "Render graph schema and static compatibility validator". See [P065_DEFINE_A_TYPED_RENDER_GRAPH.md](P065_DEFINE_A_TYPED_RENDER_GRAPH.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P063 — Validate editor interoperability (host scope)
+
+Host gate for the directive deliverable "Editor round-trip report and import guidance". See [P063_VALIDATE_EDITOR_INTEROPERABILITY.md](P063_VALIDATE_EDITOR_INTEROPERABILITY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

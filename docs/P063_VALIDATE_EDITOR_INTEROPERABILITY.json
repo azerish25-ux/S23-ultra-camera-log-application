@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "phase": "P063",
+  "mapId": "s23-editor-interoperability-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Create reference exports with explicit import instructions, range, primaries, transfer, and sidecar. Round-trip through independently selected editors or decoders where available. Record application versions and any manual assignments; do not claim automatic recognition without testing it.",
+  "fixture": "A LogC3 export imported once at video levels and once with an incorrect full-range assumption.",
+  "oracle": "The protocol detects the tonal mismatch and documents the correct supported workflow.",
+  "mutant": "Approve interoperability because a generic player opens the file.",
+  "export": {
+    "encoding": "LogC3",
+    "primaries": "AWG3",
+    "transfer": "LogC3",
+    "range": "video",
+    "container": "Main10",
+    "instructions": "Import LogC3 at video levels using the sidecar; do not assume full range."
+  },
+  "videoImport": {
+    "id": "video-levels",
+    "rangeAssumption": "video",
+    "application": "independent-decoder",
+    "version": "1.4.2",
+    "manualAssignment": true,
+    "automaticRecognitionTested": false
+  },
+  "fullRangeImport": {
+    "id": "full-range",
+    "rangeAssumption": "full",
+    "application": "independent-decoder",
+    "version": "1.4.2",
+    "manualAssignment": true,
+    "automaticRecognitionTested": false
+  },
+  "sidecar": {
+    "present": true,
+    "range": "video",
+    "primaries": "AWG3",
+    "transfer": "LogC3",
+    "encoding": "LogC3"
+  },
+  "consumer": {
+    "name": "generic-player",
+    "version": "unmeasured",
+    "opened": true,
+    "thumbnailOnly": true,
+    "automaticRecognitionClaimed": false
+  },
+  "workflow": {
+    "supportedRange": "video",
+    "documented": true,
+    "statement": "Supported workflow: import LogC3 at video levels with the explicit sidecar."
+  }
+}
