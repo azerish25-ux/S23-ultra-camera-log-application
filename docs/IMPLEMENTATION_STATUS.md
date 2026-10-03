@@ -592,3 +592,7 @@ Host gate for the directive deliverable "Aperture kernel library and point-light
 ## P094 — Add field-dependent lens characteristics (host scope)
 
 Host gate for the directive deliverable "Lens-character profile schema and continuity tests". See [P094_ADD_FIELD_DEPENDENT_LENS_CHARACTERISTICS.md](P094_ADD_FIELD_DEPENDENT_LENS_CHARACTERISTICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P095 — Implement optional anamorphic interpretation (host scope)
+
+Host gate for the directive deliverable "Anamorphic mode contract and geometry regression tests". See [P095_IMPLEMENT_OPTIONAL_ANAMORPHIC_INTERPRETATION.md](P095_IMPLEMENT_OPTIONAL_ANAMORPHIC_INTERPRETATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

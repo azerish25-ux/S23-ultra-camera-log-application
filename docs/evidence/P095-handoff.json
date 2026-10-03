@@ -1,0 +1,18 @@
+{
+  "phase": "P095",
+  "title": "Implement optional anamorphic interpretation",
+  "deliverable": "Anamorphic mode contract and geometry regression tests",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p095*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "blocked",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}
