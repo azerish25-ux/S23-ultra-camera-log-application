@@ -316,3 +316,7 @@ Host gate for the directive deliverable "Clock-domain types and timing evidence 
 ## P028 — Implement two-track startup and drain (host scope)
 
 Host gate for the directive deliverable "Two-track mux protocol and EOS fault tests". See [P028_IMPLEMENT_TWO_TRACK_STARTUP_AND_DRAIN.md](P028_IMPLEMENT_TWO_TRACK_STARTUP_AND_DRAIN.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P031 — Recover interrupted recordings (host scope)
+
+Host gate for the directive deliverable "Cold-start recovery scanner and interrupted-file fixtures". See [P031_RECOVER_INTERRUPTED_RECORDINGS.md](P031_RECOVER_INTERRUPTED_RECORDINGS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

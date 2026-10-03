@@ -1,0 +1,52 @@
+{
+  "phase": "P031",
+  "caseIds": [
+    "TC-P031-01",
+    "TC-P031-02",
+    "TC-P031-03",
+    "TC-P031-04",
+    "TC-P031-05",
+    "TC-P031-06",
+    "TC-P031-07",
+    "TC-P031-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p031_recover_interrupted_recordings.py",
+    "scripts/tests/test_p031_recover_interrupted_recordings.py",
+    "docs/P031_RECOVER_INTERRUPTED_RECORDINGS.md",
+    "docs/P031_RECOVER_INTERRUPTED_RECORDINGS.json",
+    "docs/evidence/P031-handoff.json",
+    "scripts/gates/p031_tc01.py",
+    "scripts/gates/p031_tc02.py",
+    "scripts/gates/p031_tc03.py",
+    "scripts/gates/p031_tc04.py",
+    "scripts/gates/p031_tc05.py",
+    "scripts/gates/p031_tc06.py",
+    "scripts/gates/p031_tc07.py",
+    "scripts/gates/p031_tc08.py",
+    "scripts/tests/test_p031_tc01.py",
+    "scripts/tests/test_p031_tc02.py",
+    "scripts/tests/test_p031_tc03.py",
+    "scripts/tests/test_p031_tc04.py",
+    "scripts/tests/test_p031_tc05.py",
+    "scripts/tests/test_p031_tc06.py",
+    "scripts/tests/test_p031_tc07.py",
+    "scripts/tests/test_p031_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p031*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "unfinished MP4 playability",
+    "on-device recovery"
+  ],
+  "nextPhase": "P032"
+}

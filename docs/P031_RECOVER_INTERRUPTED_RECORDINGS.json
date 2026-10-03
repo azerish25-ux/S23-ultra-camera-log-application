@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "phase": "P031",
+  "mapId": "s23-interrupted-recording-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Journal path identity, take metadata, selected tracks, and terminal status. On cold start, inspect nonempty remnants without assuming an unfinished MP4 is playable. Offer explicit export and retry, and require confirmation before deleting the sole retained copy.",
+  "fixture": "Process termination during muxer finalization with both a nonempty partial file and an incomplete journal record.",
+  "oracle": "The recovery library exposes the artefact as unverified and does not discard it merely because normal validation cannot complete.",
+  "mutant": "Delete every file lacking a completed journal flag.",
+  "journal": {
+    "pathIdentity": "takes/take-7/journal.json",
+    "takeId": "take-7",
+    "selectedTracks": ["video", "audio"],
+    "terminalStatus": "incomplete",
+    "completedJournalFlag": false,
+    "transition": "muxer_finalization"
+  },
+  "artefacts": [
+    {
+      "path": "takes/take-7/partial.mp4",
+      "kind": "partial_mp4",
+      "bytes": 4096,
+      "nonempty": true,
+      "playable": false,
+      "validationComplete": false,
+      "soleRetainedCopy": true
+    }
+  ],
+  "offers": {
+    "export": true,
+    "retry": true
+  },
+  "deleteConfirmation": false
+}
