@@ -1,0 +1,18 @@
+{
+  "phase": "P091",
+  "title": "Implement signed thin-lens defocus",
+  "deliverable": "Thin-lens reference code and dimensional tests",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p091*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "blocked",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}
