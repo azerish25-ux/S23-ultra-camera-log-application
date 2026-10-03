@@ -1,0 +1,51 @@
+{
+  "phase": "P027",
+  "caseIds": [
+    "TC-P027-01",
+    "TC-P027-02",
+    "TC-P027-03",
+    "TC-P027-04",
+    "TC-P027-05",
+    "TC-P027-06",
+    "TC-P027-07",
+    "TC-P027-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p027_qualify_microphone_acquisition.py",
+    "scripts/tests/test_p027_qualify_microphone_acquisition.py",
+    "docs/P027_QUALIFY_MICROPHONE_ACQUISITION.md",
+    "docs/P027_QUALIFY_MICROPHONE_ACQUISITION.json",
+    "docs/evidence/P027-handoff.json",
+    "scripts/gates/p027_tc01.py",
+    "scripts/gates/p027_tc02.py",
+    "scripts/gates/p027_tc03.py",
+    "scripts/gates/p027_tc04.py",
+    "scripts/gates/p027_tc05.py",
+    "scripts/gates/p027_tc06.py",
+    "scripts/gates/p027_tc07.py",
+    "scripts/gates/p027_tc08.py",
+    "scripts/tests/test_p027_tc01.py",
+    "scripts/tests/test_p027_tc02.py",
+    "scripts/tests/test_p027_tc03.py",
+    "scripts/tests/test_p027_tc04.py",
+    "scripts/tests/test_p027_tc05.py",
+    "scripts/tests/test_p027_tc06.py",
+    "scripts/tests/test_p027_tc07.py",
+    "scripts/tests/test_p027_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p027*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device microphone acquisition"
+  ],
+  "nextPhase": "P028"
+}

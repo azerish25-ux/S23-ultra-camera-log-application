@@ -320,3 +320,7 @@ Host gate for the directive deliverable "Two-track mux protocol and EOS fault te
 ## P031 — Recover interrupted recordings (host scope)
 
 Host gate for the directive deliverable "Cold-start recovery scanner and interrupted-file fixtures". See [P031_RECOVER_INTERRUPTED_RECORDINGS.md](P031_RECOVER_INTERRUPTED_RECORDINGS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P027 — Qualify microphone acquisition (host scope)
+
+Host gate for the directive deliverable "Audio acquisition contract and blocked-encoder tests". See [P027_QUALIFY_MICROPHONE_ACQUISITION.md](P027_QUALIFY_MICROPHONE_ACQUISITION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
