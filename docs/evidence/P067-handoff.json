@@ -1,0 +1,51 @@
+{
+  "phase": "P067",
+  "caseIds": [
+    "TC-P067-01",
+    "TC-P067-02",
+    "TC-P067-03",
+    "TC-P067-04",
+    "TC-P067-05",
+    "TC-P067-06",
+    "TC-P067-07",
+    "TC-P067-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p067_validate_half_and_full_precision_boundaries.py",
+    "scripts/tests/test_p067_validate_half_and_full_precision_boundaries.py",
+    "docs/P067_VALIDATE_HALF_AND_FULL_PRECISION_BOUNDARIES.md",
+    "docs/P067_VALIDATE_HALF_AND_FULL_PRECISION_BOUNDARIES.json",
+    "docs/evidence/P067-handoff.json",
+    "scripts/gates/p067_tc01.py",
+    "scripts/gates/p067_tc02.py",
+    "scripts/gates/p067_tc03.py",
+    "scripts/gates/p067_tc04.py",
+    "scripts/gates/p067_tc05.py",
+    "scripts/gates/p067_tc06.py",
+    "scripts/gates/p067_tc07.py",
+    "scripts/gates/p067_tc08.py",
+    "scripts/tests/test_p067_tc01.py",
+    "scripts/tests/test_p067_tc02.py",
+    "scripts/tests/test_p067_tc03.py",
+    "scripts/tests/test_p067_tc04.py",
+    "scripts/tests/test_p067_tc05.py",
+    "scripts/tests/test_p067_tc06.py",
+    "scripts/tests/test_p067_tc07.py",
+    "scripts/tests/test_p067_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p067*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "FP16 everywhere without accumulated-error testing",
+    "silent RGBA8 replacement of a high-precision intermediate",
+    "measured GPU precision"
+  ],
+  "nextPhase": "P068"
+}
