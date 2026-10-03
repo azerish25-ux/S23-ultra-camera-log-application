@@ -1,0 +1,51 @@
+{
+  "phase": "P071",
+  "caseIds": [
+    "TC-P071-01",
+    "TC-P071-02",
+    "TC-P071-03",
+    "TC-P071-04",
+    "TC-P071-05",
+    "TC-P071-06",
+    "TC-P071-07",
+    "TC-P071-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p071_prioritize_reliable_capture_over_preview_quality.py",
+    "scripts/tests/test_p071_prioritize_reliable_capture_over_preview_quality.py",
+    "docs/P071_PRIORITIZE_RELIABLE_CAPTURE_OVER_PREVIEW_QUALITY.md",
+    "docs/P071_PRIORITIZE_RELIABLE_CAPTURE_OVER_PREVIEW_QUALITY.json",
+    "docs/evidence/P071-handoff.json",
+    "scripts/gates/p071_tc01.py",
+    "scripts/gates/p071_tc02.py",
+    "scripts/gates/p071_tc03.py",
+    "scripts/gates/p071_tc04.py",
+    "scripts/gates/p071_tc05.py",
+    "scripts/gates/p071_tc06.py",
+    "scripts/gates/p071_tc07.py",
+    "scripts/gates/p071_tc08.py",
+    "scripts/tests/test_p071_tc01.py",
+    "scripts/tests/test_p071_tc02.py",
+    "scripts/tests/test_p071_tc03.py",
+    "scripts/tests/test_p071_tc04.py",
+    "scripts/tests/test_p071_tc05.py",
+    "scripts/tests/test_p071_tc06.py",
+    "scripts/tests/test_p071_tc07.py",
+    "scripts/tests/test_p071_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p071*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "silent recording-resolution drop that keeps the mode label",
+    "hidden source frame drops to preserve preview smoothness",
+    "measured camera or encoder timing budget"
+  ],
+  "nextPhase": "P072"
+}

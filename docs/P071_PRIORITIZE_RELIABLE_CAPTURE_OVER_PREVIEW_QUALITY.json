@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "phase": "P071",
+  "mapId": "s23-capture-priority-scheduler-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Define resource budgets and degradation order: reduce monitoring work, lower inference frequency, pause optional effects, then stop capture only under its own safety policy. Record which preview quality was active. Never silently alter the selected source recording mode mid-take.",
+  "fixture": "Increasing inference load while the camera and encoder approach their measured timing budget.",
+  "oracle": "The preview degrades visibly and source cadence remains intact until a separately documented capture limit is reached.",
+  "mutant": "Lower recording resolution without changing the active mode label.",
+  "budget": {
+    "inferenceLoad": "increasing",
+    "timingHeadroom": "approaching-limit",
+    "captureLimitDocumented": true,
+    "captureLimitReached": false
+  },
+  "source": {
+    "modeLabel": "uhd-24",
+    "recordingResolution": "3840x2160",
+    "selectedResolution": "3840x2160",
+    "cadenceIntact": true,
+    "midTake": true
+  },
+  "preview": {
+    "activeQuality": "reduced",
+    "recorded": true,
+    "degradedVisibly": true
+  },
+  "steps": [
+    {
+      "id": "reduce-monitoring",
+      "applied": true,
+      "order": 1
+    },
+    {
+      "id": "lower-inference",
+      "applied": true,
+      "order": 2
+    },
+    {
+      "id": "pause-effects",
+      "applied": true,
+      "order": 3
+    },
+    {
+      "id": "stop-capture",
+      "applied": false,
+      "order": 4
+    }
+  ]
+}
