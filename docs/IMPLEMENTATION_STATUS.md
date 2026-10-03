@@ -332,3 +332,7 @@ Host gate for the directive deliverable "White-balance intent model and capture-
 ## P032 — Measure physical audiovisual synchronization (host scope)
 
 Host gate for the directive deliverable "Physical audiovisual protocol and measured offset report". See [P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.md](P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P026 — Qualify video encoder startup (host scope)
+
+Host gate for the directive deliverable "Encoder startup owner and output-signal checks". See [P026_QUALIFY_VIDEO_ENCODER_STARTUP.md](P026_QUALIFY_VIDEO_ENCODER_STARTUP.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

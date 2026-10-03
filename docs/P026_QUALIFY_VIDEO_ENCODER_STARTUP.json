@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "phase": "P026",
+  "contractId": "s23-encoder-startup-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Handle format changes, codec-config buffers, keyframe requests, and startup timeouts separately. Inspect the actual output profile and bit depth. Retain diagnostic reasons for an advertised codec that fails configuration or produces the wrong signal.",
+  "fixture": "A Main10 request that yields an eight-bit SPS after a successful configure call.",
+  "oracle": "The output fails the ten-bit route gate and is not silently relabelled as acceptable Log.",
+  "mutant": "Validate codec depth from the requested MediaFormat rather than the emitted stream.",
+  "request": {
+    "codec": "hevc",
+    "profile": "Main10",
+    "bitDepth": 10,
+    "width": 3840,
+    "height": 2160,
+    "transfer": "unspecified",
+    "colorRange": "limited",
+    "logLabel": "none"
+  },
+  "configure": {
+    "succeeded": true,
+    "mediaFormatBitDepth": 10,
+    "mediaFormatProfile": "Main10"
+  },
+  "events": [
+    {
+      "kind": "format_change",
+      "id": "fmt",
+      "width": 3840,
+      "height": 2160,
+      "handledSeparately": true
+    },
+    {
+      "kind": "codec_config",
+      "id": "csd",
+      "bufferRole": "codec-config",
+      "spsBitDepth": 8,
+      "handledSeparately": true
+    },
+    {
+      "kind": "keyframe_request",
+      "id": "idr",
+      "requested": true,
+      "handledSeparately": true
+    },
+    {
+      "kind": "startup_timeout",
+      "id": "timeout",
+      "fired": false,
+      "boundMs": 1500,
+      "elapsedMs": 120,
+      "handledSeparately": true
+    },
+    {
+      "kind": "output_sample",
+      "id": "sample",
+      "usable": true,
+      "handledSeparately": true
+    }
+  ],
+  "emitted": {
+    "profile": "Main10",
+    "bitDepth": 8,
+    "spsBitDepth": 8,
+    "width": 3840,
+    "height": 2160,
+    "transfer": "unspecified",
+    "colorRange": "limited",
+    "relabelledAsAcceptableLog": false
+  },
+  "advertisedCodec": {
+    "name": "c2.android.hevc.encoder",
+    "configFailureReason": null
+  },
+  "inventory": [
+    "main10-request",
+    "configure-succeeded",
+    "codec-config-buffer",
+    "keyframe-request",
+    "format-change",
+    "hevc-access-unit"
+  ]
+}

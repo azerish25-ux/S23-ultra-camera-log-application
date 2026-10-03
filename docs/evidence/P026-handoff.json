@@ -1,0 +1,51 @@
+{
+  "phase": "P026",
+  "caseIds": [
+    "TC-P026-01",
+    "TC-P026-02",
+    "TC-P026-03",
+    "TC-P026-04",
+    "TC-P026-05",
+    "TC-P026-06",
+    "TC-P026-07",
+    "TC-P026-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p026_qualify_video_encoder_startup.py",
+    "scripts/tests/test_p026_qualify_video_encoder_startup.py",
+    "docs/P026_QUALIFY_VIDEO_ENCODER_STARTUP.md",
+    "docs/P026_QUALIFY_VIDEO_ENCODER_STARTUP.json",
+    "docs/evidence/P026-handoff.json",
+    "scripts/gates/p026_tc01.py",
+    "scripts/gates/p026_tc02.py",
+    "scripts/gates/p026_tc03.py",
+    "scripts/gates/p026_tc04.py",
+    "scripts/gates/p026_tc05.py",
+    "scripts/gates/p026_tc06.py",
+    "scripts/gates/p026_tc07.py",
+    "scripts/gates/p026_tc08.py",
+    "scripts/tests/test_p026_tc01.py",
+    "scripts/tests/test_p026_tc02.py",
+    "scripts/tests/test_p026_tc03.py",
+    "scripts/tests/test_p026_tc04.py",
+    "scripts/tests/test_p026_tc05.py",
+    "scripts/tests/test_p026_tc06.py",
+    "scripts/tests/test_p026_tc07.py",
+    "scripts/tests/test_p026_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p026*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device encoder startup"
+  ],
+  "nextPhase": "P027"
+}
