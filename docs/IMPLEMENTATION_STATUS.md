@@ -584,3 +584,7 @@ Host gate for the directive deliverable "Thin-lens reference code and dimensiona
 ## P092 — Separate metric and relative focus controls (host scope)
 
 Host gate for the directive deliverable "Depth-unit contract and honest focus UI". See [P092_SEPARATE_METRIC_AND_RELATIVE_FOCUS_CONTROLS.md](P092_SEPARATE_METRIC_AND_RELATIVE_FOCUS_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P093 — Implement aperture and bokeh shape models (host scope)
+
+Host gate for the directive deliverable "Aperture kernel library and point-light tests". See [P093_IMPLEMENT_APERTURE_AND_BOKEH_SHAPE_MODELS.md](P093_IMPLEMENT_APERTURE_AND_BOKEH_SHAPE_MODELS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
