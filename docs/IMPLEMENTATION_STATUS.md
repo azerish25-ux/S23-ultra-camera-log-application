@@ -544,3 +544,7 @@ Host gate for the directive deliverable "Grain seed contract and render-order in
 ## P082 — Model exposure-dependent grain statistics (host scope)
 
 Host gate for the directive deliverable "Grain-statistics model and exposure-series tests". See [P082_MODEL_EXPOSURE_DEPENDENT_GRAIN_STATISTICS.md](P082_MODEL_EXPOSURE_DEPENDENT_GRAIN_STATISTICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P083 — Scale grain by virtual gate and delivery geometry (host scope)
+
+Host gate for the directive deliverable "Format-aware grain mapping and resolution consistency tests". See [P083_SCALE_GRAIN_BY_VIRTUAL_GATE_AND_DELIVERY_GEOMETR.md](P083_SCALE_GRAIN_BY_VIRTUAL_GATE_AND_DELIVERY_GEOMETR.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
