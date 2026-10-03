@@ -480,3 +480,7 @@ Host gate for the directive deliverable "Output graph policies and branch-indepe
 ## P072 — Measure full-pipeline performance (host scope)
 
 Host gate for the directive deliverable "Integrated performance report and optimization priorities". See [P072_MEASURE_FULL_PIPELINE_PERFORMANCE.md](P072_MEASURE_FULL_PIPELINE_PERFORMANCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P068 — Implement synchronization and ownership barriers (host scope)
+
+Host gate for the directive deliverable "GPU resource owner and delayed-completion tests". See [P068_IMPLEMENT_SYNCHRONIZATION_AND_OWNERSHIP_BARRIERS.md](P068_IMPLEMENT_SYNCHRONIZATION_AND_OWNERSHIP_BARRIERS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

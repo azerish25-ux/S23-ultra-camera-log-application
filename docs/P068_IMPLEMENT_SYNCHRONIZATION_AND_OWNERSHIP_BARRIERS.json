@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "phase": "P068",
+  "mapId": "s23-synchronization-ownership-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Associate each resource with a frame identity and lifetime. Use backend-appropriate fences and barriers, bound in-flight work, and verify completion before reuse or release. Separate correctness synchronization from performance measurements.",
+  "fixture": "A slow GPU frame followed by rapid cancellation and reuse of the same texture pool slot.",
+  "oracle": "The next frame cannot read partially written or previous-generation data and cancellation releases only completed ownership.",
+  "mutant": "Recycle a texture immediately after command submission.",
+  "synchronization": {
+    "correctnessSeparated": true,
+    "performanceMeasured": false,
+    "inFlightBound": "2"
+  },
+  "pool": {
+    "slotId": "texture-pool-0",
+    "kind": "texture"
+  },
+  "frames": [
+    {
+      "frameId": "slow-gpu",
+      "generation": "1",
+      "lifetime": "in-flight",
+      "submitted": true,
+      "fenceComplete": false,
+      "cancelled": true,
+      "partialWrite": true,
+      "payload": "slow-partial",
+      "readsSlot": false
+    },
+    {
+      "frameId": "next-frame",
+      "generation": "2",
+      "lifetime": "in-flight",
+      "submitted": false,
+      "fenceComplete": false,
+      "cancelled": false,
+      "partialWrite": false,
+      "payload": "next-clean",
+      "readsSlot": true
+    }
+  ]
+}
