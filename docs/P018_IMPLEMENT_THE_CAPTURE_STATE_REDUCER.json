@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "phase": "P018",
+  "logId": "s23-capture-reducer-record-stop-race",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use distinct opening, preview, configuring, starting, recording, stopping, finalizing, and failure states. Every asynchronous event carries a generation token. First-sample acknowledgement is required before the recording timer and active indicator change.",
+  "fixture": "Record followed immediately by Stop, with a delayed first video sample and a delayed audio format callback.",
+  "oracle": "The state never returns from stopping to recording and the retained output receives an accurate terminal status.",
+  "mutant": "Allow any first-frame callback to set recording=true.",
+  "states": [
+    "opening",
+    "preview",
+    "configuring",
+    "starting",
+    "recording",
+    "stopping",
+    "finalizing",
+    "failure"
+  ],
+  "takeId": "take-1",
+  "events": [
+    {
+      "seq": 1,
+      "type": "camera_opened",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 2,
+      "type": "configure",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 3,
+      "type": "configured",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 4,
+      "type": "record",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 5,
+      "type": "stop",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 6,
+      "type": "first_video_sample",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": true
+    },
+    {
+      "seq": 7,
+      "type": "audio_format",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": true
+    },
+    {
+      "seq": 8,
+      "type": "finalize",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    },
+    {
+      "seq": 9,
+      "type": "finalized",
+      "generation": 1,
+      "owner": "session-a",
+      "delayed": false
+    }
+  ]
+}

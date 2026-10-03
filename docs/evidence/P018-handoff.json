@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "phase": "P018",
+  "caseIds": [
+    "TC-P018-01",
+    "TC-P018-02",
+    "TC-P018-03",
+    "TC-P018-04",
+    "TC-P018-05",
+    "TC-P018-06",
+    "TC-P018-07",
+    "TC-P018-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p018_implement_the_capture_state_reducer.py",
+    "scripts/gates/p018_tc01.py",
+    "scripts/gates/p018_tc02.py",
+    "scripts/gates/p018_tc03.py",
+    "scripts/gates/p018_tc04.py",
+    "scripts/gates/p018_tc05.py",
+    "scripts/gates/p018_tc06.py",
+    "scripts/gates/p018_tc07.py",
+    "scripts/gates/p018_tc08.py",
+    "scripts/tests/test_p018_implement_the_capture_state_reducer.py",
+    "scripts/tests/test_p018_tc01.py",
+    "scripts/tests/test_p018_tc02.py",
+    "scripts/tests/test_p018_tc03.py",
+    "scripts/tests/test_p018_tc04.py",
+    "scripts/tests/test_p018_tc05.py",
+    "scripts/tests/test_p018_tc06.py",
+    "scripts/tests/test_p018_tc07.py",
+    "scripts/tests/test_p018_tc08.py",
+    "docs/P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.md",
+    "docs/P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.json",
+    "docs/evidence/P018-handoff.json"
+  ],
+  "commit": "not-committed",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p018*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P019"
+}

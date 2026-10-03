@@ -296,3 +296,7 @@ Host gate for the directive deliverable "Physical qualification report for one e
 ## P011 — Model rational capture timing (host scope)
 
 Host gate for the directive deliverable "Rational timing policy and manual-readiness gate". See [P011_MODEL_RATIONAL_CAPTURE_TIMING.md](P011_MODEL_RATIONAL_CAPTURE_TIMING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P018 — Implement the capture state reducer (host scope)
+
+Host gate for the directive deliverable "Pure reducer, event log format, and race replay tests". See [P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.md](P018_IMPLEMENT_THE_CAPTURE_STATE_REDUCER.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
