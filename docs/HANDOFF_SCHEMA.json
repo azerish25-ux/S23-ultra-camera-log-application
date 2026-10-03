@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "requiredFields": [
+    "phase",
+    "caseIds",
+    "changedFiles",
+    "commit",
+    "testsRun",
+    "failures",
+    "unverified",
+    "nextPhase"
+  ]
+}

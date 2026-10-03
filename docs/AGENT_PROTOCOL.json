@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "phase": "P008",
+  "protocolId": "s23-agent-protocol",
+  "implementationBaseRevision": "fffd5c9a63cb732e103052acae29ae0c251585cc",
+  "steps": [
+    "Select the next dependency-ready phase from the master directive and do not open uncontrolled parallel edits.",
+    "Write a failing test first for that phase before changing implementation code.",
+    "Implement the smallest correct change that makes the new test pass.",
+    "Record evidence for the revision, commands, results, failures, and unresolved gates.",
+    "Integrate on the existing branch main with fast-forward publication only.",
+    "Verify the remote head before an authorized push.",
+    "When push access is absent, return a truthful blocked report and do not invent a publication.",
+    "Treat a host gate pass with a pending physical gate as software-verified only.",
+    "Preserve a concurrent remote commit; do not reset or overwrite collaborator work.",
+    "Do not treat local build success as completion of every phase."
+  ],
+  "publication": {
+    "branch": "main",
+    "fastForwardOnly": true,
+    "verifyRemoteHead": true,
+    "blockedWithoutAccess": true
+  },
+  "completionRule": "host and physical gates are separate; local build is not phase completion"
+}
