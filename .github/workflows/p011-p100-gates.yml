@@ -1,0 +1,38 @@
+name: P011-P100 host gates
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/gates/p0*.py
+      - scripts/gates/p1*.py
+      - scripts/tests/test_p0*.py
+      - scripts/tests/test_p1*.py
+      - docs/P0*.md
+      - docs/P1*.md
+      - docs/IMPLEMENTATION_STATUS.md
+      - .github/workflows/p011-p100-gates.yml
+  pull_request:
+    paths:
+      - scripts/gates/**
+      - scripts/tests/test_p*.py
+      - .github/workflows/p011-p100-gates.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Run P011 through P100 host gates
+        run: |
+          set -euo pipefail
+          for n in $(seq -w 11 100); do
+            python3 -m unittest discover -s scripts/tests -p "test_p${n}*.py"
+          done
