@@ -564,3 +564,7 @@ Host gate for the directive deliverable "Print-scan graph and domain-boundary te
 ## P087 — Add aging and mechanical imperfections as optional layers (host scope)
 
 Host gate for the directive deliverable "Optional aging module and clean-default tests". See [P087_ADD_AGING_AND_MECHANICAL_IMPERFECTIONS_AS_OPTION.md](P087_ADD_AGING_AND_MECHANICAL_IMPERFECTIONS_AS_OPTION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P088 — Validate the combined material pipeline (host scope)
+
+Host gate for the directive deliverable "Combined film-material regression suite". See [P088_VALIDATE_THE_COMBINED_MATERIAL_PIPELINE.md](P088_VALIDATE_THE_COMBINED_MATERIAL_PIPELINE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
