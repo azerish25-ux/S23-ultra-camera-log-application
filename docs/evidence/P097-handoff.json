@@ -1,0 +1,18 @@
+{
+  "phase": "P097",
+  "title": "Define the depth-provider interface",
+  "deliverable": "Depth provider contract and stale-result tests",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p097*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "blocked",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}
