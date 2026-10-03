@@ -352,3 +352,7 @@ Host gate for the directive deliverable "Acquisition probe and stage-separated t
 ## P037 — Build the bounded saved-source writer (host scope)
 
 Host gate for the directive deliverable "Bounded RAW writer and deterministic overflow harness". See [P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.md](P037_BUILD_THE_BOUNDED_SAVED_SOURCE_WRITER.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P038 — Snapshot calibration metadata at capture time (host scope)
+
+Host gate for the directive deliverable "Capture-time calibration snapshot and identity checks". See [P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.md](P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

@@ -1,0 +1,50 @@
+{
+  "phase": "P038",
+  "caseIds": [
+    "TC-P038-01",
+    "TC-P038-02",
+    "TC-P038-03",
+    "TC-P038-04",
+    "TC-P038-05",
+    "TC-P038-06",
+    "TC-P038-07",
+    "TC-P038-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p038_snapshot_calibration_metadata_at_capture_time.py",
+    "scripts/tests/test_p038_snapshot_calibration_metadata_at_capture_time.py",
+    "docs/P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.md",
+    "docs/P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.json",
+    "docs/evidence/P038-handoff.json",
+    "scripts/gates/p038_tc01.py",
+    "scripts/gates/p038_tc02.py",
+    "scripts/gates/p038_tc03.py",
+    "scripts/gates/p038_tc04.py",
+    "scripts/gates/p038_tc05.py",
+    "scripts/gates/p038_tc06.py",
+    "scripts/gates/p038_tc07.py",
+    "scripts/gates/p038_tc08.py",
+    "scripts/tests/test_p038_tc01.py",
+    "scripts/tests/test_p038_tc02.py",
+    "scripts/tests/test_p038_tc03.py",
+    "scripts/tests/test_p038_tc04.py",
+    "scripts/tests/test_p038_tc05.py",
+    "scripts/tests/test_p038_tc06.py",
+    "scripts/tests/test_p038_tc07.py",
+    "scripts/tests/test_p038_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p038*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "capture-time truth from current camera metadata",
+    "measured colour profile"
+  ],
+  "nextPhase": "P039"
+}

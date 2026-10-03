@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 1,
+  "phase": "P038",
+  "mapId": "s23-capture-calibration-snapshot-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Capture available calibration and forward matrices, reference illuminants, neutral points, black and white levels, crop descriptions, and lens shading data with explicit missing fields. Bind snapshots to firmware and route. Document the coordinate and matrix conventions.",
+  "fixture": "Two takes on different firmware versions with different forward matrices but the same physical handset.",
+  "oracle": "The developer selects the matching snapshot and rejects a profile whose source identity does not match.",
+  "mutant": "Look up current camera metadata while developing an older source and treat it as capture-time truth.",
+  "conventions": {
+    "coordinates": "Sensor active-array coordinates: origin at the top-left, x increases to the right, y increases downward, integer pixels. Crop is widthxheight+left+top. Bayer phase is relative to the crop origin and must be RGGB, GRBG, GBRG, or BGGR. Odd crop origins are not a declared layout.",
+    "matrices": "Row-major 3x3 canonical decimal strings. The forward matrix maps white-balanced camera RGB to CIE XYZ D50. The calibration matrix maps device RGB to that reference camera RGB. A snapshot is not a measured profile. Missing fields stay listed and are not filled from current device metadata or an identity matrix."
+  },
+  "handset": {
+    "id": "handset-a",
+    "model": "fixture-handset"
+  },
+  "sources": [
+    {
+      "id": "take-fw1",
+      "handsetId": "handset-a",
+      "firmware": "fw-1.0.0",
+      "route": "logical0/physical-main/RAW_SENSOR",
+      "cfa": "RGGB",
+      "crop": "4000x3000+8+8",
+      "boundSnapshotId": "snap-fw1"
+    },
+    {
+      "id": "take-fw2",
+      "handsetId": "handset-a",
+      "firmware": "fw-2.0.0",
+      "route": "logical0/physical-main/RAW_SENSOR",
+      "cfa": "RGGB",
+      "crop": "4000x3000+8+8",
+      "boundSnapshotId": "snap-fw2"
+    }
+  ],
+  "snapshots": [
+    {
+      "id": "snap-fw1",
+      "sourceId": "take-fw1",
+      "handsetId": "handset-a",
+      "firmware": "fw-1.0.0",
+      "route": "logical0/physical-main/RAW_SENSOR",
+      "cfa": "RGGB",
+      "crop": "4000x3000+8+8",
+      "forwardMatrix": [
+        "1.32",
+        "0.11",
+        "0.02",
+        "0.21",
+        "1.05",
+        "0.08",
+        "0.04",
+        "0.18",
+        "0.91"
+      ],
+      "calibrationMatrix": null,
+      "referenceIlluminants": [
+        "D65",
+        "A"
+      ],
+      "neutralPoint": [
+        "0.47",
+        "1",
+        "0.63"
+      ],
+      "blackLevel": "64",
+      "whiteLevel": "1023",
+      "lensShading": null,
+      "missingFields": [
+        "calibrationMatrix",
+        "lensShading"
+      ]
+    },
+    {
+      "id": "snap-fw2",
+      "sourceId": "take-fw2",
+      "handsetId": "handset-a",
+      "firmware": "fw-2.0.0",
+      "route": "logical0/physical-main/RAW_SENSOR",
+      "cfa": "RGGB",
+      "crop": "4000x3000+8+8",
+      "forwardMatrix": [
+        "1.4",
+        "0.08",
+        "0.01",
+        "0.19",
+        "1.1",
+        "0.07",
+        "0.03",
+        "0.16",
+        "0.95"
+      ],
+      "calibrationMatrix": [
+        "1.01",
+        "0.02",
+        "0.01",
+        "0.03",
+        "1.02",
+        "0.02",
+        "0.01",
+        "0.04",
+        "1.03"
+      ],
+      "referenceIlluminants": [
+        "D65",
+        "D50"
+      ],
+      "neutralPoint": [
+        "0.49",
+        "1",
+        "0.61"
+      ],
+      "blackLevel": "64",
+      "whiteLevel": "4095",
+      "lensShading": null,
+      "missingFields": [
+        "lensShading"
+      ]
+    }
+  ],
+  "currentMetadata": {
+    "id": "current-device",
+    "sourceId": "live",
+    "handsetId": "handset-a",
+    "firmware": "fw-2.0.0",
+    "route": "logical0/physical-main/RAW_SENSOR",
+    "cfa": "RGGB",
+    "crop": "4000x3000+8+8",
+    "forwardMatrix": [
+      "1.4",
+      "0.08",
+      "0.01",
+      "0.19",
+      "1.1",
+      "0.07",
+      "0.03",
+      "0.16",
+      "0.95"
+    ],
+    "calibrationMatrix": [
+      "1.01",
+      "0.02",
+      "0.01",
+      "0.03",
+      "1.02",
+      "0.02",
+      "0.01",
+      "0.04",
+      "1.03"
+    ],
+    "referenceIlluminants": [
+      "D65",
+      "D50"
+    ],
+    "neutralPoint": [
+      "0.49",
+      "1",
+      "0.61"
+    ],
+    "blackLevel": "64",
+    "whiteLevel": "4095",
+    "lensShading": null,
+    "missingFields": [
+      "lensShading"
+    ]
+  }
+}
