@@ -288,3 +288,7 @@ Host gate for the directive deliverable "High-resolution experiment matrix and s
 ## P015 — Cache capability evidence safely (host scope)
 
 Host gate for the directive deliverable "Capability cache invalidation and historical evidence viewer". See [P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.md](P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P016 — Run the first physical qualification slice (host scope)
+
+Host gate for the directive deliverable "Physical qualification report for one exact configuration". See [P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md](P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

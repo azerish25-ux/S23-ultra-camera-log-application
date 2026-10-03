@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "phase": "P016",
+  "caseIds": [
+    "TC-P016-01",
+    "TC-P016-02",
+    "TC-P016-03",
+    "TC-P016-04",
+    "TC-P016-05",
+    "TC-P016-06",
+    "TC-P016-07",
+    "TC-P016-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p016_run_the_first_physical_qualification_slice.py",
+    "scripts/gates/p016_tc01.py",
+    "scripts/gates/p016_tc02.py",
+    "scripts/gates/p016_tc03.py",
+    "scripts/gates/p016_tc04.py",
+    "scripts/gates/p016_tc05.py",
+    "scripts/gates/p016_tc06.py",
+    "scripts/gates/p016_tc07.py",
+    "scripts/gates/p016_tc08.py",
+    "scripts/tests/test_p016_run_the_first_physical_qualification_slice.py",
+    "scripts/tests/test_p016_tc01.py",
+    "scripts/tests/test_p016_tc02.py",
+    "scripts/tests/test_p016_tc03.py",
+    "scripts/tests/test_p016_tc04.py",
+    "scripts/tests/test_p016_tc05.py",
+    "scripts/tests/test_p016_tc06.py",
+    "scripts/tests/test_p016_tc07.py",
+    "scripts/tests/test_p016_tc08.py",
+    "docs/P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md",
+    "docs/P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.json",
+    "docs/evidence/P016-handoff.json"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p016*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "physical S23 qualification",
+    "endurance certification",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P017",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670"
+}
