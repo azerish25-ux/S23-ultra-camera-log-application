@@ -1,0 +1,51 @@
+{
+  "phase": "P036",
+  "caseIds": [
+    "TC-P036-01",
+    "TC-P036-02",
+    "TC-P036-03",
+    "TC-P036-04",
+    "TC-P036-05",
+    "TC-P036-06",
+    "TC-P036-07",
+    "TC-P036-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p036_build_the_acquisition_only_throughput_probe.py",
+    "scripts/tests/test_p036_build_the_acquisition_only_throughput_probe.py",
+    "docs/P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.md",
+    "docs/P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.json",
+    "docs/evidence/P036-handoff.json",
+    "scripts/gates/p036_tc01.py",
+    "scripts/gates/p036_tc02.py",
+    "scripts/gates/p036_tc03.py",
+    "scripts/gates/p036_tc04.py",
+    "scripts/gates/p036_tc05.py",
+    "scripts/gates/p036_tc06.py",
+    "scripts/gates/p036_tc07.py",
+    "scripts/gates/p036_tc08.py",
+    "scripts/tests/test_p036_tc01.py",
+    "scripts/tests/test_p036_tc02.py",
+    "scripts/tests/test_p036_tc03.py",
+    "scripts/tests/test_p036_tc04.py",
+    "scripts/tests/test_p036_tc05.py",
+    "scripts/tests/test_p036_tc06.py",
+    "scripts/tests/test_p036_tc07.py",
+    "scripts/tests/test_p036_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p036*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "acquisition-only rate as reliable recorded RAW video",
+    "saved-source throughput from discarded frames",
+    "final encoded performance"
+  ],
+  "nextPhase": "P037"
+}

@@ -344,3 +344,7 @@ Host gate for the directive deliverable "Cadence analyzer and source-to-output t
 ## P030 — Publish media transactionally (host scope)
 
 Host gate for the directive deliverable "Publication state machine and storage-pressure tests". See [P030_PUBLISH_MEDIA_TRANSACTIONALLY.md](P030_PUBLISH_MEDIA_TRANSACTIONALLY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P036 — Build the acquisition-only throughput probe (host scope)
+
+Host gate for the directive deliverable "Acquisition probe and stage-separated throughput report". See [P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.md](P036_BUILD_THE_ACQUISITION_ONLY_THROUGHPUT_PROBE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

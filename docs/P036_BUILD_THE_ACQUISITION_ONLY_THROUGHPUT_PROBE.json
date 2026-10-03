@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "phase": "P036",
+  "mapId": "s23-acquisition-throughput-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use preallocated buffers and counters to measure intervals, occupancy, copy time, and sustained delivery for a bounded run. State clearly when frames are not retained. Keep acquisition-only results separate from saved-source throughput and final encoded performance.",
+  "fixture": "A route delivering frames regularly when discarded but losing cadence when written to storage.",
+  "oracle": "The report preserves the distinction and cannot claim the faster acquisition-only rate as reliable recorded RAW video.",
+  "mutant": "Publish the best acquisition-only rate as the recording capability.",
+  "routeId": "discard-regular-storage-lost",
+  "preallocatedBuffers": 4,
+  "boundFrameCount": 4,
+  "publication": "separated",
+  "stages": [
+    {
+      "stage": "acquisition_only",
+      "framesRetained": false,
+      "cadence": "regular",
+      "intervalsNs": [
+        "10000000",
+        "10000000",
+        "10000000",
+        "10000000"
+      ],
+      "occupancy": [
+        "1",
+        "1",
+        "1",
+        "1"
+      ],
+      "copyTimeNs": [
+        "500",
+        "500",
+        "500",
+        "500"
+      ],
+      "deliveredCount": "4"
+    },
+    {
+      "stage": "saved_source",
+      "framesRetained": true,
+      "cadence": "lost",
+      "intervalsNs": [
+        "20000000",
+        "40000000",
+        "80000000",
+        "160000000"
+      ],
+      "occupancy": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "copyTimeNs": [
+        "2000000",
+        "8000000",
+        "20000000",
+        "40000000"
+      ],
+      "deliveredCount": "4"
+    },
+    {
+      "stage": "encoded",
+      "framesRetained": false,
+      "cadence": "absent",
+      "intervalsNs": [],
+      "occupancy": [],
+      "copyTimeNs": [],
+      "deliveredCount": "0"
+    }
+  ]
+}
