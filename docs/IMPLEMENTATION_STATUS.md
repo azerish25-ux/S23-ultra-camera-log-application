@@ -408,3 +408,7 @@ Host gate for the directive deliverable "Profile lifecycle manager and reproduci
 ## P047 — Validate profiles against independent scenes (host scope)
 
 Host gate for the directive deliverable "Independent profile acceptance suite and limitation statement". See [P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.md](P047_VALIDATE_PROFILES_AGAINST_INDEPENDENT_SCENES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P049 — Normalize RAW without destroying evidence (host scope)
+
+Host gate for the directive deliverable "Signed normalization kernel and reference vectors". See [P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.md](P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

@@ -1,0 +1,50 @@
+{
+  "phase": "P049",
+  "caseIds": [
+    "TC-P049-01",
+    "TC-P049-02",
+    "TC-P049-03",
+    "TC-P049-04",
+    "TC-P049-05",
+    "TC-P049-06",
+    "TC-P049-07",
+    "TC-P049-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p049_normalize_raw_without_destroying_evidence.py",
+    "scripts/tests/test_p049_normalize_raw_without_destroying_evidence.py",
+    "docs/P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.md",
+    "docs/P049_NORMALIZE_RAW_WITHOUT_DESTROYING_EVIDENCE.json",
+    "docs/evidence/P049-handoff.json",
+    "scripts/gates/p049_tc01.py",
+    "scripts/gates/p049_tc02.py",
+    "scripts/gates/p049_tc03.py",
+    "scripts/gates/p049_tc04.py",
+    "scripts/gates/p049_tc05.py",
+    "scripts/gates/p049_tc06.py",
+    "scripts/gates/p049_tc07.py",
+    "scripts/gates/p049_tc08.py",
+    "scripts/tests/test_p049_tc01.py",
+    "scripts/tests/test_p049_tc02.py",
+    "scripts/tests/test_p049_tc03.py",
+    "scripts/tests/test_p049_tc04.py",
+    "scripts/tests/test_p049_tc05.py",
+    "scripts/tests/test_p049_tc06.py",
+    "scripts/tests/test_p049_tc07.py",
+    "scripts/tests/test_p049_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p049*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "universal scene-white at normalized one",
+    "immediate zero-to-one clamp as valid normalization"
+  ],
+  "nextPhase": "P050"
+}
