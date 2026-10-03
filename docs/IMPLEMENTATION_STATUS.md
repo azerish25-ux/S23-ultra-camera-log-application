@@ -520,3 +520,7 @@ Host gate for the directive deliverable "Sensitometry importer and unit-consiste
 ## P076 — Model channel interaction conservatively (host scope)
 
 Host gate for the directive deliverable "Channel-coupling model and stability tests". See [P076_MODEL_CHANNEL_INTERACTION_CONSERVATIVELY.md](P076_MODEL_CHANNEL_INTERACTION_CONSERVATIVELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P077 — Implement exposure and development controls (host scope)
+
+Host gate for the directive deliverable "Exposure-development-grade parameter contract". See [P077_IMPLEMENT_EXPOSURE_AND_DEVELOPMENT_CONTROLS.md](P077_IMPLEMENT_EXPOSURE_AND_DEVELOPMENT_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
