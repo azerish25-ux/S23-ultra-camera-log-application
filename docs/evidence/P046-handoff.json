@@ -1,0 +1,50 @@
+{
+  "phase": "P046",
+  "caseIds": [
+    "TC-P046-01",
+    "TC-P046-02",
+    "TC-P046-03",
+    "TC-P046-04",
+    "TC-P046-05",
+    "TC-P046-06",
+    "TC-P046-07",
+    "TC-P046-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p046_implement_illuminant_adaptation_carefully.py",
+    "scripts/tests/test_p046_implement_illuminant_adaptation_carefully.py",
+    "docs/P046_IMPLEMENT_ILLUMINANT_ADAPTATION_CAREFULLY.md",
+    "docs/P046_IMPLEMENT_ILLUMINANT_ADAPTATION_CAREFULLY.json",
+    "docs/evidence/P046-handoff.json",
+    "scripts/gates/p046_tc01.py",
+    "scripts/gates/p046_tc02.py",
+    "scripts/gates/p046_tc03.py",
+    "scripts/gates/p046_tc04.py",
+    "scripts/gates/p046_tc05.py",
+    "scripts/gates/p046_tc06.py",
+    "scripts/gates/p046_tc07.py",
+    "scripts/gates/p046_tc08.py",
+    "scripts/tests/test_p046_tc01.py",
+    "scripts/tests/test_p046_tc02.py",
+    "scripts/tests/test_p046_tc03.py",
+    "scripts/tests/test_p046_tc04.py",
+    "scripts/tests/test_p046_tc05.py",
+    "scripts/tests/test_p046_tc06.py",
+    "scripts/tests/test_p046_tc07.py",
+    "scripts/tests/test_p046_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p046*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "universal matching under mixed illumination",
+    "spectral sensitivity rewritten by reference-white adaptation"
+  ],
+  "nextPhase": "P047"
+}

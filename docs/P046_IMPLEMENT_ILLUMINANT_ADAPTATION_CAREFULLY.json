@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "phase": "P046",
+  "mapId": "s23-illuminant-adaptation-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Document the meaning of every endpoint matrix and neutral vector. Evaluate whether interpolation is valid for the available metadata, and test conditioning throughout the chosen domain. Mixed illumination remains a limitation; do not claim a single adaptation solves arbitrary spectra.",
+  "fixture": "A scene containing daylight and narrow-band colored LEDs with one global neutral measurement.",
+  "oracle": "The pipeline applies only its declared adaptation and labels the mixed-light color uncertainty rather than claiming universal matching.",
+  "mutant": "Interpolate arbitrary matrix elements without checking endpoint conventions or neutral response.",
+  "endpoints": [
+    {
+      "id": "daylight",
+      "role": "reference-white",
+      "convention": "row-camera-to-xyz",
+      "neutral": ["1000", "1000", "1000"],
+      "matrix": [
+        ["2", "1", "0"],
+        ["0", "2", "1"],
+        ["1", "0", "2"]
+      ]
+    },
+    {
+      "id": "narrow-band-led",
+      "role": "spectral-sensitivity",
+      "convention": "row-camera-to-xyz",
+      "neutral": ["400", "1000", "200"],
+      "matrix": [
+        ["5", "0", "0"],
+        ["0", "3", "0"],
+        ["0", "0", "4"]
+      ]
+    }
+  ],
+  "neutralMeasurement": {
+    "id": "global-neutral",
+    "scope": "global",
+    "channels": ["1200", "1000", "800"],
+    "patch": "daylight-gray"
+  },
+  "scene": {
+    "illuminants": ["daylight", "narrow-band-colored-led"],
+    "mixed": true
+  },
+  "declaredAdaptation": "von-kries-reference-white",
+  "interpolation": {
+    "requested": false,
+    "weightNumerator": "0",
+    "weightDenominator": "1",
+    "checkedConventions": false,
+    "checkedNeutralResponse": false
+  }
+}
