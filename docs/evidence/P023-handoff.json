@@ -1,0 +1,49 @@
+{
+  "phase": "P023",
+  "caseIds": [
+    "TC-P023-01",
+    "TC-P023-02",
+    "TC-P023-03",
+    "TC-P023-04",
+    "TC-P023-05",
+    "TC-P023-06",
+    "TC-P023-07",
+    "TC-P023-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p023_handle_interruption_and_permission_changes.py",
+    "scripts/tests/test_p023_handle_interruption_and_permission_changes.py",
+    "docs/P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.md",
+    "docs/P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.json",
+    "docs/evidence/P023-handoff.json",
+    "scripts/gates/p023_tc01.py",
+    "scripts/gates/p023_tc02.py",
+    "scripts/gates/p023_tc03.py",
+    "scripts/gates/p023_tc04.py",
+    "scripts/gates/p023_tc05.py",
+    "scripts/gates/p023_tc06.py",
+    "scripts/gates/p023_tc07.py",
+    "scripts/gates/p023_tc08.py",
+    "scripts/tests/test_p023_tc01.py",
+    "scripts/tests/test_p023_tc02.py",
+    "scripts/tests/test_p023_tc03.py",
+    "scripts/tests/test_p023_tc04.py",
+    "scripts/tests/test_p023_tc05.py",
+    "scripts/tests/test_p023_tc06.py",
+    "scripts/tests/test_p023_tc07.py",
+    "scripts/tests/test_p023_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p023*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "qualified background recording"
+  ],
+  "nextPhase": "P024"
+}

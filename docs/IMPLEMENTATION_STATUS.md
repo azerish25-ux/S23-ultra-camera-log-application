@@ -255,3 +255,7 @@ Host gate for the directive deliverable "Monitoring branch contract and clean-ma
 ## P017 — Model camera resource ownership (host scope)
 
 Host gate for the directive deliverable "Resource-lifetime map and deterministic owner tests". See [P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.md](P017_MODEL_CAMERA_RESOURCE_OWNERSHIP.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P023 — Handle interruption and permission changes (host scope)
+
+Host gate for the directive deliverable "Interruption policy and permission fault tests". See [P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.md](P023_HANDLE_INTERRUPTION_AND_PERMISSION_CHANGES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

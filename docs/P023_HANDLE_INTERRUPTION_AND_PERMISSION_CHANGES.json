@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "phase": "P023",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "policyId": "s23-interruption-permission-fixture",
+  "method": "Define responses to permission denial, camera preemption, screen departure, app backgrounding, and device policy restrictions. Follow the existing visible stop-and-finalize policy unless a separately qualified background design is approved. Never silently remove a requested audio track.",
+  "fixture": "Microphone permission revoked during startup while video samples are already arriving.",
+  "oracle": "The take stops or fails visibly under policy, retains available media, and cannot be labelled a successful audio recording.",
+  "mutant": "Continue silently as video-only after requested microphone acquisition fails.",
+  "backgroundDesignApproved": false,
+  "policy": "visible-stop-and-finalize",
+  "scenario": {
+    "event": "microphone_revoked_during_startup",
+    "audioRequested": true,
+    "videoSamples": 4,
+    "audioSamples": 0,
+    "visibleOutcome": "stop",
+    "availableMediaRetained": true,
+    "labelledSuccessfulAudio": false,
+    "silentVideoOnlyContinuation": false,
+    "backgroundDesignApproved": false,
+    "takeId": "take-startup-mic-revoked"
+  }
+}
