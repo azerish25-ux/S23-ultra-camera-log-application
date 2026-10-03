@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "phase": "P048",
+  "mapId": "s23-profile-lifecycle-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use exact compatibility keys and explicit migration policies. Historical sources retain their original profile references. A newer profile can create a new development version but never overwrite the provenance of an earlier export. Provide rollback and comparison.",
+  "fixture": "A user installs a newly measured profile and reopens a previously rendered take.",
+  "oracle": "The earlier result remains reproducible while a new revision may be rendered and compared.",
+  "mutant": "Replace all profile files in place while keeping the old version identifier.",
+  "migrationPolicy": "new-development-version",
+  "profiles": [
+    {
+      "versionId": "prof-v1",
+      "contentHash": "ac3165c03a01dfcf1b091bee99e4e6bcc709bda10d6733c5b5daa1eaa7d9372c",
+      "firmware": "fw-1-0-0",
+      "lensRoute": "logical0-main",
+      "status": "approved",
+      "bytesLabel": "bytes-v1"
+    },
+    {
+      "versionId": "prof-v2",
+      "contentHash": "3fd59652c44a1de85fa7a7a4cf97b1f96762dc6653e83e3f2ecc4bb4842d24bf",
+      "firmware": "fw-2-0-0",
+      "lensRoute": "logical0-main",
+      "status": "candidate",
+      "bytesLabel": "bytes-v2"
+    }
+  ],
+  "sources": [
+    {
+      "id": "take-archived",
+      "profileRef": "prof-v1",
+      "contentHash": "ac3165c03a01dfcf1b091bee99e4e6bcc709bda10d6733c5b5daa1eaa7d9372c"
+    }
+  ],
+  "exports": [
+    {
+      "id": "export-archived",
+      "sourceId": "take-archived",
+      "profileRef": "prof-v1",
+      "contentHash": "ac3165c03a01dfcf1b091bee99e4e6bcc709bda10d6733c5b5daa1eaa7d9372c",
+      "recipeId": "recipe-archived"
+    },
+    {
+      "id": "export-revised",
+      "sourceId": "take-archived",
+      "profileRef": "prof-v2",
+      "contentHash": "3fd59652c44a1de85fa7a7a4cf97b1f96762dc6653e83e3f2ecc4bb4842d24bf",
+      "recipeId": "recipe-revised"
+    }
+  ]
+}

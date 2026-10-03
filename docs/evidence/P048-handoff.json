@@ -1,0 +1,50 @@
+{
+  "phase": "P048",
+  "caseIds": [
+    "TC-P048-01",
+    "TC-P048-02",
+    "TC-P048-03",
+    "TC-P048-04",
+    "TC-P048-05",
+    "TC-P048-06",
+    "TC-P048-07",
+    "TC-P048-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p048_version_and_retire_calibration_profiles.py",
+    "scripts/tests/test_p048_version_and_retire_calibration_profiles.py",
+    "docs/P048_VERSION_AND_RETIRE_CALIBRATION_PROFILES.md",
+    "docs/P048_VERSION_AND_RETIRE_CALIBRATION_PROFILES.json",
+    "docs/evidence/P048-handoff.json",
+    "scripts/gates/p048_tc01.py",
+    "scripts/gates/p048_tc02.py",
+    "scripts/gates/p048_tc03.py",
+    "scripts/gates/p048_tc04.py",
+    "scripts/gates/p048_tc05.py",
+    "scripts/gates/p048_tc06.py",
+    "scripts/gates/p048_tc07.py",
+    "scripts/gates/p048_tc08.py",
+    "scripts/tests/test_p048_tc01.py",
+    "scripts/tests/test_p048_tc02.py",
+    "scripts/tests/test_p048_tc03.py",
+    "scripts/tests/test_p048_tc04.py",
+    "scripts/tests/test_p048_tc05.py",
+    "scripts/tests/test_p048_tc06.py",
+    "scripts/tests/test_p048_tc07.py",
+    "scripts/tests/test_p048_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p048*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "in-place profile replacement as a version",
+    "measured colour profile"
+  ],
+  "nextPhase": "P049"
+}
