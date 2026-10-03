@@ -1,0 +1,51 @@
+{
+  "phase": "P028",
+  "caseIds": [
+    "TC-P028-01",
+    "TC-P028-02",
+    "TC-P028-03",
+    "TC-P028-04",
+    "TC-P028-05",
+    "TC-P028-06",
+    "TC-P028-07",
+    "TC-P028-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p028_implement_two_track_startup_and_drain.py",
+    "scripts/tests/test_p028_implement_two_track_startup_and_drain.py",
+    "docs/P028_IMPLEMENT_TWO_TRACK_STARTUP_AND_DRAIN.md",
+    "docs/P028_IMPLEMENT_TWO_TRACK_STARTUP_AND_DRAIN.json",
+    "docs/evidence/P028-handoff.json",
+    "scripts/gates/p028_tc01.py",
+    "scripts/gates/p028_tc02.py",
+    "scripts/gates/p028_tc03.py",
+    "scripts/gates/p028_tc04.py",
+    "scripts/gates/p028_tc05.py",
+    "scripts/gates/p028_tc06.py",
+    "scripts/gates/p028_tc07.py",
+    "scripts/gates/p028_tc08.py",
+    "scripts/tests/test_p028_tc01.py",
+    "scripts/tests/test_p028_tc02.py",
+    "scripts/tests/test_p028_tc03.py",
+    "scripts/tests/test_p028_tc04.py",
+    "scripts/tests/test_p028_tc05.py",
+    "scripts/tests/test_p028_tc06.py",
+    "scripts/tests/test_p028_tc07.py",
+    "scripts/tests/test_p028_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p028*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device two-track mux and drain"
+  ],
+  "nextPhase": "P029"
+}

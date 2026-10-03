@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "phase": "P028",
+  "contractId": "s23-two-track-startup-drain-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Wait for all selected track formats before starting the muxer. Bound pre-start samples, coordinate EOS independently, and define maximum drain duration. Record which track failed and preserve useful partial output under an unverified label.",
+  "fixture": "Video format arrives immediately, audio format arrives late, then Stop occurs before audio EOS.",
+  "oracle": "The state machine produces the correct incomplete or verified outcome without deadlock or fabricated audio samples.",
+  "mutant": "Start the muxer after the first track and ignore later selected tracks.",
+  "takeId": "synthetic-two-track-p028",
+  "selectedTracks": [
+    "video",
+    "audio"
+  ],
+  "maxPreStartSamples": 3,
+  "maxDrainDurationMs": 1500,
+  "partialOutput": "private-stage/take-p028.mp4",
+  "muxPolicy": "wait-for-all-formats",
+  "drainPolicy": "bounded",
+  "events": [
+    {
+      "index": 0,
+      "kind": "format",
+      "track": "video",
+      "atMs": 0,
+      "fabricated": false
+    },
+    {
+      "index": 1,
+      "kind": "sample",
+      "track": "video",
+      "atMs": 33,
+      "fabricated": false
+    },
+    {
+      "index": 2,
+      "kind": "sample",
+      "track": "video",
+      "atMs": 66,
+      "fabricated": false
+    },
+    {
+      "index": 3,
+      "kind": "format",
+      "track": "audio",
+      "atMs": 90,
+      "fabricated": false
+    },
+    {
+      "index": 4,
+      "kind": "sample",
+      "track": "audio",
+      "atMs": 100,
+      "fabricated": false
+    },
+    {
+      "index": 5,
+      "kind": "sample",
+      "track": "video",
+      "atMs": 132,
+      "fabricated": false
+    },
+    {
+      "index": 6,
+      "kind": "stop",
+      "track": "session",
+      "atMs": 200,
+      "fabricated": false
+    },
+    {
+      "index": 7,
+      "kind": "eos",
+      "track": "video",
+      "atMs": 240,
+      "fabricated": false
+    }
+  ]
+}
