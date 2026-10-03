@@ -1,0 +1,51 @@
+{
+  "phase": "P070",
+  "caseIds": [
+    "TC-P070-01",
+    "TC-P070-02",
+    "TC-P070-03",
+    "TC-P070-04",
+    "TC-P070-05",
+    "TC-P070-06",
+    "TC-P070-07",
+    "TC-P070-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p070_implement_temporal_chunk_boundaries.py",
+    "scripts/tests/test_p070_implement_temporal_chunk_boundaries.py",
+    "docs/P070_IMPLEMENT_TEMPORAL_CHUNK_BOUNDARIES.md",
+    "docs/P070_IMPLEMENT_TEMPORAL_CHUNK_BOUNDARIES.json",
+    "docs/evidence/P070-handoff.json",
+    "scripts/gates/p070_tc01.py",
+    "scripts/gates/p070_tc02.py",
+    "scripts/gates/p070_tc03.py",
+    "scripts/gates/p070_tc04.py",
+    "scripts/gates/p070_tc05.py",
+    "scripts/gates/p070_tc06.py",
+    "scripts/gates/p070_tc07.py",
+    "scripts/gates/p070_tc08.py",
+    "scripts/tests/test_p070_tc01.py",
+    "scripts/tests/test_p070_tc02.py",
+    "scripts/tests/test_p070_tc03.py",
+    "scripts/tests/test_p070_tc04.py",
+    "scripts/tests/test_p070_tc05.py",
+    "scripts/tests/test_p070_tc06.py",
+    "scripts/tests/test_p070_tc07.py",
+    "scripts/tests/test_p070_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p070*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "empty-state restart as temporal continuity",
+    "measured resumed export",
+    "focus-pull capture on a device"
+  ],
+  "nextPhase": "P071"
+}

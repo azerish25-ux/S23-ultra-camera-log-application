@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "phase": "P070",
+  "mapId": "s23-temporal-chunk-boundaries-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Declare history and lookahead per temporal node, checkpoint relevant state, and include overlap frames that are not duplicated in final output. Bind caches to source, model, graph, and algorithm identities. Scene cuts invalidate appropriate history.",
+  "fixture": "A subject crossing a chunk boundary during a focus pull with a process restart at the boundary.",
+  "oracle": "The resumed output preserves temporal continuity within the declared tolerance and exact frame count.",
+  "mutant": "Restart the temporal model from an empty state at every export chunk.",
+  "subject": "focus-pull-subject",
+  "focusPull": true,
+  "boundaryCrossed": true,
+  "sourceId": "focus-pull-source",
+  "modelId": "temporal-model-a",
+  "graphId": "deferred-export",
+  "algorithmId": "overlap-trim-a",
+  "tolerance": "0.01",
+  "expectedFrameCount": "8",
+  "nodes": [
+    {
+      "id": "temporal-denoise",
+      "history": "4",
+      "lookahead": "2",
+      "checkpoint": true,
+      "cacheBound": true,
+      "cache": {
+        "sourceId": "focus-pull-source",
+        "modelId": "temporal-model-a",
+        "graphId": "deferred-export",
+        "algorithmId": "overlap-trim-a"
+      }
+    }
+  ],
+  "chunks": [
+    {
+      "id": "chunk-0",
+      "startFrame": "0",
+      "endFrame": "4",
+      "overlapIn": "0",
+      "overlapOut": "2",
+      "sceneCut": false,
+      "historyInvalidated": false,
+      "emittedFrames": [
+        "0",
+        "1",
+        "2",
+        "3"
+      ],
+      "overlapFrames": [
+        "4",
+        "5"
+      ],
+      "continuityDelta": "0.002"
+    },
+    {
+      "id": "chunk-1",
+      "startFrame": "4",
+      "endFrame": "8",
+      "overlapIn": "2",
+      "overlapOut": "0",
+      "sceneCut": false,
+      "historyInvalidated": false,
+      "emittedFrames": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "overlapFrames": [
+        "2",
+        "3"
+      ],
+      "continuityDelta": "0.004"
+    }
+  ],
+  "uninterrupted": {
+    "frameCount": "8",
+    "continuityDelta": "0.003",
+    "duplicateFrames": [],
+    "checkpointLoaded": false,
+    "emptyState": false
+  },
+  "resumed": {
+    "frameCount": "8",
+    "continuityDelta": "0.006",
+    "duplicateFrames": [],
+    "checkpointLoaded": true,
+    "emptyState": false,
+    "restartAtBoundary": true
+  }
+}
