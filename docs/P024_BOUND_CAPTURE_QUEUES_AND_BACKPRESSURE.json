@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "phase": "P024",
+  "policyId": "s23-backpressure-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Budget queues in bytes and frames, use explicit policies for preview drops versus source failure, and instrument outstanding leases. Source overflow causes a controlled visible stop with gap evidence. Preview and ML queues may discard stale work without altering source timestamps.",
+  "fixture": "A depth worker blocked for several seconds while the source writer remains healthy, followed by a deliberately stalled source writer.",
+  "oracle": "The first condition only reduces monitoring freshness; the second triggers a documented capture stop rather than hidden loss.",
+  "mutant": "Use one unbounded queue for source writing, preview, and inference.",
+  "budgets": {
+    "sourceFrames": 3,
+    "sourceBytes": 65536,
+    "previewFrames": 8,
+    "previewBytes": 131072,
+    "inferenceFrames": 2,
+    "inferenceBytes": 65536,
+    "leaseLimit": 8
+  },
+  "queues": [
+    {
+      "name": "source",
+      "role": "source",
+      "bounded": true,
+      "frameCapacity": 3,
+      "byteCapacity": 65536,
+      "overflowPolicy": "visible_stop_with_gap"
+    },
+    {
+      "name": "preview",
+      "role": "preview",
+      "bounded": true,
+      "frameCapacity": 8,
+      "byteCapacity": 131072,
+      "overflowPolicy": "discard_stale"
+    },
+    {
+      "name": "inference",
+      "role": "inference",
+      "bounded": true,
+      "frameCapacity": 2,
+      "byteCapacity": 65536,
+      "overflowPolicy": "discard_stale"
+    }
+  ],
+  "leases": [
+    {
+      "id": "lease-source",
+      "queue": "source",
+      "bytes": 4096
+    },
+    {
+      "id": "lease-inference",
+      "queue": "inference",
+      "bytes": 4096
+    }
+  ],
+  "conditions": [
+    {
+      "id": "depth_blocked",
+      "kind": "monitoring_stall",
+      "blockedConsumer": "inference",
+      "blockedSeconds": 4,
+      "sourceWriter": "healthy",
+      "frameBytes": 4096,
+      "frames": [
+        {
+          "id": "d0",
+          "timestampNs": "1000000000"
+        },
+        {
+          "id": "d1",
+          "timestampNs": "1333333333"
+        },
+        {
+          "id": "d2",
+          "timestampNs": "1666666666"
+        },
+        {
+          "id": "d3",
+          "timestampNs": "2000000000"
+        },
+        {
+          "id": "d4",
+          "timestampNs": "2333333333"
+        }
+      ]
+    },
+    {
+      "id": "source_stalled",
+      "kind": "source_stall",
+      "blockedConsumer": "source",
+      "blockedSeconds": 3,
+      "sourceWriter": "stalled",
+      "frameBytes": 4096,
+      "frames": [
+        {
+          "id": "s0",
+          "timestampNs": "3000000000"
+        },
+        {
+          "id": "s1",
+          "timestampNs": "3333333333"
+        },
+        {
+          "id": "s2",
+          "timestampNs": "3666666666"
+        },
+        {
+          "id": "s3",
+          "timestampNs": "4000000000"
+        },
+        {
+          "id": "s4",
+          "timestampNs": "4333333333"
+        }
+      ]
+    }
+  ]
+}

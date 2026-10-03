@@ -1,0 +1,51 @@
+{
+  "phase": "P024",
+  "caseIds": [
+    "TC-P024-01",
+    "TC-P024-02",
+    "TC-P024-03",
+    "TC-P024-04",
+    "TC-P024-05",
+    "TC-P024-06",
+    "TC-P024-07",
+    "TC-P024-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p024_bound_capture_queues_and_backpressure.py",
+    "scripts/tests/test_p024_bound_capture_queues_and_backpressure.py",
+    "docs/P024_BOUND_CAPTURE_QUEUES_AND_BACKPRESSURE.md",
+    "docs/P024_BOUND_CAPTURE_QUEUES_AND_BACKPRESSURE.json",
+    "docs/evidence/P024-handoff.json",
+    "scripts/gates/p024_tc01.py",
+    "scripts/gates/p024_tc02.py",
+    "scripts/gates/p024_tc03.py",
+    "scripts/gates/p024_tc04.py",
+    "scripts/gates/p024_tc05.py",
+    "scripts/gates/p024_tc06.py",
+    "scripts/gates/p024_tc07.py",
+    "scripts/gates/p024_tc08.py",
+    "scripts/tests/test_p024_tc01.py",
+    "scripts/tests/test_p024_tc02.py",
+    "scripts/tests/test_p024_tc03.py",
+    "scripts/tests/test_p024_tc04.py",
+    "scripts/tests/test_p024_tc05.py",
+    "scripts/tests/test_p024_tc06.py",
+    "scripts/tests/test_p024_tc07.py",
+    "scripts/tests/test_p024_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p024*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "on-device queue bounds and backpressure"
+  ],
+  "nextPhase": "P025"
+}
