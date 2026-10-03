@@ -596,3 +596,7 @@ Host gate for the directive deliverable "Lens-character profile schema and conti
 ## P095 — Implement optional anamorphic interpretation (host scope)
 
 Host gate for the directive deliverable "Anamorphic mode contract and geometry regression tests". See [P095_IMPLEMENT_OPTIONAL_ANAMORPHIC_INTERPRETATION.md](P095_IMPLEMENT_OPTIONAL_ANAMORPHIC_INTERPRETATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P096 — Validate virtual optics against controlled geometry (host scope)
+
+Host gate for the directive deliverable "Optical validation laboratory and error decomposition". See [P096_VALIDATE_VIRTUAL_OPTICS_AGAINST_CONTROLLED_GEOME.md](P096_VALIDATE_VIRTUAL_OPTICS_AGAINST_CONTROLLED_GEOME.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
