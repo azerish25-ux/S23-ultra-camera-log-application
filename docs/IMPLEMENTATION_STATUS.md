@@ -556,3 +556,7 @@ Host gate for the directive deliverable "Halation model, kernel tests, and contr
 ## P085 — Implement optical bloom and diffusion (host scope)
 
 Host gate for the directive deliverable "Optical diffusion module and energy-response tests". See [P085_IMPLEMENT_OPTICAL_BLOOM_AND_DIFFUSION.md](P085_IMPLEMENT_OPTICAL_BLOOM_AND_DIFFUSION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P086 — Model print and scan finishing (host scope)
+
+Host gate for the directive deliverable "Print-scan graph and domain-boundary tests". See [P086_MODEL_PRINT_AND_SCAN_FINISHING.md](P086_MODEL_PRINT_AND_SCAN_FINISHING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
