@@ -1,0 +1,50 @@
+{
+  "phase": "P073",
+  "caseIds": [
+    "TC-P073-01",
+    "TC-P073-02",
+    "TC-P073-03",
+    "TC-P073-04",
+    "TC-P073-05",
+    "TC-P073-06",
+    "TC-P073-07",
+    "TC-P073-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p073_define_stock_profiles_and_evidence_levels.py",
+    "scripts/tests/test_p073_define_stock_profiles_and_evidence_levels.py",
+    "docs/P073_DEFINE_STOCK_PROFILES_AND_EVIDENCE_LEVELS.md",
+    "docs/P073_DEFINE_STOCK_PROFILES_AND_EVIDENCE_LEVELS.json",
+    "docs/evidence/P073-handoff.json",
+    "scripts/gates/p073_tc01.py",
+    "scripts/gates/p073_tc02.py",
+    "scripts/gates/p073_tc03.py",
+    "scripts/gates/p073_tc04.py",
+    "scripts/gates/p073_tc05.py",
+    "scripts/gates/p073_tc06.py",
+    "scripts/gates/p073_tc07.py",
+    "scripts/gates/p073_tc08.py",
+    "scripts/tests/test_p073_tc01.py",
+    "scripts/tests/test_p073_tc02.py",
+    "scripts/tests/test_p073_tc03.py",
+    "scripts/tests/test_p073_tc04.py",
+    "scripts/tests/test_p073_tc05.py",
+    "scripts/tests/test_p073_tc06.py",
+    "scripts/tests/test_p073_tc07.py",
+    "scripts/tests/test_p073_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p073*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "marketing name as physically measured parameters",
+    "manufacturer stock calibration"
+  ],
+  "nextPhase": "P074"
+}

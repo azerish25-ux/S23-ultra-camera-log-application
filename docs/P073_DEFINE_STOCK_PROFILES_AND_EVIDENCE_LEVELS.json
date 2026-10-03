@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "phase": "P073",
+  "mapId": "s23-stock-profiles-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Store stock family, balance, response model, parameter units, source references, licence state, and confidence. Distinguish measured parameters from reconstructed artistic controls. Keep display names independent of stable profile identifiers and version every numerical change.",
+  "fixture": "Two creative interpretations of the same nominal stock with different density curves and uncertain source data.",
+  "oracle": "The catalogue exposes them as versioned interpretations rather than falsely identical calibrated materials.",
+  "mutant": "Use a stock marketing name as proof that all numerical parameters are physically measured.",
+  "nominalStock": "vision-400",
+  "profiles": [
+    {
+      "profileId": "vision-400-a",
+      "version": "1",
+      "displayName": "Vision 400",
+      "family": "color-negative",
+      "balance": "daylight",
+      "responseModel": "density-curve",
+      "parameterUnits": "log-density",
+      "sourceReferences": ["uncertain-datasheet"],
+      "licenceState": "unspecified",
+      "confidence": "low",
+      "evidenceLevel": "reconstructed",
+      "densityCurve": ["0.12", "0.4", "1.1", "2.4"],
+      "artisticControls": ["print-contrast"],
+      "measuredParameters": [],
+      "virtualFormat": "none",
+      "appearanceId": "none"
+    },
+    {
+      "profileId": "vision-400-b",
+      "version": "1",
+      "displayName": "Vision 400",
+      "family": "color-negative",
+      "balance": "daylight",
+      "responseModel": "density-curve",
+      "parameterUnits": "log-density",
+      "sourceReferences": ["uncertain-scan"],
+      "licenceState": "unspecified",
+      "confidence": "low",
+      "evidenceLevel": "synthetic",
+      "densityCurve": ["0.18", "0.55", "1.35", "2.1"],
+      "artisticControls": ["shoulder-roll"],
+      "measuredParameters": [],
+      "virtualFormat": "none",
+      "appearanceId": "none"
+    }
+  ]
+}
