@@ -368,3 +368,7 @@ Host gate for the directive deliverable "RAW source specification and hostile-in
 ## P035 — Implement packed RAW decoding fixtures (host scope)
 
 Host gate for the directive deliverable "Packing adapters and exact golden arrays". See [P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.md](P035_IMPLEMENT_PACKED_RAW_DECODING_FIXTURES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P039 — Retain sources across cancelled development (host scope)
+
+Host gate for the directive deliverable "Non-destructive development contract and cancellation tests". See [P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.md](P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

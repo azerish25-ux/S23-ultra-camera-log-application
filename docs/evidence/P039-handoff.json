@@ -1,0 +1,51 @@
+{
+  "phase": "P039",
+  "caseIds": [
+    "TC-P039-01",
+    "TC-P039-02",
+    "TC-P039-03",
+    "TC-P039-04",
+    "TC-P039-05",
+    "TC-P039-06",
+    "TC-P039-07",
+    "TC-P039-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p039_retain_sources_across_cancelled_development.py",
+    "scripts/tests/test_p039_retain_sources_across_cancelled_development.py",
+    "docs/P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.md",
+    "docs/P039_RETAIN_SOURCES_ACROSS_CANCELLED_DEVELOPMENT.json",
+    "docs/evidence/P039-handoff.json",
+    "scripts/gates/p039_tc01.py",
+    "scripts/gates/p039_tc02.py",
+    "scripts/gates/p039_tc03.py",
+    "scripts/gates/p039_tc04.py",
+    "scripts/gates/p039_tc05.py",
+    "scripts/gates/p039_tc06.py",
+    "scripts/gates/p039_tc07.py",
+    "scripts/gates/p039_tc08.py",
+    "scripts/tests/test_p039_tc01.py",
+    "scripts/tests/test_p039_tc02.py",
+    "scripts/tests/test_p039_tc03.py",
+    "scripts/tests/test_p039_tc04.py",
+    "scripts/tests/test_p039_tc05.py",
+    "scripts/tests/test_p039_tc06.py",
+    "scripts/tests/test_p039_tc07.py",
+    "scripts/tests/test_p039_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p039*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "physical S23 qualification",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "developed movie written onto the source filename",
+    "on-device cancelled development"
+  ],
+  "nextPhase": "P040"
+}

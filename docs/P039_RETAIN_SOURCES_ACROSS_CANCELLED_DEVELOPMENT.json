@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "phase": "P039",
+  "mapId": "s23-retain-sources-cancelled-development-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use read-only source handles, separate destination identities, and content hashes before and after processing. Manage temporary output independently. Cancellation closes leases and records progress while preserving source and profile records.",
+  "fixture": "Cancellation halfway through development followed by a process restart and a retry with another film recipe.",
+  "oracle": "The source hash is unchanged, the partial result is labelled incomplete, and the retry reads the original frames.",
+  "mutant": "Reuse the source filename as the destination of a developed movie.",
+  "policy": "separate_destination",
+  "source": {
+    "id": "raw-take-1",
+    "filename": "take.rawseq",
+    "handle": "ro-take-1",
+    "readOnly": true,
+    "hashBefore": "c72ebf74e6b161bb2c615d99f50c3a50fc7c3f92b98c4aedeefca5608892193a",
+    "hashAfter": "c72ebf74e6b161bb2c615d99f50c3a50fc7c3f92b98c4aedeefca5608892193a",
+    "frames": [
+      "frame-0",
+      "frame-1",
+      "frame-2",
+      "frame-3"
+    ]
+  },
+  "profile": {
+    "id": "profile-capture",
+    "recipe": "recipe-a",
+    "hash": "f705056a8a55afff80a38acca68eba0b298171312e8c95ef579c007f2eb4df3f"
+  },
+  "job": {
+    "developedFrames": 2,
+    "destination": "dev-cancel.mov",
+    "temporary": "tmp-dev-cancel.part",
+    "partialLabel": "incomplete",
+    "leasesClosed": true,
+    "progressRecorded": true
+  },
+  "retry": {
+    "restarted": true,
+    "recipe": "recipe-b",
+    "destination": "dev-retry-recipe-b.mov",
+    "readsOriginalFrames": true,
+    "frameIds": [
+      "frame-0",
+      "frame-1",
+      "frame-2",
+      "frame-3"
+    ]
+  }
+}
