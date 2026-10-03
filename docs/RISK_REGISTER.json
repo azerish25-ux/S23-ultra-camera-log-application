@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "phase": "P006",
+  "registerId": "s23-risk-register",
+  "implementationBaseRevision": "fffd5c9a63cb732e103052acae29ae0c251585cc",
+  "risks": [
+    {
+      "id": "footage_loss",
+      "title": "Footage loss",
+      "irreversible": true,
+      "stopCondition": "Stop before any delete, overwrite, or in-place cleanup of original media when a second hash-verified copy is absent.",
+      "requiredEvidence": [
+        "hash of the original bytes before the experiment",
+        "hash-verified second copy that restores without the original path",
+        "explicit statement that derived proxies are not a substitute for the original"
+      ],
+      "reversibleAlternative": "Copy originals to a content-addressed holding area and compare hashes before any destructive storage experiment."
+    },
+    {
+      "id": "misleading_labels",
+      "title": "Misleading labels",
+      "irreversible": false,
+      "stopCondition": "Stop publication if a label asserts physical S23 qualification, calibrated colour, a sustained stream, or firmware access that the evidence does not show.",
+      "requiredEvidence": [
+        "evidence class and source revision bound to the label",
+        "explicit non-claims for physical, calibrated, and firmware results",
+        "separation of advertised capability from a verified stream"
+      ],
+      "reversibleAlternative": "Mark the result advertised-only, exploratory, or inconclusive and keep the narrower software finding."
+    },
+    {
+      "id": "thermal_load",
+      "title": "Thermal load",
+      "irreversible": true,
+      "stopCondition": "Stop a capture or stress experiment when a predeclared temperature, throttle, or battery limit is crossed, or when no temperature observation with unit and domain is available.",
+      "requiredEvidence": [
+        "temperature samples with unit and domain",
+        "duration and abort threshold declared before the run",
+        "device-variant identity when a physical observation is claimed"
+      ],
+      "reversibleAlternative": "Use short host or emulator timing runs and existing thermal notes before any long physical take."
+    },
+    {
+      "id": "rendering_instability",
+      "title": "Rendering instability",
+      "irreversible": false,
+      "stopCondition": "Stop promotion of a renderer when a crash, unreproducible frame, or unretained source change appears in the acceptance set.",
+      "requiredEvidence": [
+        "input fixture identity",
+        "frame-by-frame comparison against the retained reference",
+        "crash or failure log kept beside any passing summary"
+      ],
+      "reversibleAlternative": "Compare a CPU reference against retained source frames before changing a GPU path."
+    },
+    {
+      "id": "licensing",
+      "title": "Licensing",
+      "irreversible": true,
+      "stopCondition": "Stop public bundling or redistribution when owner, licence, or permitted use is unknown.",
+      "requiredEvidence": [
+        "source attribution and content identity",
+        "licence review state",
+        "permitted use, including whether redistribution is allowed"
+      ],
+      "reversibleAlternative": "Keep uncleared media in private comparison and out of the public bundle."
+    },
+    {
+      "id": "firmware_modification",
+      "title": "Firmware modification",
+      "irreversible": true,
+      "stopCondition": "Stop before any flash, bootloader change, or protection change unless a blocked stream is identified and a device-specific recovery procedure is verified. User enthusiasm is not authorization.",
+      "requiredEvidence": [
+        "identified blocked stream that application-level paths cannot produce",
+        "verified device-specific recovery procedure",
+        "device-variant and firmware identity",
+        "fresh explicit authorization distinct from user enthusiasm"
+      ],
+      "reversibleAlternative": "Run non-destructive Camera2 and application-level capability discovery on host fixtures, emulator reports, or read-only device records."
+    }
+  ]
+}

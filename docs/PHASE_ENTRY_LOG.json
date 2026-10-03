@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "phase": "P006",
+  "decisions": [
+    {
+      "id": "P006-DEC-firmware-deferred",
+      "riskId": "firmware_modification",
+      "proposal": "Flash a modified camera firmware image to expose a hypothesized hidden stream.",
+      "irreversible": true,
+      "blockedStreamIdentified": false,
+      "recoveryProcedureVerified": false,
+      "authorizedByEnthusiasmOnly": false,
+      "alternatives": [
+        "non-destructive Camera2 capability discovery",
+        "application-level investigation of advertised streams",
+        "defer firmware work until a measured blocked stream exists"
+      ],
+      "evidence": [
+        "no identified blocked stream is recorded for this proposal",
+        "no verified device-specific recovery procedure is recorded for this proposal",
+        "P006 acceptance oracle: defer the experiment while non-destructive investigations remain available"
+      ],
+      "resourceCost": {
+        "value": 1,
+        "unit": "h",
+        "domain": "engineering_time"
+      },
+      "fallback": "Leave device firmware, bootloader, and protections unchanged and continue application-level work.",
+      "stopCondition": "Stop before any flash, bootloader change, or protection change while the blocked stream or recovery procedure is unidentified.",
+      "decision": "deferred",
+      "rationale": "The firmware proposal has no identified blocked stream and no verified recovery procedure, so it is deferred. Reversible capability discovery stays available. Enthusiasm is not recorded as authorization."
+    },
+    {
+      "id": "P006-DEC-capability-discovery",
+      "riskId": "misleading_labels",
+      "proposal": "Non-destructive capability discovery: inventory advertised Camera2 streams and application-level labels on host or emulator fixtures, and record each result as advertised-only.",
+      "irreversible": false,
+      "blockedStreamIdentified": false,
+      "recoveryProcedureVerified": false,
+      "authorizedByEnthusiasmOnly": false,
+      "alternatives": [
+        "reuse existing advertised-only capability reports",
+        "defer the inventory rather than relabel it as a verified physical stream"
+      ],
+      "evidence": [
+        "existing advertised-only capability schema distinguishes advertisement from a verified recording",
+        "host and emulator fixtures do not require a device write"
+      ],
+      "resourceCost": {
+        "value": 3,
+        "unit": "h",
+        "domain": "engineering_time"
+      },
+      "fallback": "Publish no new capability claim and leave the existing capture paths unchanged.",
+      "stopCondition": "Stop if any result would be labeled as a verified physical stream, calibrated measurement, or firmware capability, or if the probe requests a device write.",
+      "decision": "allowed",
+      "rationale": "The proposal is reversible, names alternatives, evidence, resource cost, fallback, and a stop condition, and does not modify firmware or other irreversible state."
+    },
+    {
+      "id": "P006-DEC-footage-delete-deferred",
+      "riskId": "footage_loss",
+      "proposal": "Delete original camera files after a visual review of proxies.",
+      "irreversible": true,
+      "blockedStreamIdentified": false,
+      "recoveryProcedureVerified": false,
+      "authorizedByEnthusiasmOnly": false,
+      "alternatives": [
+        "hash-copy originals before any deletion experiment",
+        "retain proxies and originals together"
+      ],
+      "evidence": [
+        "no hash-verified second copy is recorded for this proposal",
+        "a proxy review does not restore original bytes"
+      ],
+      "resourceCost": {
+        "value": 1,
+        "unit": "h",
+        "domain": "engineering_time"
+      },
+      "fallback": "Keep every original byte in place.",
+      "stopCondition": "Stop before deletion if a second hash-verified copy and a tested restore path are absent.",
+      "decision": "deferred",
+      "rationale": "Deleting originals is irreversible and this proposal has no verified recovery. The reversible hash-copy experiment remains the available path."
+    }
+  ]
+}
