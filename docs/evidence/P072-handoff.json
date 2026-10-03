@@ -1,0 +1,50 @@
+{
+  "phase": "P072",
+  "caseIds": [
+    "TC-P072-01",
+    "TC-P072-02",
+    "TC-P072-03",
+    "TC-P072-04",
+    "TC-P072-05",
+    "TC-P072-06",
+    "TC-P072-07",
+    "TC-P072-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p072_measure_full_pipeline_performance.py",
+    "scripts/tests/test_p072_measure_full_pipeline_performance.py",
+    "docs/P072_MEASURE_FULL_PIPELINE_PERFORMANCE.md",
+    "docs/P072_MEASURE_FULL_PIPELINE_PERFORMANCE.json",
+    "docs/evidence/P072-handoff.json",
+    "scripts/gates/p072_tc01.py",
+    "scripts/gates/p072_tc02.py",
+    "scripts/gates/p072_tc03.py",
+    "scripts/gates/p072_tc04.py",
+    "scripts/gates/p072_tc05.py",
+    "scripts/gates/p072_tc06.py",
+    "scripts/gates/p072_tc07.py",
+    "scripts/gates/p072_tc08.py",
+    "scripts/tests/test_p072_tc01.py",
+    "scripts/tests/test_p072_tc02.py",
+    "scripts/tests/test_p072_tc03.py",
+    "scripts/tests/test_p072_tc04.py",
+    "scripts/tests/test_p072_tc05.py",
+    "scripts/tests/test_p072_tc06.py",
+    "scripts/tests/test_p072_tc07.py",
+    "scripts/tests/test_p072_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p072*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "standalone inference latency as camera frame rate",
+    "end-to-end performance from the fastest individual kernel"
+  ],
+  "nextPhase": "P073"
+}

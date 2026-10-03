@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "phase": "P072",
+  "mapId": "s23-full-pipeline-performance-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Measure capture, copies, inference, rendering, encoding, decoding, I/O, and queue occupancy together. Warm up where appropriate, retain cold-start results separately, and report sustained thermal state. Compare live and deferred modes as different workflows.",
+  "fixture": "A fast standalone depth model whose integrated path stalls because of repeated format conversion and memory copies.",
+  "oracle": "The report attributes the actual bottleneck and does not advertise standalone inference latency as camera frame rate.",
+  "mutant": "Compute end-to-end performance from the fastest individual kernel.",
+  "model": {
+    "id": "standalone-depth",
+    "standaloneInferenceMs": "1.25",
+    "integratedStall": true
+  },
+  "attribution": {
+    "bottleneck": "copies",
+    "cause": "format-conversion",
+    "frameRateSource": "integrated"
+  },
+  "workflowComparison": "distinct",
+  "stages": [
+    {"id": "capture", "latencyMs": "8.4", "occupancy": "1"},
+    {"id": "copies", "latencyMs": "46.5", "occupancy": "8"},
+    {"id": "inference", "latencyMs": "1.25", "occupancy": "1"},
+    {"id": "rendering", "latencyMs": "7.2", "occupancy": "2"},
+    {"id": "encoding", "latencyMs": "11", "occupancy": "1"},
+    {"id": "decoding", "latencyMs": "4.8", "occupancy": "1"},
+    {"id": "io", "latencyMs": "13.6", "occupancy": "3"},
+    {"id": "queue", "latencyMs": "0", "occupancy": "9"}
+  ],
+  "conversions": [
+    {"id": "depth-to-render", "repeats": "4", "copyBytes": "12582912"}
+  ],
+  "workflows": [
+    {
+      "mode": "live",
+      "thermal": "sustained",
+      "warmup": true,
+      "coldStartRetained": true,
+      "coldStartMs": "180",
+      "sustainedMs": "92.75"
+    },
+    {
+      "mode": "deferred",
+      "thermal": "sustained",
+      "warmup": true,
+      "coldStartRetained": true,
+      "coldStartMs": "240",
+      "sustainedMs": "61.4"
+    }
+  ]
+}
