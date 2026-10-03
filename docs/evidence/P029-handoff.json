@@ -1,0 +1,51 @@
+{
+  "phase": "P029",
+  "caseIds": [
+    "TC-P029-01",
+    "TC-P029-02",
+    "TC-P029-03",
+    "TC-P029-04",
+    "TC-P029-05",
+    "TC-P029-06",
+    "TC-P029-07",
+    "TC-P029-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p029_preserve_cadence_rather_than_hide_gaps.py",
+    "scripts/tests/test_p029_preserve_cadence_rather_than_hide_gaps.py",
+    "docs/P029_PRESERVE_CADENCE_RATHER_THAN_HIDE_GAPS.md",
+    "docs/P029_PRESERVE_CADENCE_RATHER_THAN_HIDE_GAPS.json",
+    "docs/evidence/P029-handoff.json",
+    "scripts/gates/p029_tc01.py",
+    "scripts/gates/p029_tc02.py",
+    "scripts/gates/p029_tc03.py",
+    "scripts/gates/p029_tc04.py",
+    "scripts/gates/p029_tc05.py",
+    "scripts/gates/p029_tc06.py",
+    "scripts/gates/p029_tc07.py",
+    "scripts/gates/p029_tc08.py",
+    "scripts/tests/test_p029_tc01.py",
+    "scripts/tests/test_p029_tc02.py",
+    "scripts/tests/test_p029_tc03.py",
+    "scripts/tests/test_p029_tc04.py",
+    "scripts/tests/test_p029_tc05.py",
+    "scripts/tests/test_p029_tc06.py",
+    "scripts/tests/test_p029_tc07.py",
+    "scripts/tests/test_p029_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p029*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "average frame rate as per-frame cadence",
+    "retiming disguised as native capture",
+    "physical lip-sync"
+  ],
+  "nextPhase": "P030"
+}

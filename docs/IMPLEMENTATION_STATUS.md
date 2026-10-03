@@ -336,3 +336,7 @@ Host gate for the directive deliverable "Physical audiovisual protocol and measu
 ## P026 — Qualify video encoder startup (host scope)
 
 Host gate for the directive deliverable "Encoder startup owner and output-signal checks". See [P026_QUALIFY_VIDEO_ENCODER_STARTUP.md](P026_QUALIFY_VIDEO_ENCODER_STARTUP.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P029 — Preserve cadence rather than hide gaps (host scope)
+
+Host gate for the directive deliverable "Cadence analyzer and source-to-output time mapping". See [P029_PRESERVE_CADENCE_RATHER_THAN_HIDE_GAPS.md](P029_PRESERVE_CADENCE_RATHER_THAN_HIDE_GAPS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

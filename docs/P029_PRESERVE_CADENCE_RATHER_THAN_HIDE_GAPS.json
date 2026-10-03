@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "phase": "P029",
+  "mapId": "s23-cadence-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Analyze original timestamp intervals, duplicates, discontinuities, duration, and count. Keep packet ordering distinct from presentation ordering when codec reordering exists. Any retiming is a named development operation with mapping metadata, not repair disguised as native capture.",
+  "fixture": "A source containing one forty-eight-millisecond gap and a later short interval that restores the average frame rate.",
+  "oracle": "The per-frame integrity gate reports the gap even when the final average falls within tolerance.",
+  "mutant": "Approve cadence using only total frames divided by duration.",
+  "nominalIntervalMs": "40",
+  "toleranceMs": "1",
+  "frames": [
+    {
+      "id": "f0",
+      "packetIndex": 0,
+      "presentationIndex": 0,
+      "timestampMs": "0",
+      "duplicate": false,
+      "contentId": "c0"
+    },
+    {
+      "id": "f1",
+      "packetIndex": 1,
+      "presentationIndex": 1,
+      "timestampMs": "40",
+      "duplicate": false,
+      "contentId": "c1"
+    },
+    {
+      "id": "f2",
+      "packetIndex": 2,
+      "presentationIndex": 2,
+      "timestampMs": "88",
+      "duplicate": false,
+      "contentId": "c2"
+    },
+    {
+      "id": "f3",
+      "packetIndex": 3,
+      "presentationIndex": 3,
+      "timestampMs": "120",
+      "duplicate": false,
+      "contentId": "c3"
+    }
+  ],
+  "retiming": null
+}
