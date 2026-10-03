@@ -536,3 +536,7 @@ Host gate for the directive deliverable "Stock exposure-series benchmark and lim
 ## P080 — Package a small validated stock library (host scope)
 
 Host gate for the directive deliverable "Initial versioned stock pack and profile acceptance report". See [P080_PACKAGE_A_SMALL_VALIDATED_STOCK_LIBRARY.md](P080_PACKAGE_A_SMALL_VALIDATED_STOCK_LIBRARY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P081 — Establish deterministic grain coordinates (host scope)
+
+Host gate for the directive deliverable "Grain seed contract and render-order invariance tests". See [P081_ESTABLISH_DETERMINISTIC_GRAIN_COORDINATES.md](P081_ESTABLISH_DETERMINISTIC_GRAIN_COORDINATES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
