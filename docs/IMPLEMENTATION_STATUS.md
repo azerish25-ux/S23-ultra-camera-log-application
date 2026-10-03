@@ -568,3 +568,7 @@ Host gate for the directive deliverable "Optional aging module and clean-default
 ## P088 — Validate the combined material pipeline (host scope)
 
 Host gate for the directive deliverable "Combined film-material regression suite". See [P088_VALIDATE_THE_COMBINED_MATERIAL_PIPELINE.md](P088_VALIDATE_THE_COMBINED_MATERIAL_PIPELINE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P089 — Specify all six requested virtual formats (host scope)
+
+Host gate for the directive deliverable "Virtual-format registry and geometry validation". See [P089_SPECIFY_ALL_SIX_REQUESTED_VIRTUAL_FORMATS.md](P089_SPECIFY_ALL_SIX_REQUESTED_VIRTUAL_FORMATS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
