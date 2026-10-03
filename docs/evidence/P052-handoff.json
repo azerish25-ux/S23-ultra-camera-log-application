@@ -1,0 +1,50 @@
+{
+  "phase": "P052",
+  "caseIds": [
+    "TC-P052-01",
+    "TC-P052-02",
+    "TC-P052-03",
+    "TC-P052-04",
+    "TC-P052-05",
+    "TC-P052-06",
+    "TC-P052-07",
+    "TC-P052-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p052_add_quality_demosaic_as_a_measured_upgrade.py",
+    "scripts/tests/test_p052_add_quality_demosaic_as_a_measured_upgrade.py",
+    "docs/P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.md",
+    "docs/P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.json",
+    "docs/evidence/P052-handoff.json",
+    "scripts/gates/p052_tc01.py",
+    "scripts/gates/p052_tc02.py",
+    "scripts/gates/p052_tc03.py",
+    "scripts/gates/p052_tc04.py",
+    "scripts/gates/p052_tc05.py",
+    "scripts/gates/p052_tc06.py",
+    "scripts/gates/p052_tc07.py",
+    "scripts/gates/p052_tc08.py",
+    "scripts/tests/test_p052_tc01.py",
+    "scripts/tests/test_p052_tc02.py",
+    "scripts/tests/test_p052_tc03.py",
+    "scripts/tests/test_p052_tc04.py",
+    "scripts/tests/test_p052_tc05.py",
+    "scripts/tests/test_p052_tc06.py",
+    "scripts/tests/test_p052_tc07.py",
+    "scripts/tests/test_p052_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p052*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured quality demosaic on a physical sensor",
+    "restored detail inferred from edge contrast"
+  ],
+  "nextPhase": "P053"
+}

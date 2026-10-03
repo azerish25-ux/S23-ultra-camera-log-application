@@ -460,3 +460,7 @@ Host gate for the directive deliverable "Editor round-trip report and import gui
 ## P061 — Separate HLG-derived development from RAW development (host scope)
 
 Host gate for the directive deliverable "Source normalization router and lineage assertions". See [P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.md](P061_SEPARATE_HLG_DERIVED_DEVELOPMENT_FROM_RAW_DEVELO.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P052 — Add quality demosaic as a measured upgrade (host scope)
+
+Host gate for the directive deliverable "Quality demosaic benchmark and algorithm selection decision". See [P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.md](P052_ADD_QUALITY_DEMOSAIC_AS_A_MEASURED_UPGRADE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
