@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "phase": "P021",
+  "modelId": "s23-dual-focus-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Keep separate control namespaces and units. Confirm physical focus through available results and expose unknown distance honestly. Virtual focus may track a subject in relative depth without claiming metric distance; recording source sharpness remains independently important.",
+  "fixture": "A face selected for virtual focus while the physical lens is focused on a nearby foreground object.",
+  "oracle": "The interface warns that virtual refocusing cannot restore source detail that was never sharply recorded.",
+  "mutant": "Overwrite the physical focus-distance field with the virtual focus target.",
+  "physical": {
+    "namespace": "physical.lens",
+    "unit": "metres",
+    "subject": "nearby_foreground",
+    "observedDistance": null,
+    "confirmedByResult": false
+  },
+  "virtual": {
+    "namespace": "virtual.development",
+    "unit": "relative_depth",
+    "subject": "face",
+    "relativeDepth": "0.62",
+    "claimsMetricDistance": false
+  },
+  "sourceSharpness": {
+    "recordedSharpAtVirtualSubject": false,
+    "independentOfVirtualPlane": true
+  }
+}

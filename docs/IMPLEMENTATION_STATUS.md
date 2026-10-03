@@ -267,3 +267,7 @@ Host gate for the directive deliverable "Codec-route database and interface-spec
 ## P012 — Discover dynamic-range profiles (host scope)
 
 Host gate for the directive deliverable "Profile-combination planner and explicit rejection reasons". See [P012_DISCOVER_DYNAMIC_RANGE_PROFILES.md](P012_DISCOVER_DYNAMIC_RANGE_PROFILES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P021 — Implement focus intent and observed lens state (host scope)
+
+Host gate for the directive deliverable "Dual focus model and focus provenance tests". See [P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.md](P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

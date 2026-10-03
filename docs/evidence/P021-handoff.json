@@ -1,0 +1,53 @@
+{
+  "phase": "P021",
+  "caseIds": [
+    "TC-P021-01",
+    "TC-P021-02",
+    "TC-P021-03",
+    "TC-P021-04",
+    "TC-P021-05",
+    "TC-P021-06",
+    "TC-P021-07",
+    "TC-P021-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p021_implement_focus_intent_and_observed_lens_state.py",
+    "scripts/tests/test_p021_implement_focus_intent_and_observed_lens_state.py",
+    "docs/P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.md",
+    "docs/P021_IMPLEMENT_FOCUS_INTENT_AND_OBSERVED_LENS_STATE.json",
+    "docs/evidence/P021-handoff.json",
+    "scripts/gates/p021_tc01.py",
+    "scripts/gates/p021_tc02.py",
+    "scripts/gates/p021_tc03.py",
+    "scripts/gates/p021_tc04.py",
+    "scripts/gates/p021_tc05.py",
+    "scripts/gates/p021_tc06.py",
+    "scripts/gates/p021_tc07.py",
+    "scripts/gates/p021_tc08.py",
+    "scripts/tests/test_p021_tc01.py",
+    "scripts/tests/test_p021_tc02.py",
+    "scripts/tests/test_p021_tc03.py",
+    "scripts/tests/test_p021_tc04.py",
+    "scripts/tests/test_p021_tc05.py",
+    "scripts/tests/test_p021_tc06.py",
+    "scripts/tests/test_p021_tc07.py",
+    "scripts/tests/test_p021_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p021*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 qualification",
+    "measured physical lens focus distance on a device",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "P020 was not re-run by this host writer",
+    "publication commit is not assigned; next dependency is P022"
+  ],
+  "nextPhase": "blocked"
+}
