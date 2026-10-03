@@ -524,3 +524,7 @@ Host gate for the directive deliverable "Channel-coupling model and stability te
 ## P077 — Implement exposure and development controls (host scope)
 
 Host gate for the directive deliverable "Exposure-development-grade parameter contract". See [P077_IMPLEMENT_EXPOSURE_AND_DEVELOPMENT_CONTROLS.md](P077_IMPLEMENT_EXPOSURE_AND_DEVELOPMENT_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P078 — Protect skin and neutrals without hidden beautification (host scope)
+
+Host gate for the directive deliverable "Skin-texture evaluation and optional adjustment policy". See [P078_PROTECT_SKIN_AND_NEUTRALS_WITHOUT_HIDDEN_BEAUTIF.md](P078_PROTECT_SKIN_AND_NEUTRALS_WITHOUT_HIDDEN_BEAUTIF.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
