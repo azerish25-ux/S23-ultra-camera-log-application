@@ -528,3 +528,7 @@ Host gate for the directive deliverable "Exposure-development-grade parameter co
 ## P078 — Protect skin and neutrals without hidden beautification (host scope)
 
 Host gate for the directive deliverable "Skin-texture evaluation and optional adjustment policy". See [P078_PROTECT_SKIN_AND_NEUTRALS_WITHOUT_HIDDEN_BEAUTIF.md](P078_PROTECT_SKIN_AND_NEUTRALS_WITHOUT_HIDDEN_BEAUTIF.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P079 — Validate stock behaviour across exposure (host scope)
+
+Host gate for the directive deliverable "Stock exposure-series benchmark and limitation notes". See [P079_VALIDATE_STOCK_BEHAVIOUR_ACROSS_EXPOSURE.md](P079_VALIDATE_STOCK_BEHAVIOUR_ACROSS_EXPOSURE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
