@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "phase": "P058",
+  "mapId": "s23-gamut-matrix-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Specify working-space to AWG3 conversion, matrix direction, white point, numerical precision, and storage coefficients. Distinguish a YUV matrix identifier from RGB primaries and transfer. Keep LogC4 and other ARRI workflows outside this profile unless separately implemented.",
+  "fixture": "An AWG3 LogC3 file whose metadata incorrectly identifies Rec.709 primaries because Rec.709 YUV coefficients were used.",
+  "oracle": "The signal validator rejects the contradictory descriptor and requires the explicit sidecar interpretation.",
+  "mutant": "Treat matrix coefficients and color primaries as interchangeable metadata.",
+  "signal": {
+    "encoding": "LogC3",
+    "primaries": "AWG3",
+    "transfer": "LogC3",
+    "whitePoint": "D65"
+  },
+  "conversion": {
+    "direction": "working-to-AWG3",
+    "precision": "decimal-string",
+    "whitePoint": "D65",
+    "matrix": ["1", "0", "0", "0", "1", "0", "0", "0", "1"]
+  },
+  "storage": {
+    "id": "BT.709",
+    "kr": "0.2126",
+    "kg": "0.7152",
+    "kb": "0.0722"
+  },
+  "descriptor": {
+    "declaredPrimaries": "Rec.709",
+    "yuvMatrix": "BT.709",
+    "transfer": "LogC3",
+    "range": "video",
+    "derivedFrom": "yuv-coefficients"
+  },
+  "sidecar": {
+    "present": false,
+    "explicit": false,
+    "primaries": "AWG3",
+    "transfer": "LogC3",
+    "yuvMatrix": "BT.709",
+    "matrixDirection": "working-to-AWG3",
+    "whitePoint": "D65"
+  },
+  "separateImplementation": false
+}

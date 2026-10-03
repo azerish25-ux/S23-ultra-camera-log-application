@@ -1,0 +1,51 @@
+{
+  "phase": "P058",
+  "caseIds": [
+    "TC-P058-01",
+    "TC-P058-02",
+    "TC-P058-03",
+    "TC-P058-04",
+    "TC-P058-05",
+    "TC-P058-06",
+    "TC-P058-07",
+    "TC-P058-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p058_define_gamut_and_matrix_conventions.py",
+    "scripts/tests/test_p058_define_gamut_and_matrix_conventions.py",
+    "docs/P058_DEFINE_GAMUT_AND_MATRIX_CONVENTIONS.md",
+    "docs/P058_DEFINE_GAMUT_AND_MATRIX_CONVENTIONS.json",
+    "docs/evidence/P058-handoff.json",
+    "scripts/gates/p058_tc01.py",
+    "scripts/gates/p058_tc02.py",
+    "scripts/gates/p058_tc03.py",
+    "scripts/gates/p058_tc04.py",
+    "scripts/gates/p058_tc05.py",
+    "scripts/gates/p058_tc06.py",
+    "scripts/gates/p058_tc07.py",
+    "scripts/gates/p058_tc08.py",
+    "scripts/tests/test_p058_tc01.py",
+    "scripts/tests/test_p058_tc02.py",
+    "scripts/tests/test_p058_tc03.py",
+    "scripts/tests/test_p058_tc04.py",
+    "scripts/tests/test_p058_tc05.py",
+    "scripts/tests/test_p058_tc06.py",
+    "scripts/tests/test_p058_tc07.py",
+    "scripts/tests/test_p058_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p058*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "AWG3 LogC3 as a measured camera encoding",
+    "LogC4 and other ARRI workflows",
+    "Rec.709 YUV coefficients as RGB primaries"
+  ],
+  "nextPhase": "P059"
+}
