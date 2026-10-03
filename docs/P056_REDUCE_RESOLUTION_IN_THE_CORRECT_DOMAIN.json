@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "phase": "P056",
+  "mapId": "s23-linear-domain-reduction-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Define crop, antialiasing, and scene-linear reduction before log or display encoding. Track geometry changes in provenance. Compare tiled and untiled results, and distinguish simple box averaging from higher-quality resampling choices.",
+  "fixture": "Alternating dark and bright linear pixels whose arithmetic average differs from the average of their encoded values.",
+  "oracle": "The output agrees with the declared linear-domain reference and records the actual reduction ratio.",
+  "mutant": "Average LogC-encoded values and label the result scene-linear reduction.",
+  "domain": "scene-linear",
+  "encoding": "host-logc-toy",
+  "resampler": "box",
+  "antialias": "box-prefilter",
+  "sourceWidth": 4,
+  "sourceHeight": 4,
+  "outputWidth": 2,
+  "outputHeight": 2,
+  "crop": {"originX": 0, "originY": 0, "width": 4, "height": 4},
+  "pixels": [
+    "0.04", "1", "0.2", "0.8",
+    "1", "0.04", "0.8", "0.2",
+    "0.04", "0.04", "1", "1",
+    "0.04", "0.04", "1", "1"
+  ],
+  "declaredReference": ["0.52", "0.5", "0.04", "1"],
+  "tileSize": 2
+}

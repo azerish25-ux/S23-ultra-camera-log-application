@@ -1,0 +1,50 @@
+{
+  "phase": "P056",
+  "caseIds": [
+    "TC-P056-01",
+    "TC-P056-02",
+    "TC-P056-03",
+    "TC-P056-04",
+    "TC-P056-05",
+    "TC-P056-06",
+    "TC-P056-07",
+    "TC-P056-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p056_reduce_resolution_in_the_correct_domain.py",
+    "scripts/tests/test_p056_reduce_resolution_in_the_correct_domain.py",
+    "docs/P056_REDUCE_RESOLUTION_IN_THE_CORRECT_DOMAIN.md",
+    "docs/P056_REDUCE_RESOLUTION_IN_THE_CORRECT_DOMAIN.json",
+    "docs/evidence/P056-handoff.json",
+    "scripts/gates/p056_tc01.py",
+    "scripts/gates/p056_tc02.py",
+    "scripts/gates/p056_tc03.py",
+    "scripts/gates/p056_tc04.py",
+    "scripts/gates/p056_tc05.py",
+    "scripts/gates/p056_tc06.py",
+    "scripts/gates/p056_tc07.py",
+    "scripts/gates/p056_tc08.py",
+    "scripts/tests/test_p056_tc01.py",
+    "scripts/tests/test_p056_tc02.py",
+    "scripts/tests/test_p056_tc03.py",
+    "scripts/tests/test_p056_tc04.py",
+    "scripts/tests/test_p056_tc05.py",
+    "scripts/tests/test_p056_tc06.py",
+    "scripts/tests/test_p056_tc07.py",
+    "scripts/tests/test_p056_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p056*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "ARRI LogC or camera log encoding",
+    "measured on-device resampling"
+  ],
+  "nextPhase": "P057"
+}
