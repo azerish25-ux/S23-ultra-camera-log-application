@@ -1,0 +1,51 @@
+{
+  "phase": "P069",
+  "caseIds": [
+    "TC-P069-01",
+    "TC-P069-02",
+    "TC-P069-03",
+    "TC-P069-04",
+    "TC-P069-05",
+    "TC-P069-06",
+    "TC-P069-07",
+    "TC-P069-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p069_implement_tiled_spatial_rendering.py",
+    "scripts/tests/test_p069_implement_tiled_spatial_rendering.py",
+    "docs/P069_IMPLEMENT_TILED_SPATIAL_RENDERING.md",
+    "docs/P069_IMPLEMENT_TILED_SPATIAL_RENDERING.json",
+    "docs/evidence/P069-handoff.json",
+    "scripts/gates/p069_tc01.py",
+    "scripts/gates/p069_tc02.py",
+    "scripts/gates/p069_tc03.py",
+    "scripts/gates/p069_tc04.py",
+    "scripts/gates/p069_tc05.py",
+    "scripts/gates/p069_tc06.py",
+    "scripts/gates/p069_tc07.py",
+    "scripts/gates/p069_tc08.py",
+    "scripts/tests/test_p069_tc01.py",
+    "scripts/tests/test_p069_tc02.py",
+    "scripts/tests/test_p069_tc03.py",
+    "scripts/tests/test_p069_tc04.py",
+    "scripts/tests/test_p069_tc05.py",
+    "scripts/tests/test_p069_tc06.py",
+    "scripts/tests/test_p069_tc07.py",
+    "scripts/tests/test_p069_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p069*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured optical halation",
+    "device GPU memory bounds",
+    "seam-free physical render"
+  ],
+  "nextPhase": "P070"
+}

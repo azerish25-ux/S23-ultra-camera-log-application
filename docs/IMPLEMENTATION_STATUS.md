@@ -504,3 +504,7 @@ Host gate for the directive deliverable "Temporal chunk contract and uninterrupt
 ## P073 — Define stock profiles and evidence levels (host scope)
 
 Host gate for the directive deliverable "Stock schema and evidence-level validator". See [P073_DEFINE_STOCK_PROFILES_AND_EVIDENCE_LEVELS.md](P073_DEFINE_STOCK_PROFILES_AND_EVIDENCE_LEVELS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P069 — Implement tiled spatial rendering (host scope)
+
+Host gate for the directive deliverable "Tile planner and boundary equivalence tests". See [P069_IMPLEMENT_TILED_SPATIAL_RENDERING.md](P069_IMPLEMENT_TILED_SPATIAL_RENDERING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

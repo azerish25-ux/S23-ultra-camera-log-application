@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "phase": "P069",
+  "mapId": "s23-tiled-spatial-rendering-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Compute each node halo from the maximum kernel support, process overlap regions, and crop only after dependencies finish. Use global coordinates for grain and lens effects. Compare tiled and untiled reference outputs at boundaries and corners.",
+  "fixture": "A bright impulse centered exactly on a tile boundary with halation, blur, and deterministic grain enabled.",
+  "oracle": "The assembled result matches the declared untiled tolerance and contains no seam or repeated grain block.",
+  "mutant": "Apply every effect independently inside tiles without overlap.",
+  "planner": {
+    "width": 8,
+    "height": 8,
+    "tileSize": 4,
+    "tolerance": "0",
+    "cropAfterDependencies": true,
+    "globalCoordinates": true
+  },
+  "nodes": [
+    {
+      "id": "blur",
+      "effect": "blur",
+      "kernelSupport": "1"
+    },
+    {
+      "id": "halation",
+      "effect": "halation",
+      "kernelSupport": "1"
+    },
+    {
+      "id": "lens",
+      "effect": "lens",
+      "kernelSupport": "0"
+    },
+    {
+      "id": "grain",
+      "effect": "grain",
+      "kernelSupport": "0"
+    }
+  ],
+  "impulse": {
+    "x": 4,
+    "y": 4,
+    "value": "1"
+  }
+}
