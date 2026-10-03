@@ -34,14 +34,14 @@ def evaluate(payload: dict) -> dict:
     outputs, constraints_violated, _variant = _payload(payload)
     rejected: list[str] = []
     unsupported = [item["id"] for item in outputs if not item["supportedAlone"]]
-    if unsupported:
-        decision = "rejected"
-        rejected.extend(unsupported)
-        reasons = [f"output {output_id} is not supported alone" for output_id in unsupported]
-    elif constraints_violated:
+    if constraints_violated:
         decision = "rejected"
         rejected.extend(item["id"] for item in outputs)
         reasons = [_COEXISTENCE]
+    elif unsupported:
+        decision = "rejected"
+        rejected.extend(unsupported)
+        reasons = [f"output {output_id} is not supported alone" for output_id in unsupported]
     else:
         decision = "compatible"
         reasons = ["output combination is compatible"]
@@ -49,7 +49,11 @@ def evaluate(payload: dict) -> dict:
     reasons.extend(_owner_reasons(outputs))
     if decision in {"allowed", "qualified"}:
         raise ValueError("TC-P009-03 must not decide allowed or qualified")
-    if constraints_violated and not unsupported and decision in {"allowed", "qualified"}:
+    if constraints_violated and (
+        decision != "rejected"
+        or _COEXISTENCE not in reasons
+        or rejected != [item["id"] for item in outputs]
+    ):
         raise ValueError("independent support must not be treated as coexistence")
     return _result(decision, reasons, rejected, _logical_ids(outputs))
 

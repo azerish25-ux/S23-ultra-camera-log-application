@@ -27,15 +27,15 @@ def evaluate(payload: dict) -> dict:
     skipped_physical_as_pass = flags["skippedPhysicalAsPass"]
     stale_report = flags["staleReport"]
     raw_log_id = payload.get("rawLogId")
-    if not isinstance(raw_log_id, str):
-        raise ValueError("rawLogId must be a string")
+    if not isinstance(raw_log_id, str) or not raw_log_id.strip():
+        raise ValueError("rawLogId must be a non-empty string")
 
-    contradiction = raw_failed or skipped_physical_as_pass or stale_report
+    distorted = skipped_physical_as_pass or stale_report
     reasons = [_BASELINE_REASON]
     rejected: list[str] = []
     open_questions: list[str] = []
 
-    if summary_passed and contradiction:
+    if summary_passed and (raw_failed or distorted):
         decision = "blocked"
         reasons.append(
             "Contradiction between the passing aggregate summary and inspectable underlying evidence; "
@@ -44,21 +44,7 @@ def evaluate(payload: dict) -> dict:
         _append_flag_reasons(reasons, raw_failed, skipped_physical_as_pass, stale_report)
         reasons.append("Trusting the green summary without the raw log is blocked and is never allowed.")
         rejected = ["aggregate-summary"]
-    elif (not summary_passed) and raw_failed:
-        decision = "failed"
-        reasons.append(
-            "Summary did not pass and the critical raw log failed; outcome is failed. "
-            f"Prefer and preserve the raw log {raw_log_id}."
-        )
-        _append_flag_reasons(reasons, False, skipped_physical_as_pass, stale_report)
-    elif summary_passed and not contradiction:
-        decision = "consistent"
-        reasons.append(
-            "Aggregate summary and raw log agree, with no skipped physical pass and no stale report. "
-            f"Outcome is consistent. Raw log {raw_log_id} is retained. "
-            "Consistency does not authorize the deferred firmware experiment."
-        )
-    elif skipped_physical_as_pass or stale_report:
+    elif distorted:
         decision = "blocked"
         reasons.append(
             "Contradiction in the outcome record; "
@@ -67,6 +53,20 @@ def evaluate(payload: dict) -> dict:
         _append_flag_reasons(reasons, raw_failed, skipped_physical_as_pass, stale_report)
         reasons.append("A distorted report must not be allowed.")
         rejected = ["aggregate-summary"]
+    elif (not summary_passed) and raw_failed:
+        decision = "failed"
+        reasons.append(
+            "Summary did not pass and the critical raw log failed; outcome is failed. "
+            f"Prefer and preserve the raw log {raw_log_id}."
+        )
+        _append_flag_reasons(reasons, False, skipped_physical_as_pass, stale_report)
+    elif summary_passed:
+        decision = "consistent"
+        reasons.append(
+            "Aggregate summary and raw log agree, with no skipped physical pass and no stale report. "
+            f"Outcome is consistent. Raw log {raw_log_id} is retained. "
+            "Consistency does not authorize the deferred firmware experiment."
+        )
     else:
         decision = "failed"
         reasons.append(

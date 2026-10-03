@@ -28,6 +28,14 @@ def exact_keys(value: dict, required: set[str], context: str, optional: set[str]
     require(not extra, f"{context} has unexpected fields: {', '.join(sorted(extra))}")
 
 
+def revision_sha(value: object, context: str) -> str:
+    require(
+        isinstance(value, str) and len(value) == 40 and all(char in "0123456789abcdef" for char in value),
+        context + " must be a lowercase 40-character hexadecimal revision",
+    )
+    return value
+
+
 def required_text(value: object, context: str) -> str:
     require(isinstance(value, str) and bool(value.strip()), context + " must be a non-empty string")
     return value
@@ -67,8 +75,8 @@ def evaluate(payload: dict) -> dict:
         raise ValueError("caseId mismatches the module")
     exact_keys(payload, {"caseId", "inspectionRevision", "currentRevision", "incrementalReview",
                          "changeScope", "unrelatedEvidence"}, "payload")
-    inspection = required_text(payload["inspectionRevision"], "inspectionRevision")
-    current = required_text(payload["currentRevision"], "currentRevision")
+    inspection = revision_sha(payload["inspectionRevision"], "inspectionRevision")
+    current = revision_sha(payload["currentRevision"], "currentRevision")
     incremental = boolean(payload["incrementalReview"], "incrementalReview")
     scope = required_text(payload["changeScope"], "changeScope")
     require(scope in CHANGE_SCOPES, "changeScope must be documentation, capture_interface, or none")

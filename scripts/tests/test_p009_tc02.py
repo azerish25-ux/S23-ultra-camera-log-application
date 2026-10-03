@@ -146,17 +146,18 @@ class TcP00902(unittest.TestCase):
         self.assertEqual(result["rejectedClaims"], ["rear/tele-sensor/none"])
         self.assertEqual(result["preservedResults"], ["advertised:rear"])
 
-    def test_samples_zero_without_advertisement_is_still_not_qualified(self):
+    def test_samples_zero_without_advertisement_is_rejected(self):
         result = evaluate(
             {
                 "route": route(advertised=False, configured=True, samples=0, physicalId=None),
                 "failureMode": "none",
             }
         )
-        self.assertEqual(result["decision"], "advertised_only")
-        self.assertNotIn(result["decision"], {"qualified", "allowed"})
-        self.assertEqual(result["rejectedClaims"], ["rear/None/none"])
-        self.assertEqual(result["preservedResults"], ["advertised:rear"])
+        self.assertEqual(result["decision"], "rejected")
+        self.assertNotIn(result["decision"], {"qualified", "allowed", "advertised_only"})
+        self.assertEqual(result["rejectedClaims"], ["rear:logical"])
+        self.assertEqual(result["preservedResults"], [])
+        self.assertNotIn("None", result["rejectedClaims"])
 
     def test_open_physical_independently_is_rejected_not_qualified(self):
         result = evaluate(

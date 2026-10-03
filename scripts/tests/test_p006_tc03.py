@@ -225,17 +225,24 @@ class P006Tc03Tests(unittest.TestCase):
         self.assertEqual(["bare"], result["rejectedClaims"])
         self.assertEqual(["whole"], result["preservedResults"])
 
-    def test_unclaimed_fixture_without_provenance_does_not_exclude(self):
+    def test_unclaimed_fixture_without_provenance_is_excluded(self):
         fixtures = [
             _fixture("claimed", kind="stock_profile"),
             _fixture("unclaimed", kind="model", provenance=None, visual_result="reproducible"),
         ]
         result = p006_tc03.evaluate(_payload(fixtures, ["claimed"]))
-        self.assertEqual("accepted", result["decision"])
+        self.assertEqual("excluded", result["decision"])
         self.assertEqual(["claimed"], result["preservedResults"])
-        self.assertEqual([], result["rejectedClaims"])
-        self.assertNotIn("unclaimed", result["rejectedClaims"])
-        self.assertNotIn("unclaimed", result["preservedResults"])
+        self.assertEqual(["unclaimed"], result["rejectedClaims"])
+        self.assertNotIn(result["decision"], ("accepted", "reproducible", "allowed"))
+
+    def test_duplicate_fixture_id_raises(self):
+        fixtures = [
+            _fixture("same"),
+            _fixture("same", provenance=None),
+        ]
+        with self.assertRaises(ValueError):
+            p006_tc03.evaluate(_payload(fixtures, ["same"]))
 
     def test_none_and_omitted_provenance_are_excluded(self):
         omitted = {

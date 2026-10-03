@@ -147,6 +147,10 @@ class ConflictingRevisionTests(unittest.TestCase):
             gate.evaluate(self.payload(unrelatedEvidence=["ok", 1]))
         with self.assertRaises(ValueError):
             gate.evaluate(self.payload(incrementalReview="false"))
+        with self.assertRaises(ValueError):
+            gate.evaluate(self.payload(inspectionRevision="HEAD", currentRevision="HEAD"))
+        with self.assertRaises(ValueError):
+            gate.evaluate(self.payload(inspectionRevision="A" * 40, currentRevision="A" * 40))
 
 
 if __name__ == "__main__":

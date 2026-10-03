@@ -187,7 +187,11 @@ def _text(value: object, label: str) -> str:
 def _optional_text(value: object, label: str) -> str | None:
     if value is None:
         return None
-    return _text(value, label)
+    if not isinstance(value, str):
+        raise ValueError(f"{label} must be a string or null")
+    if not value.strip():
+        return None
+    return value
 
 
 def _number(value: object, label: str) -> int | float:

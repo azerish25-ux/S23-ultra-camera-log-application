@@ -83,7 +83,8 @@ class UncontrolledThresholdTests(unittest.TestCase):
         ))
         self.assert_shape(result, "reviewed_revision")
         self.assertEqual([], result["rejectedClaims"])
-        self.assertEqual([], result["openQuestions"])
+        self.assertIn("Renewed independent validation is still required.", result["openQuestions"])
+        self.assertIn("Renewed independent validation is still required.", result["reasons"])
         self.assertEqual(
             ["original-failure:temporal artifact severity", HASH_A, HASH_B],
             result["preservedResults"],

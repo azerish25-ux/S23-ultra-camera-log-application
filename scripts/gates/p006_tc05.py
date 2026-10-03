@@ -22,7 +22,7 @@ def evaluate(payload: dict) -> dict:
         return _clarification(measurements, incomplete)
     if compare is not None:
         left, right = compare
-        if left["domain"] != right["domain"]:
+        if left["domain"] != right["domain"] or left["unit"] != right["unit"]:
             return _blocked(measurements, left, right)
     shared = None if compare is None else compare[0]["domain"]
     return _comparable(measurements, shared)
@@ -153,13 +153,27 @@ def _blocked(
 ) -> dict:
     left_domain = str(left["domain"])
     right_domain = str(right["domain"])
+    left_unit = str(left["unit"])
+    right_unit = str(right["unit"])
+    domain_mismatch = left_domain != right_domain
+    unit_mismatch = left_unit != right_unit
+    mismatches: list[str] = []
+    if domain_mismatch:
+        mismatches.append(f"domains differ: {left_domain} vs {right_domain}")
+    if unit_mismatch:
+        mismatches.append(f"units differ: {left_unit} vs {right_unit}")
     reasons = [
         (
-            f"comparison of {left['name']} and {right['name']} is blocked because domains differ: "
-            f"{left_domain} vs {right_domain}"
-        ),
-        "units do not make distinct domains comparable",
+            f"comparison of {left['name']} and {right['name']} is blocked because "
+            + "; ".join(mismatches)
+        )
     ]
+    if domain_mismatch and not unit_mismatch:
+        reasons.append("units do not make distinct domains comparable")
+    elif unit_mismatch and not domain_mismatch:
+        reasons.append("a shared domain does not make different units comparable")
+    else:
+        reasons.append("different units and domains are not comparable")
     rejected = [f"compare:{left['name']}:{left_domain}:{right['name']}:{right_domain}"]
     preserved = [item["name"] for item in measurements]
     return _finish("blocked", reasons, rejected, preserved, [])

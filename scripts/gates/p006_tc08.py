@@ -43,8 +43,8 @@ def evaluate(payload):
     if 'missingPrerequisite' not in reproduction:
         raise ValueError('missingPrerequisite must be a str or null')
     missing = reproduction['missingPrerequisite']
-    if missing is not None and not isinstance(missing, str):
-        raise ValueError('missingPrerequisite must be a str or null')
+    if missing is not None and (not isinstance(missing, str) or not missing.strip()):
+        raise ValueError('missingPrerequisite must be null or a non-blank string')
     stated = _require_str(payload, 'statedSoftwareResult')
     # tempPath is an optional observation about the fresh environment. It is
     # not evidence, a prerequisite, or a physical-qualification input.

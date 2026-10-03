@@ -169,6 +169,64 @@ class UnsupportedCertaintyTests(unittest.TestCase):
         self.assertEqual([], result["preservedResults"])
         self.assertEqual([], result["openQuestions"])
 
+    def test_weak_evidence_does_not_allow_a_recovered_experiment(self):
+        experiment = {
+            "irreversible": False,
+            "blockedStreamIdentified": True,
+            "recoveryProcedureVerified": True,
+            "authorizedByEnthusiasmOnly": False,
+        }
+        for evidence_kind in ("emulator", "simulated", "unavailable_probe"):
+            result = gate.evaluate(self.payload(evidenceKind=evidence_kind, experiment=experiment))
+            self.assert_shape(result, "deferred")
+            self.assertNotEqual("allowed", result["decision"])
+            self.assertIn(
+                f"Evidence kind {evidence_kind} cannot change a deferred decision into allowed.",
+                result["reasons"],
+            )
+
+    def test_established_wording_is_rejected_without_the_boolean_flag(self):
+        claim = "Untested physical behavior is established."
+        software = "Host software capability probe enumerated camera routes."
+        question = "Does a blocked stream exist on the physical S23?"
+        result = gate.evaluate(self.payload(
+            unsupportedPhysicalClaim=False,
+            claimText=claim,
+            softwareResult=software,
+            openQuestion=question,
+            evidenceKind="host",
+            experiment={
+                "irreversible": False,
+                "blockedStreamIdentified": True,
+                "recoveryProcedureVerified": True,
+                "authorizedByEnthusiasmOnly": False,
+            },
+        ))
+        self.assert_shape(result, "deferred")
+        self.assertEqual([claim], result["rejectedClaims"])
+        self.assertEqual([software], result["preservedResults"])
+        self.assertEqual([question], result["openQuestions"])
+
+    def test_established_software_result_is_not_preserved(self):
+        claim = "Host notes only."
+        software = "Physical firmware behavior is established."
+        result = gate.evaluate(self.payload(
+            unsupportedPhysicalClaim=False,
+            claimText=claim,
+            softwareResult=software,
+            evidenceKind="host",
+            experiment={
+                "irreversible": False,
+                "blockedStreamIdentified": True,
+                "recoveryProcedureVerified": True,
+                "authorizedByEnthusiasmOnly": False,
+            },
+        ))
+        self.assert_shape(result, "deferred")
+        self.assertEqual([software], result["rejectedClaims"])
+        self.assertEqual([], result["preservedResults"])
+        self.assertNotIn(software, result["preservedResults"])
+
     def test_non_dict_payload_and_case_id_mismatch_raise(self):
         with self.assertRaises(ValueError):
             gate.evaluate(["not", "a", "dict"])  # type: ignore[arg-type]

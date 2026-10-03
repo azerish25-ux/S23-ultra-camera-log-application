@@ -243,16 +243,10 @@ class TcP00903(unittest.TestCase):
         )
         self.assertEqual(result["decision"], "rejected")
         self.assertNotIn(result["decision"], {"allowed", "qualified", "compatible"})
-        self.assertEqual(result["rejectedClaims"], ["raw-main", "wide-encoder"])
+        self.assertEqual(result["rejectedClaims"], ["preview-main", "raw-main", "wide-encoder"])
         self.assertEqual(result["preservedResults"], ["rear", "wide"])
-        self.assertEqual(
-            result["reasons"],
-            [
-                "output raw-main is not supported alone",
-                "output wide-encoder is not supported alone",
-                "tele-sensor addressed via rear",
-            ],
-        )
+        self.assertEqual(result["reasons"][0], _COEXISTENCE)
+        self.assertIn("tele-sensor addressed via rear", result["reasons"])
 
     def test_variant_label_does_not_override_constraints(self):
         outputs = [

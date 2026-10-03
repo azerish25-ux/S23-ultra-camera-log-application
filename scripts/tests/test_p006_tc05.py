@@ -124,6 +124,20 @@ class MeasurementWithoutUnitsTests(unittest.TestCase):
         self.assertEqual(result["preservedResults"], ["timing", "render timing"])
         self.assertIn("elapsed_ms", " ".join(result["reasons"]))
 
+    def test_shared_domain_milliseconds_versus_microseconds_is_blocked(self):
+        result = evaluate(payload([
+            measurement("timing", 5, "ms", "elapsed"),
+            measurement("timing-us", 5000, "us", "elapsed"),
+        ], compare=["timing", "timing-us"]))
+        assert_contract(self, result)
+        self.assertEqual(result["decision"], "blocked")
+        self.assertNotEqual(result["decision"], "comparable")
+        named = " ".join(result["reasons"])
+        self.assertIn("ms", named)
+        self.assertIn("us", named)
+        self.assertIn("units differ", named)
+        self.assertEqual(result["preservedResults"], ["timing", "timing-us"])
+
     def test_null_compare_with_qualified_measurements_is_comparable(self):
         result = evaluate(payload([
             measurement("memory", 64, "MiB", "process_rss"),

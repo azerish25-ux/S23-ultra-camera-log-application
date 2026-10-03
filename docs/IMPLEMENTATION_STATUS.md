@@ -246,7 +246,16 @@ implement TC-P010-01 through TC-P010-08. See [P010 stream map](P010_STREAM_MAP.m
 
 P006 through P010 are host-verified software gates. They do not certify physical
 S23 capture, sustained 4K/8K, endurance, or cinema-camera equivalence. The next
-dependency-ready phase is P011, rational capture timing.
+dependency-ready phase is P011, rational capture timing. A later host audit
+closed false passes in those gates: weak or "established" physical wording
+cannot allow TC-P006-01; incomplete or duplicate fixtures cannot pass
+TC-P006-03; skip/stale reports block TC-P006-04; different units block
+TC-P006-05 even on one domain; blank prerequisites do not reproduce TC-P006-08;
+blank units require clarification in TC-P007-05; a reviewed loosening still
+requires renewed validation in TC-P007-06; an unadvertised route is not stored
+as advertised-only in TC-P009-02; a constraint violation rejects every output
+in TC-P009-03. TC-P006-02 accepts only lowercase 40-character revision hashes.
+That audit is still not physical S23 qualification.
 
 ## P022 — Protect preview independence (host scope)
 

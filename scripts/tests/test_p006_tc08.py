@@ -96,6 +96,13 @@ class IndependentReproductionTests(unittest.TestCase):
         self.assertIn(missing, result['openQuestions'])
         self.assertNotIn(result['decision'], ('allowed', 'passed'))
 
+    def test_blank_missing_prerequisite_is_not_reproduced(self):
+        stated = 'blank prerequisite must not count as a clean run'
+        for missing in ('', '   ', '\n'):
+            with self.subTest(missing=missing):
+                with self.assertRaises(ValueError):
+                    p006_tc08.evaluate(payload(False, False, missing, False, stated))
+
     def test_combined_faults_stay_unverified(self):
         stated = 'attractive summary without a fresh run'
         missing = 'private notes'

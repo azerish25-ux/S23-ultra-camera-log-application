@@ -45,9 +45,11 @@ def evaluate(payload: dict) -> dict:
         reasons = [
             f"Threshold {name!r} loosening is a reviewed revision with a recorded version.",
             "This is not a claim that the original run passed.",
+            "Renewed independent validation is still required.",
             profile_reason,
         ]
-        return _finish("reviewed_revision", reasons, [], preserved, [])
+        questions = ["Renewed independent validation is still required."]
+        return _finish("reviewed_revision", reasons, [], preserved, questions)
 
     if original_failed:
         reasons = [

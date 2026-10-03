@@ -33,8 +33,9 @@ def evaluate(payload: dict) -> dict:
         fixture_id = fixture.get("id")
         if not isinstance(fixture_id, str) or fixture_id == "":
             raise ValueError("each fixture id must be a non-empty string")
-        if fixture_id not in by_id:
-            by_id[fixture_id] = fixture
+        if fixture_id in by_id:
+            raise ValueError(f"duplicate fixture id: {fixture_id}")
+        by_id[fixture_id] = fixture
 
     missing: list[str] = []
     rejected: list[str] = []
@@ -55,6 +56,12 @@ def evaluate(payload: dict) -> dict:
         else:
             rejected.append(fixture_id)
 
+    for fixture_id, fixture in by_id.items():
+        if fixture_id in seen:
+            continue
+        if not _provenance_complete(fixture.get("provenance")):
+            rejected.append(fixture_id)
+
     if missing or rejected:
         decision = "excluded"
         reasons = [_BASELINE_REASON]
@@ -66,7 +73,7 @@ def evaluate(payload: dict) -> dict:
             )
         if rejected:
             reasons.append(
-                "Claimed fixtures missing complete provenance "
+                "Fixtures missing complete provenance "
                 "(non-empty origin, owner, acquiredAt, permittedUse) are excluded: "
                 + ", ".join(rejected)
                 + "."

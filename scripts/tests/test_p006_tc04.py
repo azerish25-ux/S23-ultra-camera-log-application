@@ -161,6 +161,22 @@ class P006Tc04Tests(unittest.TestCase):
         self.assertIn("deferred", " ".join(result["reasons"]).lower())
         self._assert_schema(result)
 
+    def test_skip_or_stale_with_failing_summary_is_blocked(self):
+        for skipped, stale in ((True, False), (False, True), (True, True)):
+            result = p006_tc04.evaluate(
+                _payload(
+                    summary_passed=False,
+                    raw_failed=True,
+                    skipped_physical_as_pass=skipped,
+                    stale_report=stale,
+                    raw_log_id="raw-distorted",
+                )
+            )
+            self.assertEqual("blocked", result["decision"])
+            self.assertNotEqual("failed", result["decision"])
+            self.assertEqual(["aggregate-summary"], result["rejectedClaims"])
+            self.assertEqual(["raw-distorted"], result["preservedResults"])
+
     def test_summary_not_passed_without_raw_failure_is_not_allowed(self):
         result = p006_tc04.evaluate(
             _payload(summary_passed=False, raw_failed=False, raw_log_id="raw-hold")
@@ -178,6 +194,14 @@ class P006Tc04Tests(unittest.TestCase):
             p006_tc04.evaluate(payload)
         payload = _payload()
         payload["rawLogId"] = None
+        with self.assertRaises(ValueError):
+            p006_tc04.evaluate(payload)
+        payload = _payload()
+        payload["rawLogId"] = ""
+        with self.assertRaises(ValueError):
+            p006_tc04.evaluate(payload)
+        payload = _payload()
+        payload["rawLogId"] = "   "
         with self.assertRaises(ValueError):
             p006_tc04.evaluate(payload)
         payload = _payload()
@@ -206,9 +230,10 @@ class P006Tc04Tests(unittest.TestCase):
                         self.assertTrue(result["reasons"])
                         self.assertEqual([], result["openQuestions"])
                         self._assert_schema(result)
-                        if summary_passed and (raw_failed or skipped or stale):
+                        if skipped or stale or (summary_passed and raw_failed):
                             self.assertEqual("blocked", result["decision"])
-                            self._assert_contradiction_prefers_raw(result, "raw-matrix")
+                            if summary_passed:
+                                self._assert_contradiction_prefers_raw(result, "raw-matrix")
                         elif (not summary_passed) and raw_failed:
                             self.assertEqual("failed", result["decision"])
                         elif summary_passed and not raw_failed and not skipped and not stale:

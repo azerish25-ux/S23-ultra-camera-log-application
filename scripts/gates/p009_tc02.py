@@ -38,7 +38,8 @@ def evaluate(payload: dict) -> dict:
     logical = route["logicalId"]
     physical = route["physicalId"]
     identity = _route_id(route)
-    claim = f"{logical}/{physical}/{failure_mode}"
+    physical_token = physical if physical is not None else "logical"
+    claim = f"{logical}/{physical_token}/{failure_mode}"
     reasons: list[str] = []
     rejected: list[str] = []
     preserved: list[str] = []
@@ -53,7 +54,7 @@ def evaluate(payload: dict) -> dict:
     configured = route["configured"]
     samples = route["samples"]
     independent = route["openPhysicalIndependently"]
-    unusable = (advertised and not configured) or samples == 0 or failure_mode != "none"
+    unusable = (not configured) or samples == 0 or failure_mode != "none"
     qualified = advertised and configured and samples > 0 and failure_mode == "none"
 
     if independent:
@@ -68,7 +69,7 @@ def evaluate(payload: dict) -> dict:
         decision = "qualified"
         preserved.append(identity)
         reasons.append(f"{identity} qualified")
-    elif unusable:
+    elif advertised and unusable:
         decision = "advertised_only"
         rejected.append(claim)
         preserved.append(f"advertised:{logical}")

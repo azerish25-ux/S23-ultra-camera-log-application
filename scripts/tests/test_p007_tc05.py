@@ -246,10 +246,19 @@ class MeasurementWithoutUnitsTests(unittest.TestCase):
                 [{"name": "frame-interval", "value": 1, "unit": "ms", "domain": "elapsed"}],
                 compare=["missing", "frame-interval"],
             ))
-        with self.assertRaises(ValueError):
-            gate.evaluate(self.payload(
-                [{"name": "frame-interval", "value": 1, "unit": "", "domain": "elapsed"}],
-            ))
+        blank_unit = gate.evaluate(self.payload(
+            [{"name": "frame-interval", "value": 1, "unit": "", "domain": "elapsed"}],
+        ))
+        self.assert_shape(blank_unit, "clarification_required")
+        self.assertIn("frame-interval", blank_unit["rejectedClaims"])
+        whitespace_unit = gate.evaluate(self.payload(
+            [{"name": "frame-interval", "value": 1, "unit": "   ", "domain": "elapsed"}],
+        ))
+        self.assert_shape(whitespace_unit, "clarification_required")
+        whitespace_domain = gate.evaluate(self.payload(
+            [{"name": "frame-interval", "value": 1, "unit": "ms", "domain": "  "}],
+        ))
+        self.assert_shape(whitespace_domain, "clarification_required")
         with self.assertRaises(ValueError):
             gate.evaluate(self.payload([], prof=[{"displayName": STOCK}]))
 
