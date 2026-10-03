@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "phase": "P066",
+  "mapId": "s23-gpu-backend-decision-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Compare available EGL/OpenGL ES or Vulkan paths using the same small reference kernels and resource-lifetime tests. Record required extensions and formats. Start with one maintained backend; a second requires a demonstrated coverage or performance benefit.",
+  "fixture": "A device supporting the API version but lacking a required renderable high-precision format.",
+  "oracle": "The backend reports unavailable for that route and retains the CPU reference rather than silently lowering precision.",
+  "mutant": "Assume an API version number guarantees every required texture and surface capability.",
+  "probe": {
+    "apiFamily": "opengles",
+    "apiVersion": "3.2",
+    "apiVersionSupported": true,
+    "routeId": "gles-rgba16f",
+    "requiredFormat": "rgba16f",
+    "formatRenderable": false,
+    "requiredExtensions": ["GL_EXT_color_buffer_half_float"],
+    "presentExtensions": [],
+    "surfaceCompatible": true,
+    "imageImportAvailable": false,
+    "cpuReferenceRetained": true,
+    "silentPrecisionLowering": false
+  },
+  "kernels": [
+    {
+      "id": "box-blur",
+      "reference": "cpu",
+      "gpuExecuted": false,
+      "matchedReference": false
+    },
+    {
+      "id": "luma-accumulate",
+      "reference": "cpu",
+      "gpuExecuted": false,
+      "matchedReference": false
+    }
+  ],
+  "lifetimes": [
+    {
+      "id": "color-target",
+      "resource": "texture",
+      "completionObserved": true,
+      "recycledAfterCompletion": true
+    },
+    {
+      "id": "staging-buffer",
+      "resource": "buffer",
+      "completionObserved": true,
+      "recycledAfterCompletion": true
+    }
+  ],
+  "backends": [
+    {
+      "id": "gles",
+      "family": "opengles",
+      "role": "candidate",
+      "maintained": true,
+      "selected": false,
+      "coverageBenefit": false,
+      "performanceBenefit": false
+    },
+    {
+      "id": "cpu-reference",
+      "family": "cpu",
+      "role": "reference",
+      "maintained": true,
+      "selected": true,
+      "coverageBenefit": false,
+      "performanceBenefit": false
+    },
+    {
+      "id": "vulkan",
+      "family": "vulkan",
+      "role": "second",
+      "maintained": true,
+      "selected": false,
+      "coverageBenefit": false,
+      "performanceBenefit": false
+    }
+  ]
+}

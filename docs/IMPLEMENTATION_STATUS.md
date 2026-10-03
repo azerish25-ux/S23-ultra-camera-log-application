@@ -488,3 +488,7 @@ Host gate for the directive deliverable "GPU resource owner and delayed-completi
 ## P071 — Prioritize reliable capture over preview quality (host scope)
 
 Host gate for the directive deliverable "Resource scheduler and capture-priority stress tests". See [P071_PRIORITIZE_RELIABLE_CAPTURE_OVER_PREVIEW_QUALITY.md](P071_PRIORITIZE_RELIABLE_CAPTURE_OVER_PREVIEW_QUALITY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P066 — Select and qualify the first GPU backend (host scope)
+
+Host gate for the directive deliverable "Backend decision record and capability probe". See [P066_SELECT_AND_QUALIFY_THE_FIRST_GPU_BACKEND.md](P066_SELECT_AND_QUALIFY_THE_FIRST_GPU_BACKEND.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

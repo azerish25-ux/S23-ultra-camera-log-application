@@ -1,0 +1,51 @@
+{
+  "phase": "P066",
+  "caseIds": [
+    "TC-P066-01",
+    "TC-P066-02",
+    "TC-P066-03",
+    "TC-P066-04",
+    "TC-P066-05",
+    "TC-P066-06",
+    "TC-P066-07",
+    "TC-P066-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p066_select_and_qualify_the_first_gpu_backend.py",
+    "scripts/tests/test_p066_select_and_qualify_the_first_gpu_backend.py",
+    "docs/P066_SELECT_AND_QUALIFY_THE_FIRST_GPU_BACKEND.md",
+    "docs/P066_SELECT_AND_QUALIFY_THE_FIRST_GPU_BACKEND.json",
+    "docs/evidence/P066-handoff.json",
+    "scripts/gates/p066_tc01.py",
+    "scripts/gates/p066_tc02.py",
+    "scripts/gates/p066_tc03.py",
+    "scripts/gates/p066_tc04.py",
+    "scripts/gates/p066_tc05.py",
+    "scripts/gates/p066_tc06.py",
+    "scripts/gates/p066_tc07.py",
+    "scripts/gates/p066_tc08.py",
+    "scripts/tests/test_p066_tc01.py",
+    "scripts/tests/test_p066_tc02.py",
+    "scripts/tests/test_p066_tc03.py",
+    "scripts/tests/test_p066_tc04.py",
+    "scripts/tests/test_p066_tc05.py",
+    "scripts/tests/test_p066_tc06.py",
+    "scripts/tests/test_p066_tc07.py",
+    "scripts/tests/test_p066_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p066*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "API version guarantees every texture and surface capability",
+    "silent precision lowering of a high-precision intermediate",
+    "on-device GPU backend qualification"
+  ],
+  "nextPhase": "P067"
+}
