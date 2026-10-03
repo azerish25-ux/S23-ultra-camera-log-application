@@ -193,3 +193,58 @@ remain unqualified until their documented protocols are executed.
 After exact-commit acceptance, P006 decision/risk gates are the next foundation
 phase. This work adds measurement discipline, not a new recording mode or a
 physical-camera performance claim.
+
+## P006 — decision and risk gates
+
+Host-only. The [risk register](RISK_REGISTER.json) covers footage loss, misleading
+labels, thermal load, rendering instability, licensing, and firmware modification.
+The [phase-entry log](PHASE_ENTRY_LOG.json) defers an irreversible firmware
+proposal that has no identified blocked stream and no verified recovery.
+Enthusiasm is not authorization to flash. `scripts/gates/p006_register.py` and
+`scripts/gates/p006_tc01.py` through `p006_tc08.py` implement TC-P006-01 through
+TC-P006-08. No Android source, build pin, or physical qualification changed.
+See [P006 decision gates](P006_DECISION_GATES.md).
+
+## P007 — provenance ledger
+
+Host-only. The [provenance ledger](PROVENANCE_LEDGER.json) content-addresses
+fixtures. Two stock profiles that share a display name and differ in sha256 stay
+distinct. Unknown redistribution rights stay out of the public bundle and do not
+block private comparison. `scripts/gates/p007_ledger.py` and `p007_tc01.py`
+through `p007_tc08.py` implement TC-P007-01 through TC-P007-08. No secrets, media
+tokens, or user identifiers are stored in the manifest. See
+[P007 provenance](P007_PROVENANCE.md).
+
+## P008 — execution protocol
+
+Host-only. The [agent protocol](AGENT_PROTOCOL.json) and [handoff schema](HANDOFF_SCHEMA.json)
+require dependency order, a failing test first, fast-forward publication on
+`main`, and remote-head verification before push. A host pass with a pending
+physical gate is software-verified only. A local build does not complete the
+programme. `scripts/gates/p008_protocol.py` and `p008_tc01.py` through
+`p008_tc08.py` implement TC-P008-01 through TC-P008-08. See
+[P008 execution protocol](P008_EXECUTION_PROTOCOL.md).
+
+## P009 — logical and physical camera routes
+
+Host fixture, not a live probe. The [route inventory](CAMERA_ROUTE_INVENTORY.json)
+keeps a physical member that is not a public camera id addressable through its
+logical owner, leaves missing focal length unknown, and rejects opening that
+member as an independent camera. One property failure does not erase other
+routes. `scripts/gates/p009_routes.py` and `p009_tc01.py` through `p009_tc08.py`
+implement TC-P009-01 through TC-P009-08. Existing Camera2 Kotlin is unchanged.
+See [P009 camera routes](P009_CAMERA_ROUTES.md).
+
+## P010 — ordinary stream configurations
+
+Host fixture, not a device probe. The [stream map](STREAM_MAP.json) preserves
+every advertised size, including a stream whose timing query failed, withholds
+fixed cadence when only a variable AE range contains the nominal rate, and
+rejects an illegal simultaneous combination without deleting the export.
+`scripts/gates/p010_stream_map.py` and `p010_tc01.py` through `p010_tc08.py`
+implement TC-P010-01 through TC-P010-08. See [P010 stream map](P010_STREAM_MAP.md).
+
+P006 through P010 are host-verified software gates. They do not certify physical
+S23 capture, sustained 4K/8K, endurance, or cinema-camera equivalence. The next
+dependency-ready phase is P011, rational capture timing.
+

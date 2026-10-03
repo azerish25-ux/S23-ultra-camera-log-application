@@ -1,0 +1,48 @@
+name: P006-P010 host gates
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/gates/**
+      - scripts/tests/test_p006*.py
+      - scripts/tests/test_p007*.py
+      - scripts/tests/test_p008*.py
+      - scripts/tests/test_p009*.py
+      - scripts/tests/test_p010*.py
+      - docs/RISK_REGISTER.json
+      - docs/PHASE_ENTRY_LOG.json
+      - docs/PROVENANCE_LEDGER.json
+      - docs/AGENT_PROTOCOL.json
+      - docs/HANDOFF_SCHEMA.json
+      - docs/CAMERA_ROUTE_INVENTORY.json
+      - docs/STREAM_MAP.json
+      - docs/P006_DECISION_GATES.md
+      - docs/P007_PROVENANCE.md
+      - docs/P008_EXECUTION_PROTOCOL.md
+      - docs/P009_CAMERA_ROUTES.md
+      - docs/P010_STREAM_MAP.md
+      - docs/IMPLEMENTATION_STATUS.md
+      - .github/workflows/p006-p010-gates.yml
+  pull_request:
+    paths:
+      - scripts/gates/**
+      - scripts/tests/test_p0*.py
+      - .github/workflows/p006-p010-gates.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - name: Run TC-P006 through TC-P010 host gates
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts/tests -p 'test_p0*.py' -v

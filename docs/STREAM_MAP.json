@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "phase": "P010",
+  "mapId": "s23-stream-map-fixture",
+  "implementationBaseRevision": "fffd5c9a63cb732e103052acae29ae0c251585cc",
+  "failedProperties": ["dynamicRangeProfiles"],
+  "streams": [
+    {
+      "logicalId": "0",
+      "format": "YUV_420_888",
+      "width": 1280,
+      "height": 720,
+      "advertised": true,
+      "minFps": "30",
+      "maxFps": "30",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": "timing"
+    },
+    {
+      "logicalId": "0",
+      "format": "YUV_420_888",
+      "width": 1920,
+      "height": 1080,
+      "advertised": true,
+      "minFps": "24",
+      "maxFps": "30",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": null
+    },
+    {
+      "logicalId": "0",
+      "format": "YUV_420_888",
+      "width": 3840,
+      "height": 2160,
+      "advertised": true,
+      "minFps": "24",
+      "maxFps": "29.97",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": null
+    },
+    {
+      "logicalId": "0",
+      "format": "JPEG",
+      "width": 1920,
+      "height": 1080,
+      "advertised": true,
+      "minFps": "1",
+      "maxFps": "15",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": null
+    },
+    {
+      "logicalId": "0",
+      "format": "JPEG",
+      "width": 4000,
+      "height": 3000,
+      "advertised": true,
+      "minFps": "1",
+      "maxFps": "5",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": null
+    },
+    {
+      "logicalId": "0",
+      "format": "RAW_SENSOR",
+      "width": 4000,
+      "height": 3000,
+      "advertised": true,
+      "minFps": "1",
+      "maxFps": "2",
+      "fixedCadenceEvidence": false,
+      "aeRangeIncludesNominal": true,
+      "queryError": null
+    }
+  ]
+}
