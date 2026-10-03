@@ -328,3 +328,7 @@ Host gate for the directive deliverable "Audio acquisition contract and blocked-
 ## P020 — Implement stable white-balance controls (host scope)
 
 Host gate for the directive deliverable "White-balance intent model and capture-versus-look separation". See [P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.md](P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P032 — Measure physical audiovisual synchronization (host scope)
+
+Host gate for the directive deliverable "Physical audiovisual protocol and measured offset report". See [P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.md](P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

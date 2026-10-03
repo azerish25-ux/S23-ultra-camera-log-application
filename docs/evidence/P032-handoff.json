@@ -1,0 +1,50 @@
+{
+  "phase": "P032",
+  "caseIds": [
+    "TC-P032-01",
+    "TC-P032-02",
+    "TC-P032-03",
+    "TC-P032-04",
+    "TC-P032-05",
+    "TC-P032-06",
+    "TC-P032-07",
+    "TC-P032-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p032_measure_physical_audiovisual_synchronization.py",
+    "scripts/tests/test_p032_measure_physical_audiovisual_synchronization.py",
+    "docs/P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.md",
+    "docs/P032_MEASURE_PHYSICAL_AUDIOVISUAL_SYNCHRONIZATION.json",
+    "docs/evidence/P032-handoff.json",
+    "scripts/gates/p032_tc01.py",
+    "scripts/gates/p032_tc02.py",
+    "scripts/gates/p032_tc03.py",
+    "scripts/gates/p032_tc04.py",
+    "scripts/gates/p032_tc05.py",
+    "scripts/gates/p032_tc06.py",
+    "scripts/gates/p032_tc07.py",
+    "scripts/gates/p032_tc08.py",
+    "scripts/tests/test_p032_tc01.py",
+    "scripts/tests/test_p032_tc02.py",
+    "scripts/tests/test_p032_tc03.py",
+    "scripts/tests/test_p032_tc04.py",
+    "scripts/tests/test_p032_tc05.py",
+    "scripts/tests/test_p032_tc06.py",
+    "scripts/tests/test_p032_tc07.py",
+    "scripts/tests/test_p032_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p032*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "lip sync from matching first packet timestamps",
+    "physical lip-sync"
+  ],
+  "nextPhase": "P033"
+}

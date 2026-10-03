@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "phase": "P032",
+  "mapId": "s23-physical-av-sync-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Record repeatable visible and audible events under documented geometry, estimate offsets independently, and report measurement uncertainty. Use multiple events across a longer take to separate fixed offset from drift. Account for sound travel when the fixture distance matters.",
+  "fixture": "A flash-and-click recording with a constant offset at the beginning and increased offset near the end.",
+  "oracle": "The report distinguishes initial synchronization error from drift and does not certify lip sync from container starts alone.",
+  "mutant": "Use matching first packet timestamps as the sole synchronization test.",
+  "geometry": {
+    "fixtureDistanceMm": "3400",
+    "speedOfSoundMmPerS": "340000",
+    "documented": true
+  },
+  "packetStarts": {
+    "videoFirstNs": "0",
+    "audioFirstNs": "0"
+  },
+  "events": [
+    {
+      "id": "flash-begin",
+      "position": "beginning",
+      "visibleNs": "1000000000",
+      "audibleNs": "1015000000",
+      "uncertaintyNs": "200000"
+    },
+    {
+      "id": "flash-middle",
+      "position": "middle",
+      "visibleNs": "5000000000",
+      "audibleNs": "5015000000",
+      "uncertaintyNs": "200000"
+    },
+    {
+      "id": "flash-end",
+      "position": "end",
+      "visibleNs": "10000000000",
+      "audibleNs": "10025000000",
+      "uncertaintyNs": "200000"
+    }
+  ]
+}
