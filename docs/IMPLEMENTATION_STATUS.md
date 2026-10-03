@@ -416,3 +416,7 @@ Host gate for the directive deliverable "Signed normalization kernel and referen
 ## P050 — Implement all CFA parity cases (host scope)
 
 Host gate for the directive deliverable "CFA coordinate utility and exhaustive parity tests". See [P050_IMPLEMENT_ALL_CFA_PARITY_CASES.md](P050_IMPLEMENT_ALL_CFA_PARITY_CASES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P055 — Convert into a declared working space (host scope)
+
+Host gate for the directive deliverable "Working-image descriptor and color conversion tests". See [P055_CONVERT_INTO_A_DECLARED_WORKING_SPACE.md](P055_CONVERT_INTO_A_DECLARED_WORKING_SPACE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

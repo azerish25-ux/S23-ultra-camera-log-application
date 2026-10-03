@@ -1,0 +1,50 @@
+{
+  "phase": "P055",
+  "caseIds": [
+    "TC-P055-01",
+    "TC-P055-02",
+    "TC-P055-03",
+    "TC-P055-04",
+    "TC-P055-05",
+    "TC-P055-06",
+    "TC-P055-07",
+    "TC-P055-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p055_convert_into_a_declared_working_space.py",
+    "scripts/tests/test_p055_convert_into_a_declared_working_space.py",
+    "docs/P055_CONVERT_INTO_A_DECLARED_WORKING_SPACE.md",
+    "docs/P055_CONVERT_INTO_A_DECLARED_WORKING_SPACE.json",
+    "docs/evidence/P055-handoff.json",
+    "scripts/gates/p055_tc01.py",
+    "scripts/gates/p055_tc02.py",
+    "scripts/gates/p055_tc03.py",
+    "scripts/gates/p055_tc04.py",
+    "scripts/gates/p055_tc05.py",
+    "scripts/gates/p055_tc06.py",
+    "scripts/gates/p055_tc07.py",
+    "scripts/gates/p055_tc08.py",
+    "scripts/tests/test_p055_tc01.py",
+    "scripts/tests/test_p055_tc02.py",
+    "scripts/tests/test_p055_tc03.py",
+    "scripts/tests/test_p055_tc04.py",
+    "scripts/tests/test_p055_tc05.py",
+    "scripts/tests/test_p055_tc06.py",
+    "scripts/tests/test_p055_tc07.py",
+    "scripts/tests/test_p055_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p055*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "measured camera-to-working profile",
+    "eight-bit display bitmap as a working image"
+  ],
+  "nextPhase": "P056"
+}

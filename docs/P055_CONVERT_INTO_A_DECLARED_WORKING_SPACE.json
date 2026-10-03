@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "phase": "P055",
+  "mapId": "s23-declared-working-space-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Apply the validated camera transform and exposure scale into the chosen high-precision working representation. Keep negative and above-one channels until a documented boundary. Use independent reference vectors and reject singular or nonfinite transforms.",
+  "fixture": "A saturated source vector that produces a negative working-space channel and a highlight above diffuse white.",
+  "oracle": "The conversion preserves both values for subsequent processing instead of forcing display-gamut clipping.",
+  "mutant": "Insert an eight-bit display bitmap between the camera transform and working image.",
+  "workingSpace": {
+    "name": "scene-linear-float",
+    "precision": "float64",
+    "whitePoint": "D65",
+    "units": "scene-linear",
+    "order": ["camera-transform", "exposure-scale", "working-store"],
+    "boundary": "documented-storage",
+    "diffuseWhite": "1",
+    "storageFloor": "-8",
+    "storageCeiling": "16"
+  },
+  "cameraTransform": ["1", "0", "0", "-0.5", "1", "0", "0", "0", "1"],
+  "exposureScale": "2",
+  "source": {
+    "id": "saturated-highlight",
+    "cameraRgb": ["2", "0.1", "0.1"]
+  },
+  "independentReference": {
+    "id": "independent-vector",
+    "workingRgb": ["4", "-1.8", "0.2"]
+  }
+}
