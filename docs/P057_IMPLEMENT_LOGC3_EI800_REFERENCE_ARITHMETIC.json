@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "phase": "P057",
+  "mapId": "s23-logc3-ei800-reference-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Use the published EI800 exposure-domain coefficients and an explicit signed linear branch. Separate the encoding EI convention from the phone ISO. Test black, middle grey, branch continuity within coefficient rounding, monotonicity, and inverse round trips.",
+  "fixture": "Signed exposures around zero, values bracketing the branch cut, middle grey, and highlights well above scene-linear one.",
+  "oracle": "The independent numerical reference agrees within declared arithmetic tolerances without clipping valid intermediate values.",
+  "mutant": "Use the sensor-signal coefficient table for exposure-domain input.",
+  "source": "ARRI, ALEXA Log C Curve: Usage in VFX, 2017-03",
+  "encodingEi": "800",
+  "phoneIso": "200",
+  "convention": "exposure-domain",
+  "coefficientSelector": "encoding-ei",
+  "tolerance": {
+    "roundTrip": "0.000000000001",
+    "branchGap": "0.0000003",
+    "midGrey": "0.000000000000001",
+    "oracle": "0.000000000001"
+  },
+  "coefficients": {
+    "exposure-domain": {
+      "cut": "0.010591",
+      "a": "5.555556",
+      "b": "0.052272",
+      "c": "0.247190",
+      "d": "0.385537",
+      "e": "5.367655",
+      "f": "0.092809"
+    },
+    "sensor-signal": {
+      "cut": "0.004201",
+      "a": "200",
+      "b": "-0.729169",
+      "c": "0.247190",
+      "d": "0.385537",
+      "e": "193.235573",
+      "f": "-0.662201"
+    }
+  },
+  "samples": [
+    {"id": "neg-002", "exposure": "-0.02", "role": "signed-negative"},
+    {"id": "neg-001", "exposure": "-0.01", "role": "signed-negative"},
+    {"id": "black", "exposure": "0", "role": "black"},
+    {"id": "pos-001", "exposure": "0.001", "role": "signed-positive"},
+    {"id": "cut", "exposure": "0.010591", "role": "branch-cut"},
+    {"id": "above-cut", "exposure": "0.010592", "role": "branch-above"},
+    {"id": "grey", "exposure": "0.18", "role": "middle-grey"},
+    {"id": "hi-16", "exposure": "16", "role": "highlight"}
+  ]
+}

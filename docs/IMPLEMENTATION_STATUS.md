@@ -436,3 +436,7 @@ Host gate for the directive deliverable "Defect correction policy and highlight-
 ## P058 — Define gamut and matrix conventions (host scope)
 
 Host gate for the directive deliverable "Complete signal descriptor and contradiction tests". See [P058_DEFINE_GAMUT_AND_MATRIX_CONVENTIONS.md](P058_DEFINE_GAMUT_AND_MATRIX_CONVENTIONS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P057 — Implement LogC3 EI800 reference arithmetic (host scope)
+
+Host gate for the directive deliverable "Forward and inverse LogC3 functions with source attribution". See [P057_IMPLEMENT_LOGC3_EI800_REFERENCE_ARITHMETIC.md](P057_IMPLEMENT_LOGC3_EI800_REFERENCE_ARITHMETIC.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
