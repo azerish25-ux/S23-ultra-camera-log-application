@@ -1,0 +1,51 @@
+{
+  "phase": "P041",
+  "caseIds": [
+    "TC-P041-01",
+    "TC-P041-02",
+    "TC-P041-03",
+    "TC-P041-04",
+    "TC-P041-05",
+    "TC-P041-06",
+    "TC-P041-07",
+    "TC-P041-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p041_define_the_calibrated_profile_contract.py",
+    "scripts/tests/test_p041_define_the_calibrated_profile_contract.py",
+    "docs/P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.md",
+    "docs/P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.json",
+    "docs/evidence/P041-handoff.json",
+    "scripts/gates/p041_tc01.py",
+    "scripts/gates/p041_tc02.py",
+    "scripts/gates/p041_tc03.py",
+    "scripts/gates/p041_tc04.py",
+    "scripts/gates/p041_tc05.py",
+    "scripts/gates/p041_tc06.py",
+    "scripts/gates/p041_tc07.py",
+    "scripts/gates/p041_tc08.py",
+    "scripts/tests/test_p041_tc01.py",
+    "scripts/tests/test_p041_tc02.py",
+    "scripts/tests/test_p041_tc03.py",
+    "scripts/tests/test_p041_tc04.py",
+    "scripts/tests/test_p041_tc05.py",
+    "scripts/tests/test_p041_tc06.py",
+    "scripts/tests/test_p041_tc07.py",
+    "scripts/tests/test_p041_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p041*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "physical S23 qualification",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "certified measured profile",
+    "synthetic evidence as physical calibration"
+  ],
+  "nextPhase": "P042"
+}

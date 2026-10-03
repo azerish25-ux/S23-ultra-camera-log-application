@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "phase": "P041",
+  "mapId": "s23-calibrated-profile-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Specify source identity, matrix direction, white point, exposure scale, crop, CFA assumptions, illuminant, black model, defect policy, and fit provenance. Separate measured, manufacturer-derived provisional, and synthetic profiles. Hash the complete numerical payload and reject nonfinite values.",
+  "fixture": "A profile labelled measured but lacking measurement references, plus a synthetic profile offered for physical footage.",
+  "oracle": "The importer retains the author assertion separately and refuses synthetic evidence as physical calibration.",
+  "mutant": "Promote any imported profile with a measured string to certified status.",
+  "profiles": [
+    {
+      "id": "labelled-measured-no-refs",
+      "authorAssertion": "measured",
+      "category": "measured",
+      "offeredFor": "physical",
+      "sourceIdentity": {
+        "handset": "fixture-handset",
+        "firmware": "fw-1",
+        "route": "raw-logical-0",
+        "logicalCamera": "logical-0"
+      },
+      "matrixDirection": "camera-rgb-to-xyz-d50",
+      "matrix": [
+        ["0.436", "0.385", "0.143"],
+        ["0.222", "0.717", "0.061"],
+        ["0.014", "0.097", "0.714"]
+      ],
+      "whitePoint": "D50",
+      "exposureScale": "1.25",
+      "crop": "4000x3000+0+0",
+      "cfa": "RGGB",
+      "illuminant": "D65",
+      "blackModel": {
+        "offset": "64",
+        "rowBias": "0.5",
+        "columnBias": "-0.25"
+      },
+      "defectPolicy": "retain-signed",
+      "fitProvenance": {
+        "fitId": "fit-labelled",
+        "measurementReferences": []
+      },
+      "payloadHash": "4a8681c7f0a7bcebb39fb53bb5081ddbfd15b76597d563e98c7d7060693e8659"
+    },
+    {
+      "id": "synthetic-physical",
+      "authorAssertion": "synthetic",
+      "category": "synthetic",
+      "offeredFor": "physical",
+      "sourceIdentity": {
+        "handset": "fixture-handset",
+        "firmware": "fw-1",
+        "route": "raw-logical-0",
+        "logicalCamera": "logical-0"
+      },
+      "matrixDirection": "camera-rgb-to-xyz-d50",
+      "matrix": [
+        ["0.436", "0.385", "0.143"],
+        ["0.222", "0.717", "0.061"],
+        ["0.014", "0.097", "0.714"]
+      ],
+      "whitePoint": "D50",
+      "exposureScale": "1",
+      "crop": "4000x3000+0+0",
+      "cfa": "RGGB",
+      "illuminant": "D65",
+      "blackModel": {
+        "offset": "64",
+        "rowBias": "0",
+        "columnBias": "0"
+      },
+      "defectPolicy": "retain-signed",
+      "fitProvenance": {
+        "fitId": "fit-synthetic",
+        "measurementReferences": []
+      },
+      "payloadHash": "5117923f045a71ce294748cd8efa34edf493b32ff90e790edb24db04c2fd3bd5"
+    }
+  ]
+}

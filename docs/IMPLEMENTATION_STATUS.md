@@ -384,3 +384,7 @@ Host gate for the directive deliverable "Neutral-reference measurement and guard
 ## P042 — Measure black response and read noise (host scope)
 
 Host gate for the directive deliverable "Black-level model and dark-frame analysis report". See [P042_MEASURE_BLACK_RESPONSE_AND_READ_NOISE.md](P042_MEASURE_BLACK_RESPONSE_AND_READ_NOISE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P041 — Define the calibrated profile contract (host scope)
+
+Host gate for the directive deliverable "Profile schema and provenance-aware importer". See [P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.md](P041_DEFINE_THE_CALIBRATED_PROFILE_CONTRACT.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
