@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "phase": "P020",
+  "modelId": "s23-white-balance-intent-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Expose available presets and locks, record gains and transforms where accessible, and label Kelvin values provisional unless independently calibrated. A creative tint slider changes the render recipe, not capture metadata. Avoid changing the RAW neutral interpretation without versioning the profile.",
+  "fixture": "A stable RAW neutral point with a creative warm preview and an unsupported hardware Kelvin request.",
+  "oracle": "The source metadata stays unchanged, the preview recipe records its adjustment, and unsupported Kelvin remains unavailable.",
+  "mutant": "Write a creative temperature slider value into measured sensor white-balance evidence.",
+  "hardware": {
+    "namespace": "hardware.white_balance",
+    "presets": ["auto", "daylight", "cloudy", "fluorescent"],
+    "lockAvailable": true,
+    "locked": true,
+    "selectedPreset": "daylight",
+    "kelvinSupported": false,
+    "independentlyCalibrated": false,
+    "kelvinRequest": "5600",
+    "transformAccessible": true,
+    "gains": {
+      "red": "1.84",
+      "greenRed": "1.00",
+      "greenBlue": "1.00",
+      "blue": "1.52"
+    },
+    "colorTransform": "sensor-matrix-v1"
+  },
+  "preview": {
+    "namespace": "preview.recipe",
+    "creativeTemperature": "warm",
+    "creativeKelvinSlider": "3200",
+    "tintSlider": "plus_8",
+    "recordsAdjustment": true,
+    "writesCaptureMetadata": false
+  },
+  "rawNeutral": {
+    "namespace": "raw.neutral",
+    "red": "0.543",
+    "green": "1.00",
+    "blue": "0.66",
+    "profileVersion": "neutral-v1",
+    "priorProfile": "neutral-v1",
+    "sourceMetadataUnchanged": true
+  }
+}

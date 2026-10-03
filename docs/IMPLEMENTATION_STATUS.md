@@ -324,3 +324,7 @@ Host gate for the directive deliverable "Cold-start recovery scanner and interru
 ## P027 — Qualify microphone acquisition (host scope)
 
 Host gate for the directive deliverable "Audio acquisition contract and blocked-encoder tests". See [P027_QUALIFY_MICROPHONE_ACQUISITION.md](P027_QUALIFY_MICROPHONE_ACQUISITION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P020 — Implement stable white-balance controls (host scope)
+
+Host gate for the directive deliverable "White-balance intent model and capture-versus-look separation". See [P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.md](P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

@@ -1,0 +1,54 @@
+{
+  "phase": "P020",
+  "caseIds": [
+    "TC-P020-01",
+    "TC-P020-02",
+    "TC-P020-03",
+    "TC-P020-04",
+    "TC-P020-05",
+    "TC-P020-06",
+    "TC-P020-07",
+    "TC-P020-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p020_implement_stable_white_balance_controls.py",
+    "scripts/tests/test_p020_implement_stable_white_balance_controls.py",
+    "docs/P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.md",
+    "docs/P020_IMPLEMENT_STABLE_WHITE_BALANCE_CONTROLS.json",
+    "docs/evidence/P020-handoff.json",
+    "scripts/gates/p020_tc01.py",
+    "scripts/gates/p020_tc02.py",
+    "scripts/gates/p020_tc03.py",
+    "scripts/gates/p020_tc04.py",
+    "scripts/gates/p020_tc05.py",
+    "scripts/gates/p020_tc06.py",
+    "scripts/gates/p020_tc07.py",
+    "scripts/gates/p020_tc08.py",
+    "scripts/tests/test_p020_tc01.py",
+    "scripts/tests/test_p020_tc02.py",
+    "scripts/tests/test_p020_tc03.py",
+    "scripts/tests/test_p020_tc04.py",
+    "scripts/tests/test_p020_tc05.py",
+    "scripts/tests/test_p020_tc06.py",
+    "scripts/tests/test_p020_tc07.py",
+    "scripts/tests/test_p020_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p020*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 qualification",
+    "measured sensor white balance on a device",
+    "independent Kelvin calibration",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "P019 was not re-run by this host writer",
+    "publication commit is not assigned; next dependency is P021"
+  ],
+  "nextPhase": "blocked"
+}
