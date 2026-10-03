@@ -1,0 +1,50 @@
+{
+  "phase": "P034",
+  "caseIds": [
+    "TC-P034-01",
+    "TC-P034-02",
+    "TC-P034-03",
+    "TC-P034-04",
+    "TC-P034-05",
+    "TC-P034-06",
+    "TC-P034-07",
+    "TC-P034-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p034_pair_images_with_exact_capture_metadata.py",
+    "scripts/tests/test_p034_pair_images_with_exact_capture_metadata.py",
+    "docs/P034_PAIR_IMAGES_WITH_EXACT_CAPTURE_METADATA.md",
+    "docs/P034_PAIR_IMAGES_WITH_EXACT_CAPTURE_METADATA.json",
+    "docs/evidence/P034-handoff.json",
+    "scripts/gates/p034_tc01.py",
+    "scripts/gates/p034_tc02.py",
+    "scripts/gates/p034_tc03.py",
+    "scripts/gates/p034_tc04.py",
+    "scripts/gates/p034_tc05.py",
+    "scripts/gates/p034_tc06.py",
+    "scripts/gates/p034_tc07.py",
+    "scripts/gates/p034_tc08.py",
+    "scripts/tests/test_p034_tc01.py",
+    "scripts/tests/test_p034_tc02.py",
+    "scripts/tests/test_p034_tc03.py",
+    "scripts/tests/test_p034_tc04.py",
+    "scripts/tests/test_p034_tc05.py",
+    "scripts/tests/test_p034_tc06.py",
+    "scripts/tests/test_p034_tc07.py",
+    "scripts/tests/test_p034_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p034*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "latest-metadata attachment as exact pairing",
+    "nearest-neighbor timestamp pairing"
+  ],
+  "nextPhase": "P035"
+}

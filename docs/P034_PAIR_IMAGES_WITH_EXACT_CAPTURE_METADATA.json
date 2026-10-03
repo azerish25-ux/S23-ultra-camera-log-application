@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "phase": "P034",
+  "mapId": "s23-exact-pair-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Join by exact sensor timestamp using bounded pending maps. Define timeout and missing-metadata policy. Detect duplicate timestamps and preserve partial results rather than nearest-neighbor guessing. Close every Image after copying or consuming its data.",
+  "fixture": "Frames arriving out of callback order with one metadata entry delayed and another absent.",
+  "oracle": "Only exact matches enter qualified source records; unresolved frames receive an explicit failure or gap policy.",
+  "mutant": "Attach the most recently received metadata to each incoming Image.",
+  "policy": {
+    "pendingLimit": 4,
+    "timeoutNs": "1000000000",
+    "missingMetadata": "gap",
+    "duplicatePolicy": "reject_and_preserve"
+  },
+  "events": [
+    {
+      "kind": "image",
+      "frameId": "early",
+      "sensorTimestampNs": "1000000000",
+      "atNs": "1000000000",
+      "copied": true,
+      "closed": true
+    },
+    {
+      "kind": "metadata",
+      "frameId": "late",
+      "sensorTimestampNs": "2000000000",
+      "atNs": "1100000000",
+      "exposureNs": "10000000",
+      "blackLevel": "64",
+      "neutral": "0.45,1,0.55"
+    },
+    {
+      "kind": "image",
+      "frameId": "absent",
+      "sensorTimestampNs": "3000000000",
+      "atNs": "1200000000",
+      "copied": true,
+      "closed": true
+    },
+    {
+      "kind": "image",
+      "frameId": "late",
+      "sensorTimestampNs": "2000000000",
+      "atNs": "1300000000",
+      "copied": true,
+      "closed": true
+    },
+    {
+      "kind": "metadata",
+      "frameId": "early",
+      "sensorTimestampNs": "1000000000",
+      "atNs": "1400000000",
+      "exposureNs": "20000000",
+      "blackLevel": "64",
+      "neutral": "0.50,1,0.60"
+    },
+    {
+      "kind": "stop",
+      "atNs": "1500000000"
+    }
+  ]
+}

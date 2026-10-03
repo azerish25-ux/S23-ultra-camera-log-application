@@ -356,3 +356,7 @@ Host gate for the directive deliverable "Bounded RAW writer and deterministic ov
 ## P038 — Snapshot calibration metadata at capture time (host scope)
 
 Host gate for the directive deliverable "Capture-time calibration snapshot and identity checks". See [P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.md](P038_SNAPSHOT_CALIBRATION_METADATA_AT_CAPTURE_TIME.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P034 — Pair Images with exact capture metadata (host scope)
+
+Host gate for the directive deliverable "Exact pairing service and reorder-timeout tests". See [P034_PAIR_IMAGES_WITH_EXACT_CAPTURE_METADATA.md](P034_PAIR_IMAGES_WITH_EXACT_CAPTURE_METADATA.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
