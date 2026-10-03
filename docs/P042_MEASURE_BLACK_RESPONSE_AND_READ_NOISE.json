@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "phase": "P042",
+  "mapId": "s23-black-response-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Acquire controlled dark sequences at selected exposure and gain settings. Inspect row, column, temporal, and hot-pixel structure. Preserve signed residuals after black subtraction, report uncertainty, and separate sensor code saturation from later normalization.",
+  "fixture": "Dark frames containing a small negative mean after an intentionally incorrect black subtraction and a persistent hot column.",
+  "oracle": "The fit detects the bias and structured defect rather than clipping all negative samples to zero.",
+  "mutant": "Clamp black-subtracted RAW to zero before computing statistics.",
+  "exposureNs": "10000000",
+  "gain": "1",
+  "blackLevel": "100",
+  "uncertaintyDn": "1",
+  "saturationCode": "1023",
+  "normalizationOffset": "0",
+  "width": 4,
+  "frames": [
+    {
+      "id": "dark-a",
+      "samples": [
+        "96", "98", "98", "106",
+        "98", "96", "98", "106",
+        "98", "98", "96", "106",
+        "96", "98", "98", "106"
+      ]
+    },
+    {
+      "id": "dark-b",
+      "samples": [
+        "98", "96", "98", "106",
+        "98", "98", "96", "106",
+        "96", "98", "98", "106",
+        "98", "96", "98", "106"
+      ]
+    }
+  ]
+}

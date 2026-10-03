@@ -1,0 +1,51 @@
+{
+  "phase": "P042",
+  "caseIds": [
+    "TC-P042-01",
+    "TC-P042-02",
+    "TC-P042-03",
+    "TC-P042-04",
+    "TC-P042-05",
+    "TC-P042-06",
+    "TC-P042-07",
+    "TC-P042-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p042_measure_black_response_and_read_noise.py",
+    "scripts/tests/test_p042_measure_black_response_and_read_noise.py",
+    "docs/P042_MEASURE_BLACK_RESPONSE_AND_READ_NOISE.md",
+    "docs/P042_MEASURE_BLACK_RESPONSE_AND_READ_NOISE.json",
+    "docs/evidence/P042-handoff.json",
+    "scripts/gates/p042_tc01.py",
+    "scripts/gates/p042_tc02.py",
+    "scripts/gates/p042_tc03.py",
+    "scripts/gates/p042_tc04.py",
+    "scripts/gates/p042_tc05.py",
+    "scripts/gates/p042_tc06.py",
+    "scripts/gates/p042_tc07.py",
+    "scripts/gates/p042_tc08.py",
+    "scripts/tests/test_p042_tc01.py",
+    "scripts/tests/test_p042_tc02.py",
+    "scripts/tests/test_p042_tc03.py",
+    "scripts/tests/test_p042_tc04.py",
+    "scripts/tests/test_p042_tc05.py",
+    "scripts/tests/test_p042_tc06.py",
+    "scripts/tests/test_p042_tc07.py",
+    "scripts/tests/test_p042_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p042*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "black response from clamped residuals",
+    "read noise as a physical S23 measurement",
+    "denoising as sensor improvement"
+  ],
+  "nextPhase": "P043"
+}
