@@ -532,3 +532,7 @@ Host gate for the directive deliverable "Skin-texture evaluation and optional ad
 ## P079 — Validate stock behaviour across exposure (host scope)
 
 Host gate for the directive deliverable "Stock exposure-series benchmark and limitation notes". See [P079_VALIDATE_STOCK_BEHAVIOUR_ACROSS_EXPOSURE.md](P079_VALIDATE_STOCK_BEHAVIOUR_ACROSS_EXPOSURE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P080 — Package a small validated stock library (host scope)
+
+Host gate for the directive deliverable "Initial versioned stock pack and profile acceptance report". See [P080_PACKAGE_A_SMALL_VALIDATED_STOCK_LIBRARY.md](P080_PACKAGE_A_SMALL_VALIDATED_STOCK_LIBRARY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
