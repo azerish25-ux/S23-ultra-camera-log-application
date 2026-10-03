@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "phase": "P065",
+  "mapId": "s23-typed-render-graph-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Give every node declared input and output descriptors, precision requirements, spatial halo, temporal context, and deterministic parameters. Validate graph edges before allocation. Nodes report whether they alter geometry, exposure, color, texture, or time.",
+  "fixture": "A film-density node connected directly to an encoded YUV surface and a display overlay connected to clean-master export.",
+  "oracle": "The graph validator rejects both invalid connections before processing frames.",
+  "mutant": "Represent all intermediate images as untyped texture handles.",
+  "validation": {
+    "stage": "before-allocation",
+    "framesProcessed": false,
+    "allocated": false
+  },
+  "nodes": [
+    {
+      "id": "scene-linear-source",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "working",
+          "domain": "scene-linear",
+          "precision": "rgba16f",
+          "geometry": "image-plane"
+        }
+      ],
+      "precisionRequirement": "rgba16f",
+      "halo": "2",
+      "temporal": "none",
+      "deterministic": true,
+      "parameters": ["identity"],
+      "alters": ["color"]
+    },
+    {
+      "id": "film-density",
+      "inputs": [
+        {
+          "name": "density-in",
+          "domain": "scene-linear",
+          "precision": "rgba16f",
+          "geometry": "image-plane"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "density",
+          "domain": "film-density",
+          "precision": "rgba16f",
+          "geometry": "image-plane"
+        }
+      ],
+      "precisionRequirement": "rgba16f",
+      "halo": "2",
+      "temporal": "none",
+      "deterministic": true,
+      "parameters": ["density-curve"],
+      "alters": ["color", "exposure", "texture"]
+    },
+    {
+      "id": "encoded-yuv-surface",
+      "inputs": [
+        {
+          "name": "encoded",
+          "domain": "encoded-yuv",
+          "precision": "yuv420",
+          "geometry": "image-plane"
+        }
+      ],
+      "outputs": [],
+      "precisionRequirement": "yuv420",
+      "halo": "0",
+      "temporal": "none",
+      "deterministic": true,
+      "parameters": ["bt709"],
+      "alters": ["color"]
+    },
+    {
+      "id": "display-overlay",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "overlay",
+          "domain": "display-overlay",
+          "precision": "rgba8",
+          "geometry": "overlay-plane"
+        }
+      ],
+      "precisionRequirement": "rgba8",
+      "halo": "0",
+      "temporal": "none",
+      "deterministic": true,
+      "parameters": ["srgb-overlay"],
+      "alters": ["geometry", "color"]
+    },
+    {
+      "id": "clean-master-export",
+      "inputs": [
+        {
+          "name": "master",
+          "domain": "clean-master",
+          "precision": "rgba16f",
+          "geometry": "export-plane"
+        }
+      ],
+      "outputs": [],
+      "precisionRequirement": "rgba16f",
+      "halo": "0",
+      "temporal": "none",
+      "deterministic": true,
+      "parameters": ["clean-export"],
+      "alters": ["color"]
+    }
+  ],
+  "edges": [
+    {
+      "id": "working-to-density",
+      "fromNode": "scene-linear-source",
+      "fromPort": "working",
+      "toNode": "film-density",
+      "toPort": "density-in"
+    },
+    {
+      "id": "density-to-yuv",
+      "fromNode": "film-density",
+      "fromPort": "density",
+      "toNode": "encoded-yuv-surface",
+      "toPort": "encoded"
+    },
+    {
+      "id": "overlay-to-master",
+      "fromNode": "display-overlay",
+      "fromPort": "overlay",
+      "toNode": "clean-master-export",
+      "toPort": "master"
+    }
+  ]
+}

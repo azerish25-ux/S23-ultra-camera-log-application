@@ -1,0 +1,51 @@
+{
+  "phase": "P065",
+  "caseIds": [
+    "TC-P065-01",
+    "TC-P065-02",
+    "TC-P065-03",
+    "TC-P065-04",
+    "TC-P065-05",
+    "TC-P065-06",
+    "TC-P065-07",
+    "TC-P065-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p065_define_a_typed_render_graph.py",
+    "scripts/tests/test_p065_define_a_typed_render_graph.py",
+    "docs/P065_DEFINE_A_TYPED_RENDER_GRAPH.md",
+    "docs/P065_DEFINE_A_TYPED_RENDER_GRAPH.json",
+    "docs/evidence/P065-handoff.json",
+    "scripts/gates/p065_tc01.py",
+    "scripts/gates/p065_tc02.py",
+    "scripts/gates/p065_tc03.py",
+    "scripts/gates/p065_tc04.py",
+    "scripts/gates/p065_tc05.py",
+    "scripts/gates/p065_tc06.py",
+    "scripts/gates/p065_tc07.py",
+    "scripts/gates/p065_tc08.py",
+    "scripts/tests/test_p065_tc01.py",
+    "scripts/tests/test_p065_tc02.py",
+    "scripts/tests/test_p065_tc03.py",
+    "scripts/tests/test_p065_tc04.py",
+    "scripts/tests/test_p065_tc05.py",
+    "scripts/tests/test_p065_tc06.py",
+    "scripts/tests/test_p065_tc07.py",
+    "scripts/tests/test_p065_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p065*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "untyped texture handles as a compatible intermediate",
+    "silent RGBA8 replacement of a high-precision intermediate",
+    "GPU backend qualification"
+  ],
+  "nextPhase": "P066"
+}

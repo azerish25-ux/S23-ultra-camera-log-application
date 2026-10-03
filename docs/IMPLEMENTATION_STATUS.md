@@ -448,3 +448,7 @@ Host gate for the directive deliverable "Codec precision protocol and paired pos
 ## P056 — Reduce resolution in the correct domain (host scope)
 
 Host gate for the directive deliverable "Resampling module and geometry provenance tests". See [P056_REDUCE_RESOLUTION_IN_THE_CORRECT_DOMAIN.md](P056_REDUCE_RESOLUTION_IN_THE_CORRECT_DOMAIN.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P065 — Define a typed render graph (host scope)
+
+Host gate for the directive deliverable "Render graph schema and static compatibility validator". See [P065_DEFINE_A_TYPED_RENDER_GRAPH.md](P065_DEFINE_A_TYPED_RENDER_GRAPH.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
