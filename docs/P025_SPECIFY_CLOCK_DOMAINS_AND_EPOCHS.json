@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "phase": "P025",
+  "mapId": "s23-clock-domain-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "method": "Represent every timestamp with domain and units. Estimate clock correspondence only using an identified method and retained samples. Use a shared take epoch for presentation while preserving original sensor times. Mark unsupported synchronization paths as unverified.",
+  "fixture": "Audio and video streams whose timestamps look similar numerically but originate from different clock domains.",
+  "oracle": "The synchronizer refuses to assume equivalence without a measured or documented mapping.",
+  "mutant": "Subtract timestamps from unrelated domains because both are expressed in nanoseconds.",
+  "takeEpoch": {
+    "id": "take-1",
+    "domain": "monotonic_system",
+    "units": "ns",
+    "origin": "take-start"
+  },
+  "timestamps": [
+    {
+      "id": "video-0",
+      "streamId": "video",
+      "domain": "sensor",
+      "units": "ns",
+      "value": "1000000000",
+      "origin": "sensor-boot"
+    },
+    {
+      "id": "audio-0",
+      "streamId": "audio",
+      "domain": "audio_hardware",
+      "units": "ns",
+      "value": "1000000000",
+      "origin": "audio-boot"
+    },
+    {
+      "id": "mono-0",
+      "streamId": "video",
+      "domain": "monotonic_system",
+      "units": "ns",
+      "value": "1000000000",
+      "origin": "boottime"
+    },
+    {
+      "id": "pres-0",
+      "streamId": "video",
+      "domain": "encoded_presentation",
+      "units": "ns",
+      "value": "1000000000",
+      "origin": "container-zero"
+    },
+    {
+      "id": "codec-0",
+      "streamId": "video",
+      "domain": "codec",
+      "units": "ns",
+      "value": "0",
+      "origin": "codec-start"
+    }
+  ],
+  "mappings": [],
+  "unsupportedPaths": [
+    {"fromDomain": "sensor", "toDomain": "audio_hardware", "status": "unverified"},
+    {"fromDomain": "sensor", "toDomain": "monotonic_system", "status": "unverified"},
+    {"fromDomain": "sensor", "toDomain": "codec", "status": "unverified"},
+    {"fromDomain": "sensor", "toDomain": "encoded_presentation", "status": "unverified"},
+    {"fromDomain": "monotonic_system", "toDomain": "audio_hardware", "status": "unverified"},
+    {"fromDomain": "audio_hardware", "toDomain": "codec", "status": "unverified"},
+    {"fromDomain": "codec", "toDomain": "encoded_presentation", "status": "unverified"},
+    {"fromDomain": "monotonic_system", "toDomain": "encoded_presentation", "status": "unverified"}
+  ]
+}

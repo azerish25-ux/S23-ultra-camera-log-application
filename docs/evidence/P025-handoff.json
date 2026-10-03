@@ -1,0 +1,50 @@
+{
+  "phase": "P025",
+  "caseIds": [
+    "TC-P025-01",
+    "TC-P025-02",
+    "TC-P025-03",
+    "TC-P025-04",
+    "TC-P025-05",
+    "TC-P025-06",
+    "TC-P025-07",
+    "TC-P025-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p025_specify_clock_domains_and_epochs.py",
+    "scripts/tests/test_p025_specify_clock_domains_and_epochs.py",
+    "docs/P025_SPECIFY_CLOCK_DOMAINS_AND_EPOCHS.md",
+    "docs/P025_SPECIFY_CLOCK_DOMAINS_AND_EPOCHS.json",
+    "docs/evidence/P025-handoff.json",
+    "scripts/gates/p025_tc01.py",
+    "scripts/gates/p025_tc02.py",
+    "scripts/gates/p025_tc03.py",
+    "scripts/gates/p025_tc04.py",
+    "scripts/gates/p025_tc05.py",
+    "scripts/gates/p025_tc06.py",
+    "scripts/gates/p025_tc07.py",
+    "scripts/gates/p025_tc08.py",
+    "scripts/tests/test_p025_tc01.py",
+    "scripts/tests/test_p025_tc02.py",
+    "scripts/tests/test_p025_tc03.py",
+    "scripts/tests/test_p025_tc04.py",
+    "scripts/tests/test_p025_tc05.py",
+    "scripts/tests/test_p025_tc06.py",
+    "scripts/tests/test_p025_tc07.py",
+    "scripts/tests/test_p025_tc08.py"
+  ],
+  "commit": "uncommitted",
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p025*.py' -v",
+  "failures": [],
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence without measured evidence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "cross-domain clock equivalence from matching nanosecond units",
+    "physical lip-sync"
+  ],
+  "nextPhase": "P026"
+}
