@@ -540,3 +540,7 @@ Host gate for the directive deliverable "Initial versioned stock pack and profil
 ## P081 — Establish deterministic grain coordinates (host scope)
 
 Host gate for the directive deliverable "Grain seed contract and render-order invariance tests". See [P081_ESTABLISH_DETERMINISTIC_GRAIN_COORDINATES.md](P081_ESTABLISH_DETERMINISTIC_GRAIN_COORDINATES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P082 — Model exposure-dependent grain statistics (host scope)
+
+Host gate for the directive deliverable "Grain-statistics model and exposure-series tests". See [P082_MODEL_EXPOSURE_DEPENDENT_GRAIN_STATISTICS.md](P082_MODEL_EXPOSURE_DEPENDENT_GRAIN_STATISTICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
