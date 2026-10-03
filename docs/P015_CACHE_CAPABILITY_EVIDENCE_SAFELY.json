@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "phase": "P015",
+  "cacheId": "s23-capability-cache-fixture",
+  "implementationBaseRevision": "d4deac8fc82832fd23396a01065c5f0bf9da6670",
+  "marketingName": "Galaxy S23 Ultra",
+  "historical": [
+    {
+      "reportId": "hist-firmware-a-hevc-main10",
+      "immutable": true,
+      "buildFingerprint": "samsung/dm3q/dm3q:14/UP1A.231005.007/S918BXXU3BWJM:user/release-keys",
+      "appProtocolVersion": "capability-probe/1",
+      "route": "logical:0",
+      "codecIdentity": "c2.exynos.hevc.encoder/1.0",
+      "codecCapabilityResponse": "Main10-surface-available",
+      "marketingName": "Galaxy S23 Ultra",
+      "previouslyWorking": true
+    },
+    {
+      "reportId": "hist-front-jpeg-unaffected",
+      "immutable": true,
+      "buildFingerprint": "samsung/dm3q/dm3q:14/UP1A.231005.007/S918BXXU4CXA1:user/release-keys",
+      "appProtocolVersion": "capability-probe/1",
+      "route": "logical:1",
+      "codecIdentity": "c2.android.avc.encoder/1.0",
+      "codecCapabilityResponse": "avc-baseline-available",
+      "marketingName": "Galaxy S23 Ultra",
+      "previouslyWorking": true
+    }
+  ],
+  "selectionCache": [
+    {
+      "candidateId": "sel-hevc-main10-rear",
+      "sourceReportId": "hist-firmware-a-hevc-main10",
+      "buildFingerprint": "samsung/dm3q/dm3q:14/UP1A.231005.007/S918BXXU3BWJM:user/release-keys",
+      "appProtocolVersion": "capability-probe/1",
+      "route": "logical:0",
+      "codecIdentity": "c2.exynos.hevc.encoder/1.0",
+      "codecCapabilityResponse": "Main10-surface-available",
+      "marketingName": "Galaxy S23 Ultra",
+      "previouslyWorking": true
+    }
+  ],
+  "currentEnvironment": {
+    "buildFingerprint": "samsung/dm3q/dm3q:14/UP1A.231005.007/S918BXXU4CXA1:user/release-keys",
+    "appProtocolVersion": "capability-probe/1",
+    "route": "logical:0",
+    "codecIdentity": "c2.exynos.hevc.encoder/1.0",
+    "codecCapabilityResponse": "Main10-surface-unavailable",
+    "marketingName": "Galaxy S23 Ultra"
+  }
+}

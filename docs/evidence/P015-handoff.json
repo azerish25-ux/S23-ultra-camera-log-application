@@ -1,0 +1,51 @@
+{
+  "phase": "P015",
+  "caseIds": [
+    "TC-P015-01",
+    "TC-P015-02",
+    "TC-P015-03",
+    "TC-P015-04",
+    "TC-P015-05",
+    "TC-P015-06",
+    "TC-P015-07",
+    "TC-P015-08"
+  ],
+  "changedFiles": [
+    "scripts/gates/p015_cache_capability_evidence_safely.py",
+    "scripts/tests/test_p015_cache_capability_evidence_safely.py",
+    "docs/P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.md",
+    "docs/P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.json",
+    "docs/evidence/P015-handoff.json",
+    "scripts/gates/p015_tc01.py",
+    "scripts/gates/p015_tc02.py",
+    "scripts/gates/p015_tc03.py",
+    "scripts/gates/p015_tc04.py",
+    "scripts/gates/p015_tc05.py",
+    "scripts/gates/p015_tc06.py",
+    "scripts/gates/p015_tc07.py",
+    "scripts/gates/p015_tc08.py",
+    "scripts/tests/test_p015_tc01.py",
+    "scripts/tests/test_p015_tc02.py",
+    "scripts/tests/test_p015_tc03.py",
+    "scripts/tests/test_p015_tc04.py",
+    "scripts/tests/test_p015_tc05.py",
+    "scripts/tests/test_p015_tc06.py",
+    "scripts/tests/test_p015_tc07.py",
+    "scripts/tests/test_p015_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": [
+    "python3 -m unittest discover -s scripts/tests -p 'test_p015*.py' -v"
+  ],
+  "failures": [],
+  "unverified": [
+    "physical S23 capture was not run",
+    "fixed cadence was not measured on a device",
+    "sensor-derived Log was not certified",
+    "ten-bit fidelity was not certified",
+    "film-stock fidelity was not certified",
+    "cinema-camera equivalence was not certified",
+    "commit is null; publication is blocked until the serializer records one"
+  ],
+  "nextPhase": "blocked"
+}

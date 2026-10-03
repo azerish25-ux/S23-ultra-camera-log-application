@@ -284,3 +284,7 @@ Host gate for the directive deliverable "Dual focus model and focus provenance t
 ## P014 — Plan native high-resolution experiments (host scope)
 
 Host gate for the directive deliverable "High-resolution experiment matrix and source-geometry evidence". See [P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.md](P014_PLAN_NATIVE_HIGH_RESOLUTION_EXPERIMENTS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P015 — Cache capability evidence safely (host scope)
+
+Host gate for the directive deliverable "Capability cache invalidation and historical evidence viewer". See [P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.md](P015_CACHE_CAPABILITY_EVIDENCE_SAFELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
