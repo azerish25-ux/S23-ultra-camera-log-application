@@ -8,15 +8,20 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: p016-continuity-publication
+  cancel-in-progress: false
+
 jobs:
   apply:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out exact repair commit
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
           fetch-depth: 0
+          persist-credentials: true
 
       - name: Materialize reviewed one-shot helper
         shell: bash
@@ -60,23 +65,82 @@ jobs:
             "c6517e64f70bb5fe7d72f8711ef5c24f256d6348"
           python3 /tmp/p016-continuity.py apply | tee /tmp/p016-continuity-apply.json
 
-      - name: Verify directive, research contract, continuity, and regressions
+      - name: Create detached final commit
+        id: create_final
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+          python3 /tmp/p016-continuity.py publish | tee /tmp/p016-continuity-publish.txt
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          text = Path('/tmp/p016-continuity-publish.txt').read_text()
+          matches = re.findall(r'^FINAL_COMMIT_SHA=([0-9a-f]{40})$', text, flags=re.MULTILINE)
+          if len(matches) != 1:
+              raise SystemExit(f'Expected one final commit SHA, found {len(matches)}')
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as output:
+              output.write(f'sha={matches[0]}\n')
+          PY
+
+      - name: Verify exact detached final commit
+        shell: bash
+        env:
+          FINAL_COMMIT_SHA: ${{ steps.create_final.outputs.sha }}
+        run: |
+          set -euo pipefail
+          test "$FINAL_COMMIT_SHA" != "$GITHUB_SHA"
+          git fetch --no-tags origin "$FINAL_COMMIT_SHA"
+          test "$(git rev-parse "$FINAL_COMMIT_SHA^")" = "$GITHUB_SHA"
+          rm -rf /tmp/p016-final
+          git worktree add --detach /tmp/p016-final "$FINAL_COMMIT_SHA"
+          cd /tmp/p016-final
+          python3 - <<'PY'
+          import os
+          import subprocess
+          from pathlib import Path
+
+          expected = {
+              '.github/workflows/apply-p016-continuity.yml',
+              '.github/p016-continuity/part00',
+              '.github/p016-continuity/part01',
+              '.github/p016-continuity/part02',
+              '.github/p016-continuity/part03',
+              'docs/REPOSITORY_CONTINUITY.json',
+              'docs/REQUIREMENT_EVIDENCE.json',
+              'docs/evidence/P016-source-inspection.json',
+              'docs/IMPLEMENTATION_STATUS.md',
+          }
+          final = os.environ['FINAL_COMMIT_SHA']
+          changed = set(subprocess.check_output(
+              ['git', 'diff-tree', '--no-commit-id', '--name-only', '-r', final],
+              text=True,
+          ).splitlines())
+          if changed != expected:
+              raise SystemExit(f'Unexpected final-tree paths: {sorted(changed ^ expected)}')
+          for path in expected:
+              if path.startswith('.github/') and Path(path).exists():
+                  raise SystemExit(f'Bootstrap path survived final publication: {path}')
+          PY
+          test -z "$(git status --porcelain)"
           python3 scripts/verify_master_directive.py
           python3 scripts/verify_research_contract.py
           python3 scripts/verify_repository_continuity.py
           python3 -m unittest discover -s docs/master-directive/reference -p 'test_reference.py' -v
           python3 -m unittest discover -s scripts/tests -v
 
-      - name: Create detached final commit
+      - name: Fast-forward main to verified final commit
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FINAL_COMMIT_SHA: ${{ steps.create_final.outputs.sha }}
         run: |
           set -euo pipefail
-          python3 /tmp/p016-continuity.py publish | tee /tmp/final-commit.txt
+          remote_main="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+          test "$remote_main" = "$GITHUB_SHA"
+          git push origin "$FINAL_COMMIT_SHA:refs/heads/main"
 
       - name: Retain publication receipt
         if: always()
@@ -85,5 +149,5 @@ jobs:
           name: p016-continuity-publication
           path: |
             /tmp/p016-continuity-apply.json
-            /tmp/final-commit.txt
+            /tmp/p016-continuity-publish.txt
           if-no-files-found: warn
