@@ -1,0 +1,51 @@
+{
+  "phase": "P106",
+  "title": "Implement flow-based history reprojection",
+  "deliverable": "History reprojection module and synthetic flow tests",
+  "caseIds": [
+    "TC-P106-01",
+    "TC-P106-02",
+    "TC-P106-03",
+    "TC-P106-04",
+    "TC-P106-05",
+    "TC-P106-06",
+    "TC-P106-07",
+    "TC-P106-08"
+  ],
+  "changedFiles": [
+    "docs/P106_IMPLEMENT_FLOW_BASED_HISTORY_REPROJECTION.md",
+    "docs/P106_IMPLEMENT_FLOW_BASED_HISTORY_REPROJECTION.json",
+    "docs/evidence/P106-handoff.json",
+    "scripts/gates/p106_implement_flow_based_history_reprojection.py",
+    "scripts/gates/p106_tc01.py",
+    "scripts/gates/p106_tc02.py",
+    "scripts/gates/p106_tc03.py",
+    "scripts/gates/p106_tc04.py",
+    "scripts/gates/p106_tc05.py",
+    "scripts/gates/p106_tc06.py",
+    "scripts/gates/p106_tc07.py",
+    "scripts/gates/p106_tc08.py",
+    "scripts/tests/test_p106_implement_flow_based_history_reprojection.py",
+    "scripts/tests/test_p106_tc01.py",
+    "scripts/tests/test_p106_tc02.py",
+    "scripts/tests/test_p106_tc03.py",
+    "scripts/tests/test_p106_tc04.py",
+    "scripts/tests/test_p106_tc05.py",
+    "scripts/tests/test_p106_tc06.py",
+    "scripts/tests/test_p106_tc07.py",
+    "scripts/tests/test_p106_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p106*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P107",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

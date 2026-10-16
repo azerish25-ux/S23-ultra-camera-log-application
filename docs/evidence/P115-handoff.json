@@ -1,0 +1,51 @@
+{
+  "phase": "P115",
+  "title": "Build a temporal integration reference",
+  "deliverable": "Temporal integration reference and analytic motion fixtures",
+  "caseIds": [
+    "TC-P115-01",
+    "TC-P115-02",
+    "TC-P115-03",
+    "TC-P115-04",
+    "TC-P115-05",
+    "TC-P115-06",
+    "TC-P115-07",
+    "TC-P115-08"
+  ],
+  "changedFiles": [
+    "docs/P115_BUILD_A_TEMPORAL_INTEGRATION_REFERENCE.md",
+    "docs/P115_BUILD_A_TEMPORAL_INTEGRATION_REFERENCE.json",
+    "docs/evidence/P115-handoff.json",
+    "scripts/gates/p115_build_a_temporal_integration_reference.py",
+    "scripts/gates/p115_tc01.py",
+    "scripts/gates/p115_tc02.py",
+    "scripts/gates/p115_tc03.py",
+    "scripts/gates/p115_tc04.py",
+    "scripts/gates/p115_tc05.py",
+    "scripts/gates/p115_tc06.py",
+    "scripts/gates/p115_tc07.py",
+    "scripts/gates/p115_tc08.py",
+    "scripts/tests/test_p115_build_a_temporal_integration_reference.py",
+    "scripts/tests/test_p115_tc01.py",
+    "scripts/tests/test_p115_tc02.py",
+    "scripts/tests/test_p115_tc03.py",
+    "scripts/tests/test_p115_tc04.py",
+    "scripts/tests/test_p115_tc05.py",
+    "scripts/tests/test_p115_tc06.py",
+    "scripts/tests/test_p115_tc07.py",
+    "scripts/tests/test_p115_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p115*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P116",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

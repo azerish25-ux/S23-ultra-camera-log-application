@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "phase": "P104",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p104-integrated-budget",
+  "device": "s23",
+  "measured_on_device": false,
+  "physical_qualification": "unavailable",
+  "measurement_id": null,
+  "fps": 24,
+  "input_resolution": "1280x720",
+  "inference_cadence_hz": 8,
+  "output_resolution": "3840x2160",
+  "thermal": "warm",
+  "memory": "pressure",
+  "live_depth": "deferred_only",
+  "dropped_frames": 3,
+  "hide_dropped_frames": false,
+  "frame_rate_source": "integrated",
+  "samples": [
+    {"capture_ms": 20, "inference_ms": 5, "render_ms": 20, "encode_ms": 10},
+    {"capture_ms": 8, "inference_ms": 4, "render_ms": 10, "encode_ms": 8},
+    {"capture_ms": 15, "inference_ms": 6, "render_ms": 18, "encode_ms": 12},
+    {"capture_ms": 10, "inference_ms": 3, "render_ms": 12, "encode_ms": 10},
+    {"capture_ms": 12, "inference_ms": 4, "render_ms": 14, "encode_ms": 16}
+  ]
+}

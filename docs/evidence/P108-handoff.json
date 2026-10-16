@@ -1,0 +1,51 @@
+{
+  "phase": "P108",
+  "title": "Detect occlusion and scene discontinuities",
+  "deliverable": "Occlusion mask and scene-reset tests",
+  "caseIds": [
+    "TC-P108-01",
+    "TC-P108-02",
+    "TC-P108-03",
+    "TC-P108-04",
+    "TC-P108-05",
+    "TC-P108-06",
+    "TC-P108-07",
+    "TC-P108-08"
+  ],
+  "changedFiles": [
+    "docs/P108_DETECT_OCCLUSION_AND_SCENE_DISCONTINUITIES.md",
+    "docs/P108_DETECT_OCCLUSION_AND_SCENE_DISCONTINUITIES.json",
+    "docs/evidence/P108-handoff.json",
+    "scripts/gates/p108_detect_occlusion_and_scene_discontinuities.py",
+    "scripts/gates/p108_tc01.py",
+    "scripts/gates/p108_tc02.py",
+    "scripts/gates/p108_tc03.py",
+    "scripts/gates/p108_tc04.py",
+    "scripts/gates/p108_tc05.py",
+    "scripts/gates/p108_tc06.py",
+    "scripts/gates/p108_tc07.py",
+    "scripts/gates/p108_tc08.py",
+    "scripts/tests/test_p108_detect_occlusion_and_scene_discontinuities.py",
+    "scripts/tests/test_p108_tc01.py",
+    "scripts/tests/test_p108_tc02.py",
+    "scripts/tests/test_p108_tc03.py",
+    "scripts/tests/test_p108_tc04.py",
+    "scripts/tests/test_p108_tc05.py",
+    "scripts/tests/test_p108_tc06.py",
+    "scripts/tests/test_p108_tc07.py",
+    "scripts/tests/test_p108_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p108*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P109",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

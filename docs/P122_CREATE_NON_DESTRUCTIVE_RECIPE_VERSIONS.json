@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "phase": "P122",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p122-recipe-versions",
+  "claim": "non-destructive-recipe-version-host-fixture",
+  "applyMutant": false,
+  "mutatedInPlace": false,
+  "sourceMaterial": "s23-imported-clip-a",
+  "versions": [
+    {
+      "id": "rv-1",
+      "parent_id": null,
+      "source_sha256": "9f08a9433990a82fcc30bdeb08ab218ae4f002b36466df429c12d59b72d9275c",
+      "parameters": {
+        "focus": 0.4,
+        "grain": 0.15
+      },
+      "version_sha256": "cd6a49c49dda03f5a206c43f4fba5d67cb2b7d540971fe06ccc9431401a3e112"
+    },
+    {
+      "id": "rv-2",
+      "parent_id": "rv-1",
+      "source_sha256": "9f08a9433990a82fcc30bdeb08ab218ae4f002b36466df429c12d59b72d9275c",
+      "parameters": {
+        "focus": 0.72,
+        "grain": 0.33
+      },
+      "version_sha256": "9ccaa17151f11e7bd0d7604cf726dfdfa673f5a3a62872dff2e9afc6e0de4d5f"
+    }
+  ],
+  "runningExportRecipeId": "rv-1",
+  "liveParameters": {
+    "focus": 0.72,
+    "grain": 0.33
+  }
+}

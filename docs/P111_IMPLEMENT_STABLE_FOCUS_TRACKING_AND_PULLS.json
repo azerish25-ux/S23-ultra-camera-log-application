@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "phase": "P111",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p111-crossing",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "frameMs": 40,
+  "maxDistancePerFrame": 0.25,
+  "confidenceThreshold": 0.5,
+  "labelledSmooth": true,
+  "pull": [
+    {
+      "t_ms": 0,
+      "focus_distance": 1.0
+    },
+    {
+      "t_ms": 40,
+      "focus_distance": 1.25
+    },
+    {
+      "t_ms": 80,
+      "focus_distance": 1.5
+    }
+  ],
+  "query": {
+    "t_ms": 20,
+    "reportedFocus": 1.125,
+    "reportedState": "interpolated",
+    "claimsInterpolationBeyondKeys": false
+  },
+  "tracking": [
+    {
+      "t_ms": 0,
+      "confidence": 0.9,
+      "proposedFocus": 1.0,
+      "appliedFocus": 1.0,
+      "appliedState": "tracking",
+      "identity": "subject-a",
+      "selectedIdentity": "subject-a",
+      "nearestFaceFocus": 1.0
+    },
+    {
+      "t_ms": 40,
+      "confidence": 0.25,
+      "proposedFocus": 0.5,
+      "appliedFocus": 1.0,
+      "appliedState": "held",
+      "identity": "subject-a",
+      "selectedIdentity": "subject-a",
+      "nearestFaceFocus": 0.5
+    },
+    {
+      "t_ms": 80,
+      "confidence": 0.8,
+      "proposedFocus": 1.25,
+      "appliedFocus": 1.25,
+      "appliedState": "tracking",
+      "identity": "subject-a",
+      "selectedIdentity": "subject-a",
+      "nearestFaceFocus": 0.5
+    }
+  ]
+}

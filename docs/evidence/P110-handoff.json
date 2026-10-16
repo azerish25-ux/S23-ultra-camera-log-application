@@ -1,0 +1,51 @@
+{
+  "phase": "P110",
+  "title": "Render depth-ordered foreground and background blur",
+  "deliverable": "Occlusion-aware bokeh reference and layer-compositing tests",
+  "caseIds": [
+    "TC-P110-01",
+    "TC-P110-02",
+    "TC-P110-03",
+    "TC-P110-04",
+    "TC-P110-05",
+    "TC-P110-06",
+    "TC-P110-07",
+    "TC-P110-08"
+  ],
+  "changedFiles": [
+    "docs/P110_RENDER_DEPTH_ORDERED_FOREGROUND_AND_BACKGROUND_BLUR.md",
+    "docs/P110_RENDER_DEPTH_ORDERED_FOREGROUND_AND_BACKGROUND_BLUR.json",
+    "docs/evidence/P110-handoff.json",
+    "scripts/gates/p110_render_depth_ordered_foreground_and_background_blur.py",
+    "scripts/gates/p110_tc01.py",
+    "scripts/gates/p110_tc02.py",
+    "scripts/gates/p110_tc03.py",
+    "scripts/gates/p110_tc04.py",
+    "scripts/gates/p110_tc05.py",
+    "scripts/gates/p110_tc06.py",
+    "scripts/gates/p110_tc07.py",
+    "scripts/gates/p110_tc08.py",
+    "scripts/tests/test_p110_render_depth_ordered_foreground_and_background_blur.py",
+    "scripts/tests/test_p110_tc01.py",
+    "scripts/tests/test_p110_tc02.py",
+    "scripts/tests/test_p110_tc03.py",
+    "scripts/tests/test_p110_tc04.py",
+    "scripts/tests/test_p110_tc05.py",
+    "scripts/tests/test_p110_tc06.py",
+    "scripts/tests/test_p110_tc07.py",
+    "scripts/tests/test_p110_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p110*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P111",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

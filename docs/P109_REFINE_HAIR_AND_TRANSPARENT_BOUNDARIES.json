@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "phase": "P109",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p109-hair-band",
+  "claim": "synthetic-host-fixture",
+  "hair_threshold": 0.5,
+  "band": 1,
+  "minimum_unknown_coverage": 1.0,
+  "inpaint_glass": false,
+  "foreground_colour": "foreground",
+  "samples": [
+    {
+      "confidence": 0.99,
+      "class": "opaque",
+      "matte": 1.0,
+      "colour": "subject",
+      "called_opaque": true
+    },
+    {
+      "confidence": 0.99,
+      "class": "opaque",
+      "matte": "unknown",
+      "colour": "subject",
+      "called_opaque": false
+    },
+    {
+      "confidence": 0.2,
+      "class": "hair",
+      "matte": 0.42,
+      "colour": "mixed",
+      "called_opaque": false
+    },
+    {
+      "confidence": 0.8,
+      "class": "glass",
+      "matte": 0.3,
+      "colour": "mixed",
+      "called_opaque": false
+    },
+    {
+      "confidence": 0.99,
+      "class": "background",
+      "matte": "unknown",
+      "colour": "background",
+      "called_opaque": false
+    },
+    {
+      "confidence": 0.99,
+      "class": "background",
+      "matte": 0.0,
+      "colour": "background",
+      "called_opaque": false
+    }
+  ],
+  "applyMutant": false
+}

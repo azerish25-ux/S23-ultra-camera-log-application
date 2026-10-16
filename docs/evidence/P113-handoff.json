@@ -1,0 +1,51 @@
+{
+  "phase": "P113",
+  "title": "Implement shutter-angle controls correctly",
+  "deliverable": "Shutter-angle model and exposure feasibility tests",
+  "caseIds": [
+    "TC-P113-01",
+    "TC-P113-02",
+    "TC-P113-03",
+    "TC-P113-04",
+    "TC-P113-05",
+    "TC-P113-06",
+    "TC-P113-07",
+    "TC-P113-08"
+  ],
+  "changedFiles": [
+    "docs/P113_IMPLEMENT_SHUTTER_ANGLE_CONTROLS_CORRECTLY.md",
+    "docs/P113_IMPLEMENT_SHUTTER_ANGLE_CONTROLS_CORRECTLY.json",
+    "docs/evidence/P113-handoff.json",
+    "scripts/gates/p113_implement_shutter_angle_controls_correctly.py",
+    "scripts/gates/p113_tc01.py",
+    "scripts/gates/p113_tc02.py",
+    "scripts/gates/p113_tc03.py",
+    "scripts/gates/p113_tc04.py",
+    "scripts/gates/p113_tc05.py",
+    "scripts/gates/p113_tc06.py",
+    "scripts/gates/p113_tc07.py",
+    "scripts/gates/p113_tc08.py",
+    "scripts/tests/test_p113_implement_shutter_angle_controls_correctly.py",
+    "scripts/tests/test_p113_tc01.py",
+    "scripts/tests/test_p113_tc02.py",
+    "scripts/tests/test_p113_tc03.py",
+    "scripts/tests/test_p113_tc04.py",
+    "scripts/tests/test_p113_tc05.py",
+    "scripts/tests/test_p113_tc06.py",
+    "scripts/tests/test_p113_tc07.py",
+    "scripts/tests/test_p113_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p113*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P114",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "phase": "P126",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p126-clip-library",
+  "claim": "thumbnail-is-not-accessible-verified-footage",
+  "applyMutant": false,
+  "omitted_ids": ["clip-source-revoked"],
+  "clips": [
+    {
+      "clip_id": "clip-source-revoked",
+      "content_sha256": "d763957660bd3721156b52e750c89c3530ec505b513998b0a21e3c08e2220bb1",
+      "byte_count": 22,
+      "present": false,
+      "playable": false,
+      "verification": "missing",
+      "thumbnail_cached": true,
+      "role": "source",
+      "bundle_id": "take-1"
+    },
+    {
+      "clip_id": "clip-thumbnail-cached",
+      "content_sha256": "df8d501b4b4732b72e3c3973dee54fda02e40940a61a1bfefcebeca681a9936d",
+      "byte_count": 24,
+      "present": true,
+      "playable": false,
+      "verification": "unverified",
+      "content": "p126-cached-thumbnail-v1",
+      "thumbnail_cached": true,
+      "role": "thumbnail",
+      "bundle_id": "take-1"
+    },
+    {
+      "clip_id": "clip-metadata-paired",
+      "content_sha256": "fb6a2be26348f1a782273138c3947bd0e7c8e6c98abfb3b2149d5384b3fa54e9",
+      "byte_count": 23,
+      "present": true,
+      "playable": false,
+      "verification": "verified",
+      "content": "p126-metadata-paired-v1",
+      "role": "metadata",
+      "bundle_id": "take-1"
+    },
+    {
+      "clip_id": "clip-result-verified",
+      "content_sha256": "2d8eb68a9505ad2b0169d4f48cc4334e1b50353fc43ab0cd9a5ed4736ee3bd3b",
+      "byte_count": 23,
+      "present": true,
+      "playable": true,
+      "verification": "verified",
+      "content": "p126-verified-result-v1",
+      "role": "result",
+      "bundle_id": "take-1"
+    },
+    {
+      "clip_id": "clip-recovery-paired",
+      "content_sha256": "4d1dd038c3c6c2ea3145f54066abc9b714b78a651942171d7002f6017a22ca01",
+      "byte_count": 23,
+      "present": true,
+      "playable": false,
+      "verification": "unverified",
+      "content": "p126-recovery-paired-v1",
+      "role": "recovery",
+      "bundle_id": "take-1"
+    }
+  ]
+}

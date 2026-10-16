@@ -1,0 +1,52 @@
+{
+  "phase": "P111",
+  "title": "Implement stable focus tracking and pulls",
+  "deliverable": "Focus tracker and deterministic focus-curve tests",
+  "caseIds": [
+    "TC-P111-01",
+    "TC-P111-02",
+    "TC-P111-03",
+    "TC-P111-04",
+    "TC-P111-05",
+    "TC-P111-06",
+    "TC-P111-07",
+    "TC-P111-08"
+  ],
+  "changedFiles": [
+    "docs/P111_IMPLEMENT_STABLE_FOCUS_TRACKING_AND_PULLS.md",
+    "docs/P111_IMPLEMENT_STABLE_FOCUS_TRACKING_AND_PULLS.json",
+    "docs/evidence/P111-handoff.json",
+    "scripts/gates/p111_implement_stable_focus_tracking_and_pulls.py",
+    "scripts/gates/p111_tc01.py",
+    "scripts/gates/p111_tc02.py",
+    "scripts/gates/p111_tc03.py",
+    "scripts/gates/p111_tc04.py",
+    "scripts/gates/p111_tc05.py",
+    "scripts/gates/p111_tc06.py",
+    "scripts/gates/p111_tc07.py",
+    "scripts/gates/p111_tc08.py",
+    "scripts/tests/test_p111_implement_stable_focus_tracking_and_pulls.py",
+    "scripts/tests/test_p111_tc01.py",
+    "scripts/tests/test_p111_tc02.py",
+    "scripts/tests/test_p111_tc03.py",
+    "scripts/tests/test_p111_tc04.py",
+    "scripts/tests/test_p111_tc05.py",
+    "scripts/tests/test_p111_tc06.py",
+    "scripts/tests/test_p111_tc07.py",
+    "scripts/tests/test_p111_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p111*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P112",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification.",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323"
+}

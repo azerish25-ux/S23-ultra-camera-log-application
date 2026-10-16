@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "phase": "P123",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p123-cancel-during-verification",
+  "claim": "synthetic-host-fixture",
+  "transitionLog": ["idle", "queued", "running", "cancelled"],
+  "terminalState": "cancelled",
+  "sourceRetained": true,
+  "workersReleased": true,
+  "stalePublish": false,
+  "applyMutant": false
+}

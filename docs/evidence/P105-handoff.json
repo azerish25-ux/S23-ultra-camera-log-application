@@ -1,0 +1,50 @@
+{
+  "phase": "P105",
+  "title": "Establish temporal baselines",
+  "deliverable": "Temporal baseline suite and artifact taxonomy",
+  "caseIds": [
+    "TC-P105-01",
+    "TC-P105-02",
+    "TC-P105-03",
+    "TC-P105-04",
+    "TC-P105-05",
+    "TC-P105-06",
+    "TC-P105-07",
+    "TC-P105-08"
+  ],
+  "changedFiles": [
+    "docs/P105_ESTABLISH_TEMPORAL_BASELINES.md",
+    "docs/P105_ESTABLISH_TEMPORAL_BASELINES.json",
+    "docs/evidence/P105-handoff.json",
+    "scripts/gates/p105_establish_temporal_baselines.py",
+    "scripts/gates/p105_tc01.py",
+    "scripts/gates/p105_tc02.py",
+    "scripts/gates/p105_tc03.py",
+    "scripts/gates/p105_tc04.py",
+    "scripts/gates/p105_tc05.py",
+    "scripts/gates/p105_tc06.py",
+    "scripts/gates/p105_tc07.py",
+    "scripts/gates/p105_tc08.py",
+    "scripts/tests/test_p105_establish_temporal_baselines.py",
+    "scripts/tests/test_p105_tc01.py",
+    "scripts/tests/test_p105_tc02.py",
+    "scripts/tests/test_p105_tc03.py",
+    "scripts/tests/test_p105_tc04.py",
+    "scripts/tests/test_p105_tc05.py",
+    "scripts/tests/test_p105_tc06.py",
+    "scripts/tests/test_p105_tc07.py",
+    "scripts/tests/test_p105_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p105*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P106",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

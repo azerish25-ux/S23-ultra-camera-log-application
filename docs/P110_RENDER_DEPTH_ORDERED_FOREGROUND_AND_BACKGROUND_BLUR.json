@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "phase": "P110",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p110-branch-face-light",
+  "focus": 2.0,
+  "samples": [
+    {"depth": 0.0, "value": 0.75, "layer": "foreground"},
+    {"depth": 0.5, "value": 1.0, "layer": "foreground"},
+    {"depth": 2.0, "value": 0.25, "layer": "focus"},
+    {"depth": 2.0, "value": 0.5, "layer": "focus"},
+    {"depth": 5.0, "value": 1.0, "layer": "background"},
+    {"depth": 4.0, "value": 0.0, "layer": "background"},
+    {"depth": null, "value": -1.0, "layer": "unknown"}
+  ],
+  "claim": "occlusion-aware-bokeh",
+  "label": "depth-ordered"
+}

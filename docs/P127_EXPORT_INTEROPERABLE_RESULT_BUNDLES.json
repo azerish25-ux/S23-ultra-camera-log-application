@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "phase": "P127",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p127-share-bundle",
+  "claim": "sanitized-interoperable-export",
+  "applyMutant": false,
+  "export_allowed": true,
+  "grade_applied": true,
+  "labels": ["LogC3"],
+  "filename": "share_LogC3.mov",
+  "manifest": {
+    "source_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "recipe_version_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "result_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "color_transfer": "logc3",
+    "container": "mov",
+    "non_claims": ["not a physical S23 qualification"]
+  },
+  "metadataTexts": [
+    "owner=ada@example.com source=/home/ada/Movies/private_take.mov color_transfer=logc3"
+  ],
+  "interpretation": {
+    "transfer": "logc3",
+    "note": "scene-referred LogC3 EI800 sidecar"
+  },
+  "selfDescribing": false,
+  "publishPrivatePaths": false,
+  "personalIdentifiers": ["ada@example.com"]
+}

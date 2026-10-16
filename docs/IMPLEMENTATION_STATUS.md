@@ -2,6 +2,10 @@
 
 > **Specification authority:** [MASTER_DIRECTIVE.md](../MASTER_DIRECTIVE.md) and its linked complete package govern future development. This file records implementation evidence; its legacy phase names are not completion claims for the new P001-P160 programme. See [directive integration](master-directive/INTEGRATION.md).
 
+## P101–P130 host references
+
+Executable host gates now cover P001–P130 (130 of 160 directive phases). P101–P130 close half of the previous P101–P160 gap. They are Python references for inference identity, depth corpus and confidence, temporal reprojection, shutter and interpolation disclosure, stabilization and rolling-shutter limits, import inspection, non-destructive recipe versions, development jobs, storage budgets, the clip index, export bundles, and separate source/look selection. `python3 -m unittest discover` across `test_p101*.py` through `test_p130*.py` ran 1,770 tests with 0 failures. These runs do not qualify a physical S23, sensor-derived Log, ten-bit fidelity, film-stock fidelity, or cinema-camera equivalence, and they do not change the Android capture UI. P131–P160 remain open.
+
 
 ## Version 0.7 imaging milestone
 
@@ -616,3 +620,123 @@ Host gate for the directive deliverable "Preprocessing reference and host-device
 ## P100 — Export and validate model numerics (host scope)
 
 Host gate for the directive deliverable "Model conversion report and numerical regression suite". See [P100_EXPORT_AND_VALIDATE_MODEL_NUMERICS.md](P100_EXPORT_AND_VALIDATE_MODEL_NUMERICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P101 — Integrate the first on-device inference path (host scope)
+
+Host gate for the directive deliverable "Offline inference integration and no-network tests". See [P101_INTEGRATE_THE_FIRST_ON_DEVICE_INFERENCE_PATH.md](P101_INTEGRATE_THE_FIRST_ON_DEVICE_INFERENCE_PATH.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P102 — Construct a difficult-scene depth corpus (host scope)
+
+Host gate for the directive deliverable "Difficult-scene corpus and per-category evaluation protocol". See [P102_CONSTRUCT_A_DIFFICULT_SCENE_DEPTH_CORPUS.md](P102_CONSTRUCT_A_DIFFICULT_SCENE_DEPTH_CORPUS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P103 — Estimate confidence and uncertainty (host scope)
+
+Host gate for the directive deliverable "Confidence policy and uncertainty-aware rendering tests". See [P103_ESTIMATE_CONFIDENCE_AND_UNCERTAINTY.md](P103_ESTIMATE_CONFIDENCE_AND_UNCERTAINTY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P104 — Qualify integrated depth performance on the S23 (host scope)
+
+Host gate for the directive deliverable "Physical inference qualification and live-versus-deferred decision". See [P104_QUALIFY_INTEGRATED_DEPTH_PERFORMANCE_ON_THE_S23.md](P104_QUALIFY_INTEGRATED_DEPTH_PERFORMANCE_ON_THE_S23.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P105 — Establish temporal baselines (host scope)
+
+Host gate for the directive deliverable "Temporal baseline suite and artifact taxonomy". See [P105_ESTABLISH_TEMPORAL_BASELINES.md](P105_ESTABLISH_TEMPORAL_BASELINES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P106 — Implement flow-based history reprojection (host scope)
+
+Host gate for the directive deliverable "History reprojection module and synthetic flow tests". See [P106_IMPLEMENT_FLOW_BASED_HISTORY_REPROJECTION.md](P106_IMPLEMENT_FLOW_BASED_HISTORY_REPROJECTION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P107 — Align relative depth scale and offset (host scope)
+
+Host gate for the directive deliverable "Relative-depth alignment and focus-pumping tests". See [P107_ALIGN_RELATIVE_DEPTH_SCALE_AND_OFFSET.md](P107_ALIGN_RELATIVE_DEPTH_SCALE_AND_OFFSET.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P108 — Detect occlusion and scene discontinuities (host scope)
+
+Host gate for the directive deliverable "Occlusion mask and scene-reset tests". See [P108_DETECT_OCCLUSION_AND_SCENE_DISCONTINUITIES.md](P108_DETECT_OCCLUSION_AND_SCENE_DISCONTINUITIES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P109 — Refine hair and transparent boundaries (host scope)
+
+Host gate for the directive deliverable "Boundary refinement module and mixed-pixel corpus results". See [P109_REFINE_HAIR_AND_TRANSPARENT_BOUNDARIES.md](P109_REFINE_HAIR_AND_TRANSPARENT_BOUNDARIES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P110 — Render depth-ordered foreground and background blur (host scope)
+
+Host gate for the directive deliverable "Occlusion-aware bokeh reference and layer-compositing tests". See [P110_RENDER_DEPTH_ORDERED_FOREGROUND_AND_BACKGROUND_BLUR.md](P110_RENDER_DEPTH_ORDERED_FOREGROUND_AND_BACKGROUND_BLUR.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P111 — Implement stable focus tracking and pulls (host scope)
+
+Host gate for the directive deliverable "Focus tracker and deterministic focus-curve tests". See [P111_IMPLEMENT_STABLE_FOCUS_TRACKING_AND_PULLS.md](P111_IMPLEMENT_STABLE_FOCUS_TRACKING_AND_PULLS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P112 — Qualify temporal lens quality at normal playback (host scope)
+
+Host gate for the directive deliverable "Temporal optics acceptance report and safe default envelope". See [P112_QUALIFY_TEMPORAL_LENS_QUALITY_AT_NORMAL_PLAYBACK.md](P112_QUALIFY_TEMPORAL_LENS_QUALITY_AT_NORMAL_PLAYBACK.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P113 — Implement shutter-angle controls correctly (host scope)
+
+Host gate for the directive deliverable "Shutter-angle model and exposure feasibility tests". See [P113_IMPLEMENT_SHUTTER_ANGLE_CONTROLS_CORRECTLY.md](P113_IMPLEMENT_SHUTTER_ANGLE_CONTROLS_CORRECTLY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P114 — Define synthetic shutter scope (host scope)
+
+Host gate for the directive deliverable "Synthetic-shutter eligibility policy and limitation tests". See [P114_DEFINE_SYNTHETIC_SHUTTER_SCOPE.md](P114_DEFINE_SYNTHETIC_SHUTTER_SCOPE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P115 — Build a temporal integration reference (host scope)
+
+Host gate for the directive deliverable "Temporal integration reference and analytic motion fixtures". See [P115_BUILD_A_TEMPORAL_INTEGRATION_REFERENCE.md](P115_BUILD_A_TEMPORAL_INTEGRATION_REFERENCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P116 — Evaluate interpolation without hidden hallucination (host scope)
+
+Host gate for the directive deliverable "Interpolation benchmark and provenance flags". See [P116_EVALUATE_INTERPOLATION_WITHOUT_HIDDEN_HALLUCINATION.md](P116_EVALUATE_INTERPOLATION_WITHOUT_HIDDEN_HALLUCINATION.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P117 — Integrate stabilization with geometry (host scope)
+
+Host gate for the directive deliverable "Stabilization geometry contract and alignment tests". See [P117_INTEGRATE_STABILIZATION_WITH_GEOMETRY.md](P117_INTEGRATE_STABILIZATION_WITH_GEOMETRY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P118 — Investigate rolling-shutter correction conservatively (host scope)
+
+Host gate for the directive deliverable "Rolling-shutter research report and bounded experimental mode". See [P118_INVESTIGATE_ROLLING_SHUTTER_CORRECTION_CONSERVATIVELY.md](P118_INVESTIGATE_ROLLING_SHUTTER_CORRECTION_CONSERVATIVELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P119 — Add practical cinematographic guidance (host scope)
+
+Host gate for the directive deliverable "Capture guidance rules and nonintrusive UI tests". See [P119_ADD_PRACTICAL_CINEMATOGRAPHIC_GUIDANCE.md](P119_ADD_PRACTICAL_CINEMATOGRAPHIC_GUIDANCE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P120 — Validate combined motion and optics (host scope)
+
+Host gate for the directive deliverable "Motion-optics integration benchmark and release envelope". See [P120_VALIDATE_COMBINED_MOTION_AND_OPTICS.md](P120_VALIDATE_COMBINED_MOTION_AND_OPTICS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P121 — Inspect imported media before rendering (host scope)
+
+Host gate for the directive deliverable "Media inspection report and import normalization policy". See [P121_INSPECT_IMPORTED_MEDIA_BEFORE_RENDERING.md](P121_INSPECT_IMPORTED_MEDIA_BEFORE_RENDERING.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P122 — Create non-destructive recipe versions (host scope)
+
+Host gate for the directive deliverable "Recipe snapshot store and concurrent-edit tests". See [P122_CREATE_NON_DESTRUCTIVE_RECIPE_VERSIONS.md](P122_CREATE_NON_DESTRUCTIVE_RECIPE_VERSIONS.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P123 — Implement the development job state machine (host scope)
+
+Host gate for the directive deliverable "Job reducer and cancellation race tests". See [P123_IMPLEMENT_THE_DEVELOPMENT_JOB_STATE_MACHINE.md](P123_IMPLEMENT_THE_DEVELOPMENT_JOB_STATE_MACHINE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P124 — Checkpoint temporal rendering safely (host scope)
+
+Host gate for the directive deliverable "Resume manifest and uninterrupted-equivalence tests". See [P124_CHECKPOINT_TEMPORAL_RENDERING_SAFELY.md](P124_CHECKPOINT_TEMPORAL_RENDERING_SAFELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P125 — Budget disk and intermediate storage (host scope)
+
+Host gate for the directive deliverable "Storage planner and low-space continuation policy". See [P125_BUDGET_DISK_AND_INTERMEDIATE_STORAGE.md](P125_BUDGET_DISK_AND_INTERMEDIATE_STORAGE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P126 — Build a trustworthy clip library (host scope)
+
+Host gate for the directive deliverable "Clip library schema and missing-media tests". See [P126_BUILD_A_TRUSTWORTHY_CLIP_LIBRARY.md](P126_BUILD_A_TRUSTWORTHY_CLIP_LIBRARY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P127 — Export interoperable result bundles (host scope)
+
+Host gate for the directive deliverable "Export bundle schema and privacy-preserving share tests". See [P127_EXPORT_INTEROPERABLE_RESULT_BUNDLES.md](P127_EXPORT_INTEROPERABLE_RESULT_BUNDLES.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P128 — Validate long-form development end to end (host scope)
+
+Host gate for the directive deliverable "End-to-end deferred-development acceptance report". See [P128_VALIDATE_LONG_FORM_DEVELOPMENT_END_TO_END.md](P128_VALIDATE_LONG_FORM_DEVELOPMENT_END_TO_END.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P129 — Define the camera screen information hierarchy (host scope)
+
+Host gate for the directive deliverable "Camera screen specification and layout interaction tests". See [P129_DEFINE_THE_CAMERA_SCREEN_INFORMATION_HIERARCHY.md](P129_DEFINE_THE_CAMERA_SCREEN_INFORMATION_HIERARCHY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+
+## P130 — Implement source and look selection separately (host scope)
+
+Host gate for the directive deliverable "Separated control model and truthfulness UI tests". See [P130_IMPLEMENT_SOURCE_AND_LOOK_SELECTION_SEPARATELY.md](P130_IMPLEMENT_SOURCE_AND_LOOK_SELECTION_SEPARATELY.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.

@@ -1,0 +1,51 @@
+{
+  "phase": "P118",
+  "title": "Investigate rolling-shutter correction conservatively",
+  "deliverable": "Rolling-shutter research report and bounded experimental mode",
+  "caseIds": [
+    "TC-P118-01",
+    "TC-P118-02",
+    "TC-P118-03",
+    "TC-P118-04",
+    "TC-P118-05",
+    "TC-P118-06",
+    "TC-P118-07",
+    "TC-P118-08"
+  ],
+  "changedFiles": [
+    "docs/P118_INVESTIGATE_ROLLING_SHUTTER_CORRECTION_CONSERVATIVELY.md",
+    "docs/P118_INVESTIGATE_ROLLING_SHUTTER_CORRECTION_CONSERVATIVELY.json",
+    "docs/evidence/P118-handoff.json",
+    "scripts/gates/p118_investigate_rolling_shutter_correction_conservatively.py",
+    "scripts/gates/p118_tc01.py",
+    "scripts/gates/p118_tc02.py",
+    "scripts/gates/p118_tc03.py",
+    "scripts/gates/p118_tc04.py",
+    "scripts/gates/p118_tc05.py",
+    "scripts/gates/p118_tc06.py",
+    "scripts/gates/p118_tc07.py",
+    "scripts/gates/p118_tc08.py",
+    "scripts/tests/test_p118_investigate_rolling_shutter_correction_conservatively.py",
+    "scripts/tests/test_p118_tc01.py",
+    "scripts/tests/test_p118_tc02.py",
+    "scripts/tests/test_p118_tc03.py",
+    "scripts/tests/test_p118_tc04.py",
+    "scripts/tests/test_p118_tc05.py",
+    "scripts/tests/test_p118_tc06.py",
+    "scripts/tests/test_p118_tc07.py",
+    "scripts/tests/test_p118_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p118*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P119",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "phase": "P130",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p130-source-look",
+  "claim": "source-look-separation-host-reference",
+  "applyMutant": false,
+  "committed": {
+    "source_id": "qualified-1080p-sdr",
+    "source_sha256": "02b79fbb1f8eec06c9f2a5a31efcdf4aba21bda3c0c541700e550d5e0115e898",
+    "source_transfer": "bt709",
+    "look_id": "neutral",
+    "look_params": {
+      "contrast": 1
+    },
+    "source_retained": true,
+    "recording_mode": "1080p SDR"
+  },
+  "proposed": {
+    "source_id": "qualified-1080p-sdr",
+    "source_sha256": "02b79fbb1f8eec06c9f2a5a31efcdf4aba21bda3c0c541700e550d5e0115e898",
+    "source_transfer": "bt709",
+    "look_id": "imax-style-simulated",
+    "look_params": {
+      "appearance": "large-format",
+      "simulated": true,
+      "computationalCost": "preview-only",
+      "calibrationStatus": "not-qualified"
+    },
+    "source_retained": true,
+    "recording_mode": "1080p SDR"
+  }
+}

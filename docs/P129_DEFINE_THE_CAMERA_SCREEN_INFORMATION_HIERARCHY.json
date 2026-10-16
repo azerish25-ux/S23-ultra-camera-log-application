@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "phase": "P129",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p129-landscape-hierarchy",
+  "claim": "camera-screen-hierarchy-host-fixture",
+  "applyMutant": false,
+  "record_in_scroll_only": false,
+  "warnings_visible": true,
+  "viewfinder_replaced": false,
+  "usability_study_pass": false,
+  "slots": {
+    "capture": [
+      {"id": "record", "label": "Record"},
+      {"id": "stop", "label": "Stop"},
+      {"id": "source-mode", "label": "Source mode"},
+      {"id": "exposure", "label": "Exposure"},
+      {"id": "audio", "label": "Audio"}
+    ],
+    "monitoring": [
+      {"id": "microphone-meters", "label": "Microphone meters"}
+    ],
+    "processing": [
+      {"id": "manual-controls", "label": "Manual controls"}
+    ]
+  },
+  "warnings": [
+    {"kind": "storage", "text": "Storage warning"}
+  ]
+}

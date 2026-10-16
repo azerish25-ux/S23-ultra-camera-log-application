@@ -1,0 +1,17 @@
+{
+  "phase": "P102",
+  "title": "Construct a difficult-scene depth corpus",
+  "deliverable": "Difficult-scene corpus and per-category evaluation protocol",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p102*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P103",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

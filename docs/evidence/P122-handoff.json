@@ -1,0 +1,51 @@
+{
+  "phase": "P122",
+  "title": "Create non-destructive recipe versions",
+  "deliverable": "Recipe snapshot store and concurrent-edit tests",
+  "caseIds": [
+    "TC-P122-01",
+    "TC-P122-02",
+    "TC-P122-03",
+    "TC-P122-04",
+    "TC-P122-05",
+    "TC-P122-06",
+    "TC-P122-07",
+    "TC-P122-08"
+  ],
+  "changedFiles": [
+    "docs/P122_CREATE_NON_DESTRUCTIVE_RECIPE_VERSIONS.md",
+    "docs/P122_CREATE_NON_DESTRUCTIVE_RECIPE_VERSIONS.json",
+    "docs/evidence/P122-handoff.json",
+    "scripts/gates/p122_create_non_destructive_recipe_versions.py",
+    "scripts/gates/p122_tc01.py",
+    "scripts/gates/p122_tc02.py",
+    "scripts/gates/p122_tc03.py",
+    "scripts/gates/p122_tc04.py",
+    "scripts/gates/p122_tc05.py",
+    "scripts/gates/p122_tc06.py",
+    "scripts/gates/p122_tc07.py",
+    "scripts/gates/p122_tc08.py",
+    "scripts/tests/test_p122_create_non_destructive_recipe_versions.py",
+    "scripts/tests/test_p122_tc01.py",
+    "scripts/tests/test_p122_tc02.py",
+    "scripts/tests/test_p122_tc03.py",
+    "scripts/tests/test_p122_tc04.py",
+    "scripts/tests/test_p122_tc05.py",
+    "scripts/tests/test_p122_tc06.py",
+    "scripts/tests/test_p122_tc07.py",
+    "scripts/tests/test_p122_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p122*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P123",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

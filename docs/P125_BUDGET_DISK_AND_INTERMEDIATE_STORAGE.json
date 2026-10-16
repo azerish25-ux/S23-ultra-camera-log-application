@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "phase": "P125",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p125-raw-tenbit-duplication",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "source_bytes": 8000000000,
+  "intermediate_estimate_bytes": 4000000000,
+  "safety_bytes": 250000000,
+  "free_bytes": 20000000000,
+  "start_allowed": true,
+  "delete_source": false,
+  "frame_count": 100,
+  "bytes_per_frame": 40000000
+}

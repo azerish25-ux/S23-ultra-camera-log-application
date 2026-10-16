@@ -1,0 +1,51 @@
+{
+  "phase": "P117",
+  "title": "Integrate stabilization with geometry",
+  "deliverable": "Stabilization geometry contract and alignment tests",
+  "caseIds": [
+    "TC-P117-01",
+    "TC-P117-02",
+    "TC-P117-03",
+    "TC-P117-04",
+    "TC-P117-05",
+    "TC-P117-06",
+    "TC-P117-07",
+    "TC-P117-08"
+  ],
+  "changedFiles": [
+    "docs/P117_INTEGRATE_STABILIZATION_WITH_GEOMETRY.md",
+    "docs/P117_INTEGRATE_STABILIZATION_WITH_GEOMETRY.json",
+    "docs/evidence/P117-handoff.json",
+    "scripts/gates/p117_integrate_stabilization_with_geometry.py",
+    "scripts/gates/p117_tc01.py",
+    "scripts/gates/p117_tc02.py",
+    "scripts/gates/p117_tc03.py",
+    "scripts/gates/p117_tc04.py",
+    "scripts/gates/p117_tc05.py",
+    "scripts/gates/p117_tc06.py",
+    "scripts/gates/p117_tc07.py",
+    "scripts/gates/p117_tc08.py",
+    "scripts/tests/test_p117_integrate_stabilization_with_geometry.py",
+    "scripts/tests/test_p117_tc01.py",
+    "scripts/tests/test_p117_tc02.py",
+    "scripts/tests/test_p117_tc03.py",
+    "scripts/tests/test_p117_tc04.py",
+    "scripts/tests/test_p117_tc05.py",
+    "scripts/tests/test_p117_tc06.py",
+    "scripts/tests/test_p117_tc07.py",
+    "scripts/tests/test_p117_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p117*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P118",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "phase": "P124",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p124-model-replaced",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "job_id": "job-stopped",
+  "new_job_id": "job-after-model-replacement",
+  "calls_resume": false,
+  "source_sha256": "0838cbd982edbffeb5432f911a7c53ed2e7197993fda8ab5d62c004ca9a5caab",
+  "observed_source_sha256": "0838cbd982edbffeb5432f911a7c53ed2e7197993fda8ab5d62c004ca9a5caab",
+  "recipe_sha256": "eadc91002f653754d1de6d142ef034fb6acb64da1d9e4aa54a126b0beb5fbbc5",
+  "model_sha256": "bfc843c4088b7abf5bd23377209d0953b8285a46abd010c882c5047705e0ea68",
+  "observed_model_sha256": "55d940316859bc00bcdfc4d09ebae9de5e3743334d75c180590274dcf8c28b5b",
+  "graph_sha256": "d9bb277c5d65019190317c8d355a0778b9c05b39432c5375fb7bf5abefdab3a9",
+  "observed_graph_sha256": "d9bb277c5d65019190317c8d355a0778b9c05b39432c5375fb7bf5abefdab3a9",
+  "profile_sha256": "4ef30bc66bf4841d8892adbb509b904dfff461fb1664fa39ccd3b1737c54dabc",
+  "observed_profile_sha256": "4ef30bc66bf4841d8892adbb509b904dfff461fb1664fa39ccd3b1737c54dabc",
+  "algorithm_sha256": "22b35b01d9cff17c6de38a8c8a5794987755c7bc9067d1c0af54964f6106e035",
+  "observed_algorithm_sha256": "22b35b01d9cff17c6de38a8c8a5794987755c7bc9067d1c0af54964f6106e035",
+  "checkpoints": [
+    {
+      "frame_index": 0,
+      "recipe_sha256": "eadc91002f653754d1de6d142ef034fb6acb64da1d9e4aa54a126b0beb5fbbc5",
+      "partial_output_sha256": "5660c35819fad7a3167bf23b494e3a31b9e5d27948025375326af78b460ca88f",
+      "source_sha256": "0838cbd982edbffeb5432f911a7c53ed2e7197993fda8ab5d62c004ca9a5caab",
+      "missing_frames": []
+    },
+    {
+      "frame_index": 2,
+      "recipe_sha256": "eadc91002f653754d1de6d142ef034fb6acb64da1d9e4aa54a126b0beb5fbbc5",
+      "partial_output_sha256": "4f6d1d8dd38426fb969e414e99685280fee16cd4e27b619f6b8ccd9e622f45d0",
+      "source_sha256": "0838cbd982edbffeb5432f911a7c53ed2e7197993fda8ab5d62c004ca9a5caab",
+      "missing_frames": [1]
+    }
+  ],
+  "resume_frame": 0,
+  "assembled_frames": [],
+  "intended_frames": []
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "phase": "P114",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p114-scope",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "shutter_angle_degrees": 180.0,
+  "fps": 24.0,
+  "contains_estimated": false,
+  "disclosed": true,
+  "labelled_as_longer_sensor_exposure": false,
+  "frames": [
+    {
+      "origin": "captured",
+      "weight": 0.5
+    },
+    {
+      "origin": "captured",
+      "weight": 0.5
+    }
+  ]
+}

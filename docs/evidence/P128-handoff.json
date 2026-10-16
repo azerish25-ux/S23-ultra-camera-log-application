@@ -1,0 +1,51 @@
+{
+  "phase": "P128",
+  "title": "Validate long-form development end to end",
+  "deliverable": "End-to-end deferred-development acceptance report",
+  "caseIds": [
+    "TC-P128-01",
+    "TC-P128-02",
+    "TC-P128-03",
+    "TC-P128-04",
+    "TC-P128-05",
+    "TC-P128-06",
+    "TC-P128-07",
+    "TC-P128-08"
+  ],
+  "changedFiles": [
+    "docs/P128_VALIDATE_LONG_FORM_DEVELOPMENT_END_TO_END.md",
+    "docs/P128_VALIDATE_LONG_FORM_DEVELOPMENT_END_TO_END.json",
+    "docs/evidence/P128-handoff.json",
+    "scripts/gates/p128_validate_long_form_development_end_to_end.py",
+    "scripts/gates/p128_tc01.py",
+    "scripts/gates/p128_tc02.py",
+    "scripts/gates/p128_tc03.py",
+    "scripts/gates/p128_tc04.py",
+    "scripts/gates/p128_tc05.py",
+    "scripts/gates/p128_tc06.py",
+    "scripts/gates/p128_tc07.py",
+    "scripts/gates/p128_tc08.py",
+    "scripts/tests/test_p128_validate_long_form_development_end_to_end.py",
+    "scripts/tests/test_p128_tc01.py",
+    "scripts/tests/test_p128_tc02.py",
+    "scripts/tests/test_p128_tc03.py",
+    "scripts/tests/test_p128_tc04.py",
+    "scripts/tests/test_p128_tc05.py",
+    "scripts/tests/test_p128_tc06.py",
+    "scripts/tests/test_p128_tc07.py",
+    "scripts/tests/test_p128_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p128*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P129",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "phase": "P119",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p119-honest-shutter",
+  "claim": "mode cannot do 180 degrees at 48 fps",
+  "applyMutant": false,
+  "selectedLimitId": "mode-48",
+  "measuredLimits": [
+    {
+      "id": "mode-48",
+      "fps": 48.0,
+      "shutter_angle": 172.8,
+      "max_stable_motion_px": 6.0,
+      "mode_available": true
+    }
+  ],
+  "guidance": [
+    {
+      "text": "this mode cannot do 180 degrees at this fps",
+      "limitId": "mode-48",
+      "recommendsFps": null,
+      "recommendsShutter": null,
+      "observedMotionPx": 2.0,
+      "claimsStableMotion": true,
+      "promises": []
+    },
+    {
+      "text": "the face is clipped; guidance will not restore it",
+      "limitId": "mode-48",
+      "recommendsFps": null,
+      "recommendsShutter": null,
+      "observedMotionPx": null,
+      "claimsStableMotion": false,
+      "promises": []
+    },
+    {
+      "text": "the source is physically out of focus; a virtual shallow-focus recipe will not restore focus",
+      "limitId": "mode-48",
+      "recommendsFps": null,
+      "recommendsShutter": null,
+      "observedMotionPx": null,
+      "claimsStableMotion": false,
+      "promises": []
+    }
+  ],
+  "sourceClipped": true,
+  "sourceOutOfFocus": true,
+  "virtualShallowFocusSelected": true,
+  "cinematicPresetActive": true,
+  "clippingWarningsVisible": true,
+  "adviceChangesSettings": false,
+  "changesCameraPosition": false,
+  "relabelsLighting": false
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "phase": "P118",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p118-pan-lines",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "readoutSecondsPerRow": 0.5,
+  "readoutSource": "measured",
+  "cameraVelocityY": 4.0,
+  "warpLabel": "rolling_shutter_correction",
+  "claimsGlobalShutterRestored": false,
+  "rows": [
+    {"rowIndex": 0, "y": 10.0, "velocityY": 4.0, "role": "background"},
+    {"rowIndex": 2, "y": 20.0, "velocityY": 4.0, "role": "background"},
+    {"rowIndex": 1, "y": 8.0, "velocityY": -2.0, "role": "foreground"}
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "phase": "P101",
+  "title": "Integrate the first on-device inference path",
+  "deliverable": "Offline inference integration and no-network tests",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p101*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence",
+    "physical S23 capture"
+  ],
+  "nextPhase": "P102",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

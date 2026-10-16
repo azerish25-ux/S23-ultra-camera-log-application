@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "phase": "P116",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p116-interpolation",
+  "claim": "interpolation-provenance-host-fixture",
+  "applyMutant": false,
+  "captured": [
+    {"time": 0.0, "value": 0.0, "origin": "captured"},
+    {"time": 1.0, "value": 2.0, "origin": "captured"},
+    {"time": 3.0, "value": 6.0, "origin": "captured"}
+  ],
+  "estimated": [
+    {"time": 0.5, "value": 1.0, "origin": "estimated"},
+    {"time": 2.0, "value": 4.0, "origin": "estimated"}
+  ],
+  "withheldMidpoint": {"time": 2.0, "value": 5.0}
+}

@@ -1,0 +1,51 @@
+{
+  "phase": "P121",
+  "title": "Inspect imported media before rendering",
+  "deliverable": "Media inspection report and import normalization policy",
+  "caseIds": [
+    "TC-P121-01",
+    "TC-P121-02",
+    "TC-P121-03",
+    "TC-P121-04",
+    "TC-P121-05",
+    "TC-P121-06",
+    "TC-P121-07",
+    "TC-P121-08"
+  ],
+  "changedFiles": [
+    "docs/P121_INSPECT_IMPORTED_MEDIA_BEFORE_RENDERING.md",
+    "docs/P121_INSPECT_IMPORTED_MEDIA_BEFORE_RENDERING.json",
+    "docs/evidence/P121-handoff.json",
+    "scripts/gates/p121_inspect_imported_media_before_rendering.py",
+    "scripts/gates/p121_tc01.py",
+    "scripts/gates/p121_tc02.py",
+    "scripts/gates/p121_tc03.py",
+    "scripts/gates/p121_tc04.py",
+    "scripts/gates/p121_tc05.py",
+    "scripts/gates/p121_tc06.py",
+    "scripts/gates/p121_tc07.py",
+    "scripts/gates/p121_tc08.py",
+    "scripts/tests/test_p121_inspect_imported_media_before_rendering.py",
+    "scripts/tests/test_p121_tc01.py",
+    "scripts/tests/test_p121_tc02.py",
+    "scripts/tests/test_p121_tc03.py",
+    "scripts/tests/test_p121_tc04.py",
+    "scripts/tests/test_p121_tc05.py",
+    "scripts/tests/test_p121_tc06.py",
+    "scripts/tests/test_p121_tc07.py",
+    "scripts/tests/test_p121_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p121*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P122",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

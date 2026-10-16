@@ -1,0 +1,18 @@
+{
+  "phase": "P104",
+  "title": "Qualify integrated depth performance on the S23",
+  "deliverable": "Physical inference qualification and live-versus-deferred decision",
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p104*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P105",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

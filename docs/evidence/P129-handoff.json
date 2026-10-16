@@ -1,0 +1,51 @@
+{
+  "phase": "P129",
+  "title": "Define the camera screen information hierarchy",
+  "deliverable": "Camera screen specification and layout interaction tests",
+  "caseIds": [
+    "TC-P129-01",
+    "TC-P129-02",
+    "TC-P129-03",
+    "TC-P129-04",
+    "TC-P129-05",
+    "TC-P129-06",
+    "TC-P129-07",
+    "TC-P129-08"
+  ],
+  "changedFiles": [
+    "docs/P129_DEFINE_THE_CAMERA_SCREEN_INFORMATION_HIERARCHY.md",
+    "docs/P129_DEFINE_THE_CAMERA_SCREEN_INFORMATION_HIERARCHY.json",
+    "docs/evidence/P129-handoff.json",
+    "scripts/gates/p129_define_the_camera_screen_information_hierarchy.py",
+    "scripts/gates/p129_tc01.py",
+    "scripts/gates/p129_tc02.py",
+    "scripts/gates/p129_tc03.py",
+    "scripts/gates/p129_tc04.py",
+    "scripts/gates/p129_tc05.py",
+    "scripts/gates/p129_tc06.py",
+    "scripts/gates/p129_tc07.py",
+    "scripts/gates/p129_tc08.py",
+    "scripts/tests/test_p129_define_the_camera_screen_information_hierarchy.py",
+    "scripts/tests/test_p129_tc01.py",
+    "scripts/tests/test_p129_tc02.py",
+    "scripts/tests/test_p129_tc03.py",
+    "scripts/tests/test_p129_tc04.py",
+    "scripts/tests/test_p129_tc05.py",
+    "scripts/tests/test_p129_tc06.py",
+    "scripts/tests/test_p129_tc07.py",
+    "scripts/tests/test_p129_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p129*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P130",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

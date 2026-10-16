@@ -1,0 +1,51 @@
+{
+  "phase": "P120",
+  "title": "Validate combined motion and optics",
+  "deliverable": "Motion-optics integration benchmark and release envelope",
+  "caseIds": [
+    "TC-P120-01",
+    "TC-P120-02",
+    "TC-P120-03",
+    "TC-P120-04",
+    "TC-P120-05",
+    "TC-P120-06",
+    "TC-P120-07",
+    "TC-P120-08"
+  ],
+  "changedFiles": [
+    "docs/P120_VALIDATE_COMBINED_MOTION_AND_OPTICS.md",
+    "docs/P120_VALIDATE_COMBINED_MOTION_AND_OPTICS.json",
+    "docs/evidence/P120-handoff.json",
+    "scripts/gates/p120_validate_combined_motion_and_optics.py",
+    "scripts/gates/p120_tc01.py",
+    "scripts/gates/p120_tc02.py",
+    "scripts/gates/p120_tc03.py",
+    "scripts/gates/p120_tc04.py",
+    "scripts/gates/p120_tc05.py",
+    "scripts/gates/p120_tc06.py",
+    "scripts/gates/p120_tc07.py",
+    "scripts/gates/p120_tc08.py",
+    "scripts/tests/test_p120_validate_combined_motion_and_optics.py",
+    "scripts/tests/test_p120_tc01.py",
+    "scripts/tests/test_p120_tc02.py",
+    "scripts/tests/test_p120_tc03.py",
+    "scripts/tests/test_p120_tc04.py",
+    "scripts/tests/test_p120_tc05.py",
+    "scripts/tests/test_p120_tc06.py",
+    "scripts/tests/test_p120_tc07.py",
+    "scripts/tests/test_p120_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p120*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P121",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

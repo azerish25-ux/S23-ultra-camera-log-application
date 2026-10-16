@@ -1,0 +1,51 @@
+{
+  "phase": "P127",
+  "title": "Export interoperable result bundles",
+  "deliverable": "Export bundle schema and privacy-preserving share tests",
+  "caseIds": [
+    "TC-P127-01",
+    "TC-P127-02",
+    "TC-P127-03",
+    "TC-P127-04",
+    "TC-P127-05",
+    "TC-P127-06",
+    "TC-P127-07",
+    "TC-P127-08"
+  ],
+  "changedFiles": [
+    "docs/P127_EXPORT_INTEROPERABLE_RESULT_BUNDLES.md",
+    "docs/P127_EXPORT_INTEROPERABLE_RESULT_BUNDLES.json",
+    "docs/evidence/P127-handoff.json",
+    "scripts/gates/p127_export_interoperable_result_bundles.py",
+    "scripts/gates/p127_tc01.py",
+    "scripts/gates/p127_tc02.py",
+    "scripts/gates/p127_tc03.py",
+    "scripts/gates/p127_tc04.py",
+    "scripts/gates/p127_tc05.py",
+    "scripts/gates/p127_tc06.py",
+    "scripts/gates/p127_tc07.py",
+    "scripts/gates/p127_tc08.py",
+    "scripts/tests/test_p127_export_interoperable_result_bundles.py",
+    "scripts/tests/test_p127_tc01.py",
+    "scripts/tests/test_p127_tc02.py",
+    "scripts/tests/test_p127_tc03.py",
+    "scripts/tests/test_p127_tc04.py",
+    "scripts/tests/test_p127_tc05.py",
+    "scripts/tests/test_p127_tc06.py",
+    "scripts/tests/test_p127_tc07.py",
+    "scripts/tests/test_p127_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p127*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P128",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

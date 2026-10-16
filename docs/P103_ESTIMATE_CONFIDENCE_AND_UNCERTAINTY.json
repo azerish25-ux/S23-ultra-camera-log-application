@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "phase": "P103",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p103-confidence",
+  "claim": "synthetic-host-fixture",
+  "tolerance": 0.05,
+  "maxEce": 0.5,
+  "calibrated": false,
+  "calibrationSetId": null,
+  "binCounts": null,
+  "confidenceMetadataPresent": true,
+  "pairs": [
+    {
+      "confidence": 0.05,
+      "absoluteError": 0.4,
+      "intervalWidth": 0.8
+    },
+    {
+      "confidence": 0.15,
+      "absoluteError": 0.3,
+      "intervalWidth": 0.7
+    },
+    {
+      "confidence": 0.25,
+      "absoluteError": 0.22,
+      "intervalWidth": 0.55
+    },
+    {
+      "confidence": 0.35,
+      "absoluteError": 0.18,
+      "intervalWidth": 0.5
+    },
+    {
+      "confidence": 0.45,
+      "absoluteError": 0.12,
+      "intervalWidth": 0.4
+    },
+    {
+      "confidence": 0.55,
+      "absoluteError": 0.1,
+      "intervalWidth": 0.36
+    },
+    {
+      "confidence": 0.65,
+      "absoluteError": 0.04,
+      "intervalWidth": 0.12
+    },
+    {
+      "confidence": 0.75,
+      "absoluteError": 0.03,
+      "intervalWidth": 0.1
+    },
+    {
+      "confidence": 0.85,
+      "absoluteError": 0.02,
+      "intervalWidth": 0.06
+    },
+    {
+      "confidence": 0.95,
+      "absoluteError": 0.01,
+      "intervalWidth": 0.04
+    }
+  ],
+  "blurReducedOnLowConfidence": true,
+  "applyMutant": false
+}

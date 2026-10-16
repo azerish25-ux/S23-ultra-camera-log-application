@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "phase": "P105",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p105-temporal-baseline",
+  "claim": "host-temporal-baseline",
+  "nominalFramePeriodMs": 40,
+  "frameTimestampsMs": [0, 40, 80, 120, 160, 200, 240, 400],
+  "lumaMeans": [0.4, 0.42, 0.41, 0.43, 0.55, 0.5, 0.62, 0.3],
+  "hideGap": false,
+  "useKeyframeAsBaseline": false,
+  "keyframeScore": null,
+  "applyMutant": false
+}

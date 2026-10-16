@@ -1,0 +1,51 @@
+{
+  "phase": "P114",
+  "title": "Define synthetic shutter scope",
+  "deliverable": "Synthetic-shutter eligibility policy and limitation tests",
+  "caseIds": [
+    "TC-P114-01",
+    "TC-P114-02",
+    "TC-P114-03",
+    "TC-P114-04",
+    "TC-P114-05",
+    "TC-P114-06",
+    "TC-P114-07",
+    "TC-P114-08"
+  ],
+  "changedFiles": [
+    "docs/P114_DEFINE_SYNTHETIC_SHUTTER_SCOPE.md",
+    "docs/P114_DEFINE_SYNTHETIC_SHUTTER_SCOPE.json",
+    "docs/evidence/P114-handoff.json",
+    "scripts/gates/p114_define_synthetic_shutter_scope.py",
+    "scripts/gates/p114_tc01.py",
+    "scripts/gates/p114_tc02.py",
+    "scripts/gates/p114_tc03.py",
+    "scripts/gates/p114_tc04.py",
+    "scripts/gates/p114_tc05.py",
+    "scripts/gates/p114_tc06.py",
+    "scripts/gates/p114_tc07.py",
+    "scripts/gates/p114_tc08.py",
+    "scripts/tests/test_p114_define_synthetic_shutter_scope.py",
+    "scripts/tests/test_p114_tc01.py",
+    "scripts/tests/test_p114_tc02.py",
+    "scripts/tests/test_p114_tc03.py",
+    "scripts/tests/test_p114_tc04.py",
+    "scripts/tests/test_p114_tc05.py",
+    "scripts/tests/test_p114_tc06.py",
+    "scripts/tests/test_p114_tc07.py",
+    "scripts/tests/test_p114_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p114*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P115",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

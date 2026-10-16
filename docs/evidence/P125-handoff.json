@@ -1,0 +1,51 @@
+{
+  "phase": "P125",
+  "title": "Budget disk and intermediate storage",
+  "deliverable": "Storage planner and low-space continuation policy",
+  "caseIds": [
+    "TC-P125-01",
+    "TC-P125-02",
+    "TC-P125-03",
+    "TC-P125-04",
+    "TC-P125-05",
+    "TC-P125-06",
+    "TC-P125-07",
+    "TC-P125-08"
+  ],
+  "changedFiles": [
+    "docs/P125_BUDGET_DISK_AND_INTERMEDIATE_STORAGE.md",
+    "docs/P125_BUDGET_DISK_AND_INTERMEDIATE_STORAGE.json",
+    "docs/evidence/P125-handoff.json",
+    "scripts/gates/p125_budget_disk_and_intermediate_storage.py",
+    "scripts/gates/p125_tc01.py",
+    "scripts/gates/p125_tc02.py",
+    "scripts/gates/p125_tc03.py",
+    "scripts/gates/p125_tc04.py",
+    "scripts/gates/p125_tc05.py",
+    "scripts/gates/p125_tc06.py",
+    "scripts/gates/p125_tc07.py",
+    "scripts/gates/p125_tc08.py",
+    "scripts/tests/test_p125_budget_disk_and_intermediate_storage.py",
+    "scripts/tests/test_p125_tc01.py",
+    "scripts/tests/test_p125_tc02.py",
+    "scripts/tests/test_p125_tc03.py",
+    "scripts/tests/test_p125_tc04.py",
+    "scripts/tests/test_p125_tc05.py",
+    "scripts/tests/test_p125_tc06.py",
+    "scripts/tests/test_p125_tc07.py",
+    "scripts/tests/test_p125_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p125*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P126",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

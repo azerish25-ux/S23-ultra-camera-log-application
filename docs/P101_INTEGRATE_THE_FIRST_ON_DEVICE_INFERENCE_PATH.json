@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "phase": "P101",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p101-offline-inference",
+  "claim": "host-offline-inference-reference",
+  "networkingEnabled": false,
+  "blockCameraUntilCloud": false,
+  "virtualBlurApplied": false,
+  "model": {
+    "filename": "depth-small.tflite",
+    "content": "p101-approved-weights-v1",
+    "precision": "fp16",
+    "runtimeVersion": "tflite-2.16.1",
+    "cachedFilename": "depth-small.tflite",
+    "cachedContent": "p101-approved-weights-v1",
+    "cachedPrecision": "fp16",
+    "cachedRuntimeVersion": "tflite-2.16.1",
+    "keepCachedDepth": true
+  },
+  "geometry": {
+    "sourceWidth": 4,
+    "sourceHeight": 2,
+    "tensorSize": 4,
+    "channelOrder": "rgb",
+    "recordedChannelOrder": "rgb",
+    "preparation": "letterbox",
+    "stretchRecorded": false
+  },
+  "conversion": {
+    "baseline": [0.1, 0.4, 0.7],
+    "exported": [0.11, 0.39, 0.72],
+    "tolerance": 0.05,
+    "boundaryBaseline": [0.0, 1.0],
+    "boundaryExported": [0.01, 0.99],
+    "boundaryTolerance": 0.02,
+    "loads": true,
+    "experimental": false
+  },
+  "offlineFailure": {
+    "networkingEnabled": false,
+    "assetPresent": false,
+    "assetCorrupt": false,
+    "missingCapability": "on-device-depth",
+    "captureUsable": true,
+    "blockCaptureUntilCloud": false,
+    "sourceRetained": true
+  },
+  "delegate": {
+    "initFailed": true,
+    "fallbackName": "",
+    "fallbackQualified": false,
+    "depthDisabled": true,
+    "disableReason": "gpu-delegate-unavailable",
+    "silentBackendChange": false,
+    "uploadsFrames": false
+  },
+  "depth": {
+    "sourceTimestampNs": 1000000,
+    "sourceCrop": [0, 0, 4, 2],
+    "values": [0.25, 0.5, 0.75],
+    "identity": {
+      "timestampNs": 1000000,
+      "crop": [0, 0, 4, 2]
+    },
+    "reprojected": false
+  },
+  "confidence": {
+    "scores": [0.33, 0.71],
+    "label": "uncalibrated",
+    "presentedAs": "uncalibrated-score",
+    "renderingReliance": "reduced"
+  },
+  "load": {
+    "modelLatencyMs": 12.5,
+    "captureMs": 16.0,
+    "renderMs": 4.0,
+    "encodeMs": 6.0,
+    "frameBudgetMs": 33.333,
+    "operation": "deferred",
+    "reportedAsFrameRateGuarantee": false,
+    "workloadMeasured": true
+  }
+}

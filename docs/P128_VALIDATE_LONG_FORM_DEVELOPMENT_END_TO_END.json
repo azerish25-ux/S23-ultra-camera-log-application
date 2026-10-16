@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "phase": "P128",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p128-long-form",
+  "claim": "long-form-development-host-fixture",
+  "applyMutant": false,
+  "expected_frames": 6,
+  "accounted_frames": [0, 1, 2, 3, 4, 5],
+  "checkpoint_frames": [0, 2, 5],
+  "audio_duration": 0.25,
+  "video_duration": 0.25,
+  "audio_absent": false,
+  "spot_check_only": false
+}

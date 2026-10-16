@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "phase": "P120",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p120-combined-motion-optics",
+  "claim": "combined-motion-optics-host-fixture",
+  "applyMutant": false,
+  "combinationPassed": true,
+  "comparison": "perfect-motion",
+  "graphOrder": [
+    "source_blur",
+    "shutter",
+    "interpolation",
+    "stabilization",
+    "depth",
+    "focus",
+    "compositing"
+  ],
+  "report": {
+    "shutter_angle": 172.8,
+    "fps": 24.0,
+    "exposure_seconds": 0.02,
+    "interpolation_fraction": 0.25,
+    "estimated_disclosed": true,
+    "stabilization_crop_fraction": 0.08,
+    "rolling_shutter_readout": "measured",
+    "correction_applied": true
+  }
+}

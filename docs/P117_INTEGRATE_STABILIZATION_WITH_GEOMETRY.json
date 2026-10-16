@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "phase": "P117",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p117-stabilized-crop",
+  "claim": "synthetic-host-fixture",
+  "applyMutant": false,
+  "source": {
+    "width": 4,
+    "height": 2,
+    "lensId": "s23-main",
+    "timestamp": 0.0
+  },
+  "warp": {
+    "dx": 1.0,
+    "dy": 0.0
+  },
+  "crop": {
+    "x": 0.0,
+    "y": 0.0,
+    "width": 3.0,
+    "height": 2.0
+  },
+  "cropRecorded": true,
+  "fill": "unknown",
+  "inpaint": false,
+  "stabilized": {
+    "lensId": "s23-main",
+    "timestamp": 0.0,
+    "aspect": 1.5
+  },
+  "layers": {
+    "rgb": {
+      "dx": 1.0,
+      "dy": 0.0
+    },
+    "depth": {
+      "dx": 1.0,
+      "dy": 0.0
+    },
+    "mask": {
+      "dx": 1.0,
+      "dy": 0.0
+    }
+  },
+  "corrections": [
+    {
+      "kind": "ois",
+      "dx": 0.0,
+      "dy": 0.0,
+      "known": true
+    },
+    {
+      "kind": "eis",
+      "dx": 0.0,
+      "dy": 0.0,
+      "known": true
+    },
+    {
+      "kind": "post",
+      "dx": 1.0,
+      "dy": 0.0,
+      "known": true
+    }
+  ],
+  "samples": [
+    {
+      "x": 1.0,
+      "y": 0.0,
+      "layer": "depth"
+    },
+    {
+      "x": 0.0,
+      "y": 0.0,
+      "layer": "depth"
+    }
+  ],
+  "sourceHorizontalFovDegrees": 90.0,
+  "reportedHorizontalFovDegrees": 71.56505117707798,
+  "depthMap": [
+    [
+      0,
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6,
+      7
+    ]
+  ]
+}

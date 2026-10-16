@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "phase": "P108",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p108-hand-pan-cut",
+  "claim": "occlusion-and-cut-host-fixture",
+  "depthSamples": [
+    1.0,
+    1.1,
+    3.4,
+    3.5
+  ],
+  "threshold": 0.5,
+  "flows": [
+    {
+      "dx": 0.3,
+      "dy": 0.0,
+      "rdx": -0.3,
+      "rdy": 0.0
+    },
+    {
+      "dx": 1.5,
+      "dy": 0.2,
+      "rdx": -0.1,
+      "rdy": -0.2
+    }
+  ],
+  "flow_threshold": 0.25,
+  "smoothed": false,
+  "sampleLabels": [
+    "measured",
+    "unknown",
+    "measured",
+    "measured"
+  ],
+  "outputLabels": [
+    "measured",
+    "unknown",
+    "measured",
+    "measured"
+  ],
+  "editBoundary": false,
+  "timestampsContinuous": true,
+  "carryHistory": false,
+  "retainOccludedHistory": false
+}

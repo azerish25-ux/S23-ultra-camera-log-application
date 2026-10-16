@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "phase": "P112",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p112-playback",
+  "claim": "synthetic-host-fixture",
+  "playback_fps": 24,
+  "frames": [
+    {
+      "edge_energy": 0.8,
+      "brightness": 0.4,
+      "focus_distance": 2.0,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.81,
+      "brightness": 0.42,
+      "focus_distance": 2.0,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.79,
+      "brightness": 0.41,
+      "focus_distance": 2.1,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.82,
+      "brightness": 0.43,
+      "focus_distance": 2.1,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.78,
+      "brightness": 0.4,
+      "focus_distance": 2.0,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.8,
+      "brightness": 0.44,
+      "focus_distance": 2.2,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.81,
+      "brightness": 0.41,
+      "focus_distance": 2.2,
+      "boundary_severity": 0.1
+    },
+    {
+      "edge_energy": 0.79,
+      "brightness": 0.42,
+      "focus_distance": 2.0,
+      "boundary_severity": 0.1
+    }
+  ],
+  "flicker_limit": 0.05,
+  "edge_crawl_limit": 0.05,
+  "severity_limit": 1.0,
+  "still_as_playback": false,
+  "still_sharpness": 0.92,
+  "measured_on_device": false,
+  "claims_physical_lens_qualification": false,
+  "applyMutant": false
+}

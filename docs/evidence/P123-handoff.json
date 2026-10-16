@@ -1,0 +1,51 @@
+{
+  "phase": "P123",
+  "title": "Implement the development job state machine",
+  "deliverable": "Job reducer and cancellation race tests",
+  "caseIds": [
+    "TC-P123-01",
+    "TC-P123-02",
+    "TC-P123-03",
+    "TC-P123-04",
+    "TC-P123-05",
+    "TC-P123-06",
+    "TC-P123-07",
+    "TC-P123-08"
+  ],
+  "changedFiles": [
+    "docs/P123_IMPLEMENT_THE_DEVELOPMENT_JOB_STATE_MACHINE.md",
+    "docs/P123_IMPLEMENT_THE_DEVELOPMENT_JOB_STATE_MACHINE.json",
+    "docs/evidence/P123-handoff.json",
+    "scripts/gates/p123_implement_the_development_job_state_machine.py",
+    "scripts/gates/p123_tc01.py",
+    "scripts/gates/p123_tc02.py",
+    "scripts/gates/p123_tc03.py",
+    "scripts/gates/p123_tc04.py",
+    "scripts/gates/p123_tc05.py",
+    "scripts/gates/p123_tc06.py",
+    "scripts/gates/p123_tc07.py",
+    "scripts/gates/p123_tc08.py",
+    "scripts/tests/test_p123_implement_the_development_job_state_machine.py",
+    "scripts/tests/test_p123_tc01.py",
+    "scripts/tests/test_p123_tc02.py",
+    "scripts/tests/test_p123_tc03.py",
+    "scripts/tests/test_p123_tc04.py",
+    "scripts/tests/test_p123_tc05.py",
+    "scripts/tests/test_p123_tc06.py",
+    "scripts/tests/test_p123_tc07.py",
+    "scripts/tests/test_p123_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p123*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P124",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

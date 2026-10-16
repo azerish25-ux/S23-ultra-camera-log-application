@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "phase": "P106",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p106-translating-square",
+  "claim": "synthetic-host-fixture",
+  "frame_width": 8,
+  "frame_height": 8,
+  "motion_px": 2,
+  "prev_timestamp": "t0",
+  "curr_timestamp": "t1",
+  "fill_unknowns_as_measured": false,
+  "points": [
+    {"x": 1, "y": 2, "depth": 0.35, "dx": 2, "dy": 0, "rdx": -2, "rdy": 0},
+    {"x": 2, "y": 2, "depth": 0.35, "dx": 2, "dy": 0, "rdx": -2, "rdy": 0},
+    {"x": 1, "y": 3, "depth": 0.35, "dx": 2, "dy": 0, "rdx": -2, "rdy": 0},
+    {"x": 2, "y": 3, "depth": 0.35, "dx": 2, "dy": 0, "rdx": -2, "rdy": 0},
+    {"x": 7, "y": 2, "depth": 0.35, "dx": 2, "dy": 0, "rdx": -2, "rdy": 0}
+  ]
+}

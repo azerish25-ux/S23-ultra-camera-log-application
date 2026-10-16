@@ -1,0 +1,50 @@
+{
+  "phase": "P130",
+  "title": "Implement source and look selection separately",
+  "deliverable": "Separated control model and truthfulness UI tests",
+  "caseIds": [
+    "TC-P130-01",
+    "TC-P130-02",
+    "TC-P130-03",
+    "TC-P130-04",
+    "TC-P130-05",
+    "TC-P130-06",
+    "TC-P130-07",
+    "TC-P130-08"
+  ],
+  "changedFiles": [
+    "docs/P130_IMPLEMENT_SOURCE_AND_LOOK_SELECTION_SEPARATELY.md",
+    "docs/P130_IMPLEMENT_SOURCE_AND_LOOK_SELECTION_SEPARATELY.json",
+    "docs/evidence/P130-handoff.json",
+    "scripts/gates/p130_implement_source_and_look_selection_separately.py",
+    "scripts/gates/p130_tc01.py",
+    "scripts/gates/p130_tc02.py",
+    "scripts/gates/p130_tc03.py",
+    "scripts/gates/p130_tc04.py",
+    "scripts/gates/p130_tc05.py",
+    "scripts/gates/p130_tc06.py",
+    "scripts/gates/p130_tc07.py",
+    "scripts/gates/p130_tc08.py",
+    "scripts/tests/test_p130_implement_source_and_look_selection_separately.py",
+    "scripts/tests/test_p130_tc01.py",
+    "scripts/tests/test_p130_tc02.py",
+    "scripts/tests/test_p130_tc03.py",
+    "scripts/tests/test_p130_tc04.py",
+    "scripts/tests/test_p130_tc05.py",
+    "scripts/tests/test_p130_tc06.py",
+    "scripts/tests/test_p130_tc07.py",
+    "scripts/tests/test_p130_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p130*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P131",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

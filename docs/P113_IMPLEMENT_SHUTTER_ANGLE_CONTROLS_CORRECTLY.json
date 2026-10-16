@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "phase": "P113",
+  "implementationBaseRevision": "3fbad4bc0e0336e273d2723ec873f001e8865323",
+  "evidenceId": "p113-shutter-180-at-24",
+  "goal": "Translate creative shutter angle into a feasible physical exposure request.",
+  "method": "Compute exposure from rational frame rate and angle, then validate sensor limits and actual applied results. Keep requested angle separate from effective exposure. When light levels prevent the desired setting, explain the tradeoff without silently changing cadence.",
+  "fixture": "One-hundred-eighty-degree shutter at twenty-four frames per second and a requested exposure exceeding the selected sensor interval.",
+  "oracle": "The first maps to approximately one forty-eighth second and the second is rejected or visibly constrained.",
+  "mutant": "Treat shutter angle as an arbitrary blur-strength percentage.",
+  "deliverable": "Shutter-angle model and exposure feasibility tests",
+  "shutterAngleDegrees": 180,
+  "fps": {
+    "numerator": 24,
+    "denominator": 1
+  },
+  "reportedAngleDegrees": 180,
+  "reportedExposureSeconds": {
+    "numerator": 1,
+    "denominator": 48
+  },
+  "sourceCadenceFps": {
+    "numerator": 24,
+    "denominator": 1
+  },
+  "syntheticIntegration": false,
+  "sensorConfirmed": false,
+  "measurementId": null,
+  "applyMutant": false,
+  "exceedingRequest": {
+    "shutterAngleDegrees": 180,
+    "fps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "requestedExposureSeconds": {
+      "numerator": 1,
+      "denominator": 12
+    },
+    "sensorIntervalSeconds": {
+      "numerator": 1,
+      "denominator": 24
+    },
+    "syntheticIntegration": false,
+    "sourceCadenceFps": {
+      "numerator": 24,
+      "denominator": 1
+    },
+    "reportsAngleAsApplied": false
+  }
+}
