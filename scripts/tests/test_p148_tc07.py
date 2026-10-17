@@ -1,0 +1,90 @@
+"""Tests for TC-P148-07."""
+
+from __future__ import annotations
+
+import importlib.util
+import unittest
+from pathlib import Path
+
+_SPEC = importlib.util.spec_from_file_location(
+    "p148_tc07",
+    Path(__file__).resolve().parents[1] / "gates" / "p148_tc07.py",
+)
+_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+evaluate = _MODULE.evaluate
+_GATE = _MODULE._GATE
+
+KEYS = ("caseId", "decision", "reasons", "rejectedClaims", "preservedResults", "openQuestions")
+
+
+def payload(**overrides):
+    base = _GATE.core_payload(repeat="source modes")
+    base.update({
+        "features": [
+            {"id": "offline-privacy", "state": "implemented", "scope": "host-reference"},
+            {"id": "live-depth", "state": "experimental", "scope": "live-depth"},
+        ],
+        "implementedList": ["offline-privacy"],
+    })
+    base.update(overrides)
+    return base
+
+
+class TCP14807(unittest.TestCase):
+    def assert_contract(self, result, evidence="p148-offline-privacy"):
+        self.assertEqual(tuple(result), KEYS)
+        self.assertEqual(result["caseId"], "TC-P148-07")
+        self.assertNotIn(result["decision"], {"qualified", "allowed"})
+        self.assertIn(evidence, result["preservedResults"])
+        self.assertIn("physical S23 measurement was not run", result["openQuestions"])
+        self.assertTrue(result["reasons"])
+
+    def test_accurate_scope_is_recorded(self):
+        result = evaluate(payload())
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "recorded")
+        self.assertEqual(result["rejectedClaims"], [])
+        self.assertEqual(result["preservedResults"][3]["implementedList"], ["offline-privacy"])
+        self.assertEqual(_MODULE.CASE["name"], "Release claim exceeds evidence")
+
+    def test_copying_the_roadmap_into_implemented_is_rejected(self):
+        result = evaluate(payload(implementedList=["offline-privacy", "live-depth"]))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_MODULE.NEGATIVE_TOKEN, result["rejectedClaims"])
+        self.assertIn(_MODULE.CASE["negative"], result["reasons"])
+
+    def test_unqualified_native_resolution_is_rejected(self):
+        result = evaluate(payload(features=[
+            {"id": "offline-privacy", "state": "implemented", "scope": "host-reference"},
+            {"id": "native", "state": "experimental", "scope": "native-resolution"},
+        ]))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_MODULE.UNSUPPORTED_SCOPE, result["rejectedClaims"])
+
+    def test_physically_qualified_scope_is_recorded(self):
+        result = evaluate(payload(
+            features=[
+                {"id": "native", "state": "physically-qualified", "scope": "native-resolution"},
+            ],
+            implementedList=["native"],
+        ))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "recorded")
+        self.assertEqual(result["rejectedClaims"], [])
+
+    def test_second_repeat_preserves_a_different_evidence_id(self):
+        evidence = "p148-tc07-calibration"
+        result = evaluate(payload(evidenceId=evidence, repeat="calibration status"))
+        self.assert_contract(result, evidence)
+        self.assertEqual(result["decision"], "recorded")
+
+    def test_invalid_payload_raises(self):
+        with self.assertRaises(ValueError):
+            evaluate({})
+        with self.assertRaises(ValueError):
+            evaluate(payload(features=[]))
+        with self.assertRaises(ValueError):
+            evaluate(payload(implementedList=["missing"]))

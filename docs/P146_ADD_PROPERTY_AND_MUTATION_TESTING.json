@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "phase": "P146",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p146-property-mutation",
+  "claim": "property-and-mutation-testing-host-reference",
+  "applyMutant": false,
+  "samples": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "shuffled": [
+    4,
+    1,
+    3,
+    2
+  ],
+  "reportedSum": 10,
+  "reportedShuffledSum": 10,
+  "propertySuite": [
+    {
+      "id": "numeric-domain",
+      "metadata": {
+        "domain": "numeric",
+        "seed": 1,
+        "valid": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "invalid": [
+          "nan",
+          "inf",
+          "-inf"
+        ]
+      }
+    },
+    {
+      "id": "temporal-sequence",
+      "metadata": {
+        "domain": "temporal",
+        "seed": 1,
+        "events": [
+          {
+            "t": 1000000,
+            "kind": "frame"
+          },
+          {
+            "t": 1001000,
+            "kind": "metadata"
+          },
+          {
+            "t": 1000000,
+            "kind": "timestamp-reuse"
+          }
+        ]
+      }
+    },
+    {
+      "id": "geometry-combinations",
+      "metadata": {
+        "domain": "geometry",
+        "seed": 1,
+        "width": 1920,
+        "height": 1080,
+        "transform": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1
+        ],
+        "excessive": {
+          "width": 8193,
+          "height": 8193
+        }
+      }
+    },
+    {
+      "id": "malformed-records",
+      "metadata": {
+        "domain": "malformed",
+        "seed": 1,
+        "length": -1,
+        "path": "../escape",
+        "extension": "json",
+        "headerValidated": false
+      }
+    }
+  ],
+  "catalogue": [
+    {
+      "id": "timestamp-nearest-neighbor",
+      "kind": "nearest-neighbor",
+      "input": {
+        "pairing": "nearest-neighbor",
+        "frameTimestampNs": 1000000,
+        "metadataTimestampNs": 1001000
+      },
+      "original": {
+        "pairing": "exact",
+        "frameTimestampNs": 1000000,
+        "metadataTimestampNs": 1000000
+      },
+      "expected_detection": true,
+      "detected": true
+    },
+    {
+      "id": "range-confusion",
+      "kind": "range-confusion",
+      "input": {
+        "range": "full",
+        "code": 0
+      },
+      "original": {
+        "range": "legal",
+        "code": 16
+      },
+      "expected_detection": true,
+      "detected": true
+    },
+    {
+      "id": "timestamp-reuse",
+      "kind": "timestamp-reuse",
+      "input": {
+        "frameId": 2,
+        "timestampNs": 1000
+      },
+      "original": {
+        "frameId": 2,
+        "timestampNs": 2000
+      },
+      "expected_detection": true,
+      "detected": true
+    },
+    {
+      "id": "cfa-swap",
+      "kind": "cfa-swap",
+      "input": {
+        "cfa": "BGGR"
+      },
+      "original": {
+        "cfa": "RGGB"
+      },
+      "expected_detection": true,
+      "detected": true
+    },
+    {
+      "id": "missing-hash",
+      "kind": "missing-hash",
+      "input": {
+        "hashChecked": false,
+        "sha256": "621026212615beafbec94bb497232c3988d40af442a6db2dfa04b12d08410eaa"
+      },
+      "original": {
+        "hashChecked": true,
+        "sha256": "621026212615beafbec94bb497232c3988d40af442a6db2dfa04b12d08410eaa"
+      },
+      "expected_detection": true,
+      "detected": true
+    }
+  ]
+}

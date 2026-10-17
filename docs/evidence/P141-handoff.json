@@ -1,0 +1,50 @@
+{
+  "phase": "P141",
+  "title": "Manage reference media rights and attribution",
+  "deliverable": "Content rights manifest and package licence gate",
+  "caseIds": [
+    "TC-P141-01",
+    "TC-P141-02",
+    "TC-P141-03",
+    "TC-P141-04",
+    "TC-P141-05",
+    "TC-P141-06",
+    "TC-P141-07",
+    "TC-P141-08"
+  ],
+  "changedFiles": [
+    "docs/P141_MANAGE_REFERENCE_MEDIA_RIGHTS_AND_ATTRIBUTION.md",
+    "docs/P141_MANAGE_REFERENCE_MEDIA_RIGHTS_AND_ATTRIBUTION.json",
+    "docs/evidence/P141-handoff.json",
+    "scripts/gates/p141_manage_reference_media_rights_and_attribution.py",
+    "scripts/gates/p141_tc01.py",
+    "scripts/gates/p141_tc02.py",
+    "scripts/gates/p141_tc03.py",
+    "scripts/gates/p141_tc04.py",
+    "scripts/gates/p141_tc05.py",
+    "scripts/gates/p141_tc06.py",
+    "scripts/gates/p141_tc07.py",
+    "scripts/gates/p141_tc08.py",
+    "scripts/tests/test_p141_manage_reference_media_rights_and_attribution.py",
+    "scripts/tests/test_p141_tc01.py",
+    "scripts/tests/test_p141_tc02.py",
+    "scripts/tests/test_p141_tc03.py",
+    "scripts/tests/test_p141_tc04.py",
+    "scripts/tests/test_p141_tc05.py",
+    "scripts/tests/test_p141_tc06.py",
+    "scripts/tests/test_p141_tc07.py",
+    "scripts/tests/test_p141_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p141*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P142",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

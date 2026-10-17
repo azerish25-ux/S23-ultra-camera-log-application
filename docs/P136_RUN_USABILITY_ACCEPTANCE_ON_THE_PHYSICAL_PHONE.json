@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "phase": "P136",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p136-usability",
+  "claim": "physical-usability-not-run",
+  "session_count": 0,
+  "device_id": null,
+  "measured_on_device": false,
+  "approved": false,
+  "findings": []
+}

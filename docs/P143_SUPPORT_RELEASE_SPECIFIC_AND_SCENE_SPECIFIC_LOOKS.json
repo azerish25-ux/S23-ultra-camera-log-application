@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "phase": "P143",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p143-release-looks",
+  "claim": "release-specific-looks-host-reference",
+  "applyMutant": false,
+  "looks": [
+    {
+      "film_id": "reference-film",
+      "release_id": "theatrical-35mm",
+      "scene_id": null,
+      "reference_id": "owned-theatrical-reference",
+      "edition": "theatrical-print",
+      "format": "35mm",
+      "display_assumptions": "theatrical-projection",
+      "scene_family": null,
+      "parameters": {
+        "contrast": 1.5,
+        "red": 1.25,
+        "green": 0.75,
+        "blue": 0.5
+      },
+      "averaged": false,
+      "ambiguous": false,
+      "inferred_from_screenshot": false,
+      "definitive": false,
+      "replaces_release_look": false,
+      "collapsed_release_ids": null
+    },
+    {
+      "film_id": "reference-film",
+      "release_id": "digital-sdr",
+      "scene_id": null,
+      "reference_id": "owned-digital-reference",
+      "edition": "digital-sdr",
+      "format": "digital",
+      "display_assumptions": "rec709",
+      "scene_family": null,
+      "parameters": {
+        "contrast": 0.5,
+        "red": 0.75,
+        "green": 1.0,
+        "blue": 1.25
+      },
+      "averaged": false,
+      "ambiguous": false,
+      "inferred_from_screenshot": false,
+      "definitive": false,
+      "replaces_release_look": false,
+      "collapsed_release_ids": null
+    }
+  ],
+  "dropAmbiguous": false
+}

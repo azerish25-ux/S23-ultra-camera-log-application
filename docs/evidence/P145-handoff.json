@@ -1,0 +1,51 @@
+{
+  "phase": "P145",
+  "title": "Build the layered automated test system",
+  "deliverable": "Layered CI plan and machine-readable evidence aggregation",
+  "caseIds": [
+    "TC-P145-01",
+    "TC-P145-02",
+    "TC-P145-03",
+    "TC-P145-04",
+    "TC-P145-05",
+    "TC-P145-06",
+    "TC-P145-07",
+    "TC-P145-08"
+  ],
+  "changedFiles": [
+    "docs/P145_BUILD_THE_LAYERED_AUTOMATED_TEST_SYSTEM.md",
+    "docs/P145_BUILD_THE_LAYERED_AUTOMATED_TEST_SYSTEM.json",
+    "docs/evidence/P145-handoff.json",
+    "scripts/gates/p145_build_the_layered_automated_test_system.py",
+    "scripts/gates/p145_tc01.py",
+    "scripts/gates/p145_tc02.py",
+    "scripts/gates/p145_tc03.py",
+    "scripts/gates/p145_tc04.py",
+    "scripts/gates/p145_tc05.py",
+    "scripts/gates/p145_tc06.py",
+    "scripts/gates/p145_tc07.py",
+    "scripts/gates/p145_tc08.py",
+    "scripts/tests/test_p145_build_the_layered_automated_test_system.py",
+    "scripts/tests/test_p145_tc01.py",
+    "scripts/tests/test_p145_tc02.py",
+    "scripts/tests/test_p145_tc03.py",
+    "scripts/tests/test_p145_tc04.py",
+    "scripts/tests/test_p145_tc05.py",
+    "scripts/tests/test_p145_tc06.py",
+    "scripts/tests/test_p145_tc07.py",
+    "scripts/tests/test_p145_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p145*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P146",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

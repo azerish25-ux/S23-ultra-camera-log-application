@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "phase": "P141",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p141-reference-rights",
+  "claim": "content-rights-manifest-host-reference",
+  "applyMutant": false,
+  "assets": [
+    {
+      "asset_id": "production-still-public",
+      "kind": "image",
+      "licence": null,
+      "attribution": null,
+      "redistribute": false,
+      "public_url": "https://example.invalid/production-still",
+      "citation": "Production still cited from a public URL; no permission to bundle",
+      "bundled": false
+    },
+    {
+      "asset_id": "owned-comparison-thumbnail",
+      "kind": "image",
+      "licence": "owned-comparison",
+      "attribution": "S23 Cinema owned comparison footage",
+      "redistribute": true,
+      "public_url": null,
+      "citation": "Owned comparison thumbnail approved for the package",
+      "bundled": true
+    }
+  ]
+}

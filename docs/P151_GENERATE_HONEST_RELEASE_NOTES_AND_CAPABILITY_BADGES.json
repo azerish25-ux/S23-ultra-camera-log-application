@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "phase": "P151",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p151-release-notes",
+  "claim": "honest-release-notes-and-capability-badges",
+  "applyMutant": false,
+  "claims": [
+    {
+      "claim_id": "sdr-recording",
+      "badge": "evidenced",
+      "evidence_id": "ev-sdr-recording",
+      "limit": "qualified SDR recording; software tests are separate from physical qualification; not universal 8K"
+    },
+    {
+      "claim_id": "raw-development",
+      "badge": "experimental",
+      "evidence_id": "ev-raw-development",
+      "limit": "experimental RAW development; not live RAW cinema capture"
+    },
+    {
+      "claim_id": "depth-effects",
+      "badge": "experimental",
+      "evidence_id": "ev-depth-effects",
+      "limit": "deferred-only depth effects"
+    }
+  ],
+  "implementedFeatures": [
+    "sdr-recording"
+  ],
+  "aspirationalRequirements": [
+    "live-raw-cinema-capture",
+    "universal-8k"
+  ],
+  "knownFailures": [
+    "physical S23 was not run",
+    "live RAW cinema capture is not supported",
+    "universal 8K is not supported"
+  ]
+}

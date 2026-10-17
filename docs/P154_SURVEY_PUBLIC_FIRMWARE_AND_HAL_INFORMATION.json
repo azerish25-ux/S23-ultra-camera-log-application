@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "phase": "P154",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p154-firmware-hal-survey",
+  "claim": "public-firmware-and-hal-survey-host-reference",
+  "applyMutant": false,
+  "sources": [
+    {
+      "url": "https://opensource.samsung.com/",
+      "public": true,
+      "documents": "Samsung Open Source Release Center kernel and platform packages for announced models. The listing is kernel source availability, not Samsung proprietary camera processing and not every sensor mode."
+    },
+    {
+      "url": "https://source.android.com/docs/core/camera",
+      "public": true,
+      "documents": "AOSP camera architecture: camera HAL, camera device, and the request and stream model. This is a public interface contract, not an S23 imaging firmware image."
+    },
+    {
+      "url": "https://source.android.com/docs/core/camera/camera3",
+      "public": true,
+      "documents": "Public Camera HAL3 operation and request lifecycle. It does not disclose proprietary Samsung imaging components or prove the modes on a user's phone."
+    }
+  ],
+  "phone_modified": false,
+  "claims_all_modes": false,
+  "usedAsEvidence": [
+    "https://opensource.samsung.com/",
+    "https://source.android.com/docs/core/camera",
+    "https://source.android.com/docs/core/camera/camera3"
+  ],
+  "architectureNotes": "Public kernel packages and AOSP camera HAL documents describe interfaces and released source packages. They are recorded only as unverified against the user's phone. Kernel source availability is separated from access to proprietary camera processing components. A kernel source tree does not prove every camera algorithm, every sensor mode, or those proprietary components.",
+  "notesStatus": "unverified-against-user-phone",
+  "missingComponents": [
+    "proprietary-imaging-component"
+  ],
+  "claimsCompleteFirmware": false,
+  "modelApplicability": "Not matched to a specific Galaxy S23 unit. A public kernel tree for one model or build does not establish every S23 variant.",
+  "firmwareApplicability": "Unverified against the user's phone firmware. The source package version was not read from the device."
+}

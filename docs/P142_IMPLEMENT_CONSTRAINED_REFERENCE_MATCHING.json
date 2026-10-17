@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "phase": "P142",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p142-reference-match",
+  "claim": "constrained-parameter-suggestion-host-reference",
+  "applyMutant": false,
+  "source": {
+    "source_sha256": "51034d33f22b36d22d2f88ab3253013ea702b2cfef5a7e9b2e14c26aaeddba36",
+    "lighting": "flat-overhead",
+    "composition": "flat-overhead-coverage",
+    "mean_luma": 0.5,
+    "contrast": 1.0,
+    "saturation": 1.0,
+    "texture_energy": 0.22
+  },
+  "reference": {
+    "approved": true,
+    "lighting": "dramatic-directional",
+    "composition": "dramatic-directional-key",
+    "mean_luma": 1.0,
+    "contrast": 1.2,
+    "saturation": 0.85,
+    "texture_energy": 0.61
+  },
+  "suggestion": {
+    "method": "parameters",
+    "exposure": 1.0,
+    "contrast": 1.2,
+    "saturation": 0.85,
+    "output_sha256": "51034d33f22b36d22d2f88ab3253013ea702b2cfef5a7e9b2e14c26aaeddba36",
+    "label": "parameter-suggestion",
+    "face_landmark_drift": null,
+    "claims_new_source": false,
+    "recreates_lighting_geometry": false,
+    "replaces_scene_texture": false,
+    "changes_facial_geometry": false
+  }
+}

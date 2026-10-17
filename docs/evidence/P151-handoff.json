@@ -1,0 +1,50 @@
+{
+  "phase": "P151",
+  "title": "Generate honest release notes and capability badges",
+  "deliverable": "Evidence-driven release notes and claim audit",
+  "caseIds": [
+    "TC-P151-01",
+    "TC-P151-02",
+    "TC-P151-03",
+    "TC-P151-04",
+    "TC-P151-05",
+    "TC-P151-06",
+    "TC-P151-07",
+    "TC-P151-08"
+  ],
+  "changedFiles": [
+    "docs/P151_GENERATE_HONEST_RELEASE_NOTES_AND_CAPABILITY_BADGES.md",
+    "docs/P151_GENERATE_HONEST_RELEASE_NOTES_AND_CAPABILITY_BADGES.json",
+    "docs/evidence/P151-handoff.json",
+    "scripts/gates/p151_generate_honest_release_notes_and_capability_badges.py",
+    "scripts/gates/p151_tc01.py",
+    "scripts/gates/p151_tc02.py",
+    "scripts/gates/p151_tc03.py",
+    "scripts/gates/p151_tc04.py",
+    "scripts/gates/p151_tc05.py",
+    "scripts/gates/p151_tc06.py",
+    "scripts/gates/p151_tc07.py",
+    "scripts/gates/p151_tc08.py",
+    "scripts/tests/test_p151_generate_honest_release_notes_and_capability_badges.py",
+    "scripts/tests/test_p151_tc01.py",
+    "scripts/tests/test_p151_tc02.py",
+    "scripts/tests/test_p151_tc03.py",
+    "scripts/tests/test_p151_tc04.py",
+    "scripts/tests/test_p151_tc05.py",
+    "scripts/tests/test_p151_tc06.py",
+    "scripts/tests/test_p151_tc07.py",
+    "scripts/tests/test_p151_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p151*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P152",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

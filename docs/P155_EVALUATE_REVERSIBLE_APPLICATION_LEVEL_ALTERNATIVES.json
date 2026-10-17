@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "phase": "P155",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p155-reversible-alternatives",
+  "claim": "reversible-application-level-alternatives-host-reference",
+  "applyMutant": false,
+  "alternatives": [
+    {
+      "name": "alternate-stream-combinations",
+      "tried": true,
+      "result": "available"
+    },
+    {
+      "name": "smaller-source-sizes",
+      "tried": false,
+      "result": "untested"
+    },
+    {
+      "name": "p010-image",
+      "tried": true,
+      "result": "unavailable"
+    },
+    {
+      "name": "surface-ten-bit-encoder",
+      "tried": true,
+      "result": "available"
+    },
+    {
+      "name": "deferred-development",
+      "tried": true,
+      "result": "available"
+    },
+    {
+      "name": "cpu-gpu-scheduling",
+      "tried": false,
+      "result": "untested"
+    },
+    {
+      "name": "retained-raw-workflows",
+      "tried": true,
+      "result": "available"
+    }
+  ],
+  "conclusion": "sensor-to-log-not-impossible"
+}

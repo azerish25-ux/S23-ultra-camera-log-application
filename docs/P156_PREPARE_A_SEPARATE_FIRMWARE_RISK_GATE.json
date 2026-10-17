@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "phase": "P156",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p156-firmware-risk-gate",
+  "claim": "firmware-authorization-checklist-host-reference",
+  "applyMutant": false,
+  "device_serial": "R5CW10S23A",
+  "image_digest": "b71ea88d76670a0b8cd856257bc33ce9c10083de80718749b8a3a13695f6ed14",
+  "user_authorized": false,
+  "stop_conditions": [
+    "permanent-state-change",
+    "unverified-image",
+    "no-confirmed-recovery-route-for-exact-device-variant",
+    "user-not-authorized",
+    "general-app-request-does-not-authorize-flashing"
+  ],
+  "similar_name_only": false,
+  "model_variant": "SM-S911B",
+  "bootloader_state": "locked",
+  "verified_backups": false,
+  "recovery_image": "unconfirmed",
+  "recovery_confirmed": false,
+  "rollback_limits": "rollback-not-confirmed",
+  "security_consequences": "bootloader-or-knox-security-state-may-change",
+  "permanent_state_changes": "warranty-bit-or-efuse-may-be-permanent",
+  "image_verified": false,
+  "exact_device_match": false,
+  "general_app_request": true,
+  "device_specific_authorization": false,
+  "claims_proceed": false
+}

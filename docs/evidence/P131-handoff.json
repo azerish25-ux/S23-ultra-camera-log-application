@@ -1,0 +1,50 @@
+{
+  "phase": "P131",
+  "title": "Design manual controls for deliberate operation",
+  "deliverable": "Manual interaction contract and draft-state tests",
+  "caseIds": [
+    "TC-P131-01",
+    "TC-P131-02",
+    "TC-P131-03",
+    "TC-P131-04",
+    "TC-P131-05",
+    "TC-P131-06",
+    "TC-P131-07",
+    "TC-P131-08"
+  ],
+  "changedFiles": [
+    "docs/P131_DESIGN_MANUAL_CONTROLS_FOR_DELIBERATE_OPERATION.md",
+    "docs/P131_DESIGN_MANUAL_CONTROLS_FOR_DELIBERATE_OPERATION.json",
+    "docs/evidence/P131-handoff.json",
+    "scripts/gates/p131_design_manual_controls_for_deliberate_operation.py",
+    "scripts/gates/p131_tc01.py",
+    "scripts/gates/p131_tc02.py",
+    "scripts/gates/p131_tc03.py",
+    "scripts/gates/p131_tc04.py",
+    "scripts/gates/p131_tc05.py",
+    "scripts/gates/p131_tc06.py",
+    "scripts/gates/p131_tc07.py",
+    "scripts/gates/p131_tc08.py",
+    "scripts/tests/test_p131_design_manual_controls_for_deliberate_operation.py",
+    "scripts/tests/test_p131_tc01.py",
+    "scripts/tests/test_p131_tc02.py",
+    "scripts/tests/test_p131_tc03.py",
+    "scripts/tests/test_p131_tc04.py",
+    "scripts/tests/test_p131_tc05.py",
+    "scripts/tests/test_p131_tc06.py",
+    "scripts/tests/test_p131_tc07.py",
+    "scripts/tests/test_p131_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p131*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P132",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

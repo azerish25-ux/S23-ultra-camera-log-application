@@ -1,0 +1,50 @@
+{
+  "phase": "P152",
+  "title": "Run the production readiness review",
+  "deliverable": "Production readiness dossier and signed-off decision record",
+  "caseIds": [
+    "TC-P152-01",
+    "TC-P152-02",
+    "TC-P152-03",
+    "TC-P152-04",
+    "TC-P152-05",
+    "TC-P152-06",
+    "TC-P152-07",
+    "TC-P152-08"
+  ],
+  "changedFiles": [
+    "docs/P152_RUN_THE_PRODUCTION_READINESS_REVIEW.md",
+    "docs/P152_RUN_THE_PRODUCTION_READINESS_REVIEW.json",
+    "docs/evidence/P152-handoff.json",
+    "scripts/gates/p152_run_the_production_readiness_review.py",
+    "scripts/gates/p152_tc01.py",
+    "scripts/gates/p152_tc02.py",
+    "scripts/gates/p152_tc03.py",
+    "scripts/gates/p152_tc04.py",
+    "scripts/gates/p152_tc05.py",
+    "scripts/gates/p152_tc06.py",
+    "scripts/gates/p152_tc07.py",
+    "scripts/gates/p152_tc08.py",
+    "scripts/tests/test_p152_run_the_production_readiness_review.py",
+    "scripts/tests/test_p152_tc01.py",
+    "scripts/tests/test_p152_tc02.py",
+    "scripts/tests/test_p152_tc03.py",
+    "scripts/tests/test_p152_tc04.py",
+    "scripts/tests/test_p152_tc05.py",
+    "scripts/tests/test_p152_tc06.py",
+    "scripts/tests/test_p152_tc07.py",
+    "scripts/tests/test_p152_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p152*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P153",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

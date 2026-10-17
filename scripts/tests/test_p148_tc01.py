@@ -1,0 +1,92 @@
+"""Tests for TC-P148-01."""
+
+from __future__ import annotations
+
+import importlib.util
+import unittest
+from pathlib import Path
+
+_SPEC = importlib.util.spec_from_file_location(
+    "p148_tc01",
+    Path(__file__).resolve().parents[1] / "gates" / "p148_tc01.py",
+)
+_MODULE = importlib.util.module_from_spec(_SPEC)
+_SPEC.loader.exec_module(_MODULE)
+evaluate = _MODULE.evaluate
+_GATE = _MODULE._GATE
+
+KEYS = ("caseId", "decision", "reasons", "rejectedClaims", "preservedResults", "openQuestions")
+
+
+def payload(**overrides):
+    base = _GATE.core_payload(repeat="emulator-only")
+    base.update({
+        "results": [
+            {"id": "host-arithmetic", "status": "pass", "critical": False},
+            {"id": "gpu-color", "status": "fail", "critical": True},
+            {"id": "physical-codec", "status": "unavailable", "critical": True},
+        ],
+        "summary": {"pass": 1, "fail": 1, "skip": 0, "unavailable": 1},
+        "assertedClaims": [],
+        "claimRequirements": {"release-fully-qualified": ["gpu-color", "physical-codec"]},
+    })
+    base.update(overrides)
+    return base
+
+
+class TCP14801(unittest.TestCase):
+    def assert_contract(self, result, evidence="p148-offline-privacy"):
+        self.assertEqual(tuple(result), KEYS)
+        self.assertEqual(result["caseId"], "TC-P148-01")
+        self.assertNotIn(result["decision"], {"qualified", "allowed"})
+        self.assertIn(evidence, result["preservedResults"])
+        self.assertIn("physical S23 measurement was not run", result["openQuestions"])
+        self.assertTrue(result["reasons"])
+
+    def test_visible_categories_without_blocked_claims_are_recorded(self):
+        result = evaluate(payload())
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "recorded")
+        self.assertEqual(result["rejectedClaims"], [])
+        self.assertEqual(result["preservedResults"][1]["network_endpoints"], [])
+        self.assertEqual(_MODULE.CASE["name"], "Skipped test laundering")
+        self.assertEqual(_MODULE.NEGATIVE_TOKEN, "skips-counted-as-passes")
+
+    def test_counting_skips_as_passes_is_rejected(self):
+        result = evaluate(payload(summary={"pass": 2, "fail": 1, "skip": 0, "unavailable": 0}))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_MODULE.NEGATIVE_TOKEN, result["rejectedClaims"])
+        self.assertIn(_MODULE.CASE["negative"], result["reasons"])
+
+    def test_asserting_a_claim_on_failing_evidence_is_rejected(self):
+        result = evaluate(payload(assertedClaims=["release-fully-qualified"]))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_MODULE.CLAIM_BLOCKED, result["rejectedClaims"])
+
+    def test_hidden_category_is_rejected(self):
+        result = evaluate(payload(summary={"pass": 1, "fail": 1, "skip": 0}))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_MODULE.CATEGORY_HIDDEN, result["rejectedClaims"])
+
+    def test_offline_thumbnail_payload_is_rejected_inside_the_case(self):
+        result = evaluate(payload(analytics_payload=["thumb-001"]))
+        self.assert_contract(result)
+        self.assertEqual(result["decision"], "rejected")
+        self.assertIn(_GATE.THUMBNAIL_OFFLINE, result["rejectedClaims"])
+
+    def test_second_repeat_preserves_a_different_evidence_id(self):
+        evidence = "p148-tc01-gpu"
+        result = evaluate(payload(evidenceId=evidence, repeat="GPU-unavailable"))
+        self.assert_contract(result, evidence)
+        self.assertEqual(result["decision"], "recorded")
+
+    def test_invalid_payload_raises(self):
+        with self.assertRaises(ValueError):
+            evaluate({})
+        with self.assertRaises(ValueError):
+            evaluate([])
+        with self.assertRaises(ValueError):
+            evaluate(payload(results=[]))

@@ -1,0 +1,309 @@
+{
+  "schemaVersion": 1,
+  "phase": "P147",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p147-secure-import",
+  "claim": "secure-media-and-profile-import-boundaries-host-reference",
+  "imports": [
+    {
+      "id": "media-dng",
+      "kind": "media",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "dng",
+      "magic": "dng",
+      "header_validated": true,
+      "paths": [
+        "imports/media-dng.dng"
+      ],
+      "trust_extension": false,
+      "allocated": 1024,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/media-dng.dng",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "archive-zip",
+      "kind": "archive",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "zip",
+      "magic": "PK",
+      "header_validated": true,
+      "paths": [
+        "imports/archive-zip.zip",
+        "luts/stock.cube"
+      ],
+      "trust_extension": false,
+      "allocated": 1024,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/archive-zip.zip",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "lut-cube",
+      "kind": "lut",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "cube",
+      "magic": "cube",
+      "header_validated": true,
+      "paths": [
+        "imports/lut-cube.cube"
+      ],
+      "trust_extension": false,
+      "allocated": 1024,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/lut-cube.cube",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "model-onnx",
+      "kind": "model",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "onnx",
+      "magic": "onnx",
+      "header_validated": true,
+      "paths": [
+        "imports/model-onnx.onnx"
+      ],
+      "trust_extension": false,
+      "allocated": 1024,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/model-onnx.onnx",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "profile-json",
+      "kind": "profile",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "json",
+      "magic": "json",
+      "header_validated": true,
+      "paths": [
+        "imports/profile-json.json"
+      ],
+      "trust_extension": false,
+      "allocated": 1024,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/profile-json.json",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    }
+  ],
+  "corpus": [
+    {
+      "id": "nan-profile",
+      "kind": "profile",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "json",
+      "magic": "json",
+      "header_validated": true,
+      "paths": [
+        "imports/nan-profile.json"
+      ],
+      "trust_extension": false,
+      "allocated": 0,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        "NaN",
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/nan-profile.json",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "huge-dimension",
+      "kind": "media",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "dng",
+      "magic": "dng",
+      "header_validated": true,
+      "paths": [
+        "imports/huge-dimension.dng"
+      ],
+      "trust_extension": false,
+      "allocated": 0,
+      "width": 8193,
+      "height": 8193,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/huge-dimension.dng",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "archive-traversal",
+      "kind": "archive",
+      "declared_size": 1024,
+      "actual_size": 1024,
+      "extension": "zip",
+      "magic": "PK",
+      "header_validated": true,
+      "paths": [
+        "../escape"
+      ],
+      "trust_extension": false,
+      "allocated": 0,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/archive-traversal.zip",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    },
+    {
+      "id": "trust-extension-unvalidated-header",
+      "kind": "lut",
+      "declared_size": 8000001,
+      "actual_size": 64,
+      "extension": "cube",
+      "magic": "PK",
+      "header_validated": false,
+      "paths": [
+        "imports/trust-extension-unvalidated-header.cube"
+      ],
+      "trust_extension": true,
+      "allocated": 0,
+      "width": 1920,
+      "height": 1080,
+      "values": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nesting": 1,
+      "decompression_ratio": 1,
+      "uri": "file://imports/trust-extension-unvalidated-header.cube",
+      "hash_valid": true,
+      "escaped": false,
+      "source_corrupted": false
+    }
+  ]
+}

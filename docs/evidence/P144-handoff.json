@@ -1,0 +1,50 @@
+{
+  "phase": "P144",
+  "title": "Validate recipe fidelity and honesty",
+  "deliverable": "Recipe evaluation report and catalogue quality policy",
+  "caseIds": [
+    "TC-P144-01",
+    "TC-P144-02",
+    "TC-P144-03",
+    "TC-P144-04",
+    "TC-P144-05",
+    "TC-P144-06",
+    "TC-P144-07",
+    "TC-P144-08"
+  ],
+  "changedFiles": [
+    "docs/P144_VALIDATE_RECIPE_FIDELITY_AND_HONESTY.md",
+    "docs/P144_VALIDATE_RECIPE_FIDELITY_AND_HONESTY.json",
+    "docs/evidence/P144-handoff.json",
+    "scripts/gates/p144_validate_recipe_fidelity_and_honesty.py",
+    "scripts/gates/p144_tc01.py",
+    "scripts/gates/p144_tc02.py",
+    "scripts/gates/p144_tc03.py",
+    "scripts/gates/p144_tc04.py",
+    "scripts/gates/p144_tc05.py",
+    "scripts/gates/p144_tc06.py",
+    "scripts/gates/p144_tc07.py",
+    "scripts/gates/p144_tc08.py",
+    "scripts/tests/test_p144_validate_recipe_fidelity_and_honesty.py",
+    "scripts/tests/test_p144_tc01.py",
+    "scripts/tests/test_p144_tc02.py",
+    "scripts/tests/test_p144_tc03.py",
+    "scripts/tests/test_p144_tc04.py",
+    "scripts/tests/test_p144_tc05.py",
+    "scripts/tests/test_p144_tc06.py",
+    "scripts/tests/test_p144_tc07.py",
+    "scripts/tests/test_p144_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p144*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P145",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification. A star rating cannot prove a stock or lens identification."
+}

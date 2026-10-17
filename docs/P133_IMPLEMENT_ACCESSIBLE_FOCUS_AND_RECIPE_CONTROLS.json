@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "phase": "P133",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p133-accessible-focus-recipe",
+  "claim": "accessible-focus-and-recipe-controls-host-reference",
+  "applyMutant": false,
+  "controls": [
+    {
+      "id": "record",
+      "accessible_name": "Record",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "capture",
+      "group": "record",
+      "panel": "capture",
+      "state_description": "ready",
+      "color_only_failure": false
+    },
+    {
+      "id": "stop",
+      "accessible_name": "Stop",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "capture",
+      "group": "stop",
+      "panel": "capture",
+      "state_description": "available",
+      "color_only_failure": false
+    },
+    {
+      "id": "source-status",
+      "accessible_name": "Source status",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "capture",
+      "group": "source",
+      "panel": "capture",
+      "state_description": "1080p SDR",
+      "color_only_failure": false
+    },
+    {
+      "id": "audio-warning",
+      "accessible_name": "Audio warning",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "warning",
+      "group": "audio-warning",
+      "panel": "monitoring",
+      "state_description": "audio warning readable",
+      "color_only_failure": false
+    },
+    {
+      "id": "storage-warning",
+      "accessible_name": "Storage warning",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "warning",
+      "group": "storage-warning",
+      "panel": "monitoring",
+      "state_description": "storage warning readable",
+      "color_only_failure": false
+    },
+    {
+      "id": "grey-reference-roi",
+      "accessible_name": "Grey reference ROI",
+      "role": "stepper",
+      "path": "stepper",
+      "target_size": 48,
+      "family": "roi",
+      "group": "grey-reference-roi",
+      "panel": "focus",
+      "state_description": "selected",
+      "color_only_failure": false
+    },
+    {
+      "id": "virtual-focus",
+      "accessible_name": "Virtual focus",
+      "role": "slider",
+      "path": "slider",
+      "target_size": 48,
+      "family": "focus",
+      "group": "virtual-focus",
+      "panel": "focus",
+      "state_description": "changed",
+      "color_only_failure": false
+    },
+    {
+      "id": "cancel-development",
+      "accessible_name": "Cancel development",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "cancel",
+      "group": "cancel-development",
+      "panel": "development",
+      "state_description": "available without a precision gesture",
+      "color_only_failure": false
+    },
+    {
+      "id": "film-recipe",
+      "accessible_name": "Film recipe",
+      "role": "stepper",
+      "path": "stepper",
+      "target_size": 48,
+      "family": "recipe",
+      "group": "film-recipe",
+      "panel": "recipe",
+      "state_description": "large-format film simulated",
+      "color_only_failure": false
+    },
+    {
+      "id": "recipe-evidence",
+      "accessible_name": "Recipe evidence",
+      "role": "button",
+      "path": "button",
+      "target_size": 48,
+      "family": "recipe",
+      "group": "recipe-evidence",
+      "panel": "recipe",
+      "state_description": "simulated",
+      "color_only_failure": false
+    }
+  ],
+  "focusOrder": [
+    "record",
+    "stop",
+    "source-status",
+    "audio-warning",
+    "storage-warning",
+    "grey-reference-roi",
+    "virtual-focus",
+    "cancel-development",
+    "film-recipe",
+    "recipe-evidence"
+  ]
+}

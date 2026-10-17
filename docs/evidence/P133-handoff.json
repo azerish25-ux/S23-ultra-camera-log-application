@@ -1,0 +1,50 @@
+{
+  "phase": "P133",
+  "title": "Implement accessible focus and recipe controls",
+  "deliverable": "Accessibility interaction tests and semantic control audit",
+  "caseIds": [
+    "TC-P133-01",
+    "TC-P133-02",
+    "TC-P133-03",
+    "TC-P133-04",
+    "TC-P133-05",
+    "TC-P133-06",
+    "TC-P133-07",
+    "TC-P133-08"
+  ],
+  "changedFiles": [
+    "docs/P133_IMPLEMENT_ACCESSIBLE_FOCUS_AND_RECIPE_CONTROLS.md",
+    "docs/P133_IMPLEMENT_ACCESSIBLE_FOCUS_AND_RECIPE_CONTROLS.json",
+    "docs/evidence/P133-handoff.json",
+    "scripts/gates/p133_implement_accessible_focus_and_recipe_controls.py",
+    "scripts/gates/p133_tc01.py",
+    "scripts/gates/p133_tc02.py",
+    "scripts/gates/p133_tc03.py",
+    "scripts/gates/p133_tc04.py",
+    "scripts/gates/p133_tc05.py",
+    "scripts/gates/p133_tc06.py",
+    "scripts/gates/p133_tc07.py",
+    "scripts/gates/p133_tc08.py",
+    "scripts/tests/test_p133_implement_accessible_focus_and_recipe_controls.py",
+    "scripts/tests/test_p133_tc01.py",
+    "scripts/tests/test_p133_tc02.py",
+    "scripts/tests/test_p133_tc03.py",
+    "scripts/tests/test_p133_tc04.py",
+    "scripts/tests/test_p133_tc05.py",
+    "scripts/tests/test_p133_tc06.py",
+    "scripts/tests/test_p133_tc07.py",
+    "scripts/tests/test_p133_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p133*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P134",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

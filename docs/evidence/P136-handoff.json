@@ -1,0 +1,50 @@
+{
+  "phase": "P136",
+  "title": "Run usability acceptance on the physical phone",
+  "deliverable": "Physical usability report and prioritized corrections",
+  "caseIds": [
+    "TC-P136-01",
+    "TC-P136-02",
+    "TC-P136-03",
+    "TC-P136-04",
+    "TC-P136-05",
+    "TC-P136-06",
+    "TC-P136-07",
+    "TC-P136-08"
+  ],
+  "changedFiles": [
+    "docs/P136_RUN_USABILITY_ACCEPTANCE_ON_THE_PHYSICAL_PHONE.md",
+    "docs/P136_RUN_USABILITY_ACCEPTANCE_ON_THE_PHYSICAL_PHONE.json",
+    "docs/evidence/P136-handoff.json",
+    "scripts/gates/p136_run_usability_acceptance_on_the_physical_phone.py",
+    "scripts/gates/p136_tc01.py",
+    "scripts/gates/p136_tc02.py",
+    "scripts/gates/p136_tc03.py",
+    "scripts/gates/p136_tc04.py",
+    "scripts/gates/p136_tc05.py",
+    "scripts/gates/p136_tc06.py",
+    "scripts/gates/p136_tc07.py",
+    "scripts/gates/p136_tc08.py",
+    "scripts/tests/test_p136_run_usability_acceptance_on_the_physical_phone.py",
+    "scripts/tests/test_p136_tc01.py",
+    "scripts/tests/test_p136_tc02.py",
+    "scripts/tests/test_p136_tc03.py",
+    "scripts/tests/test_p136_tc04.py",
+    "scripts/tests/test_p136_tc05.py",
+    "scripts/tests/test_p136_tc06.py",
+    "scripts/tests/test_p136_tc07.py",
+    "scripts/tests/test_p136_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p136*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P137",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

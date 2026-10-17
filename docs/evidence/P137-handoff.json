@@ -1,0 +1,50 @@
+{
+  "phase": "P137",
+  "title": "Define the movie evidence schema",
+  "deliverable": "Movie-claim schema and evidence-state tests",
+  "caseIds": [
+    "TC-P137-01",
+    "TC-P137-02",
+    "TC-P137-03",
+    "TC-P137-04",
+    "TC-P137-05",
+    "TC-P137-06",
+    "TC-P137-07",
+    "TC-P137-08"
+  ],
+  "changedFiles": [
+    "docs/P137_DEFINE_THE_MOVIE_EVIDENCE_SCHEMA.md",
+    "docs/P137_DEFINE_THE_MOVIE_EVIDENCE_SCHEMA.json",
+    "docs/evidence/P137-handoff.json",
+    "scripts/gates/p137_define_the_movie_evidence_schema.py",
+    "scripts/gates/p137_tc01.py",
+    "scripts/gates/p137_tc02.py",
+    "scripts/gates/p137_tc03.py",
+    "scripts/gates/p137_tc04.py",
+    "scripts/gates/p137_tc05.py",
+    "scripts/gates/p137_tc06.py",
+    "scripts/gates/p137_tc07.py",
+    "scripts/gates/p137_tc08.py",
+    "scripts/tests/test_p137_define_the_movie_evidence_schema.py",
+    "scripts/tests/test_p137_tc01.py",
+    "scripts/tests/test_p137_tc02.py",
+    "scripts/tests/test_p137_tc03.py",
+    "scripts/tests/test_p137_tc04.py",
+    "scripts/tests/test_p137_tc05.py",
+    "scripts/tests/test_p137_tc06.py",
+    "scripts/tests/test_p137_tc07.py",
+    "scripts/tests/test_p137_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p137*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P138",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

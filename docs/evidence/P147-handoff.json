@@ -1,0 +1,50 @@
+{
+  "phase": "P147",
+  "title": "Secure media and profile import boundaries",
+  "deliverable": "Import threat model and parser fuzz corpus",
+  "caseIds": [
+    "TC-P147-01",
+    "TC-P147-02",
+    "TC-P147-03",
+    "TC-P147-04",
+    "TC-P147-05",
+    "TC-P147-06",
+    "TC-P147-07",
+    "TC-P147-08"
+  ],
+  "changedFiles": [
+    "docs/P147_SECURE_MEDIA_AND_PROFILE_IMPORT_BOUNDARIES.md",
+    "docs/P147_SECURE_MEDIA_AND_PROFILE_IMPORT_BOUNDARIES.json",
+    "docs/evidence/P147-handoff.json",
+    "scripts/gates/p147_secure_media_and_profile_import_boundaries.py",
+    "scripts/gates/p147_tc01.py",
+    "scripts/gates/p147_tc02.py",
+    "scripts/gates/p147_tc03.py",
+    "scripts/gates/p147_tc04.py",
+    "scripts/gates/p147_tc05.py",
+    "scripts/gates/p147_tc06.py",
+    "scripts/gates/p147_tc07.py",
+    "scripts/gates/p147_tc08.py",
+    "scripts/tests/test_p147_secure_media_and_profile_import_boundaries.py",
+    "scripts/tests/test_p147_tc01.py",
+    "scripts/tests/test_p147_tc02.py",
+    "scripts/tests/test_p147_tc03.py",
+    "scripts/tests/test_p147_tc04.py",
+    "scripts/tests/test_p147_tc05.py",
+    "scripts/tests/test_p147_tc06.py",
+    "scripts/tests/test_p147_tc07.py",
+    "scripts/tests/test_p147_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p147*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P148",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

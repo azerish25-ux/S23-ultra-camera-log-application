@@ -1,0 +1,50 @@
+{
+  "phase": "P135",
+  "title": "Build side-by-side comparison tools",
+  "deliverable": "Comparison viewer and synchronized playback tests",
+  "caseIds": [
+    "TC-P135-01",
+    "TC-P135-02",
+    "TC-P135-03",
+    "TC-P135-04",
+    "TC-P135-05",
+    "TC-P135-06",
+    "TC-P135-07",
+    "TC-P135-08"
+  ],
+  "changedFiles": [
+    "docs/P135_BUILD_SIDE_BY_SIDE_COMPARISON_TOOLS.md",
+    "docs/P135_BUILD_SIDE_BY_SIDE_COMPARISON_TOOLS.json",
+    "docs/evidence/P135-handoff.json",
+    "scripts/gates/p135_build_side_by_side_comparison_tools.py",
+    "scripts/gates/p135_tc01.py",
+    "scripts/gates/p135_tc02.py",
+    "scripts/gates/p135_tc03.py",
+    "scripts/gates/p135_tc04.py",
+    "scripts/gates/p135_tc05.py",
+    "scripts/gates/p135_tc06.py",
+    "scripts/gates/p135_tc07.py",
+    "scripts/gates/p135_tc08.py",
+    "scripts/tests/test_p135_build_side_by_side_comparison_tools.py",
+    "scripts/tests/test_p135_tc01.py",
+    "scripts/tests/test_p135_tc02.py",
+    "scripts/tests/test_p135_tc03.py",
+    "scripts/tests/test_p135_tc04.py",
+    "scripts/tests/test_p135_tc05.py",
+    "scripts/tests/test_p135_tc06.py",
+    "scripts/tests/test_p135_tc07.py",
+    "scripts/tests/test_p135_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p135*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P136",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

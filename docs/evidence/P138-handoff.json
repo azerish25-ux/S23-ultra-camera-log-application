@@ -1,0 +1,50 @@
+{
+  "phase": "P138",
+  "title": "Build the first sourced recipe family",
+  "deliverable": "Initial recipe family with source-to-field traceability",
+  "caseIds": [
+    "TC-P138-01",
+    "TC-P138-02",
+    "TC-P138-03",
+    "TC-P138-04",
+    "TC-P138-05",
+    "TC-P138-06",
+    "TC-P138-07",
+    "TC-P138-08"
+  ],
+  "changedFiles": [
+    "docs/P138_BUILD_THE_FIRST_SOURCED_RECIPE_FAMILY.md",
+    "docs/P138_BUILD_THE_FIRST_SOURCED_RECIPE_FAMILY.json",
+    "docs/evidence/P138-handoff.json",
+    "scripts/gates/p138_build_the_first_sourced_recipe_family.py",
+    "scripts/gates/p138_tc01.py",
+    "scripts/gates/p138_tc02.py",
+    "scripts/gates/p138_tc03.py",
+    "scripts/gates/p138_tc04.py",
+    "scripts/gates/p138_tc05.py",
+    "scripts/gates/p138_tc06.py",
+    "scripts/gates/p138_tc07.py",
+    "scripts/gates/p138_tc08.py",
+    "scripts/tests/test_p138_build_the_first_sourced_recipe_family.py",
+    "scripts/tests/test_p138_tc01.py",
+    "scripts/tests/test_p138_tc02.py",
+    "scripts/tests/test_p138_tc03.py",
+    "scripts/tests/test_p138_tc04.py",
+    "scripts/tests/test_p138_tc05.py",
+    "scripts/tests/test_p138_tc06.py",
+    "scripts/tests/test_p138_tc07.py",
+    "scripts/tests/test_p138_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p138*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P139",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}

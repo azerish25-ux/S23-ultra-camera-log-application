@@ -1,0 +1,50 @@
+{
+  "phase": "P134",
+  "title": "Design transparent progress and failure states",
+  "deliverable": "Progress semantics and failure-state screenshots/tests",
+  "caseIds": [
+    "TC-P134-01",
+    "TC-P134-02",
+    "TC-P134-03",
+    "TC-P134-04",
+    "TC-P134-05",
+    "TC-P134-06",
+    "TC-P134-07",
+    "TC-P134-08"
+  ],
+  "changedFiles": [
+    "docs/P134_DESIGN_TRANSPARENT_PROGRESS_AND_FAILURE_STATES.md",
+    "docs/P134_DESIGN_TRANSPARENT_PROGRESS_AND_FAILURE_STATES.json",
+    "docs/evidence/P134-handoff.json",
+    "scripts/gates/p134_design_transparent_progress_and_failure_states.py",
+    "scripts/gates/p134_tc01.py",
+    "scripts/gates/p134_tc02.py",
+    "scripts/gates/p134_tc03.py",
+    "scripts/gates/p134_tc04.py",
+    "scripts/gates/p134_tc05.py",
+    "scripts/gates/p134_tc06.py",
+    "scripts/gates/p134_tc07.py",
+    "scripts/gates/p134_tc08.py",
+    "scripts/tests/test_p134_design_transparent_progress_and_failure_states.py",
+    "scripts/tests/test_p134_tc01.py",
+    "scripts/tests/test_p134_tc02.py",
+    "scripts/tests/test_p134_tc03.py",
+    "scripts/tests/test_p134_tc04.py",
+    "scripts/tests/test_p134_tc05.py",
+    "scripts/tests/test_p134_tc06.py",
+    "scripts/tests/test_p134_tc07.py",
+    "scripts/tests/test_p134_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p134*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P135",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

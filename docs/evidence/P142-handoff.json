@@ -1,0 +1,50 @@
+{
+  "phase": "P142",
+  "title": "Implement constrained reference matching",
+  "deliverable": "Parameter suggestion prototype and structure-preservation tests",
+  "caseIds": [
+    "TC-P142-01",
+    "TC-P142-02",
+    "TC-P142-03",
+    "TC-P142-04",
+    "TC-P142-05",
+    "TC-P142-06",
+    "TC-P142-07",
+    "TC-P142-08"
+  ],
+  "changedFiles": [
+    "docs/P142_IMPLEMENT_CONSTRAINED_REFERENCE_MATCHING.md",
+    "docs/P142_IMPLEMENT_CONSTRAINED_REFERENCE_MATCHING.json",
+    "docs/evidence/P142-handoff.json",
+    "scripts/gates/p142_implement_constrained_reference_matching.py",
+    "scripts/gates/p142_tc01.py",
+    "scripts/gates/p142_tc02.py",
+    "scripts/gates/p142_tc03.py",
+    "scripts/gates/p142_tc04.py",
+    "scripts/gates/p142_tc05.py",
+    "scripts/gates/p142_tc06.py",
+    "scripts/gates/p142_tc07.py",
+    "scripts/gates/p142_tc08.py",
+    "scripts/tests/test_p142_implement_constrained_reference_matching.py",
+    "scripts/tests/test_p142_tc01.py",
+    "scripts/tests/test_p142_tc02.py",
+    "scripts/tests/test_p142_tc03.py",
+    "scripts/tests/test_p142_tc04.py",
+    "scripts/tests/test_p142_tc05.py",
+    "scripts/tests/test_p142_tc06.py",
+    "scripts/tests/test_p142_tc07.py",
+    "scripts/tests/test_p142_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p142*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P143",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "phase": "P138",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p138-recipe-family",
+  "claim": "sourced-recipe-family-host-reference",
+  "applyMutant": false,
+  "max_entries": 12,
+  "family": [
+    {
+      "recipe_id": "daylight-5219",
+      "film_title": "North Sea Ledger",
+      "stock": "5219",
+      "lens": null,
+      "traces": [
+        {
+          "field": "stock",
+          "source_id": "prod-acct-daylight"
+        }
+      ],
+      "variant": "daylight",
+      "scope": "daylight exteriors",
+      "reconstruction": false,
+      "documented": true
+    },
+    {
+      "recipe_id": "low-light-5219",
+      "film_title": "North Sea Ledger",
+      "stock": "5219",
+      "lens": "Cooke S4 35mm",
+      "traces": [
+        {
+          "field": "stock",
+          "source_id": "prod-acct-low-light"
+        },
+        {
+          "field": "lens",
+          "source_id": "prod-acct-low-light"
+        }
+      ],
+      "variant": "low-light",
+      "scope": "night interiors",
+      "reconstruction": false,
+      "documented": true
+    },
+    {
+      "recipe_id": "monochrome-5222",
+      "film_title": "North Sea Ledger",
+      "stock": "5222",
+      "lens": null,
+      "traces": [
+        {
+          "field": "stock",
+          "source_id": "prod-acct-mono"
+        }
+      ],
+      "variant": "monochrome",
+      "scope": "monochrome inserts",
+      "reconstruction": false,
+      "documented": true
+    },
+    {
+      "recipe_id": "format-5207",
+      "film_title": "North Sea Ledger",
+      "stock": "5207",
+      "lens": null,
+      "traces": [
+        {
+          "field": "stock",
+          "source_id": "prod-acct-format"
+        }
+      ],
+      "variant": "format",
+      "scope": "65mm plates only",
+      "reconstruction": false,
+      "documented": true
+    },
+    {
+      "recipe_id": "scene-12",
+      "film_title": "North Sea Ledger",
+      "stock": null,
+      "lens": null,
+      "traces": [],
+      "variant": "scene",
+      "scope": "scene 12 only",
+      "reconstruction": true,
+      "documented": false
+    }
+  ]
+}

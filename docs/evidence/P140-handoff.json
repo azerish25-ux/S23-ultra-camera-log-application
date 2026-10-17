@@ -1,0 +1,50 @@
+{
+  "phase": "P140",
+  "title": "Implement offline search and filtering",
+  "deliverable": "Offline search index and deterministic retrieval tests",
+  "caseIds": [
+    "TC-P140-01",
+    "TC-P140-02",
+    "TC-P140-03",
+    "TC-P140-04",
+    "TC-P140-05",
+    "TC-P140-06",
+    "TC-P140-07",
+    "TC-P140-08"
+  ],
+  "changedFiles": [
+    "docs/P140_IMPLEMENT_OFFLINE_SEARCH_AND_FILTERING.md",
+    "docs/P140_IMPLEMENT_OFFLINE_SEARCH_AND_FILTERING.json",
+    "docs/evidence/P140-handoff.json",
+    "scripts/gates/p140_implement_offline_search_and_filtering.py",
+    "scripts/gates/p140_tc01.py",
+    "scripts/gates/p140_tc02.py",
+    "scripts/gates/p140_tc03.py",
+    "scripts/gates/p140_tc04.py",
+    "scripts/gates/p140_tc05.py",
+    "scripts/gates/p140_tc06.py",
+    "scripts/gates/p140_tc07.py",
+    "scripts/gates/p140_tc08.py",
+    "scripts/tests/test_p140_implement_offline_search_and_filtering.py",
+    "scripts/tests/test_p140_tc01.py",
+    "scripts/tests/test_p140_tc02.py",
+    "scripts/tests/test_p140_tc03.py",
+    "scripts/tests/test_p140_tc04.py",
+    "scripts/tests/test_p140_tc05.py",
+    "scripts/tests/test_p140_tc06.py",
+    "scripts/tests/test_p140_tc07.py",
+    "scripts/tests/test_p140_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p140*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P141",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

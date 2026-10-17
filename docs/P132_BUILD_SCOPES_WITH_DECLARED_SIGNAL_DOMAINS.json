@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "phase": "P132",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p132-signal-domains",
+  "claim": "declared-signal-domain-host-reference",
+  "applyMutant": false,
+  "scopes": [
+    {
+      "id": "preview-histogram",
+      "kind": "histogram",
+      "domain": "display_sdr",
+      "sampleEncoding": "display_rgb",
+      "label": "display_preview",
+      "priorLabel": null,
+      "samples": [
+        [
+          16,
+          32,
+          48
+        ],
+        [
+          255,
+          250,
+          240
+        ],
+        [
+          8,
+          8,
+          8
+        ],
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "threshold": null,
+      "inputDomain": null,
+      "samplingResolution": "rgb8",
+      "fresh": true,
+      "certifiesSensorClipping": false,
+      "certifiesTenBit": false,
+      "certifiesSourceBitDepth": false,
+      "declaresSourceClipping": false,
+      "ownsCapture": false,
+      "claimedClippingCount": null
+    },
+    {
+      "id": "preview-clipping",
+      "kind": "clipping",
+      "domain": "display_sdr",
+      "sampleEncoding": "display_rgb",
+      "label": "display_clipping",
+      "priorLabel": null,
+      "samples": [
+        0.2,
+        0.95,
+        0.99,
+        1.0,
+        0.96
+      ],
+      "threshold": 0.95,
+      "inputDomain": null,
+      "samplingResolution": "rgb8",
+      "fresh": true,
+      "certifiesSensorClipping": false,
+      "certifiesTenBit": false,
+      "certifiesSourceBitDepth": false,
+      "declaresSourceClipping": false,
+      "ownsCapture": false,
+      "claimedClippingCount": 3
+    },
+    {
+      "id": "stale-waveform",
+      "kind": "waveform",
+      "domain": "display_sdr",
+      "sampleEncoding": "display_rgb",
+      "label": "stale_display_waveform",
+      "priorLabel": null,
+      "samples": [
+        0.15,
+        0.42,
+        0.33
+      ],
+      "threshold": null,
+      "inputDomain": null,
+      "samplingResolution": "rgb8",
+      "fresh": false,
+      "certifiesSensorClipping": false,
+      "certifiesTenBit": false,
+      "certifiesSourceBitDepth": false,
+      "declaresSourceClipping": false,
+      "ownsCapture": false,
+      "claimedClippingCount": null
+    },
+    {
+      "id": "preview-false-color",
+      "kind": "false_color",
+      "domain": "display_sdr",
+      "sampleEncoding": "display_rgb",
+      "label": "display_false_color",
+      "priorLabel": null,
+      "samples": [
+        0.25,
+        0.5,
+        1.0
+      ],
+      "threshold": null,
+      "inputDomain": "display_sdr",
+      "samplingResolution": "rgb8",
+      "fresh": true,
+      "certifiesSensorClipping": false,
+      "certifiesTenBit": false,
+      "certifiesSourceBitDepth": false,
+      "declaresSourceClipping": false,
+      "ownsCapture": false,
+      "claimedClippingCount": null
+    }
+  ],
+  "source": {
+    "domain": "sensor_code",
+    "samples": [
+      0.4,
+      1.5,
+      3.0,
+      6.0
+    ],
+    "threshold": 14.0,
+    "highRange": true
+  }
+}

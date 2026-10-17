@@ -1,0 +1,50 @@
+{
+  "phase": "P146",
+  "title": "Add property and mutation testing",
+  "deliverable": "Property generators and critical mutation catalogue",
+  "caseIds": [
+    "TC-P146-01",
+    "TC-P146-02",
+    "TC-P146-03",
+    "TC-P146-04",
+    "TC-P146-05",
+    "TC-P146-06",
+    "TC-P146-07",
+    "TC-P146-08"
+  ],
+  "changedFiles": [
+    "docs/P146_ADD_PROPERTY_AND_MUTATION_TESTING.md",
+    "docs/P146_ADD_PROPERTY_AND_MUTATION_TESTING.json",
+    "docs/evidence/P146-handoff.json",
+    "scripts/gates/p146_add_property_and_mutation_testing.py",
+    "scripts/gates/p146_tc01.py",
+    "scripts/gates/p146_tc02.py",
+    "scripts/gates/p146_tc03.py",
+    "scripts/gates/p146_tc04.py",
+    "scripts/gates/p146_tc05.py",
+    "scripts/gates/p146_tc06.py",
+    "scripts/gates/p146_tc07.py",
+    "scripts/gates/p146_tc08.py",
+    "scripts/tests/test_p146_add_property_and_mutation_testing.py",
+    "scripts/tests/test_p146_tc01.py",
+    "scripts/tests/test_p146_tc02.py",
+    "scripts/tests/test_p146_tc03.py",
+    "scripts/tests/test_p146_tc04.py",
+    "scripts/tests/test_p146_tc05.py",
+    "scripts/tests/test_p146_tc06.py",
+    "scripts/tests/test_p146_tc07.py",
+    "scripts/tests/test_p146_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p146*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P147",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "phase": "P144",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p144-recipe-fidelity",
+  "claim": "recipe-fidelity-and-honesty-host-reference",
+  "applyMutant": false,
+  "preferred": {
+    "recipe_id": "visually-preferred-uncertain",
+    "coherence": 0.91,
+    "enjoyment": 0.96,
+    "identification": {
+      "status": "reconstructed",
+      "source_id": null,
+      "evidence_kind": "reconstruction"
+    },
+    "historical_accuracy_claimed": false,
+    "star_rating": 5
+  },
+  "sourced": {
+    "recipe_id": "fully-sourced-less-preferred",
+    "coherence": 0.78,
+    "enjoyment": 0.42,
+    "identification": {
+      "status": "correct",
+      "source_id": "owned-print-source",
+      "evidence_kind": "source"
+    },
+    "historical_accuracy_claimed": true,
+    "star_rating": 2
+  },
+  "policy": {
+    "separate_evidence_from_preference": true,
+    "popular_may_remain_reconstructed": true,
+    "sourced_may_need_artistic_refinement": true,
+    "star_rating_identifies_stock": false,
+    "historical_accuracy_requires_source": true
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "phase": "P160",
+  "title": "Close the programme with a reproducible evidence archive",
+  "deliverable": "Final research archive, maintenance guide, and evidence-bound roadmap",
+  "caseIds": [
+    "TC-P160-01",
+    "TC-P160-02",
+    "TC-P160-03",
+    "TC-P160-04",
+    "TC-P160-05",
+    "TC-P160-06",
+    "TC-P160-07",
+    "TC-P160-08"
+  ],
+  "changedFiles": [
+    "docs/P160_CLOSE_THE_PROGRAMME_WITH_A_REPRODUCIBLE_EVIDENCE_ARCHIVE.md",
+    "docs/P160_CLOSE_THE_PROGRAMME_WITH_A_REPRODUCIBLE_EVIDENCE_ARCHIVE.json",
+    "docs/evidence/P160-handoff.json",
+    "scripts/gates/p160_close_the_programme_with_a_reproducible_evidence_archive.py",
+    "scripts/gates/p160_tc01.py",
+    "scripts/gates/p160_tc02.py",
+    "scripts/gates/p160_tc03.py",
+    "scripts/gates/p160_tc04.py",
+    "scripts/gates/p160_tc05.py",
+    "scripts/gates/p160_tc06.py",
+    "scripts/gates/p160_tc07.py",
+    "scripts/gates/p160_tc08.py",
+    "scripts/tests/test_p160_close_the_programme_with_a_reproducible_evidence_archive.py",
+    "scripts/tests/test_p160_tc01.py",
+    "scripts/tests/test_p160_tc02.py",
+    "scripts/tests/test_p160_tc03.py",
+    "scripts/tests/test_p160_tc04.py",
+    "scripts/tests/test_p160_tc05.py",
+    "scripts/tests/test_p160_tc06.py",
+    "scripts/tests/test_p160_tc07.py",
+    "scripts/tests/test_p160_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p160*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "closed",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

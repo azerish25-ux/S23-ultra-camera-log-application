@@ -1,0 +1,50 @@
+{
+  "phase": "P159",
+  "title": "Explore higher-quality computational optics",
+  "deliverable": "Advanced optics research comparison and adoption gate",
+  "caseIds": [
+    "TC-P159-01",
+    "TC-P159-02",
+    "TC-P159-03",
+    "TC-P159-04",
+    "TC-P159-05",
+    "TC-P159-06",
+    "TC-P159-07",
+    "TC-P159-08"
+  ],
+  "changedFiles": [
+    "docs/P159_EXPLORE_HIGHER_QUALITY_COMPUTATIONAL_OPTICS.md",
+    "docs/P159_EXPLORE_HIGHER_QUALITY_COMPUTATIONAL_OPTICS.json",
+    "docs/evidence/P159-handoff.json",
+    "scripts/gates/p159_explore_higher_quality_computational_optics.py",
+    "scripts/gates/p159_tc01.py",
+    "scripts/gates/p159_tc02.py",
+    "scripts/gates/p159_tc03.py",
+    "scripts/gates/p159_tc04.py",
+    "scripts/gates/p159_tc05.py",
+    "scripts/gates/p159_tc06.py",
+    "scripts/gates/p159_tc07.py",
+    "scripts/gates/p159_tc08.py",
+    "scripts/tests/test_p159_explore_higher_quality_computational_optics.py",
+    "scripts/tests/test_p159_tc01.py",
+    "scripts/tests/test_p159_tc02.py",
+    "scripts/tests/test_p159_tc03.py",
+    "scripts/tests/test_p159_tc04.py",
+    "scripts/tests/test_p159_tc05.py",
+    "scripts/tests/test_p159_tc06.py",
+    "scripts/tests/test_p159_tc07.py",
+    "scripts/tests/test_p159_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p159*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P160",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

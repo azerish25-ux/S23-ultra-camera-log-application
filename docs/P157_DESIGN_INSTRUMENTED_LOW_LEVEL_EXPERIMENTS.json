@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "phase": "P157",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p157-instrumented-experiment-design",
+  "claim": "instrumented-low-level-experiment-design",
+  "applyMutant": false,
+  "protocolKind": "design",
+  "deviceExperimentCompleted": false,
+  "baselinePreserved": true,
+  "checksum": "a21d9963ecfdb2c7e766506537b8323d96bd3c18933a228b78d57abe5560171c",
+  "logId": "p157-design-log",
+  "failureTriggers": [
+    "no-valid-additional-sensor-frames",
+    "checksum-mismatch",
+    "thermal-safeguard-trip"
+  ],
+  "thermalSafeguardDisabled": false,
+  "capabilityMetadataFalsified": false,
+  "experiments": [
+    {
+      "id": "encoder-scheduling",
+      "change": "Vary one hypothesized encoder scheduling constraint and keep the baseline checksum.",
+      "constraints": [
+        "encoder-scheduling"
+      ],
+      "reversible": true,
+      "recoveryStep": null,
+      "observations": {
+        "before": "obs-baseline-encoder-scheduling",
+        "after": "obs-after-encoder-scheduling"
+      },
+      "captured_output": true,
+      "unlocked_claim": false
+    }
+  ]
+}

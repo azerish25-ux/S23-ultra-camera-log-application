@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "phase": "P145",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p145-layered-ci",
+  "claim": "layered-ci-evidence-aggregation",
+  "applyMutant": false,
+  "declaresQualified": false,
+  "layers": {
+    "host": [
+      {
+        "id": "host-arithmetic",
+        "outcome": "passed"
+      },
+      {
+        "id": "host-contract",
+        "outcome": "passed"
+      }
+    ],
+    "jvm": [
+      {
+        "id": "jvm-policy",
+        "outcome": "passed"
+      }
+    ],
+    "android": [
+      {
+        "id": "android-integration",
+        "outcome": "passed"
+      }
+    ],
+    "gpu": [
+      {
+        "id": "gpu-color",
+        "outcome": "failed"
+      },
+      {
+        "id": "gpu-parity",
+        "outcome": "passed"
+      }
+    ],
+    "physical": [
+      {
+        "id": "physical-ten-bit-codec",
+        "outcome": "skipped"
+      }
+    ]
+  },
+  "releasePassed": 5,
+  "releaseSummary": {
+    "host": {
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    "jvm": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    "android": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "status": "passed"
+    },
+    "gpu": {
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "status": "failed"
+    },
+    "physical": {
+      "passed": 0,
+      "failed": 0,
+      "skipped": 1,
+      "status": "unavailable"
+    }
+  }
+}

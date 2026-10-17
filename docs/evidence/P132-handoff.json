@@ -1,0 +1,50 @@
+{
+  "phase": "P132",
+  "title": "Build scopes with declared signal domains",
+  "deliverable": "Scope domain model and monitoring correctness tests",
+  "caseIds": [
+    "TC-P132-01",
+    "TC-P132-02",
+    "TC-P132-03",
+    "TC-P132-04",
+    "TC-P132-05",
+    "TC-P132-06",
+    "TC-P132-07",
+    "TC-P132-08"
+  ],
+  "changedFiles": [
+    "docs/P132_BUILD_SCOPES_WITH_DECLARED_SIGNAL_DOMAINS.md",
+    "docs/P132_BUILD_SCOPES_WITH_DECLARED_SIGNAL_DOMAINS.json",
+    "docs/evidence/P132-handoff.json",
+    "scripts/gates/p132_build_scopes_with_declared_signal_domains.py",
+    "scripts/gates/p132_tc01.py",
+    "scripts/gates/p132_tc02.py",
+    "scripts/gates/p132_tc03.py",
+    "scripts/gates/p132_tc04.py",
+    "scripts/gates/p132_tc05.py",
+    "scripts/gates/p132_tc06.py",
+    "scripts/gates/p132_tc07.py",
+    "scripts/gates/p132_tc08.py",
+    "scripts/tests/test_p132_build_scopes_with_declared_signal_domains.py",
+    "scripts/tests/test_p132_tc01.py",
+    "scripts/tests/test_p132_tc02.py",
+    "scripts/tests/test_p132_tc03.py",
+    "scripts/tests/test_p132_tc04.py",
+    "scripts/tests/test_p132_tc05.py",
+    "scripts/tests/test_p132_tc06.py",
+    "scripts/tests/test_p132_tc07.py",
+    "scripts/tests/test_p132_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p132*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P133",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

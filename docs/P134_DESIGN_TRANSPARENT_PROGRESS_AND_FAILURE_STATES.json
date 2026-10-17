@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "phase": "P134",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p134-progress-failure",
+  "claim": "transparent-progress-and-failure-host-reference",
+  "applyMutant": false,
+  "progress": {
+    "stage": "verification",
+    "accounted_frames": 12,
+    "expected_frames": 12,
+    "drain_complete": false,
+    "displayed_percent": null,
+    "success": null,
+    "failure_reason": null,
+    "failure_kind": null,
+    "verification_complete": false,
+    "publication_complete": false,
+    "footage_retained": true
+  }
+}

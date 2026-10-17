@@ -1,0 +1,50 @@
+{
+  "phase": "P157",
+  "title": "Design instrumented low-level experiments",
+  "deliverable": "Instrumented experimental protocol and observation schema",
+  "caseIds": [
+    "TC-P157-01",
+    "TC-P157-02",
+    "TC-P157-03",
+    "TC-P157-04",
+    "TC-P157-05",
+    "TC-P157-06",
+    "TC-P157-07",
+    "TC-P157-08"
+  ],
+  "changedFiles": [
+    "docs/P157_DESIGN_INSTRUMENTED_LOW_LEVEL_EXPERIMENTS.md",
+    "docs/P157_DESIGN_INSTRUMENTED_LOW_LEVEL_EXPERIMENTS.json",
+    "docs/evidence/P157-handoff.json",
+    "scripts/gates/p157_design_instrumented_low_level_experiments.py",
+    "scripts/gates/p157_tc01.py",
+    "scripts/gates/p157_tc02.py",
+    "scripts/gates/p157_tc03.py",
+    "scripts/gates/p157_tc04.py",
+    "scripts/gates/p157_tc05.py",
+    "scripts/gates/p157_tc06.py",
+    "scripts/gates/p157_tc07.py",
+    "scripts/gates/p157_tc08.py",
+    "scripts/tests/test_p157_design_instrumented_low_level_experiments.py",
+    "scripts/tests/test_p157_tc01.py",
+    "scripts/tests/test_p157_tc02.py",
+    "scripts/tests/test_p157_tc03.py",
+    "scripts/tests/test_p157_tc04.py",
+    "scripts/tests/test_p157_tc05.py",
+    "scripts/tests/test_p157_tc06.py",
+    "scripts/tests/test_p157_tc07.py",
+    "scripts/tests/test_p157_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p157*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P158",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

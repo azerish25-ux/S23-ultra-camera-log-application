@@ -1,0 +1,50 @@
+{
+  "phase": "P143",
+  "title": "Support release-specific and scene-specific looks",
+  "deliverable": "Release-aware catalogue and ambiguity tests",
+  "caseIds": [
+    "TC-P143-01",
+    "TC-P143-02",
+    "TC-P143-03",
+    "TC-P143-04",
+    "TC-P143-05",
+    "TC-P143-06",
+    "TC-P143-07",
+    "TC-P143-08"
+  ],
+  "changedFiles": [
+    "docs/P143_SUPPORT_RELEASE_SPECIFIC_AND_SCENE_SPECIFIC_LOOKS.md",
+    "docs/P143_SUPPORT_RELEASE_SPECIFIC_AND_SCENE_SPECIFIC_LOOKS.json",
+    "docs/evidence/P143-handoff.json",
+    "scripts/gates/p143_support_release_specific_and_scene_specific_looks.py",
+    "scripts/gates/p143_tc01.py",
+    "scripts/gates/p143_tc02.py",
+    "scripts/gates/p143_tc03.py",
+    "scripts/gates/p143_tc04.py",
+    "scripts/gates/p143_tc05.py",
+    "scripts/gates/p143_tc06.py",
+    "scripts/gates/p143_tc07.py",
+    "scripts/gates/p143_tc08.py",
+    "scripts/tests/test_p143_support_release_specific_and_scene_specific_looks.py",
+    "scripts/tests/test_p143_tc01.py",
+    "scripts/tests/test_p143_tc02.py",
+    "scripts/tests/test_p143_tc03.py",
+    "scripts/tests/test_p143_tc04.py",
+    "scripts/tests/test_p143_tc05.py",
+    "scripts/tests/test_p143_tc06.py",
+    "scripts/tests/test_p143_tc07.py",
+    "scripts/tests/test_p143_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p143*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P144",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

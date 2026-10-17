@@ -1,0 +1,50 @@
+{
+  "phase": "P154",
+  "title": "Survey public firmware and HAL information",
+  "deliverable": "Non-destructive architecture research report",
+  "caseIds": [
+    "TC-P154-01",
+    "TC-P154-02",
+    "TC-P154-03",
+    "TC-P154-04",
+    "TC-P154-05",
+    "TC-P154-06",
+    "TC-P154-07",
+    "TC-P154-08"
+  ],
+  "changedFiles": [
+    "docs/P154_SURVEY_PUBLIC_FIRMWARE_AND_HAL_INFORMATION.md",
+    "docs/P154_SURVEY_PUBLIC_FIRMWARE_AND_HAL_INFORMATION.json",
+    "docs/evidence/P154-handoff.json",
+    "scripts/gates/p154_survey_public_firmware_and_hal_information.py",
+    "scripts/gates/p154_tc01.py",
+    "scripts/gates/p154_tc02.py",
+    "scripts/gates/p154_tc03.py",
+    "scripts/gates/p154_tc04.py",
+    "scripts/gates/p154_tc05.py",
+    "scripts/gates/p154_tc06.py",
+    "scripts/gates/p154_tc07.py",
+    "scripts/gates/p154_tc08.py",
+    "scripts/tests/test_p154_survey_public_firmware_and_hal_information.py",
+    "scripts/tests/test_p154_tc01.py",
+    "scripts/tests/test_p154_tc02.py",
+    "scripts/tests/test_p154_tc03.py",
+    "scripts/tests/test_p154_tc04.py",
+    "scripts/tests/test_p154_tc05.py",
+    "scripts/tests/test_p154_tc06.py",
+    "scripts/tests/test_p154_tc07.py",
+    "scripts/tests/test_p154_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p154*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P155",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

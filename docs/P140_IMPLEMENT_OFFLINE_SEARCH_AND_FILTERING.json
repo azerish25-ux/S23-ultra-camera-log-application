@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "phase": "P140",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p140-offline-search",
+  "claim": "offline-search-and-filtering-host-reference",
+  "applyMutant": false,
+  "remote_model": false,
+  "network_used": false,
+  "catalogue": [
+    {
+      "id": "night-hunter-lf",
+      "title": "The Night Hunter",
+      "alternateTitles": [
+        "Night Hunter"
+      ],
+      "stockNames": [
+        "Eastman Double-X"
+      ],
+      "formats": [
+        "large-format"
+      ],
+      "sceneFamilies": [
+        "night exterior"
+      ],
+      "evidenceQuality": "partial",
+      "evidenceStatus": "partial",
+      "monochrome": true,
+      "privateRecipe": false,
+      "popularity": 3
+    },
+    {
+      "id": "night-hunter-35",
+      "title": "The Night Hunter",
+      "alternateTitles": [
+        "Hunter"
+      ],
+      "stockNames": [
+        "Kodak Vision3 250D"
+      ],
+      "formats": [
+        "35mm"
+      ],
+      "sceneFamilies": [
+        "day interior"
+      ],
+      "evidenceQuality": "documented",
+      "evidenceStatus": "documented",
+      "monochrome": false,
+      "privateRecipe": false,
+      "popularity": 80
+    },
+    {
+      "id": "river-day-lf",
+      "title": "River Day",
+      "alternateTitles": [
+        "Le Fleuve"
+      ],
+      "stockNames": [
+        "Eastman Double-X"
+      ],
+      "formats": [
+        "large-format"
+      ],
+      "sceneFamilies": [
+        "day exterior"
+      ],
+      "evidenceQuality": "unknown",
+      "evidenceStatus": "unknown",
+      "monochrome": true,
+      "privateRecipe": false,
+      "popularity": 100
+    },
+    {
+      "id": "user-night-grade",
+      "title": "The Night Hunter",
+      "alternateTitles": [
+        "Night Hunter user grade"
+      ],
+      "stockNames": [
+        "Eastman Double-X"
+      ],
+      "formats": [
+        "large-format"
+      ],
+      "sceneFamilies": [
+        "night exterior"
+      ],
+      "evidenceQuality": "preference",
+      "evidenceStatus": "user-reconstruction",
+      "monochrome": true,
+      "privateRecipe": true,
+      "popularity": 1000
+    }
+  ],
+  "query": "nigt hunter",
+  "filters": {
+    "formats": "large-format",
+    "monochrome": true
+  },
+  "typoTolerance": 1,
+  "sort": "id"
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "phase": "P148",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p148-offline-privacy",
+  "claim": "offline-privacy-and-permissions-host-reference",
+  "applyMutant": false,
+  "offline_claim": true,
+  "permissions": [
+    {
+      "name": "camera",
+      "required": true,
+      "used": true
+    },
+    {
+      "name": "microphone",
+      "required": true,
+      "used": true
+    }
+  ],
+  "network_endpoints": [],
+  "analytics_payload": [],
+  "capture_needs_camera": true,
+  "capture_needs_microphone": true,
+  "visible_warnings": [],
+  "hide_warnings": false,
+  "uploads": [],
+  "diagnostic_export": "airplane-mode local capture and development; model assets installed; diagnostic export omits personal paths and unnecessary identifiers",
+  "optional_downloads_explicit": true,
+  "operation_requires_network": false
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "phase": "P160",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p160-evidence-archive",
+  "claim": "reproducible-evidence-archive-host-reference",
+  "applyMutant": false,
+  "records": [
+    {
+      "id": "host-capture",
+      "outcome": "passed",
+      "retained": true
+    },
+    {
+      "id": "host-film-render",
+      "outcome": "passed",
+      "retained": true
+    },
+    {
+      "id": "host-virtual-lens",
+      "outcome": "passed",
+      "retained": true
+    },
+    {
+      "id": "p010-route",
+      "outcome": "failed",
+      "retained": true
+    },
+    {
+      "id": "physical-s23",
+      "outcome": "not_run",
+      "retained": true
+    }
+  ],
+  "maintenanceNote": "physical S23, sensor-derived Log, ten-bit fidelity, film-stock fidelity, and cinema-camera equivalence are not established",
+  "only_passes": false
+}

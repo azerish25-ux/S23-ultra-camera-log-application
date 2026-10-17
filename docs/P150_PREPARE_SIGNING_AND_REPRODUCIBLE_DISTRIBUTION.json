@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "phase": "P150",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p150-signing-distribution",
+  "claim": "signing-and-reproducible-distribution-host-reference",
+  "applyMutant": false,
+  "build_type": "release",
+  "signing": "upload",
+  "update_preserves_private_footage": true,
+  "warns_footage_loss": true,
+  "recommends_uninstall": false,
+  "labelled_production_update": true,
+  "source_revision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "recorded_source_revision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "is_update": true
+}

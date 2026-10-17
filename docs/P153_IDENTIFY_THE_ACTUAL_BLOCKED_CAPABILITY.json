@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "phase": "P153",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p153-blocked-capability",
+  "claim": "blocked-capability-hypothesis-host-reference",
+  "hypotheses": [
+    {
+      "capability": "raw-route",
+      "measurement_id": "disk-throughput-m1",
+      "observed_fps": 8,
+      "advertised_fps": 24,
+      "blamed": "app",
+      "vendor": null,
+      "claims_restriction": false
+    }
+  ],
+  "questions": [
+    {
+      "capability": "raw-route",
+      "missing_measurement": "sustained-disk-write-megabytes-per-second",
+      "text": "What sustained disk write rate limits the RAW route before any firmware change?",
+      "concrete": true
+    }
+  ],
+  "plan": [
+    {
+      "id": "buffer-depth",
+      "addresses": "buffering"
+    },
+    {
+      "id": "disk-throughput",
+      "addresses": "storage"
+    },
+    {
+      "id": "app-path",
+      "addresses": "alternative-app-path"
+    }
+  ],
+  "limiter": {
+    "route": "raw",
+    "cause": "disk-throughput",
+    "measurement_id": "disk-throughput-m1"
+  },
+  "applyMutant": false
+}

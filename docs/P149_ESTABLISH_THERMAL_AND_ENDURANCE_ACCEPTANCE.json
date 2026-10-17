@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "phase": "P149",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p149-thermal-endurance",
+  "claim": "thermal-and-endurance-acceptance-host-reference",
+  "applyMutant": false,
+  "thermalStatus": "moderate",
+  "continueCapture": true,
+  "controlledStop": false,
+  "advertisedFpsClaimed": false,
+  "optionalPreviewReduced": true,
+  "footagePreserved": true,
+  "sampleDurationSeconds": 180,
+  "frameRateGuaranteeClaimed": false,
+  "measuredOnDevice": false,
+  "envelopeStatus": "unavailable",
+  "configuration": "high-resolution-deferred-depth",
+  "ambientCelsius": 28,
+  "deviceState": "warm-unmeasured"
+}

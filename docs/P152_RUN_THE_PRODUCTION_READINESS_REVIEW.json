@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "phase": "P152",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p152-production-readiness",
+  "claim": "production-readiness-review-host-reference",
+  "applyMutant": false,
+  "visualQuality": "excellent",
+  "release_decision": "go",
+  "citedRiskIds": [
+    "staging-copy-deleted",
+    "crash-checkpoint",
+    "color-range",
+    "temporal-cadence",
+    "license-attribution",
+    "offline-privacy",
+    "focus-order",
+    "signed-update"
+  ],
+  "risks": [
+    {
+      "id": "staging-copy-deleted",
+      "area": "footage-retention",
+      "severity": "critical",
+      "status": "closed",
+      "category": "data-loss",
+      "reason": "preservation fixed and regression evidence exists"
+    },
+    {
+      "id": "crash-checkpoint",
+      "area": "crash-recovery",
+      "severity": "major",
+      "status": "accepted",
+      "category": "crash-recovery",
+      "reason": "deferred with explicit recovery checkpoint retained"
+    },
+    {
+      "id": "color-range",
+      "area": "color-signalling",
+      "severity": "major",
+      "status": "closed",
+      "category": "misleading-capture",
+      "reason": "legal-range signalling corrected before release"
+    },
+    {
+      "id": "temporal-cadence",
+      "area": "temporal-artifacts",
+      "severity": "minor",
+      "status": "closed",
+      "category": "temporal-artifacts",
+      "reason": "cadence gaps remain visible and are not hidden"
+    },
+    {
+      "id": "license-attribution",
+      "area": "licensing",
+      "severity": "minor",
+      "status": "closed",
+      "category": "licensing",
+      "reason": "reference media attribution recorded"
+    },
+    {
+      "id": "offline-privacy",
+      "area": "privacy",
+      "severity": "major",
+      "status": "closed",
+      "category": "privacy",
+      "reason": "offline default transmits no private media"
+    },
+    {
+      "id": "focus-order",
+      "area": "accessibility",
+      "severity": "minor",
+      "status": "closed",
+      "category": "accessibility",
+      "reason": "focus order matches the camera screen hierarchy"
+    },
+    {
+      "id": "signed-update",
+      "area": "update-safety",
+      "severity": "major",
+      "status": "closed",
+      "category": "update-safety",
+      "reason": "signed update preserves sources profiles and recovery data"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "regression-staging-copy",
+      "kind": "regression"
+    },
+    {
+      "id": "workflow-review",
+      "kind": "workflow"
+    }
+  ]
+}

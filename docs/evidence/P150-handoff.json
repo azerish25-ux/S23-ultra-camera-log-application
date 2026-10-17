@@ -1,0 +1,50 @@
+{
+  "phase": "P150",
+  "title": "Prepare signing and reproducible distribution",
+  "deliverable": "Release signing plan and update preservation tests",
+  "caseIds": [
+    "TC-P150-01",
+    "TC-P150-02",
+    "TC-P150-03",
+    "TC-P150-04",
+    "TC-P150-05",
+    "TC-P150-06",
+    "TC-P150-07",
+    "TC-P150-08"
+  ],
+  "changedFiles": [
+    "docs/P150_PREPARE_SIGNING_AND_REPRODUCIBLE_DISTRIBUTION.md",
+    "docs/P150_PREPARE_SIGNING_AND_REPRODUCIBLE_DISTRIBUTION.json",
+    "docs/evidence/P150-handoff.json",
+    "scripts/gates/p150_prepare_signing_and_reproducible_distribution.py",
+    "scripts/gates/p150_tc01.py",
+    "scripts/gates/p150_tc02.py",
+    "scripts/gates/p150_tc03.py",
+    "scripts/gates/p150_tc04.py",
+    "scripts/gates/p150_tc05.py",
+    "scripts/gates/p150_tc06.py",
+    "scripts/gates/p150_tc07.py",
+    "scripts/gates/p150_tc08.py",
+    "scripts/tests/test_p150_prepare_signing_and_reproducible_distribution.py",
+    "scripts/tests/test_p150_tc01.py",
+    "scripts/tests/test_p150_tc02.py",
+    "scripts/tests/test_p150_tc03.py",
+    "scripts/tests/test_p150_tc04.py",
+    "scripts/tests/test_p150_tc05.py",
+    "scripts/tests/test_p150_tc06.py",
+    "scripts/tests/test_p150_tc07.py",
+    "scripts/tests/test_p150_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p150*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P151",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

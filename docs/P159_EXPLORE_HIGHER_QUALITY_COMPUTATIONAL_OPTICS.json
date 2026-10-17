@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "phase": "P159",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p159-computational-optics",
+  "claim": "higher-quality-computational-optics-host-reference",
+  "applyMutant": false,
+  "baseline_stable": true,
+  "stabilityNoted": "baseline product stable",
+  "baselineRank": 4,
+  "candidates": [
+    {
+      "name": "larger-temporal-model",
+      "benchmark_rank": 1,
+      "baseline_error": 42,
+      "candidate_error": 31,
+      "adopted": false,
+      "citedReasons": [
+        "boundary-error",
+        "memory-pressure",
+        "deferred-time"
+      ],
+      "namedLimit": "deferred-render-ms",
+      "modelSize": 8,
+      "baselineModelSize": 2,
+      "memoryBytes": 900,
+      "memoryBudgetBytes": 512,
+      "deferredTimeMs": 2400,
+      "deferredBudgetMs": 400,
+      "licenseDeclared": false,
+      "converted": false,
+      "difficultScenesValidated": false
+    }
+  ]
+}

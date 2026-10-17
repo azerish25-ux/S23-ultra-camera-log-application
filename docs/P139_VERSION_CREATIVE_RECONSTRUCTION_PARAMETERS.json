@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "phase": "P139",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p139-reconstruction-versions",
+  "claim": "immutable-production-facts-host-reference",
+  "applyMutant": false,
+  "mutated_facts": false,
+  "productionFacts": {
+    "camera": "Arricam ST",
+    "cinematographer": "sourced-production-account",
+    "documentedAperture": "T2.8",
+    "documentedPrintContrast": "normal",
+    "lens": null,
+    "process": "standard-print",
+    "releaseVersion": "theatrical-35mm",
+    "stock": "Kodak Vision3 250D",
+    "title": "Night Ferry"
+  },
+  "fact_hash": "fa3e1fb408a94196209cef5f4caee107b86936abd7b11e4ff2224b1cf99417ad",
+  "prior_canonical": "{\"camera\":\"Arricam ST\",\"cinematographer\":\"sourced-production-account\",\"documentedAperture\":\"T2.8\",\"documentedPrintContrast\":\"normal\",\"lens\":null,\"process\":\"standard-print\",\"releaseVersion\":\"theatrical-35mm\",\"stock\":\"Kodak Vision3 250D\",\"title\":\"Night Ferry\"}",
+  "reconstructions": [
+    {
+      "id": "rr-1",
+      "name": "movie-inspired",
+      "provenance": "catalogue-recipe",
+      "parent_id": null,
+      "fact_hash": "fa3e1fb408a94196209cef5f4caee107b86936abd7b11e4ff2224b1cf99417ad",
+      "parameters": {
+        "exposure": 0,
+        "stockModel": "vision3-250d-inspired",
+        "virtualLens": "50mm-reconstructed",
+        "virtualAperture": 2.8,
+        "grain": 0.18,
+        "halation": 0.12,
+        "printResponse": "normal",
+        "printContrast": 1,
+        "grade": "neutral"
+      },
+      "parameter_hash": "26dda8266bc314c03a3580c1d51325ec95c0b352a0411ced4e40b080f67fce3e",
+      "label": "creative-reconstruction"
+    },
+    {
+      "id": "rr-2",
+      "name": "user-aperture-contrast",
+      "provenance": "user-derivative",
+      "parent_id": "rr-1",
+      "fact_hash": "fa3e1fb408a94196209cef5f4caee107b86936abd7b11e4ff2224b1cf99417ad",
+      "parameters": {
+        "exposure": 0,
+        "stockModel": "vision3-250d-inspired",
+        "virtualLens": "50mm-reconstructed",
+        "virtualAperture": 4,
+        "grain": 0.18,
+        "halation": 0.12,
+        "printResponse": "normal",
+        "printContrast": 1.4,
+        "grade": "neutral"
+      },
+      "parameter_hash": "a4da5e33a93df08eaaac5dee686726596be0f418316d18b4546bb01d1d2c5a1e",
+      "label": "user-reconstruction"
+    }
+  ]
+}

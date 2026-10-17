@@ -1,0 +1,50 @@
+{
+  "phase": "P156",
+  "title": "Prepare a separate firmware risk gate",
+  "deliverable": "Firmware authorization checklist and stop conditions",
+  "caseIds": [
+    "TC-P156-01",
+    "TC-P156-02",
+    "TC-P156-03",
+    "TC-P156-04",
+    "TC-P156-05",
+    "TC-P156-06",
+    "TC-P156-07",
+    "TC-P156-08"
+  ],
+  "changedFiles": [
+    "docs/P156_PREPARE_A_SEPARATE_FIRMWARE_RISK_GATE.md",
+    "docs/P156_PREPARE_A_SEPARATE_FIRMWARE_RISK_GATE.json",
+    "docs/evidence/P156-handoff.json",
+    "scripts/gates/p156_prepare_a_separate_firmware_risk_gate.py",
+    "scripts/gates/p156_tc01.py",
+    "scripts/gates/p156_tc02.py",
+    "scripts/gates/p156_tc03.py",
+    "scripts/gates/p156_tc04.py",
+    "scripts/gates/p156_tc05.py",
+    "scripts/gates/p156_tc06.py",
+    "scripts/gates/p156_tc07.py",
+    "scripts/gates/p156_tc08.py",
+    "scripts/tests/test_p156_prepare_a_separate_firmware_risk_gate.py",
+    "scripts/tests/test_p156_tc01.py",
+    "scripts/tests/test_p156_tc02.py",
+    "scripts/tests/test_p156_tc03.py",
+    "scripts/tests/test_p156_tc04.py",
+    "scripts/tests/test_p156_tc05.py",
+    "scripts/tests/test_p156_tc06.py",
+    "scripts/tests/test_p156_tc07.py",
+    "scripts/tests/test_p156_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p156*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P157",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

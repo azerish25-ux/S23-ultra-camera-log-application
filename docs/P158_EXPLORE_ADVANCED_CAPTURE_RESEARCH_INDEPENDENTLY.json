@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "phase": "P158",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p158-advanced-capture",
+  "claim": "advanced-capture-experiment-host-reference",
+  "applyMutant": false,
+  "experimentLabel": "experimental",
+  "captureKind": "multi-frame-hdr",
+  "presentedAs": "computational-merge",
+  "labelsMergeExplicitly": true,
+  "claimsExtraStops": 2,
+  "guaranteedEveryScene": false,
+  "motionAlignment": {
+    "status": "pass",
+    "error": 0.12,
+    "frames": 3
+  },
+  "ghosting": {
+    "reported": true,
+    "hidden": false,
+    "magnitude": 0.04
+  },
+  "alignmentError": {
+    "reported": true,
+    "hidden": false,
+    "magnitude": 0.12
+  },
+  "motionArtifacts": {
+    "measured": true,
+    "value": 0.04
+  },
+  "retainedHighlights": {
+    "measured": true,
+    "value": 0.83
+  },
+  "sourceSampling": "bracketed-sensor-frames",
+  "motionAssumptions": "moving-subject-across-differently-exposed-frames",
+  "exposureDifferences": [
+    -2,
+    0,
+    2
+  ],
+  "mergeArtifacts": [
+    "ghosting",
+    "alignment-error"
+  ],
+  "outputLineage": [
+    "frame-minus-2ev",
+    "frame-0ev",
+    "frame-plus-2ev",
+    "computational-merge"
+  ],
+  "singleExposureBaseline": {
+    "evidenceId": "p158-single-exposure-baseline",
+    "retainedHighlights": 0.61
+  },
+  "alternativeRawModes": [
+    {
+      "id": "raw-10bit",
+      "available": false,
+      "measurementId": null
+    },
+    {
+      "id": "raw-14bit",
+      "available": true,
+      "measurementId": "meas-raw-14bit-001"
+    }
+  ],
+  "synchronization": {
+    "labelled": "experimental",
+    "offsetMeasured": false,
+    "offsetMs": null
+  },
+  "claimsSensorDerivedLog": false
+}

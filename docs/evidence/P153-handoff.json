@@ -1,0 +1,50 @@
+{
+  "phase": "P153",
+  "title": "Identify the actual blocked capability",
+  "deliverable": "Blocked-capability hypothesis and evidence dossier",
+  "caseIds": [
+    "TC-P153-01",
+    "TC-P153-02",
+    "TC-P153-03",
+    "TC-P153-04",
+    "TC-P153-05",
+    "TC-P153-06",
+    "TC-P153-07",
+    "TC-P153-08"
+  ],
+  "changedFiles": [
+    "docs/P153_IDENTIFY_THE_ACTUAL_BLOCKED_CAPABILITY.md",
+    "docs/P153_IDENTIFY_THE_ACTUAL_BLOCKED_CAPABILITY.json",
+    "docs/evidence/P153-handoff.json",
+    "scripts/gates/p153_identify_the_actual_blocked_capability.py",
+    "scripts/gates/p153_tc01.py",
+    "scripts/gates/p153_tc02.py",
+    "scripts/gates/p153_tc03.py",
+    "scripts/gates/p153_tc04.py",
+    "scripts/gates/p153_tc05.py",
+    "scripts/gates/p153_tc06.py",
+    "scripts/gates/p153_tc07.py",
+    "scripts/gates/p153_tc08.py",
+    "scripts/tests/test_p153_identify_the_actual_blocked_capability.py",
+    "scripts/tests/test_p153_tc01.py",
+    "scripts/tests/test_p153_tc02.py",
+    "scripts/tests/test_p153_tc03.py",
+    "scripts/tests/test_p153_tc04.py",
+    "scripts/tests/test_p153_tc05.py",
+    "scripts/tests/test_p153_tc06.py",
+    "scripts/tests/test_p153_tc07.py",
+    "scripts/tests/test_p153_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p153*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P154",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

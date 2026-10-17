@@ -1,0 +1,50 @@
+{
+  "phase": "P155",
+  "title": "Evaluate reversible application-level alternatives",
+  "deliverable": "Alternative-path experiments and comparative decision",
+  "caseIds": [
+    "TC-P155-01",
+    "TC-P155-02",
+    "TC-P155-03",
+    "TC-P155-04",
+    "TC-P155-05",
+    "TC-P155-06",
+    "TC-P155-07",
+    "TC-P155-08"
+  ],
+  "changedFiles": [
+    "docs/P155_EVALUATE_REVERSIBLE_APPLICATION_LEVEL_ALTERNATIVES.md",
+    "docs/P155_EVALUATE_REVERSIBLE_APPLICATION_LEVEL_ALTERNATIVES.json",
+    "docs/evidence/P155-handoff.json",
+    "scripts/gates/p155_evaluate_reversible_application_level_alternatives.py",
+    "scripts/gates/p155_tc01.py",
+    "scripts/gates/p155_tc02.py",
+    "scripts/gates/p155_tc03.py",
+    "scripts/gates/p155_tc04.py",
+    "scripts/gates/p155_tc05.py",
+    "scripts/gates/p155_tc06.py",
+    "scripts/gates/p155_tc07.py",
+    "scripts/gates/p155_tc08.py",
+    "scripts/tests/test_p155_evaluate_reversible_application_level_alternatives.py",
+    "scripts/tests/test_p155_tc01.py",
+    "scripts/tests/test_p155_tc02.py",
+    "scripts/tests/test_p155_tc03.py",
+    "scripts/tests/test_p155_tc04.py",
+    "scripts/tests/test_p155_tc05.py",
+    "scripts/tests/test_p155_tc06.py",
+    "scripts/tests/test_p155_tc07.py",
+    "scripts/tests/test_p155_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p155*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P156",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

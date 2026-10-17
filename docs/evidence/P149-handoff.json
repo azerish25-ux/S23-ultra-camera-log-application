@@ -1,0 +1,50 @@
+{
+  "phase": "P149",
+  "title": "Establish thermal and endurance acceptance",
+  "deliverable": "Endurance protocol and configuration-specific operating envelope",
+  "caseIds": [
+    "TC-P149-01",
+    "TC-P149-02",
+    "TC-P149-03",
+    "TC-P149-04",
+    "TC-P149-05",
+    "TC-P149-06",
+    "TC-P149-07",
+    "TC-P149-08"
+  ],
+  "changedFiles": [
+    "docs/P149_ESTABLISH_THERMAL_AND_ENDURANCE_ACCEPTANCE.md",
+    "docs/P149_ESTABLISH_THERMAL_AND_ENDURANCE_ACCEPTANCE.json",
+    "docs/evidence/P149-handoff.json",
+    "scripts/gates/p149_establish_thermal_and_endurance_acceptance.py",
+    "scripts/gates/p149_tc01.py",
+    "scripts/gates/p149_tc02.py",
+    "scripts/gates/p149_tc03.py",
+    "scripts/gates/p149_tc04.py",
+    "scripts/gates/p149_tc05.py",
+    "scripts/gates/p149_tc06.py",
+    "scripts/gates/p149_tc07.py",
+    "scripts/gates/p149_tc08.py",
+    "scripts/tests/test_p149_establish_thermal_and_endurance_acceptance.py",
+    "scripts/tests/test_p149_tc01.py",
+    "scripts/tests/test_p149_tc02.py",
+    "scripts/tests/test_p149_tc03.py",
+    "scripts/tests/test_p149_tc04.py",
+    "scripts/tests/test_p149_tc05.py",
+    "scripts/tests/test_p149_tc06.py",
+    "scripts/tests/test_p149_tc07.py",
+    "scripts/tests/test_p149_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p149*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P150",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

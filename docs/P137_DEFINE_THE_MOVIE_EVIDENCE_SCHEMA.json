@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "phase": "P137",
+  "implementationBaseRevision": "db5593a4c7dae4d23363e70a27f0f93c3eb07b2b",
+  "evidenceId": "p137-movie-evidence",
+  "claim": "movie-evidence-schema-host-reference",
+  "applyMutant": false,
+  "record": {
+    "recordId": "northwater-selected-scene",
+    "lensVerified": false,
+    "fields": [
+      {
+        "name": "movie",
+        "state": "fact",
+        "value": "Northwater",
+        "source_id": "src-northwater-title"
+      },
+      {
+        "name": "scene_family",
+        "state": "fact",
+        "value": "night-interior",
+        "source_id": "src-northwater-scene"
+      },
+      {
+        "name": "acquisition_format",
+        "state": "fact",
+        "value": "35mm-4-perf",
+        "source_id": "src-northwater-format"
+      },
+      {
+        "name": "stock",
+        "state": "fact",
+        "value": "Eastman 5293",
+        "source_id": "src-northwater-stock"
+      },
+      {
+        "name": "camera",
+        "state": "fact",
+        "value": "Arriflex 535",
+        "source_id": "src-northwater-camera"
+      },
+      {
+        "name": "lens",
+        "state": "unknown",
+        "value": null,
+        "source_id": null
+      },
+      {
+        "name": "processing_notes",
+        "state": "unknown",
+        "value": null,
+        "source_id": null
+      },
+      {
+        "name": "release_reference",
+        "state": "fact",
+        "value": "theatrical",
+        "source_id": "src-northwater-release"
+      },
+      {
+        "name": "citations",
+        "state": "fact",
+        "value": [
+          "src-northwater-stock",
+          "src-northwater-camera"
+        ],
+        "source_id": "src-northwater-stock"
+      },
+      {
+        "name": "confidence",
+        "state": "reconstruction",
+        "value": "partial-scene",
+        "source_id": null
+      },
+      {
+        "name": "recipe_parameters",
+        "state": "reconstruction",
+        "value": {
+          "virtual_lens": "virtual-spherical-50mm",
+          "aperture": "T2.8",
+          "label": "reconstruction"
+        },
+        "source_id": null
+      },
+      {
+        "name": "virtual_lens",
+        "state": "reconstruction",
+        "value": "virtual-spherical-50mm",
+        "source_id": null
+      }
+    ]
+  }
+}

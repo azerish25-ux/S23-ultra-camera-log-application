@@ -1,0 +1,50 @@
+{
+  "phase": "P148",
+  "title": "Verify offline privacy and permissions",
+  "deliverable": "Privacy test report and permission inventory",
+  "caseIds": [
+    "TC-P148-01",
+    "TC-P148-02",
+    "TC-P148-03",
+    "TC-P148-04",
+    "TC-P148-05",
+    "TC-P148-06",
+    "TC-P148-07",
+    "TC-P148-08"
+  ],
+  "changedFiles": [
+    "docs/P148_VERIFY_OFFLINE_PRIVACY_AND_PERMISSIONS.md",
+    "docs/P148_VERIFY_OFFLINE_PRIVACY_AND_PERMISSIONS.json",
+    "docs/evidence/P148-handoff.json",
+    "scripts/gates/p148_verify_offline_privacy_and_permissions.py",
+    "scripts/gates/p148_tc01.py",
+    "scripts/gates/p148_tc02.py",
+    "scripts/gates/p148_tc03.py",
+    "scripts/gates/p148_tc04.py",
+    "scripts/gates/p148_tc05.py",
+    "scripts/gates/p148_tc06.py",
+    "scripts/gates/p148_tc07.py",
+    "scripts/gates/p148_tc08.py",
+    "scripts/tests/test_p148_verify_offline_privacy_and_permissions.py",
+    "scripts/tests/test_p148_tc01.py",
+    "scripts/tests/test_p148_tc02.py",
+    "scripts/tests/test_p148_tc03.py",
+    "scripts/tests/test_p148_tc04.py",
+    "scripts/tests/test_p148_tc05.py",
+    "scripts/tests/test_p148_tc06.py",
+    "scripts/tests/test_p148_tc07.py",
+    "scripts/tests/test_p148_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p148*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P149",
+  "nonClaims": "Host reference only. Not a physical S23 qualification."
+}

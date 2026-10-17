@@ -1,0 +1,51 @@
+{
+  "phase": "P139",
+  "title": "Version creative reconstruction parameters",
+  "deliverable": "Reconstruction versioning and immutable fact tests",
+  "caseIds": [
+    "TC-P139-01",
+    "TC-P139-02",
+    "TC-P139-03",
+    "TC-P139-04",
+    "TC-P139-05",
+    "TC-P139-06",
+    "TC-P139-07",
+    "TC-P139-08"
+  ],
+  "changedFiles": [
+    "docs/P139_VERSION_CREATIVE_RECONSTRUCTION_PARAMETERS.md",
+    "docs/P139_VERSION_CREATIVE_RECONSTRUCTION_PARAMETERS.json",
+    "docs/evidence/P139-handoff.json",
+    "scripts/gates/p139_version_creative_reconstruction_parameters.py",
+    "scripts/gates/p139_tc01.py",
+    "scripts/gates/p139_tc02.py",
+    "scripts/gates/p139_tc03.py",
+    "scripts/gates/p139_tc04.py",
+    "scripts/gates/p139_tc05.py",
+    "scripts/gates/p139_tc06.py",
+    "scripts/gates/p139_tc07.py",
+    "scripts/gates/p139_tc08.py",
+    "scripts/tests/test_p139_version_creative_reconstruction_parameters.py",
+    "scripts/tests/test_p139_tc01.py",
+    "scripts/tests/test_p139_tc02.py",
+    "scripts/tests/test_p139_tc03.py",
+    "scripts/tests/test_p139_tc04.py",
+    "scripts/tests/test_p139_tc05.py",
+    "scripts/tests/test_p139_tc06.py",
+    "scripts/tests/test_p139_tc07.py",
+    "scripts/tests/test_p139_tc08.py"
+  ],
+  "commit": null,
+  "testsRun": "python3 -m unittest discover -s scripts/tests -p 'test_p139*.py' -v",
+  "failures": 0,
+  "unverified": [
+    "physical S23 capture",
+    "fixed cadence",
+    "sensor-derived Log",
+    "ten-bit fidelity",
+    "film-stock fidelity",
+    "cinema-camera equivalence"
+  ],
+  "nextPhase": "P140",
+  "nonClaims": "Host fixture only. Not a physical S23 qualification."
+}
