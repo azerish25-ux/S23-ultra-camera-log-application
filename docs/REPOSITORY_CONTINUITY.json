@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "phase": "P002",
-  "inspection_id": "INSPECTION-P003-LIVE",
-  "source_revision": "0bec817a2508b2b49f0e8f5c0781061b517418c0",
-  "source_tree": "3bc5e55cd32334b8a450b9aa55a1e3530a635da6",
-  "scope": "Bounded prior source review plus new live attempt, publication, consumer, cross-adapter and negative-control integration code. Only recorded line ranges are semantically reviewed; whole-file hashes bind byte identity, not a complete repository audit. New Android tests and native execution remain unverified.",
+  "inspection_id": "INSPECTION-P016-PHYSICAL-HARNESS",
+  "source_revision": "856489acd178408dbb7fa44e565b146a48fe93bc",
+  "source_tree": "c6517e64f70bb5fe7d72f8711ef5c24f256d6348",
+  "scope": "Incremental bounded continuity review at the P016 physical-harness revision. The 61 previously inspected source records are carried forward only where their bytes are unchanged; P016PhysicalHarness.kt and P016PhysicalQualificationTest.kt are reviewed in full as opt-in androidTest infrastructure. This records source ownership and evidence boundaries only, not Android runtime, physical S23, codec, cadence, thermal, storage, or endurance acceptance.",
   "files": [
     {
       "path": ".github/scripts/emulator-test.sh",
@@ -67,6 +67,30 @@
         [
           1,
           109
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/P016PhysicalHarness.kt",
+      "blob_sha": "a05f74a635750cb109a242bead1d5590108c2779",
+      "sha256": "56698f998bc1d478b46da76866c24c3e1a796c441bf801141c0de14547a1ae0c",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          287
+        ]
+      ]
+    },
+    {
+      "path": "app/src/androidTest/java/com/s23log/probe/P016PhysicalQualificationTest.kt",
+      "blob_sha": "081967b5125122ebe100c899d75e98c772437fd6",
+      "sha256": "8ab51898e1f818d5d5bfa05903a4f102fbba51761f79c6a32f7485ac70563014",
+      "role": "test",
+      "reviewed_lines": [
+        [
+          1,
+          192
         ]
       ]
     },

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "id": "EVIDENCE-P016-SOURCE-CONTINUITY",
+  "run_id": "P016-STATIC-856489acd178408dbb7fa44e565b146a48fe93bc",
+  "inspection_id": "INSPECTION-P016-PHYSICAL-HARNESS",
+  "source_revision": "856489acd178408dbb7fa44e565b146a48fe93bc",
+  "requirement_ids": [
+    "REQ-EVIDENCE"
+  ],
+  "evidence_class": "static_inspection",
+  "origin": "static_source",
+  "environment": {
+    "kind": "host",
+    "detail": "Exact source recovered from GitHub Actions artifact S23Log-verification (artifact 11274632078); commit and Git tree identities checked against the live main branch."
+  },
+  "fixture_ids": [
+    "FIXTURE-P016-PHYSICAL-HARNESS-SOURCE",
+    "FIXTURE-P016-PHYSICAL-QUALIFICATION-SOURCE"
+  ],
+  "source_paths": [
+    "app/src/androidTest/java/com/s23log/probe/P016PhysicalHarness.kt",
+    "app/src/androidTest/java/com/s23log/probe/P016PhysicalQualificationTest.kt"
+  ],
+  "scope": {},
+  "command": "Verify commit 856489acd178408dbb7fa44e565b146a48fe93bc and tree c6517e64f70bb5fe7d72f8711ef5c24f256d6348; compare both androidTest blob and SHA-256 identities; review all 479 source lines; confirm opt-in device gating and retained false physical claims.",
+  "outcome": "passed",
+  "checks": [
+    {
+      "id": "p016-test-source-identity",
+      "outcome": "passed",
+      "reason": "Both files match the exact P016 commit by Git blob and SHA-256 identity; the prior 61 inspected records retain identical bytes."
+    },
+    {
+      "id": "p016-test-only-boundary",
+      "outcome": "passed",
+      "reason": "The reviewed code remains under androidTest, requires explicit p016Physical and marker-ready arguments, restricts execution to SM-S918 hardware and an exact source revision, reuses the existing camera engine, and leaves full decode, marker verification, physical qualification, endurance, and higher-resolution claims false on the device side."
+    }
+  ],
+  "measurements": []
+}

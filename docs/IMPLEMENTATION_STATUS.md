@@ -299,7 +299,7 @@ Host gate for the directive deliverable "Capability cache invalidation and histo
 
 ## P016 — Run the first physical qualification slice (host scope)
 
-Host gate for the directive deliverable "Physical qualification report for one exact configuration". See [P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md](P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md). A green host run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. Android sources were not changed by this phase.
+Host gate for the directive deliverable "Physical qualification report for one exact configuration". See [P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md](P016_RUN_THE_FIRST_PHYSICAL_QUALIFICATION_SLICE.md) and the [physical execution protocol](P016_PHYSICAL_EXECUTION.md). The opt-in `androidTest` harness is now covered by a bounded exact-source continuity inspection; it does not change production capture behavior. A green host or Android-build run is not a physical S23 measurement, sustained 4K/8K proof, or cinema-camera equivalence. P016 remains physically pending until the exact APK revision is executed on an `SM-S918*` and the pulled media passes the independent full-decode, cadence, and flash/tone-marker validator.
 
 ## P011 — Model rational capture timing (host scope)
 
