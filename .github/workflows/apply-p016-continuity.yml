@@ -98,6 +98,9 @@ jobs:
           rm -rf /tmp/p016-final
           git worktree add --detach /tmp/p016-final "$FINAL_COMMIT_SHA"
           cd /tmp/p016-final
+          python3 -m venv /tmp/p016-venv
+          /tmp/p016-venv/bin/pip install -r scripts/requirements-raw.txt
+          export PATH="/tmp/p016-venv/bin:$PATH"
           python3 - <<'PY'
           import os
           import subprocess
